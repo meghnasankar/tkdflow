@@ -5,8 +5,8 @@
        placeholder values below with your real URL and anon key.
    ═══════════════════════════════════════════════════════════════ */
 
-const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
-const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL  = 'https://ffkwwfwrqtwejyrnkxey.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZma3d3ZndycXR3ZWp5cm5reGV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMzIxNTYsImV4cCI6MjA4OTcwODE1Nn0.aF9zoAeej542MreGVW5bjPUDzvQQ8Inb6VUtqlnVwH4';
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
