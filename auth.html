@@ -389,8 +389,12 @@ async function handleMode() {
   if (mode === 'register') switchTab('register');
   else if (mode === 'complete') {
     const { data: { session } } = await sb.auth.getSession();
-    if (session) showCompletePanel(session);
-    else switchTab('login');
+    if (session) {
+      /* Check if profile already exists — if so, just go to profile page */
+      const { data: existing } = await sb.from('profiles').select('id').eq('id', session.user.id).single();
+      if (existing) { window.location.href = 'profile.html'; return; }
+      showCompletePanel(session);
+    } else switchTab('login');
   } else {
     switchTab('login');
   }
