@@ -165,6 +165,23 @@ p  { color: var(--gray-600); }
   display: flex; align-items: center; justify-content: center;
   color: white; font-weight: 700; font-size: 0.85rem; cursor: pointer;
 }
+
+/* ── Logged-in user pill in navbar ── */
+.nav-user-pill {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 12px 5px 5px;
+  border-radius: 30px; border: 1px solid var(--gray-200);
+  background: white; transition: var(--transition); cursor: pointer;
+  text-decoration: none;
+}
+.nav-user-pill:hover { border-color: var(--red); box-shadow: 0 2px 8px rgba(200,16,46,.12); }
+.nav-avatar-circle {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 900; color: white; flex-shrink: 0;
+}
+.nav-username-label { font-size: 0.82rem; font-weight: 700; color: var(--navy); }
+
 .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
 .hamburger span { display: block; width: 22px; height: 2px; background: var(--navy); border-radius: 2px; transition: var(--transition); }
 

@@ -173,9 +173,9 @@
       <li><a href="forum.html">Forum</a></li>
       <li><a href="competitions.html">Competitions</a></li>
     </ul>
-    <div class="nav-actions">
-      <a href="#" class="btn btn-secondary btn-sm">Log In</a>
-      <a href="#" class="btn btn-primary btn-sm">Join Free</a>
+    <div class="nav-actions" id="nav-actions">
+      <a href="auth.html" class="btn btn-secondary btn-sm">Log In</a>
+      <a href="auth.html?mode=register" class="btn btn-primary btn-sm">Join Free</a>
       <div class="hamburger" id="hamburger">
         <span></span><span></span><span></span>
       </div>
@@ -672,5 +672,7 @@
     }
   });
 </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/tkdauth.js"></script>
 </body>
 </html>

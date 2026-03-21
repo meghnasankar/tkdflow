@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — TKDflow</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { background: var(--off-white); }
+
+    /* ── Auth Hero ── */
+    .auth-hero {
+      background: linear-gradient(135deg, var(--navy) 0%, #1a2a3a 55%, #2d1218 100%);
+      padding: 56px 24px 48px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .auth-hero::before {
+      content: ''; position: absolute;
+      width: 500px; height: 500px; top: -200px; right: -100px;
+      background: radial-gradient(circle, rgba(200,16,46,.25), transparent 70%);
+    }
+    .auth-hero h1 { color: white; font-size: 1.9rem; margin-bottom: 6px; position: relative; z-index: 1; }
+    .auth-hero p  { color: rgba(255,255,255,.55); font-size: 0.95rem; position: relative; z-index: 1; }
+
+    /* ── Auth Card ── */
+    .auth-wrap { display: flex; justify-content: center; padding: 36px 24px 80px; }
+    .auth-card {
+      background: white; border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg); width: 100%; max-width: 500px; overflow: hidden;
+    }
+
+    /* ── Tabs ── */
+    .auth-tabs { display: flex; border-bottom: 2px solid var(--gray-100); }
+    .auth-tab {
+      flex: 1; padding: 18px; text-align: center;
+      font-weight: 700; font-size: 0.95rem; color: var(--gray-400);
+      cursor: pointer; transition: var(--transition);
+      border-bottom: 3px solid transparent; margin-bottom: -2px;
+    }
+    .auth-tab.active { color: var(--red); border-bottom-color: var(--red); }
+
+    .auth-body { padding: 32px; }
+    .auth-panel { display: none; }
+    .auth-panel.active { display: block; }
+
+    /* ── Google Button ── */
+    .btn-google {
+      width: 100%; display: flex; align-items: center; justify-content: center;
+      gap: 12px; padding: 13px 20px;
+      background: white; border: 2px solid var(--gray-200);
+      border-radius: var(--radius-sm); font-weight: 600; font-size: 0.95rem;
+      color: var(--gray-800); cursor: pointer; transition: var(--transition);
+    }
+    .btn-google:hover {
+      border-color: #4285f4; background: #f8f9ff;
+      box-shadow: 0 2px 10px rgba(66,133,244,.2);
+    }
+
+    /* ── Divider ── */
+    .auth-divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 20px 0; color: var(--gray-400); font-size: 0.82rem; font-weight: 500;
+    }
+    .auth-divider::before, .auth-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--gray-200);
+    }
+
+    /* ── Form ── */
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block; font-size: 0.78rem; font-weight: 700;
+      color: var(--gray-400); text-transform: uppercase;
+      letter-spacing: 0.06em; margin-bottom: 6px;
+    }
+    .form-group input, .form-group select {
+      width: 100%; padding: 11px 14px;
+      border: 2px solid var(--gray-200); border-radius: var(--radius-sm);
+      font-size: 0.95rem; color: var(--gray-800);
+      background: var(--off-white); transition: var(--transition); outline: none;
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--red); background: white;
+      box-shadow: 0 0 0 3px rgba(200,16,46,.09);
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* ── Password toggle ── */
+    .input-wrap { position: relative; }
+    .input-wrap input { padding-right: 44px; }
+    .toggle-pw {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: var(--gray-400); font-size: 1rem; padding: 4px;
+    }
+
+    /* ── Submit button ── */
+    .btn-auth {
+      width: 100%; padding: 14px; background: var(--red); color: white;
+      border: none; border-radius: var(--radius-sm);
+      font-size: 1rem; font-weight: 700; cursor: pointer;
+      transition: var(--transition); margin-top: 8px;
+      box-shadow: 0 4px 14px rgba(200,16,46,.3);
+    }
+    .btn-auth:hover { background: var(--red-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(200,16,46,.4); }
+    .btn-auth:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    /* ── Switch link ── */
+    .auth-switch { text-align: center; margin-top: 20px; font-size: 0.875rem; color: var(--gray-400); }
+    .auth-switch a { color: var(--red); font-weight: 600; cursor: pointer; }
+    .auth-switch a:hover { text-decoration: underline; }
+
+    /* ── Forgot password ── */
+    .forgot-link { text-align: right; margin-top: -8px; margin-bottom: 12px; }
+    .forgot-link a { font-size: 0.8rem; color: var(--gray-400); }
+    .forgot-link a:hover { color: var(--red); }
+
+    /* ── Message bar ── */
+    .auth-msg {
+      padding: 11px 15px; border-radius: var(--radius-sm);
+      font-size: 0.875rem; font-weight: 500; margin-bottom: 16px; display: none;
+    }
+    .auth-msg.error   { background:#fff0f0; border:1px solid #fca5a5; color:#dc2626; display:block; }
+    .auth-msg.success { background:#f0fff4; border:1px solid #86efac; color:#16a34a; display:block; }
+    .auth-msg.info    { background:#eff6ff; border:1px solid #93c5fd; color:#1d4ed8; display:block; }
+
+    /* ── School 'add new' ── */
+    #new-school-wrap, #new-school-wrap2 { display:none; margin-top:8px; }
+  </style>
+</head>
+<body>
+
+<!-- ── Navbar ── -->
+<nav class="navbar">
+  <div class="container">
+    <a href="index.html" class="navbar-logo">
+      <div class="logo-icon">道</div>
+      TKDflow<span class="kr" style="font-size:0.7em;opacity:0.6;margin-left:6px;">태권도 플로우</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="forms.html">Forms Library</a></li>
+      <li><a href="community.html">Community</a></li>
+      <li><a href="forum.html">Forum</a></li>
+      <li><a href="competitions.html">Competitions</a></li>
+    </ul>
+    <div class="nav-actions" id="nav-actions">
+      <a href="auth.html" class="btn btn-secondary btn-sm">Log In</a>
+      <a href="auth.html?mode=register" class="btn btn-primary btn-sm">Join Free</a>
+      <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Auth Hero ── -->
+<div class="auth-hero">
+  <h1 id="hero-title">Welcome Back 🥋</h1>
+  <p  id="hero-sub">Sign in to continue your taekwondo journey</p>
+</div>
+
+<!-- ── Auth Card ── -->
+<div class="auth-wrap">
+  <div class="auth-card">
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tab-login"    onclick="switchTab('login')">Sign In</div>
+      <div class="auth-tab"        id="tab-register" onclick="switchTab('register')">Create Account</div>
+    </div>
+
+    <div class="auth-body">
+      <div class="auth-msg" id="auth-msg"></div>
+
+      <!-- ════════════════════ LOGIN PANEL ════════════════════ -->
+      <div class="auth-panel active" id="panel-login">
+
+        <button class="btn-google" onclick="signInGoogle()">
+          <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.36-8.16 2.36-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          Continue with Google
+        </button>
+
+        <div class="auth-divider">or sign in with email</div>
+
+        <form id="form-login" onsubmit="loginWithEmail(event)">
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="login-email" placeholder="you@example.com" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <div class="input-wrap">
+              <input type="password" id="login-password" placeholder="Your password" required autocomplete="current-password">
+              <button type="button" class="toggle-pw" onclick="togglePw('login-password',this)">👁</button>
+            </div>
+          </div>
+          <div class="forgot-link"><a href="#" onclick="forgotPassword(event)">Forgot password?</a></div>
+          <button type="submit" class="btn-auth" id="btn-login">Sign In →</button>
+        </form>
+
+        <div class="auth-switch">Don't have an account? <a onclick="switchTab('register')">Create one free</a></div>
+      </div>
+      <!-- ── end login panel ── -->
+
+      <!-- ════════════════════ REGISTER PANEL ════════════════════ -->
+      <div class="auth-panel" id="panel-register">
+
+        <button class="btn-google" onclick="signInGoogle()">
+          <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.36-8.16 2.36-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          Continue with Google
+        </button>
+
+        <div class="auth-divider">or create account with email</div>
+
+        <form id="form-register" onsubmit="registerWithEmail(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" id="reg-name" placeholder="Your full name" required>
+            </div>
+            <div class="form-group">
+              <label>Username *</label>
+              <input type="text" id="reg-username" placeholder="e.g. tkd_meghna" required
+                pattern="[a-zA-Z0-9_]{3,20}" title="3–20 chars · letters, numbers, underscore">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Age *</label>
+              <input type="number" id="reg-age" placeholder="Age" min="5" max="99" required>
+            </div>
+            <div class="form-group">
+              <label>Belt Level *</label>
+              <select id="reg-belt" required>
+                <option value="">Select belt…</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Taekwondo School</label>
+            <select id="reg-school" onchange="onSchoolChange('new-school-wrap', this)">
+              <option value="">Select school…</option>
+              <option value="__new__">➕ Add my school…</option>
+            </select>
+            <div id="new-school-wrap">
+              <input type="text" id="reg-school-new" placeholder="Enter school / club name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="reg-email" placeholder="you@example.com" required autocomplete="email">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Password *</label>
+              <div class="input-wrap">
+                <input type="password" id="reg-password" placeholder="Min 8 chars" required minlength="8" autocomplete="new-password">
+                <button type="button" class="toggle-pw" onclick="togglePw('reg-password',this)">👁</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Confirm *</label>
+              <div class="input-wrap">
+                <input type="password" id="reg-confirm" placeholder="Repeat password" required autocomplete="new-password">
+                <button type="button" class="toggle-pw" onclick="togglePw('reg-confirm',this)">👁</button>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn-auth" id="btn-register">Create Account →</button>
+        </form>
+
+        <div class="auth-switch">Already have an account? <a onclick="switchTab('login')">Sign in</a></div>
+      </div>
+      <!-- ── end register panel ── -->
+
+      <!-- ════════════════════ COMPLETE PROFILE PANEL (Google OAuth) ════════════════════ -->
+      <div class="auth-panel" id="panel-complete">
+        <div class="auth-msg info" style="display:block">
+          👋 One more step! Tell us a little about yourself to complete your TKDflow profile.
+        </div>
+        <form id="form-complete" onsubmit="completeProfile(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" id="cp-name" placeholder="Your full name" required>
+            </div>
+            <div class="form-group">
+              <label>Username *</label>
+              <input type="text" id="cp-username" placeholder="@handle" required
+                pattern="[a-zA-Z0-9_]{3,20}" title="3–20 chars · letters, numbers, underscore">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Age *</label>
+              <input type="number" id="cp-age" placeholder="Age" min="5" max="99" required>
+            </div>
+            <div class="form-group">
+              <label>Belt Level *</label>
+              <select id="cp-belt" required>
+                <option value="">Select belt…</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Taekwondo School</label>
+            <select id="cp-school" onchange="onSchoolChange('new-school-wrap2', this)">
+              <option value="">Select school…</option>
+              <option value="__new__">➕ Add my school…</option>
+            </select>
+            <div id="new-school-wrap2">
+              <input type="text" id="cp-school-new" placeholder="Enter school / club name">
+            </div>
+          </div>
+          <button type="submit" class="btn-auth" id="btn-complete">Save & Enter TKDflow →</button>
+        </form>
+      </div>
+      <!-- ── end complete panel ── -->
+
+    </div><!-- /.auth-body -->
+  </div><!-- /.auth-card -->
+</div><!-- /.auth-wrap -->
+
+<footer style="background:var(--navy);color:rgba(255,255,255,.45);text-align:center;padding:22px;font-size:0.8rem;">
+  © 2025 TKDflow · 태권도 플로우 &nbsp;·&nbsp;
+  Secured by <a href="https://supabase.com" style="color:var(--gold);font-weight:600">Supabase</a>
+  &nbsp;·&nbsp; Non-profit · Free forever
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/tkdauth.js"></script>
+<script>
+/* ── Belt levels ── */
+const BELT_LEVELS = [
+  'White Belt (10th Gup)', 'Yellow Belt (9th Gup)', 'Yellow Stripe (8th Gup)',
+  'Green Belt (7th Gup)',  'Green Stripe (6th Gup)', 'Blue Belt (5th Gup)',
+  'Blue Stripe (4th Gup)', 'Red Belt (3rd Gup)',    'Red Stripe (2nd Gup)',
+  '1st Gup (Poom / Pre-Black)', '1st Dan Black Belt', '2nd Dan Black Belt',
+  '3rd Dan Black Belt', '4th Dan Black Belt', '5th Dan Black Belt',
+  '6th Dan Black Belt', '7th Dan Black Belt', '8th Dan Black Belt',
+  '9th Dan Black Belt (Grand Master)',
+];
+
+/* ── Init on page load ── */
+document.addEventListener('DOMContentLoaded', async () => {
+  populateBeltSelects();
+  await loadSchools();
+  await handleMode();
+});
+
+function populateBeltSelects() {
+  ['reg-belt', 'cp-belt'].forEach(id => {
+    const sel = document.getElementById(id); if (!sel) return;
+    BELT_LEVELS.forEach(b => sel.insertAdjacentHTML('beforeend', `<option value="${b}">${b}</option>`));
+  });
+}
+
+async function loadSchools() {
+  try {
+    const { data } = await sb.from('schools').select('name').order('name');
+    if (!data) return;
+    ['reg-school', 'cp-school'].forEach(id => {
+      const sel = document.getElementById(id); if (!sel) return;
+      const addNew = sel.querySelector('[value="__new__"]');
+      data.forEach(s => {
+        const o = document.createElement('option');
+        o.value = s.name; o.textContent = s.name;
+        sel.insertBefore(o, addNew);
+      });
+    });
+  } catch(e) {}
+}
+
+async function handleMode() {
+  const mode = new URLSearchParams(window.location.search).get('mode') || 'login';
+
+  /* Listen for OAuth callback */
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      const { data: p } = await sb.from('profiles').select('id').eq('id', session.user.id).single();
+      if (!p) {
+        /* New Google user — complete profile */
+        showCompletePanel(session);
+      } else {
+        window.location.href = 'profile.html';
+      }
+    }
+  });
+
+  if (mode === 'register') switchTab('register');
+  else if (mode === 'complete') {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) showCompletePanel(session);
+    else switchTab('login');
+  } else {
+    switchTab('login');
+  }
+}
+
+/* ── Tab helpers ── */
+function switchTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab)?.classList.add('active');
+  document.getElementById('panel-' + tab)?.classList.add('active');
+  clearMsg();
+  if (tab === 'register') {
+    document.getElementById('hero-title').textContent = 'Join TKDflow 🥋';
+    document.getElementById('hero-sub').textContent   = 'Free forever · No ads · Built for practitioners';
+  } else {
+    document.getElementById('hero-title').textContent = 'Welcome Back 🥋';
+    document.getElementById('hero-sub').textContent   = 'Sign in to continue your taekwondo journey';
+  }
+}
+
+function showCompletePanel(session) {
+  document.querySelectorAll('.auth-tab').forEach(t => t.style.display = 'none');
+  document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-complete')?.classList.add('active');
+  document.getElementById('hero-title').textContent = 'Complete Your Profile 🥋';
+  document.getElementById('hero-sub').textContent   = "You're almost in!";
+  /* Pre-fill name from Google */
+  const gName = session?.user?.user_metadata?.full_name;
+  if (gName) document.getElementById('cp-name').value = gName;
+}
+
+/* ── School dropdown ── */
+function onSchoolChange(wrapId, sel) {
+  document.getElementById(wrapId).style.display = sel.value === '__new__' ? 'block' : 'none';
+}
+
+/* ── Password toggle ── */
+function togglePw(id, btn) {
+  const inp = document.getElementById(id); if (!inp) return;
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'text' ? '🙈' : '👁';
+}
+
+/* ── Message helpers ── */
+function showMsg(text, type) {
+  const el = document.getElementById('auth-msg');
+  el.className = 'auth-msg ' + type; el.textContent = text; el.style.display = 'block';
+  el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+function clearMsg() {
+  const el = document.getElementById('auth-msg');
+  el.className = 'auth-msg'; el.textContent = ''; el.style.display = 'none';
+}
+
+/* ── Google OAuth ── */
+async function signInGoogle() {
+  clearMsg();
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin + '/auth.html?mode=complete' }
+  });
+  if (error) showMsg(error.message, 'error');
+}
+
+/* ── Email login ── */
+async function loginWithEmail(e) {
+  e.preventDefault(); clearMsg();
+  const btn = document.getElementById('btn-login');
+  btn.disabled = true; btn.textContent = 'Signing in…';
+
+  const { error } = await sb.auth.signInWithPassword({
+    email:    document.getElementById('login-email').value.trim(),
+    password: document.getElementById('login-password').value,
+  });
+
+  if (error) {
+    showMsg(error.message.includes('Invalid') ? 'Incorrect email or password. Please try again.' : error.message, 'error');
+    btn.disabled = false; btn.textContent = 'Sign In →';
+    return;
+  }
+  showMsg('Signed in! Redirecting…', 'success');
+  setTimeout(() => window.location.href = 'profile.html', 700);
+}
+
+/* ── Email registration ── */
+async function registerWithEmail(e) {
+  e.preventDefault(); clearMsg();
+
+  const name      = document.getElementById('reg-name').value.trim();
+  const username  = document.getElementById('reg-username').value.trim().toLowerCase();
+  const age       = parseInt(document.getElementById('reg-age').value);
+  const belt      = document.getElementById('reg-belt').value;
+  const schoolSel = document.getElementById('reg-school').value;
+  const schoolNew = document.getElementById('reg-school-new').value.trim();
+  const school    = schoolSel === '__new__' ? schoolNew : schoolSel;
+  const email     = document.getElementById('reg-email').value.trim();
+  const password  = document.getElementById('reg-password').value;
+  const confirm   = document.getElementById('reg-confirm').value;
+
+  if (password !== confirm)            { showMsg('Passwords do not match.', 'error'); return; }
+  if (!/^[a-zA-Z0-9_]{3,20}$/.test(username))
+    { showMsg('Username must be 3–20 characters: letters, numbers, underscore only.', 'error'); return; }
+
+  const btn = document.getElementById('btn-register');
+  btn.disabled = true; btn.textContent = 'Creating account…';
+
+  /* Check username uniqueness */
+  const { data: taken } = await sb.from('profiles').select('id').eq('username', username).single();
+  if (taken) {
+    showMsg('That username is already taken. Try another.', 'error');
+    btn.disabled = false; btn.textContent = 'Create Account →'; return;
+  }
+
+  /* Create auth user */
+  const { data: authData, error: authErr } = await sb.auth.signUp({ email, password });
+  if (authErr) {
+    showMsg(authErr.message, 'error');
+    btn.disabled = false; btn.textContent = 'Create Account →'; return;
+  }
+
+  /* Add new school to table if needed */
+  if (schoolSel === '__new__' && schoolNew)
+    await sb.from('schools').upsert({ name: schoolNew }, { onConflict: 'name' });
+
+  /* Create profile */
+  const { error: profErr } = await sb.from('profiles').insert({
+    id: authData.user.id, full_name: name, username,
+    age, belt_level: belt, school_name: school || null,
+  });
+  if (profErr) {
+    showMsg('Account created but profile setup failed: ' + profErr.message, 'error');
+    btn.disabled = false; btn.textContent = 'Create Account →'; return;
+  }
+
+  showMsg('🎉 Account created! Check your email to verify, then sign in.', 'success');
+  btn.textContent = 'Account Created!';
+  setTimeout(() => switchTab('login'), 3000);
+}
+
+/* ── Complete profile (Google OAuth new users) ── */
+async function completeProfile(e) {
+  e.preventDefault(); clearMsg();
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { showMsg('Session expired. Please sign in again.', 'error'); return; }
+
+  const name      = document.getElementById('cp-name').value.trim();
+  const username  = document.getElementById('cp-username').value.trim().toLowerCase();
+  const age       = parseInt(document.getElementById('cp-age').value);
+  const belt      = document.getElementById('cp-belt').value;
+  const schoolSel = document.getElementById('cp-school').value;
+  const schoolNew = document.getElementById('cp-school-new').value.trim();
+  const school    = schoolSel === '__new__' ? schoolNew : schoolSel;
+
+  if (!/^[a-zA-Z0-9_]{3,20}$/.test(username))
+    { showMsg('Username must be 3–20 characters: letters, numbers, underscore only.', 'error'); return; }
+
+  const btn = document.getElementById('btn-complete');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  const { data: taken } = await sb.from('profiles').select('id').eq('username', username).single();
+  if (taken && taken.id !== session.user.id) {
+    showMsg('That username is already taken. Try another.', 'error');
+    btn.disabled = false; btn.textContent = 'Save & Enter TKDflow →'; return;
+  }
+
+  if (schoolSel === '__new__' && schoolNew)
+    await sb.from('schools').upsert({ name: schoolNew }, { onConflict: 'name' });
+
+  const { error } = await sb.from('profiles').upsert({
+    id: session.user.id, full_name: name, username,
+    age, belt_level: belt, school_name: school || null,
+    updated_at: new Date().toISOString(),
+  });
+
+  if (error) {
+    showMsg('Could not save profile: ' + error.message, 'error');
+    btn.disabled = false; btn.textContent = 'Save & Enter TKDflow →'; return;
+  }
+  showMsg('Profile saved! Taking you in…', 'success');
+  setTimeout(() => window.location.href = 'profile.html', 700);
+}
+
+/* ── Forgot password ── */
+async function forgotPassword(e) {
+  e.preventDefault();
+  const email = document.getElementById('login-email').value.trim();
+  if (!email) { showMsg('Enter your email address above first.', 'info'); return; }
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + '/auth.html'
+  });
+  if (error) showMsg(error.message, 'error');
+  else showMsg('Password reset email sent! Check your inbox.', 'success');
+}
+</script>
+</body>
+</html>
