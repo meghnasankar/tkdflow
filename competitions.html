@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Competitions — Dobok</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .page-hero {
+      background: linear-gradient(135deg, #3d1a00 0%, #1a0d00 40%, #1a1200 100%);
+      padding: 56px 0 40px; position: relative; overflow: hidden;
+    }
+    .page-hero-circles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .page-hero-circles span { position: absolute; border-radius: 50%; }
+    .page-hero-circles span:nth-child(1) { width: 500px; height: 500px; top: -150px; right: -50px; background: radial-gradient(circle, rgba(232,160,32,.2), transparent 70%); }
+    .page-hero-circles span:nth-child(2) { width: 250px; height: 250px; bottom: -60px; left: 15%; background: radial-gradient(circle, rgba(200,16,46,.15), transparent 70%); }
+    .page-hero h1 { color: white; }
+    .page-hero p  { color: rgba(255,255,255,.6); max-width: 560px; margin: 10px 0 24px; }
+
+    /* Layout */
+    .comp-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 32px;
+      padding: 48px 0 80px;
+      align-items: start;
+    }
+
+    /* Map banner */
+    .map-banner {
+      background: linear-gradient(135deg, var(--navy), #1a2a3a);
+      border-radius: var(--radius); padding: 28px;
+      display: flex; gap: 20px; align-items: center;
+      margin-bottom: 32px; position: relative; overflow: hidden;
+    }
+    .map-banner::before {
+      content: '🗺️'; font-size: 8rem; position: absolute;
+      right: 20px; top: 50%; transform: translateY(-50%); opacity: 0.12;
+    }
+    .map-banner-text h3 { color: white; margin-bottom: 6px; }
+    .map-banner-text p  { color: rgba(255,255,255,.55); font-size: 0.88rem; }
+
+    /* Competition card (detailed) */
+    .comp-detail-card {
+      background: var(--white); border: 1px solid var(--gray-200);
+      border-radius: var(--radius); overflow: hidden;
+      margin-bottom: 20px; transition: var(--transition);
+    }
+    .comp-detail-card:hover { box-shadow: var(--shadow-lg); }
+    .comp-detail-card.featured { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+    .comp-banner-strip {
+      height: 8px;
+    }
+    .comp-detail-body { padding: 24px; }
+    .comp-detail-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; gap: 12px; }
+    .comp-detail-title { flex: 1; }
+    .comp-detail-title h3 { font-size: 1.05rem; margin-bottom: 6px; }
+    .comp-meta-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px; margin: 16px 0;
+      padding: 16px; background: var(--off-white);
+      border-radius: var(--radius-sm);
+    }
+    .comp-meta-item { display: flex; align-items: flex-start; gap: 8px; }
+    .comp-meta-item .icon { font-size: 1rem; flex-shrink: 0; }
+    .comp-meta-item .label { font-size: 0.72rem; color: var(--gray-400); text-transform: uppercase; letter-spacing: .04em; font-weight: 700; }
+    .comp-meta-item .value { font-size: 0.88rem; font-weight: 600; color: var(--navy); }
+    .comp-footer-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--gray-100); }
+    .comp-footer-row .reg-status { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 700; }
+    .reg-open   { color: #22C55E; }
+    .reg-soon   { color: var(--gold); }
+    .reg-closed { color: var(--gray-400); }
+
+    /* Countdown strip */
+    .comp-countdown {
+      background: var(--navy); padding: 12px 24px;
+      display: flex; gap: 20px; align-items: center;
+      justify-content: center;
+    }
+    .comp-countdown .unit { text-align: center; }
+    .comp-countdown .num { font-size: 1.5rem; font-weight: 900; color: white; line-height: 1; display: block; }
+    .comp-countdown .lbl { font-size: 0.65rem; text-transform: uppercase; color: rgba(255,255,255,.4); letter-spacing: .06em; }
+    .comp-countdown .sep { font-size: 1.4rem; font-weight: 900; color: var(--red); padding-bottom: 14px; }
+
+    /* Sidebar */
+    .sidebar-widget {
+      background: var(--white); border: 1px solid var(--gray-200);
+      border-radius: var(--radius); padding: 20px; margin-bottom: 20px;
+    }
+    .sidebar-widget h3 { font-size: 0.95rem; margin-bottom: 16px; }
+    .mini-comp-item {
+      display: flex; gap: 12px; padding: 10px 0;
+      border-bottom: 1px solid var(--gray-100); align-items: flex-start;
+    }
+    .mini-comp-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .mini-comp-date {
+      background: var(--navy); color: white;
+      border-radius: var(--radius-sm); padding: 6px 10px;
+      text-align: center; flex-shrink: 0; min-width: 44px;
+    }
+    .mini-comp-date .day  { font-size: 1.1rem; font-weight: 900; line-height: 1; }
+    .mini-comp-date .mo   { font-size: 0.65rem; text-transform: uppercase; color: rgba(255,255,255,.5); }
+    .mini-comp-info .name { font-size: 0.85rem; font-weight: 700; color: var(--navy); line-height: 1.3; margin-bottom: 3px; }
+    .mini-comp-info .loc  { font-size: 0.75rem; color: var(--gray-400); }
+
+    /* Post comp CTA */
+    .post-comp-cta {
+      background: linear-gradient(135deg,#1a0d2d,#0d1a2d);
+      border-radius: var(--radius); padding: 24px;
+      text-align: center;
+    }
+    .post-comp-cta h3 { color: white; margin-bottom: 8px; }
+    .post-comp-cta p  { color: rgba(255,255,255,.5); font-size: 0.85rem; margin-bottom: 16px; }
+
+    /* Modal */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--white); border-radius: var(--radius-lg); width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); }
+    .modal-header { padding: 24px 28px; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; }
+    .modal-body { padding: 28px; }
+    .modal-footer { padding: 20px 28px; border-top: 1px solid var(--gray-200); display: flex; gap: 12px; justify-content: flex-end; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 0.88rem; font-weight: 700; color: var(--navy); margin-bottom: 7px; }
+    .form-input { width: 100%; padding: 10px 14px; border: 2px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 0.9rem; color: var(--gray-800); transition: var(--transition); font-family: var(--font); }
+    .form-input:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(200,16,46,.08); }
+    .close-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--gray-400); }
+
+    /* Divisions tags */
+    .div-tag { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; background: var(--gray-100); color: var(--gray-600); }
+
+    @media (max-width: 900px) {
+      .comp-layout { grid-template-columns: 1fr; }
+      .comp-meta-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="container">
+    <a href="index.html" class="navbar-logo">
+      <div class="logo-icon">道</div>
+      Dobok<span class="accent">.</span><span class="kr">도복</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="forms.html">Forms Library</a></li>
+      <li><a href="community.html">Community</a></li>
+      <li><a href="forum.html">Forum</a></li>
+      <li><a href="competitions.html" class="active">Competitions</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="#" class="btn btn-secondary btn-sm">Log In</a>
+      <a href="#" class="btn btn-primary btn-sm">Join Free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-circles"><span></span><span></span></div>
+  <div class="container" style="position:relative;z-index:2;">
+    <div class="section-label" style="background:rgba(232,160,32,.15);color:#fcd34d;border:none;">🏆 Competition Board</div>
+    <h1>Find Your Next Tournament</h1>
+    <p>Local, national, and international taekwondo competitions — all in one place. Submit your school's event for free, reach thousands of competitors worldwide.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <button class="btn btn-gold btn-lg" onclick="document.getElementById('postCompModal').classList.add('open')">+ Post a Competition</button>
+      <div class="search-bar" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);max-width:360px;flex:1;">
+        <span style="color:rgba(255,255,255,.4);">🔍</span>
+        <input type="text" placeholder="Search by city, country, or name..." style="background:transparent;color:white;" />
+        <button class="btn btn-primary btn-sm">Search</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:32px;flex-wrap:wrap;margin-top:28px;">
+      <div><div style="font-size:1.4rem;font-weight:900;color:white;">284</div><div style="font-size:0.8rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em;">Listed Events</div></div>
+      <div><div style="font-size:1.4rem;font-weight:900;color:white;">62<span style="color:var(--gold);">+</span></div><div style="font-size:0.8rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em;">Countries</div></div>
+      <div><div style="font-size:1.4rem;font-weight:900;color:white;">18</div><div style="font-size:0.8rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em;">This Month</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="container">
+  <div class="comp-layout">
+
+    <!-- MAIN FEED -->
+    <main>
+
+      <!-- Filters -->
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;align-items:center;">
+        <div class="tabs" style="margin-bottom:0;border-bottom:none;flex:1;">
+          <button class="tab-btn active">📅 Upcoming</button>
+          <button class="tab-btn">🌍 International</button>
+          <button class="tab-btn">🏠 National</button>
+          <button class="tab-btn">📍 Local / Regional</button>
+          <button class="tab-btn">✅ Past Results</button>
+        </div>
+      </div>
+      <div class="filter-pills" style="margin-bottom:24px;">
+        <div class="pill active">All Styles</div>
+        <div class="pill">WT / Olympic</div>
+        <div class="pill">ITF</div>
+        <div class="pill">ATA</div>
+        <div class="pill">Poomsae</div>
+        <div class="pill">Sparring</div>
+        <div class="pill">Breaking</div>
+        <div class="pill">All Ages</div>
+        <div class="pill">Youth</div>
+        <div class="pill">Adult</div>
+        <div class="pill">Masters</div>
+      </div>
+
+      <!-- Dynamic competition feed — populated by JS from data/competitions.json -->
+      <div id="compFeed"></div>
+
+      
+
+    </main>
+
+    <!-- SIDEBAR -->
+    <aside>
+
+      <!-- Filter Widget -->
+      <div class="sidebar-widget">
+        <h3>🔎 Filter Events</h3>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label style="font-size:0.8rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.04em;">Country / Region</label>
+          <select class="form-input" style="padding:8px 12px;font-size:0.85rem;">
+            <option>All Countries</option>
+            <option>United States</option>
+            <option>South Korea</option>
+            <option>United Kingdom</option>
+            <option>Australia</option>
+            <option>Brazil</option>
+            <option>Germany</option>
+            <option>Canada</option>
+            <option>Spain</option>
+            <option>Mexico</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label style="font-size:0.8rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.04em;">Date Range</label>
+          <input class="form-input" type="month" style="padding:8px 12px;font-size:0.85rem;" value="2025-04" />
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label style="font-size:0.8rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.04em;">Style</label>
+          <select class="form-input" style="padding:8px 12px;font-size:0.85rem;">
+            <option>All Styles</option>
+            <option>WT / Kukkiwon</option>
+            <option>ITF</option>
+            <option>ATA / Songahm</option>
+            <option>Independent / Open</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:16px;">
+          <label style="font-size:0.8rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.04em;">Event Type</label>
+          <select class="form-input" style="padding:8px 12px;font-size:0.85rem;">
+            <option>All Events</option>
+            <option>Poomsae / Patterns</option>
+            <option>Sparring</option>
+            <option>Breaking</option>
+            <option>Combined</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;">Apply Filters</button>
+      </div>
+
+      <!-- Upcoming this month -->
+      <div class="sidebar-widget">
+        <h3>📅 This Month (April 2025)</h3>
+        <div class="mini-comp-item">
+          <div class="mini-comp-date"><div class="day">12</div><div class="mo">Apr</div></div>
+          <div class="mini-comp-info"><div class="name">Tri-State TKD Open</div><div class="loc">📍 Edison, NJ, USA</div></div>
+        </div>
+        <div class="mini-comp-item">
+          <div class="mini-comp-date"><div class="day">18</div><div class="mo">Apr</div></div>
+          <div class="mini-comp-info"><div class="name">UK National Poomsae Championships</div><div class="loc">📍 Birmingham, UK</div></div>
+        </div>
+        <div class="mini-comp-item">
+          <div class="mini-comp-date"><div class="day">26</div><div class="mo">Apr</div></div>
+          <div class="mini-comp-info"><div class="name">Australian TKD State Open</div><div class="loc">📍 Sydney, NSW</div></div>
+        </div>
+        <div class="mini-comp-item">
+          <div class="mini-comp-date" style="background:var(--red);"><div class="day">27</div><div class="mo">Apr</div></div>
+          <div class="mini-comp-info"><div class="name">Berlin Open Taekwondo Tournament</div><div class="loc">📍 Berlin, Germany</div></div>
+        </div>
+      </div>
+
+      <!-- Post competition CTA -->
+      <div class="post-comp-cta">
+        <div style="font-size:2.5rem;margin-bottom:12px;">🏟️</div>
+        <h3>Hosting a Tournament?</h3>
+        <p>List your competition for free and reach thousands of taekwondo athletes worldwide. Takes 5 minutes.</p>
+        <button class="btn btn-gold" style="width:100%;justify-content:center;" onclick="document.getElementById('postCompModal').classList.add('open')">+ Post Your Event Free</button>
+        <div class="nonprofit-badge" style="justify-content:center;margin-top:12px;">♻️ Always free — non-profit platform</div>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<!-- POST COMPETITION MODAL -->
+<div class="modal-overlay" id="postCompModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>🏆 Post a Competition</h3>
+      <button class="close-btn" onclick="document.getElementById('postCompModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="notice notice-info" style="margin-bottom:20px;">
+        ℹ️ All listings are free. Events are reviewed by our team before going live (usually within 24h).
+      </div>
+      <div class="form-group">
+        <label>Competition Name *</label>
+        <input class="form-input" type="text" placeholder="e.g. Annual Spring Open Taekwondo Championships" />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-group">
+          <label>Start Date *</label>
+          <input class="form-input" type="date" />
+        </div>
+        <div class="form-group">
+          <label>End Date *</label>
+          <input class="form-input" type="date" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Location (Venue, City, Country) *</label>
+        <input class="form-input" type="text" placeholder="e.g. City Sports Center, Toronto, Canada" />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-group">
+          <label>Style / Governing Body *</label>
+          <select class="form-input">
+            <option>WT / Kukkiwon</option>
+            <option>ITF</option>
+            <option>ATA / Songahm</option>
+            <option>GTF</option>
+            <option>Independent / Open</option>
+            <option>Multiple / All Styles</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Level *</label>
+          <select class="form-input">
+            <option>Local / Club</option>
+            <option>Regional</option>
+            <option>National</option>
+            <option>Continental</option>
+            <option>International / World</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Events Offered (check all that apply)</label>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;">
+          <label style="display:flex;align-items:center;gap:6px;font-size:0.88rem;font-weight:500;cursor:pointer;"><input type="checkbox" style="accent-color:var(--red);" /> Poomsae / Patterns</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:0.88rem;font-weight:500;cursor:pointer;"><input type="checkbox" style="accent-color:var(--red);" /> Sparring</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:0.88rem;font-weight:500;cursor:pointer;"><input type="checkbox" style="accent-color:var(--red);" /> Breaking / Power Test</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:0.88rem;font-weight:500;cursor:pointer;"><input type="checkbox" style="accent-color:var(--red);" /> Special Techniques</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:0.88rem;font-weight:500;cursor:pointer;"><input type="checkbox" style="accent-color:var(--red);" /> Team Events</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Registration Deadline</label>
+        <input class="form-input" type="date" />
+      </div>
+      <div class="form-group">
+        <label>Registration / Info URL</label>
+        <input class="form-input" type="url" placeholder="https://..." />
+      </div>
+      <div class="form-group">
+        <label>Contact Email *</label>
+        <input class="form-input" type="email" placeholder="organizer@yourevent.com" />
+      </div>
+      <div class="form-group">
+        <label>Description / Notes</label>
+        <textarea class="form-input" rows="4" placeholder="Entry fees, age divisions, special information for competitors..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="document.getElementById('postCompModal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-gold">Submit Event →</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">道 Dobok<span>.</span></div>
+        <p>A free, non-profit taekwondo training and community platform. Built by practitioners, for practitioners worldwide.</p>
+        <div class="footer-social"><a href="#">𝕏</a><a href="#">in</a><a href="#">▶</a><a href="#">📸</a></div>
+      </div>
+      <div class="footer-col"><h4>Training</h4><ul><li><a href="forms.html">Forms Library</a></li><li><a href="forms.html">WT / Poomsae</a></li><li><a href="forms.html">ITF Patterns</a></li></ul></div>
+      <div class="footer-col"><h4>Community</h4><ul><li><a href="community.html">Browse Posts</a></li><li><a href="forum.html">Forum</a></li><li><a href="competitions.html">Competitions</a></li></ul></div>
+      <div class="footer-col"><h4>About</h4><ul><li><a href="#">Our Mission</a></li><li><a href="#">Non-Profit Info</a></li><li><a href="#">Contact</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Dobok. All rights reserved.</span>
+      <div class="nonprofit-badge">♻️ 501(c)(3) Non-Profit Organization</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── State ── */
+let allComps = [];
+let activeLevel = 'all';  // upcoming, international, national, local, past
+let activeStyle = 'all';  // all, wt, itf, ata, open
+
+/* ── Load data from JSON file ── */
+fetch('data/competitions.json').then(r=>r.json()).then(data=>{allComps=data;render();startCountdowns();});
+// Disabled inline: [{"id":"wt-poomsae-2025","name":"World Taekwondo Poomsae Championships 2025","featured":true,"level":"international","style":"wt","styleBadge":"badge-red","styleLabel":"WT Official","levelBadge":"badge-navy","levelLabel":"🌍 International","emoji":"🏆","description":"The premier annual poomsae competition sanctioned by World Taekwondo. Athletes compete individually and in pairs/teams across all age and rank divisions. Scores are determined by technical excellence and presentation.","location":"Goyang, South Korea","dates":"Sep 12 – 15, 2025","regDeadline":"Aug 1, 2025","entryFee":"Via national federation","contact":"","website":"","bannerGradient":"linear-gradient(90deg,var(--gold),var(--red))","registrationStatus":"open","registrationLabel":"🟢 Registration Open","registrationClass":"reg-open","countdownTarget":"2025-09-12T09:00:00","divisions":["🧒 Under 12","🧑 Cadet (12–14)","👦 Junior (15–17)","🏋️ Senior (18+)","🎓 Masters (40+)","⭐ Colour Belt","⬛ Black Belt"],"events":[],"extraBadges":[{"label":"⭐ Featured","style":"badge-gold"}],"metaRows":[{"icon":"📍","label":"Location","value":"Goyang, South Korea"},{"icon":"📅","label":"Dates","value":"Sep 12 – 15, 2025"},{"icon":"🗓️","label":"Registration Deadline","value":"Aug 1, 2025"},{"icon":"🥋","label":"Style","value":"World Taekwondo (WT)"},{"icon":"👥","label":"Divisions","value":"Individual, Pair, Team"},{"icon":"🎫","label":"Entry Fee","value":"Via national federation"}],"notice":null},{"id":"us-open-2025","name":"US Open Taekwondo Championships 2025","featured":false,"level":"national","style":"wt","styleBadge":"badge-red","styleLabel":"WT / USAT","levelBadge":"badge-navy","levelLabel":"🇺🇸 National","emoji":"🇺🇸","description":"One of the largest annual taekwondo tournaments in North America, featuring sparring, poomsae, and breaking divisions. Open to all USAT members and international guests.","location":"Orange County Convention Center, Orlando, FL","dates":"July 4 – 6, 2025","regDeadline":"June 15, 2025","entryFee":"$65 per division","contact":"events@usat.org","website":"","bannerGradient":"linear-gradient(90deg,#0D1B2A,#1C2E40)","registrationStatus":"open","registrationLabel":"🟢 Registration Open","registrationClass":"reg-open","countdownTarget":null,"divisions":[],"events":["🥊 Sparring","🎭 Poomsae","💥 Breaking","👨‍👩‍👧 Team Poomsae"],"extraBadges":[],"metaRows":[{"icon":"📍","label":"Location","value":"Orange County Convention Center, Orlando, FL"},{"icon":"📅","label":"Dates","value":"July 4 – 6, 2025"},{"icon":"🗓️","label":"Reg. Deadline","value":"June 15, 2025"},{"icon":"🥋","label":"Style","value":"WT / USAT"},{"icon":"🎫","label":"Entry Fee","value":"$65 per division"},{"icon":"📞","label":"Contact","value":"events@usat.org"}],"notice":null},{"id":"itf-world-2025","name":"ITF World Taekwondo Championships 2025","featured":false,"level":"international","style":"itf","styleBadge":"badge-green","styleLabel":"ITF","levelBadge":"badge-navy","levelLabel":"🌍 International","emoji":"⚡","description":"The flagship international event of the International Taekwondo Federation, featuring patterns (tul), sparring, and special techniques. Athletes represent their national federations.","location":"Vienna, Austria","dates":"August 3 – 8, 2025","regDeadline":"June 30, 2025","entryFee":"","contact":"","website":"via itf-administration.com","bannerGradient":"linear-gradient(90deg,#065f46,#0d4a38)","registrationStatus":"soon","registrationLabel":"🟡 Registration Opens April 1","registrationClass":"reg-soon","countdownTarget":null,"divisions":[],"events":["📋 Patterns (Tul)","🥊 Sparring","🌟 Special Techniques","💥 Power Test"],"extraBadges":[],"metaRows":[{"icon":"📍","label":"Location","value":"Vienna, Austria"},{"icon":"📅","label":"Dates","value":"August 3 – 8, 2025"},{"icon":"🗓️","label":"Reg. Deadline","value":"June 30, 2025"},{"icon":"🥋","label":"Style","value":"ITF (Chang Hon)"},{"icon":"👥","label":"Format","value":"National teams only"},{"icon":"🌐","label":"Website","value":"via itf-administration.com"}],"notice":null},{"id":"pan-am-2025","name":"Pan American Taekwondo Championships 2025","featured":false,"level":"international","style":"wt","styleBadge":"badge-red","styleLabel":"WT","levelBadge":"badge-navy","levelLabel":"🌎 Pan-American","emoji":"🌎","description":"The regional championship for athletes across North, Central, and South America under World Taekwondo. Qualifies athletes for world-level competition.","location":"Bogotá, Colombia","dates":"May 22 – 25, 2025","regDeadline":"April 25, 2025","entryFee":"","contact":"","website":"","bannerGradient":"linear-gradient(90deg,#8B5CF6,#6D28D9)","registrationStatus":"soon","registrationLabel":"🟡 Registration Opens Soon","registrationClass":"reg-soon","countdownTarget":null,"divisions":[],"events":[],"extraBadges":[],"metaRows":[{"icon":"📍","label":"Location","value":"Bogotá, Colombia"},{"icon":"📅","label":"Dates","value":"May 22 – 25, 2025"},{"icon":"🗓️","label":"Reg. Deadline","value":"April 25, 2025"},{"icon":"🥋","label":"Style","value":"WT"}],"notice":null},{"id":"tri-state-spring-2025","name":"Tri-State Taekwondo Open — Spring 2025","featured":false,"level":"local","style":"open","styleBadge":"badge-navy","styleLabel":"All Styles Welcome","levelBadge":"badge-green","levelLabel":"📍 Local / Open","emoji":"🌱","description":"Friendly open tournament welcoming all styles and experience levels. Great for first-time competitors. Trophies for all age groups.","location":"Edison, NJ (Rutgers Recreation Center)","dates":"April 12, 2025 (1 day)","regDeadline":"","entryFee":"$35 per division, $55 for 2","contact":"tristatetkd@gmail.com","website":"","bannerGradient":"linear-gradient(90deg,#22C55E,#16a34a)","registrationStatus":"open","registrationLabel":"🟢 Registration Open · 63 spots left","registrationClass":"reg-open","countdownTarget":null,"divisions":[],"events":[],"extraBadges":[],"metaRows":[{"icon":"📍","label":"Location","value":"Edison, NJ (Rutgers Recreation Center)"},{"icon":"📅","label":"Dates","value":"April 12, 2025 (1 day)"},{"icon":"🎫","label":"Entry Fee","value":"$35 per division, $55 for 2"},{"icon":"📞","label":"Contact","value":"tristatetkd@gmail.com"}],"notice":"🌟 Perfect first competition — all experience levels welcome, no affiliation required."}];
+
+/* ── Render: filter then build HTML ── */
+function render() {
+  const feed = document.getElementById('compFeed');
+
+  let filtered = allComps.filter(c => {
+    // Level tab filter
+    if (activeLevel !== 'all') {
+      if (activeLevel === 'upcoming') {
+        // All non-past
+        if (c.registrationStatus === 'past') return false;
+      } else if (activeLevel === 'past') {
+        if (c.registrationStatus !== 'past') return false;
+      } else {
+        if (c.level !== activeLevel) return false;
+      }
+    }
+    // Style pill filter
+    if (activeStyle !== 'all') {
+      if (c.style !== activeStyle) return false;
+    }
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    feed.innerHTML = '<p style="color:var(--gray-400);padding:40px 0;text-align:center;">No competitions match the current filters.</p>';
+    return;
+  }
+
+  let html = '';
+  filtered.forEach(c => {
+    const featuredClass = c.featured ? 'featured' : '';
+
+    // Extra badges (e.g. Featured star)
+    const extraBadgesHtml = c.extraBadges.map(b =>
+      `<span class="badge ${b.style}">${b.label}</span>`
+    ).join('');
+
+    // Level + style badges
+    const levelBadge = `<span class="badge ${c.levelBadge}">${c.levelLabel}</span>`;
+    const styleBadge = `<span class="badge ${c.styleBadge}">${c.styleLabel}</span>`;
+
+    // Meta grid rows
+    const metaHtml = c.metaRows.map(m => `
+      <div class="comp-meta-item">
+        <span class="icon">${m.icon}</span>
+        <div><div class="label">${m.label}</div><div class="value">${m.value}</div></div>
+      </div>
+    `).join('');
+
+    // Divisions or events
+    let divisionsHtml = '';
+    if (c.divisions && c.divisions.length) {
+      const divTags = c.divisions.map(d => `<span class="div-tag">${d}</span>`).join('');
+      divisionsHtml = `
+        <div style="margin-bottom:16px;">
+          <div style="font-size:0.82rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Age / Rank Divisions</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">${divTags}</div>
+        </div>`;
+    } else if (c.events && c.events.length) {
+      const evTags = c.events.map(e => `<span class="div-tag">${e}</span>`).join('');
+      divisionsHtml = `
+        <div style="margin-bottom:16px;">
+          <div style="font-size:0.82rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Events Offered</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">${evTags}</div>
+        </div>`;
+    }
+
+    // Countdown strip (only if countdownTarget is set)
+    let countdownHtml = '';
+    if (c.countdownTarget) {
+      countdownHtml = `
+        <div class="comp-countdown" id="cd-${c.id}">
+          <div class="unit"><span class="num cd-days">—</span><span class="lbl">Days</span></div>
+          <div class="sep">:</div>
+          <div class="unit"><span class="num cd-hrs">—</span><span class="lbl">Hrs</span></div>
+          <div class="sep">:</div>
+          <div class="unit"><span class="num cd-min">—</span><span class="lbl">Min</span></div>
+          <div class="sep">:</div>
+          <div class="unit"><span class="num cd-sec">—</span><span class="lbl">Sec</span></div>
+        </div>`;
+    }
+
+    // Notice banner
+    const noticeHtml = c.notice
+      ? `<div class="notice notice-success" style="margin-bottom:16px;">${c.notice}</div>`
+      : '';
+
+    // Registration button label
+    const btnLabel = c.registrationStatus === 'open' ? 'Register / Learn More →' : 'View Details →';
+    const btnClass = c.registrationStatus === 'open' ? 'btn-gold' : 'btn-primary';
+
+    html += `
+      <div class="comp-detail-card ${featuredClass}" data-level="${c.level}" data-style="${c.style}">
+        <div class="comp-banner-strip" style="background:${c.bannerGradient};"></div>
+        <div class="comp-detail-body">
+          <div class="comp-detail-header">
+            <div class="comp-detail-title">
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+                ${extraBadgesHtml}${levelBadge}${styleBadge}
+              </div>
+              <h3>${c.name}</h3>
+            </div>
+            <div style="text-align:center;flex-shrink:0;">
+              <div style="font-size:2rem;">${c.emoji}</div>
+            </div>
+          </div>
+          <p style="font-size:0.9rem;color:var(--gray-600);line-height:1.7;margin-bottom:0;">${c.description}</p>
+          <div class="comp-meta-grid">${metaHtml}</div>
+          ${divisionsHtml}
+          ${noticeHtml}
+          ${countdownHtml}
+          <div class="comp-footer-row">
+            <div class="reg-status ${c.registrationClass}">${c.registrationLabel}</div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-secondary btn-sm">🔖 Save Event</button>
+              <button class="btn ${btnClass}">${btnLabel}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  feed.innerHTML = html;
+  startCountdowns();
+}
+
+/* ── Live countdowns ── */
+function startCountdowns() {
+  allComps.forEach(c => {
+    if (!c.countdownTarget) return;
+    const el = document.getElementById('cd-' + c.id);
+    if (!el) return;
+    function tick() {
+      const diff = new Date(c.countdownTarget) - new Date();
+      if (diff <= 0) return;
+      el.querySelector('.cd-days').textContent = Math.floor(diff / 86400000);
+      el.querySelector('.cd-hrs').textContent  = String(Math.floor((diff % 86400000) / 3600000)).padStart(2,'0');
+      el.querySelector('.cd-min').textContent  = String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0');
+      el.querySelector('.cd-sec').textContent  = String(Math.floor((diff % 60000) / 1000)).padStart(2,'0');
+    }
+    tick();
+    setInterval(tick, 1000);
+  });
+}
+
+/* ── Level tab buttons ── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    const txt = this.textContent.toLowerCase();
+    if (txt.includes('upcoming'))    activeLevel = 'upcoming';
+    else if (txt.includes('international')) activeLevel = 'international';
+    else if (txt.includes('national'))      activeLevel = 'national';
+    else if (txt.includes('local'))         activeLevel = 'local';
+    else if (txt.includes('past'))          activeLevel = 'past';
+    else activeLevel = 'all';
+    render();
+  });
+});
+
+/* ── Style filter pills ── */
+document.querySelectorAll('.filter-pills .pill').forEach(pill => {
+  pill.addEventListener('click', function() {
+    document.querySelectorAll('.filter-pills .pill').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    const txt = this.textContent.toLowerCase();
+    if (txt.includes('all styles'))      activeStyle = 'all';
+    else if (txt.includes('wt') || txt.includes('olympic')) activeStyle = 'wt';
+    else if (txt.includes('itf'))        activeStyle = 'itf';
+    else if (txt.includes('ata'))        activeStyle = 'ata';
+    else if (txt.includes('open'))       activeStyle = 'open';
+    else activeStyle = 'all';
+    render();
+  });
+});
+
+/* ── Close modals on backdrop click ── */
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>

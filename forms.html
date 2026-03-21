@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forms Library — Dobok</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── Page Hero ── */
+    .page-hero {
+      background: linear-gradient(135deg, var(--navy) 0%, #1a2a3a 60%, #2d1218 100%);
+      padding: 64px 0 0;
+      position: relative; overflow: hidden;
+    }
+    .page-hero-circles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .page-hero-circles span {
+      position: absolute; border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,16,46,.15), transparent 70%);
+    }
+    .page-hero-circles span:nth-child(1) { width: 500px; height: 500px; top: -150px; right: 0; }
+    .page-hero-circles span:nth-child(2) { width: 200px; height: 200px; bottom: -50px; left: 15%; }
+    .page-hero h1 { color: white; margin-bottom: 12px; }
+    .page-hero p  { color: rgba(255,255,255,.65); font-size: 1.05rem; max-width: 580px; margin-bottom: 28px; }
+    .hero-tabs {
+      display: flex; gap: 0; margin-top: 40px;
+      border-bottom: none;
+    }
+    .hero-tab {
+      padding: 12px 22px; font-size: 0.9rem; font-weight: 600;
+      color: rgba(255,255,255,.5); border-bottom: 2px solid transparent;
+      cursor: pointer; transition: var(--transition); background: none; border-top: none; border-left: none; border-right: none;
+      font-family: var(--font);
+    }
+    .hero-tab:hover { color: rgba(255,255,255,.85); }
+    .hero-tab.active { color: white; border-bottom-color: var(--red); }
+
+    /* ── Sidebar Layout ── */
+    .forms-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 32px;
+      align-items: start;
+      padding: 48px 0 80px;
+    }
+    .sidebar {
+      background: var(--white); border: 1px solid var(--gray-200);
+      border-radius: var(--radius); padding: 20px;
+      position: sticky; top: 88px;
+    }
+    .sidebar-section { margin-bottom: 24px; }
+    .sidebar-section h4 {
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--gray-400); font-weight: 700; margin-bottom: 10px;
+    }
+    .sidebar-link {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 10px; border-radius: var(--radius-sm);
+      font-size: 0.88rem; color: var(--gray-600); cursor: pointer;
+      transition: var(--transition); font-weight: 500;
+    }
+    .sidebar-link:hover { background: var(--gray-100); color: var(--navy); }
+    .sidebar-link.active { background: var(--red-light); color: var(--red); font-weight: 700; }
+    .sidebar-link .count { font-size: 0.75rem; background: var(--gray-100); padding: 2px 7px; border-radius: 10px; color: var(--gray-400); }
+    .sidebar-link.active .count { background: rgba(200,16,46,.12); color: var(--red); }
+    .sidebar-divider { height: 1px; background: var(--gray-200); margin: 16px 0; }
+
+    /* ── Belt Filter Row ── */
+    .belt-filter { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .belt-btn {
+      display: flex; align-items: center; gap: 7px;
+      padding: 7px 14px; border-radius: 20px;
+      border: 1.5px solid var(--gray-200); background: white;
+      font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: var(--transition);
+    }
+    .belt-btn:hover { border-color: var(--navy); }
+    .belt-btn.active { border-color: var(--navy); background: var(--navy); color: white; }
+    .belt-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+    /* ── Form Cards Grid ── */
+    .forms-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .form-card-visual { aspect-ratio: 16/10; }
+
+    /* ── Detail Modal Preview ── */
+    .form-tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+
+    /* ── Style Section Header ── */
+    .style-header {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 20px; background: var(--navy); border-radius: var(--radius);
+      color: white; margin-bottom: 20px;
+    }
+    .style-icon {
+      width: 44px; height: 44px; background: rgba(255,255,255,.1);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .style-header h3 { color: white; font-size: 1.1rem; margin-bottom: 2px; }
+    .style-header p  { color: rgba(255,255,255,.55); font-size: 0.82rem; }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) { .forms-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 860px) {
+      .forms-layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+    }
+    @media (max-width: 560px) { .forms-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="container">
+    <a href="index.html" class="navbar-logo">
+      <div class="logo-icon">道</div>
+      Dobok<span class="accent">.</span><span class="kr">도복</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="forms.html" class="active">Forms Library</a></li>
+      <li><a href="community.html">Community</a></li>
+      <li><a href="forum.html">Forum</a></li>
+      <li><a href="competitions.html">Competitions</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="#" class="btn btn-secondary btn-sm">Log In</a>
+      <a href="#" class="btn btn-primary btn-sm">Join Free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-circles"><span></span><span></span></div>
+  <div class="container" style="position:relative;z-index:2;">
+    <div class="section-label" style="background:rgba(200,16,46,.2);color:#ff8fa3;border:none;">📚 Complete Forms Database</div>
+    <h1>Taekwondo Forms Library</h1>
+    <p>Every major poomsae, pattern, and hyung across all governing bodies — with videos, diagrams, step breakdowns, and difficulty ratings.</p>
+    <div style="display:flex;gap:32px;flex-wrap:wrap;">
+      <div class="hero-stat" style="--c:white;"><div class="num" style="color:white;font-size:1.4rem;">140<span style="color:var(--red);">+</span></div><div class="lbl" style="color:rgba(255,255,255,.5);">Total Forms</div></div>
+      <div class="hero-stat"><div class="num" style="color:white;font-size:1.4rem;">6<span style="color:var(--red);">+</span></div><div class="lbl" style="color:rgba(255,255,255,.5);">Organizations</div></div>
+      <div class="hero-stat"><div class="num" style="color:white;font-size:1.4rem;">2k<span style="color:var(--red);">+</span></div><div class="lbl" style="color:rgba(255,255,255,.5);">Training Videos</div></div>
+    </div>
+    <div class="hero-tabs">
+      <button class="hero-tab active" onclick="switchTab(this,'all')">All Forms</button>
+      <button class="hero-tab" onclick="switchTab(this,'wt')">WT / Kukkiwon</button>
+      <button class="hero-tab" onclick="switchTab(this,'itf')">ITF</button>
+      <button class="hero-tab" onclick="switchTab(this,'ata')">ATA / Songahm</button>
+      <button class="hero-tab" onclick="switchTab(this,'gtf')">GTF</button>
+      <button class="hero-tab" onclick="switchTab(this,'other')">Other Styles</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="container">
+  <div class="forms-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <h4>Belt Rank</h4>
+        <div class="sidebar-link active" onclick="this.classList.toggle('active')">All Ranks <span class="count">140</span></div>
+        <div class="sidebar-link" onclick="this.classList.toggle('active')">⬜ White Belt <span class="count">8</span></div>
+        <div class="sidebar-link" onclick="this.classList.toggle('active')">🟡 Yellow Belt <span class="count">12</span></div>
+        <div class="sidebar-link" onclick="this.classList.toggle('active')">🟢 Green Belt <span class="count">16</span></div>
+        <div class="sidebar-link" onclick="this.classList.toggle('active')">🔵 Blue Belt <span class="count">14</span></div>
+        <div class="sidebar-link" onclick="this.classList.toggle('active')">🔴 Red Belt <span class="count">18</span></div>
+        <div class="sidebar-link" onclick="this.classList.toggle('active')">⬛ Black Belt <span class="count">72</span></div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <h4>Organization</h4>
+        <div class="sidebar-link active">WT / Kukkiwon <span class="count">36</span></div>
+        <div class="sidebar-link">ITF <span class="count">25</span></div>
+        <div class="sidebar-link">ATA / Songahm <span class="count">24</span></div>
+        <div class="sidebar-link">GTF <span class="count">20</span></div>
+        <div class="sidebar-link">USAT <span class="count">15</span></div>
+        <div class="sidebar-link">Independent / Other <span class="count">20</span></div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <h4>Difficulty</h4>
+        <div class="sidebar-link">⭐ Beginner</div>
+        <div class="sidebar-link">⭐⭐ Intermediate</div>
+        <div class="sidebar-link">⭐⭐⭐ Advanced</div>
+        <div class="sidebar-link">⭐⭐⭐⭐ Expert</div>
+        <div class="sidebar-link">⭐⭐⭐⭐⭐ Master</div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <h4>Content Type</h4>
+        <div class="sidebar-link">📹 Has Video</div>
+        <div class="sidebar-link">🗺️ Has Diagram</div>
+        <div class="sidebar-link">📝 Step-by-Step</div>
+        <div class="sidebar-link">🎓 Instructor Notes</div>
+      </div>
+    </aside>
+
+    <!-- MAIN FORMS AREA -->
+    <main>
+      <!-- Search + Sort bar -->
+      <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+        <div class="search-bar" style="flex:1;min-width:200px;">
+          <span style="color:var(--gray-400);">🔍</span>
+          <input type="text" placeholder="Search by name, Korean name, or movement count..." />
+          <button class="btn btn-primary btn-sm">Search</button>
+        </div>
+        <select style="padding:10px 14px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);font-size:0.9rem;color:var(--gray-600);background:white;">
+          <option>Sort: Most Popular</option>
+          <option>Sort: Difficulty (Low→High)</option>
+          <option>Sort: Difficulty (High→Low)</option>
+          <option>Sort: Alphabetical</option>
+          <option>Sort: Movement Count</option>
+        </select>
+      </div>
+
+      <!-- Belt quick-filter -->
+      <div class="belt-filter">
+        <button class="belt-btn active"><div class="belt-dot" style="background:linear-gradient(to right,var(--red),var(--navy));"></div> All</button>
+        <button class="belt-btn"><div class="belt-dot" style="background:#e0e0e0;border:1px solid #ccc;"></div> White</button>
+        <button class="belt-btn"><div class="belt-dot" style="background:#FBBF24;"></div> Yellow</button>
+        <button class="belt-btn"><div class="belt-dot" style="background:#22C55E;"></div> Green</button>
+        <button class="belt-btn"><div class="belt-dot" style="background:#3B82F6;"></div> Blue</button>
+        <button class="belt-btn"><div class="belt-dot" style="background:var(--red);"></div> Red</button>
+        <button class="belt-btn"><div class="belt-dot" style="background:var(--navy);"></div> Black Belt</button>
+      </div>
+
+      <!-- Dynamic forms grid — populated by JS from data/forms.json -->
+      <div id="formsGrid"></div>
+
+      
+
+    </main>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">道 Dobok<span>.</span></div>
+        <p>A free, non-profit taekwondo training and community platform. Built by practitioners, for practitioners worldwide.</p>
+        <div class="footer-social">
+          <a href="#">𝕏</a><a href="#">in</a><a href="#">▶</a><a href="#">📸</a>
+        </div>
+      </div>
+      <div class="footer-col"><h4>Training</h4><ul><li><a href="forms.html">Forms Library</a></li><li><a href="forms.html">WT / Poomsae</a></li><li><a href="forms.html">ITF Patterns</a></li><li><a href="forms.html">ATA / Songahm</a></li></ul></div>
+      <div class="footer-col"><h4>Community</h4><ul><li><a href="community.html">Browse Posts</a></li><li><a href="forum.html">Forum</a></li><li><a href="competitions.html">Competitions</a></li></ul></div>
+      <div class="footer-col"><h4>About</h4><ul><li><a href="#">Our Mission</a></li><li><a href="#">Non-Profit Info</a></li><li><a href="#">Contact Us</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Dobok. All rights reserved.</span>
+      <div class="nonprofit-badge">♻️ 501(c)(3) Non-Profit Organization</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── State ── */
+let allForms = [];
+let activeOrg = 'all';   // matches hero-tab values
+let activeBelt = 'all';  // matches belt-btn labels (lowercased)
+
+/* ── Load data from JSON file ── */
+fetch('data/forms.json').then(r=>r.json()).then(data=>{allForms=data;render();});
+/* ── To add/edit forms: update data/forms.json ── */
+// Disabled local inline: [{"id":"taegeuk-1","name":"Taegeuk Il Jang","koreanName":"태극 1장","meaning":"Heaven & Light","organization":"WT","category":"wt","series":"Taegeuk Series (Colour Belt)","seriesIcon":"☯️","seriesHeader":"World Taekwondo (WT) / Kukkiwon Poomsae","seriesDesc":"Official poomsae of the World Taekwondo Federation — used in Olympic-style competition","seriesBg":"","belt":"yellow","beltLabel":"Yellow Belt","moves":18,"difficulty":1,"difficultyLabel":"Beginner","videos":8,"hasDiagram":true,"emoji":"☯️","bgGradient":"linear-gradient(135deg,#0D1B2A,#1a3a5c)","tags":["WT","Colour Belt"],"tagStyles":["badge-navy","badge-red"],"description":"The first of the eight Taegeuk forms, representing the trigram of heaven and light. Introduces basic stances and blocks."},{"id":"taegeuk-2","name":"Taegeuk Yi Jang","koreanName":"태극 2장","meaning":"Lake & Joy","organization":"WT","category":"wt","series":"Taegeuk Series (Colour Belt)","seriesIcon":"☯️","seriesHeader":"World Taekwondo (WT) / Kukkiwon Poomsae","seriesDesc":"Official poomsae of the World Taekwondo Federation — used in Olympic-style competition","seriesBg":"","belt":"yellow","beltLabel":"Yellow Belt","moves":18,"difficulty":1,"difficultyLabel":"Beginner","videos":6,"hasDiagram":true,"emoji":"🌿","bgGradient":"linear-gradient(135deg,#0d1a0d,#1a3a1a)","tags":["WT","Colour Belt"],"tagStyles":["badge-navy","badge-red"],"description":"The second Taegeuk form, representing the lake and joy."},{"id":"taegeuk-3","name":"Taegeuk Sam Jang","koreanName":"태극 3장","meaning":"Fire & Sun","organization":"WT","category":"wt","series":"Taegeuk Series (Colour Belt)","seriesIcon":"☯️","seriesHeader":"World Taekwondo (WT) / Kukkiwon Poomsae","seriesDesc":"Official poomsae of the World Taekwondo Federation — used in Olympic-style competition","seriesBg":"","belt":"green","beltLabel":"Green Belt","moves":20,"difficulty":2,"difficultyLabel":"Beginner+","videos":5,"hasDiagram":true,"emoji":"🔥","bgGradient":"linear-gradient(135deg,#1a0d2d,#2e1a4a)","tags":["WT","Colour Belt"],"tagStyles":["badge-navy","badge-red"],"description":"Represents fire and the sun — introduces more dynamic movements and the first front kick techniques."},{"id":"taegeuk-4","name":"Taegeuk Sa Jang","koreanName":"태극 4장","meaning":"Thunder & Dignity","organization":"WT","category":"wt","series":"Taegeuk Series (Colour Belt)","seriesIcon":"☯️","seriesHeader":"World Taekwondo (WT) / Kukkiwon Poomsae","seriesDesc":"Official poomsae of the World Taekwondo Federation — used in Olympic-style competition","seriesBg":"","belt":"green","beltLabel":"Green Belt","moves":20,"difficulty":2,"difficultyLabel":"Beginner+","videos":7,"hasDiagram":true,"emoji":"⛈️","bgGradient":"linear-gradient(135deg,#1a1a0d,#3a3a1a)","tags":["WT","Colour Belt"],"tagStyles":["badge-navy","badge-red"],"description":"Thunder and dignity — introduces the back stance and knife-hand techniques."},{"id":"taegeuk-5","name":"Taegeuk Oh Jang","koreanName":"태극 5장","meaning":"Wind & Gentleness","organization":"WT","category":"wt","series":"Taegeuk Series (Colour Belt)","seriesIcon":"☯️","seriesHeader":"World Taekwondo (WT) / Kukkiwon Poomsae","seriesDesc":"Official poomsae of the World Taekwondo Federation — used in Olympic-style competition","seriesBg":"","belt":"blue","beltLabel":"Blue Belt","moves":20,"difficulty":3,"difficultyLabel":"Intermediate","videos":6,"hasDiagram":true,"emoji":"🌊","bgGradient":"linear-gradient(135deg,#0d1a2d,#1a2e4a)","tags":["WT","Colour Belt"],"tagStyles":["badge-navy","badge-red"],"description":"Wind and gentleness — introduces the hammerfist and elbow strikes."},{"id":"taegeuk-6","name":"Taegeuk Yuk Jang","koreanName":"태극 6장","meaning":"Water & Softness","organization":"WT","category":"wt","series":"Taegeuk Series (Colour Belt)","seriesIcon":"☯️","seriesHeader":"World Taekwondo (WT) / Kukkiwon Poomsae","seriesDesc":"Official poomsae of the World Taekwondo Federation — used in Olympic-style competition","seriesBg":"","belt":"blue","beltLabel":"Blue Belt","moves":23,"difficulty":3,"difficultyLabel":"Intermediate","videos":5,"hasDiagram":true,"emoji":"💧","bgGradient":"linear-gradient(135deg,#1a0d0d,#3d1a1a)","tags":["WT","Colour Belt"],"tagStyles":["badge-navy","badge-red"],"description":"Water and softness — introduces the jumping front kick and crescent kick techniques."},{"id":"taegeuk-7","name":"Taegeuk Chil Jang","koreanName":"태극 7장","meaning":"Mountain & Stillness","organization":"WT","category":"wt","series":"Taegeuk Series (Colour Belt)","seriesIcon":"☯️","seriesHeader":"World Taekwondo (WT) / Kukkiwon Poomsae","seriesDesc":"Official poomsae of the World Taekwondo Federation — used in Olympic-style competition","seriesBg":"","belt":"red","beltLabel":"Red Belt","moves":25,"difficulty":4,"difficultyLabel":"Advanced","videos":9,"hasDiagram":true,"emoji":"🏔️","bgGradient":"linear-gradient(135deg,#0d1a1a,#1a3a3a)","tags":["WT","Colour Belt"],"tagStyles":["badge-navy","badge-red"],"description":"Mountain and stillness — introduces spinning back kick and more complex combinations."},{"id":"taegeuk-8","name":"Taegeuk Pal Jang","koreanName":"태극 8장","meaning":"Earth & Infinity","organization":"WT","category":"wt","series":"Taegeuk Series (Colour Belt)","seriesIcon":"☯️","seriesHeader":"World Taekwondo (WT) / Kukkiwon Poomsae","seriesDesc":"Official poomsae of the World Taekwondo Federation — used in Olympic-style competition","seriesBg":"","belt":"red","beltLabel":"Pre-Dan","moves":27,"difficulty":4,"difficultyLabel":"Advanced","videos":14,"hasDiagram":true,"emoji":"⚡","bgGradient":"linear-gradient(135deg,#2d1218,#4a1a22)","tags":["WT","Pre-Dan"],"tagStyles":["badge-navy","badge-red"],"featured":true,"featuredLabel":"🔥 Most Practiced","description":"Earth and infinity — the final colour belt form, gateway to the black belt curriculum."},{"id":"koryo","name":"Koryo","koreanName":"고려","meaning":"The Goryeo Kingdom","organization":"WT","category":"wt","series":"Black Belt Poomsae (Kukkiwon)","seriesIcon":"☯️","seriesHeader":"World Taekwondo (WT) / Kukkiwon Poomsae","seriesDesc":"Official poomsae of the World Taekwondo Federation — used in Olympic-style competition","seriesBg":"","belt":"black","beltLabel":"1st Dan+","moves":30,"difficulty":4,"difficultyLabel":"Advanced","videos":18,"hasDiagram":false,"emoji":"🏛️","bgGradient":"linear-gradient(135deg,#1C2E40,#0D1B2A)","tags":["WT","⬛ 1st Dan+"],"tagStyles":["badge-navy","badge-dark"],"description":"Named after the Goryeo Kingdom, Koryo is the first black belt form of the Kukkiwon curriculum."},{"id":"keumgang","name":"Keumgang","koreanName":"금강","meaning":"Diamond Mountain","organization":"WT","category":"wt","series":"Black Belt Poomsae (Kukkiwon)","seriesIcon":"☯️","seriesHeader":"World Taekwondo (WT) / Kukkiwon Poomsae","seriesDesc":"Official poomsae of the World Taekwondo Federation — used in Olympic-style competition","seriesBg":"","belt":"black","beltLabel":"2nd Dan+","moves":27,"difficulty":4,"difficultyLabel":"Advanced","videos":12,"hasDiagram":false,"emoji":"💎","bgGradient":"linear-gradient(135deg,#1a1a2e,#0d0d1a)","tags":["WT","⬛ 2nd Dan+"],"tagStyles":["badge-navy","badge-dark"],"description":"Named after the Diamond Mountain, Keumgang embodies the hardness of the diamond and the solidity of the mountain."},{"id":"taebaek","name":"Taebaek","koreanName":"태백","meaning":"Baekdu Mountain","organization":"WT","category":"wt","series":"Black Belt Poomsae (Kukkiwon)","seriesIcon":"☯️","seriesHeader":"World Taekwondo (WT) / Kukkiwon Poomsae","seriesDesc":"Official poomsae of the World Taekwondo Federation — used in Olympic-style competition","seriesBg":"","belt":"black","beltLabel":"3rd Dan+","moves":26,"difficulty":5,"difficultyLabel":"Expert","videos":10,"hasDiagram":false,"emoji":"🌅","bgGradient":"linear-gradient(135deg,#0d2014,#1a3d26)","tags":["WT","⬛ 3rd Dan+"],"tagStyles":["badge-navy","badge-dark"],"description":"Named after Baekdu Mountain, Taebaek is known for its lightness and precision."},{"id":"pyongwon","name":"Pyongwon","koreanName":"평원","meaning":"A Vast Plain","organization":"WT","category":"wt","series":"Black Belt Poomsae (Kukkiwon)","seriesIcon":"☯️","seriesHeader":"World Taekwondo (WT) / Kukkiwon Poomsae","seriesDesc":"Official poomsae of the World Taekwondo Federation — used in Olympic-style competition","seriesBg":"","belt":"black","beltLabel":"4th Dan+","moves":25,"difficulty":5,"difficultyLabel":"Expert","videos":8,"hasDiagram":false,"emoji":"🌾","bgGradient":"linear-gradient(135deg,#1a0d2d,#3a1a5a)","tags":["WT","⬛ 4th Dan+"],"tagStyles":["badge-navy","badge-dark"],"description":"Represents the vast plain and the dominance and grace found in open space."},{"id":"sipjin","name":"Sipjin","koreanName":"십진","meaning":"Ten Perfections","organization":"WT","category":"wt","series":"Black Belt Poomsae (Kukkiwon)","seriesIcon":"☯️","seriesHeader":"World Taekwondo (WT) / Kukkiwon Poomsae","seriesDesc":"Official poomsae of the World Taekwondo Federation — used in Olympic-style competition","seriesBg":"","belt":"black","beltLabel":"5th Dan+","moves":31,"difficulty":5,"difficultyLabel":"Expert","videos":7,"hasDiagram":false,"emoji":"🌀","bgGradient":"linear-gradient(135deg,#0d1a1a,#1a3a4a)","tags":["WT","⬛ 5th Dan+"],"tagStyles":["badge-navy","badge-dark"],"description":"Represents the concept of ten, symbolizing eternal development and longevity."},{"id":"jitae","name":"Jitae","koreanName":"지태","meaning":"Life on Earth","organization":"WT","category":"wt","series":"Black Belt Poomsae (Kukkiwon)","seriesIcon":"☯️","seriesHeader":"World Taekwondo (WT) / Kukkiwon Poomsae","seriesDesc":"Official poomsae of the World Taekwondo Federation — used in Olympic-style competition","seriesBg":"","belt":"black","beltLabel":"6th Dan+","moves":28,"difficulty":5,"difficultyLabel":"Master","videos":5,"hasDiagram":false,"emoji":"🌏","bgGradient":"linear-gradient(135deg,#2d1218,#1a0d0d)","tags":["WT","⬛ 6th Dan+"],"tagStyles":["badge-navy","badge-dark"],"description":"Represents all living things that come from and return to the earth."},{"id":"chon-ji","name":"Chon-Ji","koreanName":"천지","meaning":"Heaven & Earth","organization":"ITF","category":"itf","series":"ITF Chang Hon Patterns","seriesIcon":"⚡","seriesHeader":"ITF — International Taekwondo Federation Patterns","seriesDesc":"Traditional Chang Hon-style patterns from the ITF system","seriesBg":"linear-gradient(135deg,#1a2a0d,#2a4a1a)","belt":"white","beltLabel":"10th Gup","moves":19,"difficulty":1,"difficultyLabel":"Beginner","videos":11,"hasDiagram":false,"emoji":"🌤️","bgGradient":"linear-gradient(135deg,#1a2a0d,#2a3a1a)","tags":["ITF","10th Gup"],"tagStyles":["badge-green","badge-navy"],"description":"The very first ITF pattern, meaning Heaven and Earth. Contains 19 movements."},{"id":"dan-gun","name":"Dan-Gun","koreanName":"단군","meaning":"Founder of Korea","organization":"ITF","category":"itf","series":"ITF Chang Hon Patterns","seriesIcon":"⚡","seriesHeader":"ITF — International Taekwondo Federation Patterns","seriesDesc":"Traditional Chang Hon-style patterns from the ITF system","seriesBg":"linear-gradient(135deg,#1a2a0d,#2a4a1a)","belt":"yellow","beltLabel":"9th Gup","moves":21,"difficulty":1,"difficultyLabel":"Beginner","videos":9,"hasDiagram":false,"emoji":"🏔️","bgGradient":"linear-gradient(135deg,#0d1a2d,#1a2e4a)","tags":["ITF","9th Gup"],"tagStyles":["badge-green","badge-navy"],"description":"Named after the holy Dan-Gun, the founder of Korea in 2333 BC."},{"id":"do-san","name":"Do-San","koreanName":"도산","meaning":"Ahn Chang-Ho","organization":"ITF","category":"itf","series":"ITF Chang Hon Patterns","seriesIcon":"⚡","seriesHeader":"ITF — International Taekwondo Federation Patterns","seriesDesc":"Traditional Chang Hon-style patterns from the ITF system","seriesBg":"linear-gradient(135deg,#1a2a0d,#2a4a1a)","belt":"yellow","beltLabel":"8th Gup","moves":24,"difficulty":2,"difficultyLabel":"Beginner+","videos":8,"hasDiagram":false,"emoji":"🎓","bgGradient":"linear-gradient(135deg,#1a0d2d,#2e1a4a)","tags":["ITF","8th Gup"],"tagStyles":["badge-green","badge-navy"],"description":"Named after the patriot Ahn Chang-Ho who dedicated his life to furthering the education of Korea."},{"id":"won-hyo","name":"Won-Hyo","koreanName":"원효","meaning":"Buddhist Monk","organization":"ITF","category":"itf","series":"ITF Chang Hon Patterns","seriesIcon":"⚡","seriesHeader":"ITF — International Taekwondo Federation Patterns","seriesDesc":"Traditional Chang Hon-style patterns from the ITF system","seriesBg":"linear-gradient(135deg,#1a2a0d,#2a4a1a)","belt":"green","beltLabel":"7th Gup","moves":28,"difficulty":2,"difficultyLabel":"Beginner+","videos":7,"hasDiagram":false,"emoji":"☀️","bgGradient":"linear-gradient(135deg,#2d1a0d,#4a2e1a)","tags":["ITF","7th Gup"],"tagStyles":["badge-green","badge-navy"],"description":"Named after the monk Won-Hyo who introduced Buddhism to the Silla Dynasty in 686 AD."},{"id":"yul-gok","name":"Yul-Gok","koreanName":"율곡","meaning":"Yi I, Confucian Scholar","organization":"ITF","category":"itf","series":"ITF Chang Hon Patterns","seriesIcon":"⚡","seriesHeader":"ITF — International Taekwondo Federation Patterns","seriesDesc":"Traditional Chang Hon-style patterns from the ITF system","seriesBg":"linear-gradient(135deg,#1a2a0d,#2a4a1a)","belt":"green","beltLabel":"6th Gup","moves":38,"difficulty":3,"difficultyLabel":"Intermediate","videos":6,"hasDiagram":false,"emoji":"📜","bgGradient":"linear-gradient(135deg,#0d1a0d,#1a2e1a)","tags":["ITF","6th Gup"],"tagStyles":["badge-green","badge-navy"],"description":"Named after the great philosopher and scholar Yi I (1536–1584), nicknamed Yul-Gok."},{"id":"joong-gun","name":"Joong-Gun","koreanName":"중근","meaning":"Ahn Joong-Gun","organization":"ITF","category":"itf","series":"ITF Chang Hon Patterns","seriesIcon":"⚡","seriesHeader":"ITF — International Taekwondo Federation Patterns","seriesDesc":"Traditional Chang Hon-style patterns from the ITF system","seriesBg":"linear-gradient(135deg,#1a2a0d,#2a4a1a)","belt":"blue","beltLabel":"5th Gup","moves":32,"difficulty":3,"difficultyLabel":"Intermediate","videos":5,"hasDiagram":false,"emoji":"⚔️","bgGradient":"linear-gradient(135deg,#1a1a0d,#3a3a1a)","tags":["ITF","5th Gup"],"tagStyles":["badge-green","badge-navy"],"description":"Named after the patriot Ahn Joong-Gun who assassinated Hiro-Bumi Ito in 1909."},{"id":"songahm-1","name":"Songahm 1","koreanName":"송암 1","meaning":"First Steps","organization":"ATA","category":"ata","series":"ATA Songahm Series","seriesIcon":"⭐","seriesHeader":"ATA / Songahm Taekwondo Forms","seriesDesc":"American Taekwondo Association — Songahm-style curriculum","seriesBg":"linear-gradient(135deg,#8a1a1a,#5a0d0d)","belt":"white","beltLabel":"White Belt","moves":18,"difficulty":1,"difficultyLabel":"Beginner","videos":6,"hasDiagram":false,"emoji":"🌱","bgGradient":"linear-gradient(135deg,#1a0d0d,#3d1a1a)","tags":["ATA","White Belt"],"tagStyles":["badge-red","badge-navy"],"description":"The first Songahm form, representing the first steps of the student's journey."},{"id":"songahm-2","name":"Songahm 2","koreanName":"송암 2","meaning":"Growing Roots","organization":"ATA","category":"ata","series":"ATA Songahm Series","seriesIcon":"⭐","seriesHeader":"ATA / Songahm Taekwondo Forms","seriesDesc":"American Taekwondo Association — Songahm-style curriculum","seriesBg":"linear-gradient(135deg,#8a1a1a,#5a0d0d)","belt":"yellow","beltLabel":"Yellow Belt","moves":23,"difficulty":2,"difficultyLabel":"Beginner+","videos":5,"hasDiagram":false,"emoji":"🌻","bgGradient":"linear-gradient(135deg,#1a1a0d,#2e2e0d)","tags":["ATA","Yellow Belt"],"tagStyles":["badge-red","badge-navy"],"description":"The second Songahm form, representing the growing of roots as the student establishes their foundation."},{"id":"songahm-3","name":"Songahm 3","koreanName":"송암 3","meaning":"Strength & Growth","organization":"ATA","category":"ata","series":"ATA Songahm Series","seriesIcon":"⭐","seriesHeader":"ATA / Songahm Taekwondo Forms","seriesDesc":"American Taekwondo Association — Songahm-style curriculum","seriesBg":"linear-gradient(135deg,#8a1a1a,#5a0d0d)","belt":"green","beltLabel":"Green Belt","moves":28,"difficulty":3,"difficultyLabel":"Intermediate","videos":4,"hasDiagram":false,"emoji":"🌳","bgGradient":"linear-gradient(135deg,#0d1a0d,#1a3a1a)","tags":["ATA","Green Belt"],"tagStyles":["badge-red","badge-navy"],"description":"The third Songahm form, representing the strength and growth of the established tree."}];
+
+/* ── Render: filter → group by series → output HTML ── */
+function render() {
+  const grid = document.getElementById('formsGrid');
+
+  // Filter by org tab
+  let filtered = allForms.filter(f => {
+    if (activeOrg === 'all') return true;
+    return f.category === activeOrg;
+  });
+
+  // Filter by belt button
+  if (activeBelt !== 'all') {
+    filtered = filtered.filter(f => f.belt === activeBelt);
+  }
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<p style="color:var(--gray-400);padding:40px 0;text-align:center;">No forms match the current filters.</p>';
+    return;
+  }
+
+  // Group forms by series (preserving insertion order)
+  const seriesMap = new Map();
+  filtered.forEach(f => {
+    if (!seriesMap.has(f.series)) seriesMap.set(f.series, []);
+    seriesMap.get(f.series).push(f);
+  });
+
+  let html = '';
+  seriesMap.forEach((forms, seriesName) => {
+    const first = forms[0];
+    // Style header
+    const headerBg = first.seriesBg ? `style="background:${first.seriesBg};"` : '';
+    html += `
+      <div class="style-header" ${headerBg}>
+        <div class="style-icon">${first.seriesIcon}</div>
+        <div><h3>${first.seriesHeader}</h3><p>${first.seriesDesc}</p></div>
+      </div>
+      <h4 style="margin-bottom:14px;color:var(--gray-400);font-size:0.85rem;text-transform:uppercase;letter-spacing:0.06em;font-weight:700;">${seriesName}</h4>
+      <div class="forms-grid" style="margin-bottom:36px;">
+    `;
+
+    forms.forEach(f => {
+      // Build difficulty dots
+      let dots = '';
+      for (let i = 1; i <= 5; i++) {
+        dots += `<div class="dot${i <= f.difficulty ? ' filled' : ''}"></div>`;
+      }
+
+      // Build tag badges
+      const tagHtml = f.tags.map((t, i) => {
+        const style = f.tagStyles[i] || 'badge-navy';
+        return `<span class="badge ${style}">${t}</span>`;
+      }).join('');
+
+      // Footer info
+      const diagramHtml = f.hasDiagram ? '<span>🗺️ Diagram</span>' : '';
+
+      // Card border for featured
+      const cardStyle = f.featured ? 'style="border-color:var(--red);"' : '';
+
+      html += `
+        <div class="form-card" data-org="${f.category}" data-belt="${f.belt}" ${cardStyle}>
+          <div class="form-card-visual" style="background:${f.bgGradient};">
+            <span>${f.emoji}</span>
+            <div style="position:absolute;bottom:10px;left:12px;z-index:2;">
+              <span class="badge badge-navy" style="font-size:0.7rem;">${f.moves} Moves</span>
+            </div>
+            ${f.featured && f.featuredLabel ? `<div style="position:absolute;top:10px;right:10px;z-index:2;"><span class="badge badge-gold">${f.featuredLabel}</span></div>` : ''}
+          </div>
+          <div class="form-card-body">
+            <div class="form-tag-row">${tagHtml}</div>
+            <h3>${f.name}</h3>
+            <div class="kr-name">${f.koreanName} — ${f.meaning}</div>
+            <div class="difficulty">
+              ${dots}
+              <span>${f.difficultyLabel}</span>
+            </div>
+          </div>
+          <div class="form-card-footer">
+            <div class="flex gap-8" style="font-size:0.8rem;color:var(--gray-400);">
+              <span>📹 ${f.videos} videos</span>
+              ${diagramHtml}
+            </div>
+            ${f.animUrl
+        ? `<a href="${f.animUrl}" class="btn btn-gold btn-sm">▶ Animate</a>`
+        : `<button class="btn btn-primary btn-sm">View →</button>`
+      }
+          </div>
+        </div>
+      `;
+    });
+
+    html += '</div>';
+  });
+
+  grid.innerHTML = html;
+}
+
+/* ── Hero org tab switching ── */
+function switchTab(el, org) {
+  document.querySelectorAll('.hero-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  activeOrg = org;
+  render();
+}
+
+/* ── Belt filter buttons ── */
+document.querySelectorAll('.belt-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.belt-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    // Derive belt key from button text
+    const txt = this.textContent.trim().toLowerCase();
+    if (txt === 'all') activeBelt = 'all';
+    else if (txt === 'white') activeBelt = 'white';
+    else if (txt === 'yellow') activeBelt = 'yellow';
+    else if (txt === 'green') activeBelt = 'green';
+    else if (txt === 'blue') activeBelt = 'blue';
+    else if (txt === 'red') activeBelt = 'red';
+    else if (txt.includes('black')) activeBelt = 'black';
+    else activeBelt = 'all';
+    render();
+  });
+});
+
+/* ── Sidebar rank/org link clicks (visual only — toggle active) ── */
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', function() {
+    const siblings = this.closest('.sidebar-section').querySelectorAll('.sidebar-link');
+    siblings.forEach(s => s.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

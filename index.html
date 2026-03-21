@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dobok — The Taekwondo Training Platform</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── Hero ── */
+    .hero {
+      min-height: calc(100vh - 68px);
+      display: flex; align-items: center;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, var(--navy) 0%, #1a2a3a 55%, #2d1218 100%);
+    }
+    .hero-circles {
+      position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+    }
+    .hero-circles span {
+      position: absolute; border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,16,46,.18), transparent 70%);
+    }
+    .hero-circles span:nth-child(1) { width: 600px; height: 600px; top: -100px; right: -100px; }
+    .hero-circles span:nth-child(2) { width: 300px; height: 300px; bottom: 50px; left: 10%; }
+    .hero-circles span:nth-child(3) { width: 200px; height: 200px; top: 40%; left: 40%; background: radial-gradient(circle, rgba(232,160,32,.1), transparent 70%); }
+    .hero-content { position: relative; z-index: 2; padding: 80px 0; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(200,16,46,.2); border: 1px solid rgba(200,16,46,.4);
+      color: #ff8fa3; padding: 6px 14px; border-radius: 20px;
+      font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 20px;
+    }
+    .hero h1 { color: white; margin-bottom: 20px; max-width: 680px; }
+    .hero h1 span { color: var(--red); }
+    .hero-sub { color: rgba(255,255,255,.65); font-size: 1.1rem; max-width: 520px; margin-bottom: 36px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 56px; }
+    .hero-stats { display: flex; flex-wrap: wrap; gap: 40px; }
+    .hero-stat .num { font-size: 1.8rem; font-weight: 900; color: white; }
+    .hero-stat .num span { color: var(--red); }
+    .hero-stat .lbl { font-size: 0.82rem; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: 0.06em; }
+    .hero-visual {
+      position: absolute; right: 0; top: 0; bottom: 0;
+      width: 42%; pointer-events: none; overflow: hidden;
+    }
+    .hero-image-frame {
+      position: absolute; right: -20px; top: 50%; transform: translateY(-50%);
+      width: 90%; background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 24px; padding: 20px;
+      backdrop-filter: blur(8px);
+    }
+    .hero-image-frame img { width: 100%; border-radius: 16px; }
+    .hero-float-card {
+      position: absolute; background: rgba(255,255,255,0.95);
+      border-radius: var(--radius); padding: 12px 16px;
+      box-shadow: var(--shadow-lg);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .hero-float-card .icon { font-size: 1.4rem; }
+    .hero-float-card .text strong { display: block; font-size: 0.85rem; color: var(--navy); }
+    .hero-float-card .text span { font-size: 0.75rem; color: var(--gray-400); }
+
+    /* ── Featured Forms Carousel ── */
+    .form-scroll {
+      display: flex; gap: 20px; overflow-x: auto; padding-bottom: 12px;
+      scrollbar-width: thin; scrollbar-color: var(--gray-200) transparent;
+    }
+    .form-scroll::-webkit-scrollbar { height: 4px; }
+    .form-scroll::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 2px; }
+    .form-mini-card {
+      flex-shrink: 0; width: 200px;
+      background: var(--white); border-radius: var(--radius);
+      border: 1px solid var(--gray-200); overflow: hidden;
+      transition: var(--transition); cursor: pointer;
+    }
+    .form-mini-card:hover { box-shadow: var(--shadow); transform: translateY(-3px); border-color: var(--red); }
+    .form-mini-visual {
+      height: 120px;
+      background: linear-gradient(135deg, var(--navy), var(--navy-mid));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; position: relative; overflow: hidden;
+    }
+    .form-mini-body { padding: 12px; }
+    .form-mini-body h4 { font-size: 0.9rem; color: var(--navy); }
+    .form-mini-body .sub { font-size: 0.75rem; color: var(--gray-400); font-family: var(--font-kr); }
+
+    /* ── Wavy Divider ── */
+    .wave-divider { line-height: 0; }
+    .wave-divider svg { display: block; }
+
+    /* ── Feature Highlights ── */
+    .feature-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: var(--red-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 16px;
+      transition: var(--transition);
+    }
+    .feature-item:hover .feature-icon { background: var(--red); }
+    .feature-item { padding: 28px; border-radius: var(--radius); background: var(--white); border: 1px solid var(--gray-200); transition: var(--transition); }
+    .feature-item:hover { box-shadow: var(--shadow); transform: translateY(-3px); }
+
+    /* ── CTA Banner ── */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--navy), #1a2a3a);
+      border-radius: var(--radius-lg); padding: 56px 64px;
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 32px; position: relative; overflow: hidden;
+    }
+    .cta-banner::before {
+      content: ''; position: absolute; top: -40%; right: 5%;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(200,16,46,.2), transparent 70%);
+    }
+    .cta-banner-text { position: relative; z-index: 1; }
+    .cta-banner-text h2 { color: white; margin-bottom: 10px; }
+    .cta-banner-text p { color: rgba(255,255,255,.6); max-width: 440px; }
+    .cta-banner-actions { position: relative; z-index: 1; display: flex; gap: 12px; flex-shrink: 0; }
+
+    /* ── Community Preview ── */
+    .post-card { padding: 20px; }
+    .post-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .post-actions { display: flex; gap: 12px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--gray-200); }
+    .post-action-btn { display: flex; align-items: center; gap: 5px; font-size: 0.82rem; color: var(--gray-400); transition: var(--transition); background: none; border: none; cursor: pointer; font-family: var(--font); }
+    .post-action-btn:hover { color: var(--red); }
+
+    /* ── Org Logos Ticker ── */
+    .org-ticker { overflow: hidden; position: relative; }
+    .org-track {
+      display: flex; gap: 48px; align-items: center;
+      animation: ticker 28s linear infinite;
+      width: max-content;
+    }
+    .org-track:hover { animation-play-state: paused; }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .org-chip {
+      display: flex; align-items: center; gap: 10px; white-space: nowrap;
+      background: var(--white); border: 1px solid var(--gray-200);
+      padding: 10px 20px; border-radius: 40px;
+      font-size: 0.85rem; font-weight: 600; color: var(--gray-600);
+    }
+    .org-chip span { font-size: 1.2rem; }
+
+    /* ── Responsive ── */
+    @media(max-width: 900px) {
+      .hero-visual { display: none; }
+      .cta-banner { flex-direction: column; padding: 40px 28px; }
+    }
+    @media(max-width: 640px) {
+      .hero-content { padding: 48px 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- =========================================================
+     NAVBAR
+     ========================================================= -->
+<nav class="navbar">
+  <div class="container">
+    <a href="index.html" class="navbar-logo">
+      <div class="logo-icon">道</div>
+      Dobok<span class="accent">.</span><span class="kr">도복</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="forms.html">Forms Library</a></li>
+      <li><a href="community.html">Community</a></li>
+      <li><a href="forum.html">Forum</a></li>
+      <li><a href="competitions.html">Competitions</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="#" class="btn btn-secondary btn-sm">Log In</a>
+      <a href="#" class="btn btn-primary btn-sm">Join Free</a>
+      <div class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- =========================================================
+     HERO
+     ========================================================= -->
+<section class="hero hero-pattern">
+  <div class="hero-bg"></div>
+  <div class="hero-circles">
+    <span></span><span></span><span></span>
+  </div>
+  <div class="container hero-content">
+    <div class="hero-eyebrow">
+      🥋 &nbsp;Non-Profit · Free Forever
+    </div>
+    <h1>Master Every Form.<br><span>Train Together.</span><br>Go Further.</h1>
+    <p class="hero-sub">
+      The world's most complete taekwondo training resource — poomsae library, expert community, and live competition listings. Built by practitioners, for practitioners.
+    </p>
+    <div class="hero-actions">
+      <a href="forms.html" class="btn btn-primary btn-lg">Explore Forms Library →</a>
+      <a href="community.html" class="btn btn-lg" style="color:white;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2)">Join the Community</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">2<span>k+</span></div><div class="lbl">Training Videos</div></div>
+      <div class="hero-stat"><div class="num">140<span>+</span></div><div class="lbl">Forms Covered</div></div>
+      <div class="hero-stat"><div class="num">38<span>k</span></div><div class="lbl">Community Members</div></div>
+      <div class="hero-stat"><div class="num">90<span>+</span></div><div class="lbl">Countries</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     ORGANISATIONS TICKER
+     ========================================================= -->
+<section class="section-sm" style="background:var(--off-white); border-top:1px solid var(--gray-200);">
+  <div class="container" style="margin-bottom:16px;">
+    <p style="font-size:0.82rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);font-weight:600;text-align:center;">
+      Covering Forms From All Major Organizations
+    </p>
+  </div>
+  <div class="org-ticker">
+    <div class="org-track" id="orgTrack">
+      <div class="org-chip"><span>🏅</span> World Taekwondo (WT)</div>
+      <div class="org-chip"><span>🥋</span> ITF — International Taekwondo Federation</div>
+      <div class="org-chip"><span>⭐</span> ATA / Songahm</div>
+      <div class="org-chip"><span>🔵</span> USAT — USA Taekwondo</div>
+      <div class="org-chip"><span>🇰🇷</span> Kukkiwon</div>
+      <div class="org-chip"><span>🏆</span> GTF — Global Taekwondo Federation</div>
+      <div class="org-chip"><span>⚡</span> WTF Poomsae Series</div>
+      <div class="org-chip"><span>🌏</span> Pan American Taekwondo Union</div>
+      <!-- duplicate for infinite scroll -->
+      <div class="org-chip"><span>🏅</span> World Taekwondo (WT)</div>
+      <div class="org-chip"><span>🥋</span> ITF — International Taekwondo Federation</div>
+      <div class="org-chip"><span>⭐</span> ATA / Songahm</div>
+      <div class="org-chip"><span>🔵</span> USAT — USA Taekwondo</div>
+      <div class="org-chip"><span>🇰🇷</span> Kukkiwon</div>
+      <div class="org-chip"><span>🏆</span> GTF — Global Taekwondo Federation</div>
+      <div class="org-chip"><span>⚡</span> WTF Poomsae Series</div>
+      <div class="org-chip"><span>🌏</span> Pan American Taekwondo Union</div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     FEATURED FORMS
+     ========================================================= -->
+<section class="section">
+  <div class="container">
+    <div class="flex-between" style="margin-bottom:28px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div class="section-label">📚 Forms Library</div>
+        <h2>Featured Poomsae &amp; Patterns</h2>
+      </div>
+      <a href="forms.html" class="btn btn-secondary">View All 140+ Forms →</a>
+    </div>
+    <div class="form-scroll">
+      <!-- WT Taegeuk -->
+      <a href="forms.html" class="form-mini-card" style="text-decoration:none;">
+        <div class="form-mini-visual" style="background:linear-gradient(135deg,#0D1B2A,#1a3a5c);">☯️</div>
+        <div class="form-mini-body">
+          <h4>Taegeuk 1 Jang</h4>
+          <div class="sub">태극 1장 · WT</div>
+          <div class="difficulty" style="margin-top:6px;">
+            <div class="dot filled"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            <span>Beginner</span>
+          </div>
+        </div>
+      </a>
+      <a href="forms.html" class="form-mini-card" style="text-decoration:none;">
+        <div class="form-mini-visual" style="background:linear-gradient(135deg,#1a2a0d,#2a4a1a);">🌿</div>
+        <div class="form-mini-body">
+          <h4>Taegeuk 4 Jang</h4>
+          <div class="sub">태극 4장 · WT</div>
+          <div class="difficulty" style="margin-top:6px;">
+            <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div>
+            <span>Intermediate</span>
+          </div>
+        </div>
+      </a>
+      <a href="forms.html" class="form-mini-card" style="text-decoration:none;">
+        <div class="form-mini-visual" style="background:linear-gradient(135deg,#2d1218,#4a1a22);">🔥</div>
+        <div class="form-mini-body">
+          <h4>Koryo</h4>
+          <div class="sub">고려 · WT Black Belt</div>
+          <div class="difficulty" style="margin-top:6px;">
+            <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div>
+            <span>Advanced</span>
+          </div>
+        </div>
+      </a>
+      <a href="forms.html" class="form-mini-card" style="text-decoration:none;">
+        <div class="form-mini-visual" style="background:linear-gradient(135deg,#1a1a2e,#16213e);">💎</div>
+        <div class="form-mini-body">
+          <h4>Keumgang</h4>
+          <div class="sub">금강 · WT Black Belt</div>
+          <div class="difficulty" style="margin-top:6px;">
+            <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div>
+            <span>Advanced</span>
+          </div>
+        </div>
+      </a>
+      <a href="forms.html" class="form-mini-card" style="text-decoration:none;">
+        <div class="form-mini-visual" style="background:linear-gradient(135deg,#1a0d2d,#2e1a4a);">⚡</div>
+        <div class="form-mini-body">
+          <h4>Chon-Ji</h4>
+          <div class="sub">천지 · ITF</div>
+          <div class="difficulty" style="margin-top:6px;">
+            <div class="dot filled"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            <span>Beginner</span>
+          </div>
+        </div>
+      </a>
+      <a href="forms.html" class="form-mini-card" style="text-decoration:none;">
+        <div class="form-mini-visual" style="background:linear-gradient(135deg,#0d2014,#1a3d26);">🌲</div>
+        <div class="form-mini-body">
+          <h4>Do-San</h4>
+          <div class="sub">도산 · ITF</div>
+          <div class="difficulty" style="margin-top:6px;">
+            <div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            <span>Beginner+</span>
+          </div>
+        </div>
+      </a>
+      <a href="forms.html" class="form-mini-card" style="text-decoration:none;">
+        <div class="form-mini-visual" style="background:linear-gradient(135deg,#1a0d0d,#3d1a1a);">🎯</div>
+        <div class="form-mini-body">
+          <h4>Songahm 1</h4>
+          <div class="sub">송암 1 · ATA</div>
+          <div class="difficulty" style="margin-top:6px;">
+            <div class="dot filled"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            <span>Beginner</span>
+          </div>
+        </div>
+      </a>
+      <a href="forms.html" class="form-mini-card" style="text-decoration:none;">
+        <div class="form-mini-visual" style="background:linear-gradient(135deg,#0d1a2d,#1a2e4a);">🌊</div>
+        <div class="form-mini-body">
+          <h4>Taebaek</h4>
+          <div class="sub">태백 · WT Black Belt</div>
+          <div class="difficulty" style="margin-top:6px;">
+            <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div>
+            <span>Expert</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     PLATFORM FEATURES
+     ========================================================= -->
+<section class="section" style="background:var(--off-white);">
+  <div class="container">
+    <div class="section-header text-center">
+      <div class="section-label">✨ Platform Features</div>
+      <h2>Everything a Taekwondo Athlete Needs</h2>
+      <p>From white belt to master — free resources, expert content, and a global community.</p>
+    </div>
+    <div class="grid-3">
+      <div class="feature-item">
+        <div class="feature-icon">📽️</div>
+        <h3>Video Library</h3>
+        <p style="margin-top:8px;font-size:0.9rem;">Multi-angle, slow-motion form breakdowns with step-by-step movement annotations from certified masters.</p>
+        <a href="forms.html" style="display:inline-flex;align-items:center;gap:4px;margin-top:14px;font-size:0.85rem;font-weight:600;color:var(--red);">Browse videos →</a>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🤝</div>
+        <h3>Community Posts</h3>
+        <p style="margin-top:8px;font-size:0.9rem;">Share training clips, technique tips, and progress updates. Get feedback from experienced practitioners worldwide.</p>
+        <a href="community.html" style="display:inline-flex;align-items:center;gap:4px;margin-top:14px;font-size:0.85rem;font-weight:600;color:var(--red);">See community →</a>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">💬</div>
+        <h3>Discussion Forum</h3>
+        <p style="margin-top:8px;font-size:0.9rem;">Ask technique questions, debate training methods, and connect with coaches, athletes and hobbyists from every style.</p>
+        <a href="forum.html" style="display:inline-flex;align-items:center;gap:4px;margin-top:14px;font-size:0.85rem;font-weight:600;color:var(--red);">Open forum →</a>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🏆</div>
+        <h3>Competition Board</h3>
+        <p style="margin-top:8px;font-size:0.9rem;">Find local and international tournaments, register your school's event, and track upcoming competition deadlines.</p>
+        <a href="competitions.html" style="display:inline-flex;align-items:center;gap:4px;margin-top:14px;font-size:0.85rem;font-weight:600;color:var(--red);">Find events →</a>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🗂️</div>
+        <h3>Belt Progression Guide</h3>
+        <p style="margin-top:8px;font-size:0.9rem;">Structured curriculum mapped by belt rank across all major organizations — know exactly what to learn next.</p>
+        <a href="forms.html" style="display:inline-flex;align-items:center;gap:4px;margin-top:14px;font-size:0.85rem;font-weight:600;color:var(--red);">View curriculum →</a>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🌐</div>
+        <h3>Multi-Style Coverage</h3>
+        <p style="margin-top:8px;font-size:0.9rem;">WT, ITF, ATA, GTF and more — every major governing body and style represented with accurate, verified content.</p>
+        <a href="forms.html" style="display:inline-flex;align-items:center;gap:4px;margin-top:14px;font-size:0.85rem;font-weight:600;color:var(--red);">Explore styles →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     RECENT COMMUNITY POSTS
+     ========================================================= -->
+<section class="section">
+  <div class="container">
+    <div class="flex-between" style="margin-bottom:32px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div class="section-label">🔥 Trending</div>
+        <h2>Latest from the Community</h2>
+      </div>
+      <a href="community.html" class="btn btn-secondary">See All Posts →</a>
+    </div>
+    <div class="grid-3">
+
+      <!-- Post 1 -->
+      <div class="card">
+        <div class="video-thumb">
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a2a3a,#2d1218);display:flex;align-items:center;justify-content:center;font-size:3rem;">🥋</div>
+          <div class="play-btn">▶</div>
+          <div class="duration">2:14</div>
+          <div class="video-overlay-badge"><span class="badge badge-red">Technique</span></div>
+        </div>
+        <div class="post-card">
+          <div class="post-header">
+            <div class="user-chip">
+              <div class="avatar" style="background:linear-gradient(135deg,#3B82F6,#1a1a2e);">JK</div>
+              <div>
+                <div class="name">Jae-Won Kim</div>
+                <div class="meta">3rd Dan · Seoul</div>
+              </div>
+            </div>
+            <span class="belt belt-black"><div class="belt-stripe"></div>3rd Dan</span>
+          </div>
+          <h4 style="font-size:0.95rem;margin-bottom:6px;">Breaking down the spinning hook kick from Koryo — slow-mo analysis</h4>
+          <p style="font-size:0.82rem;">The pivot position is everything. Here's why most people get the hip rotation wrong and how to fix it...</p>
+          <div class="post-actions">
+            <button class="post-action-btn">❤️ 284</button>
+            <button class="post-action-btn">💬 47</button>
+            <button class="post-action-btn">🔖 Save</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Post 2 -->
+      <div class="card">
+        <div class="video-thumb">
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#0d2014,#1a3d26);display:flex;align-items:center;justify-content:center;font-size:3rem;">🎯</div>
+          <div class="play-btn">▶</div>
+          <div class="duration">5:02</div>
+          <div class="video-overlay-badge"><span class="badge badge-green">Tutorial</span></div>
+        </div>
+        <div class="post-card">
+          <div class="post-header">
+            <div class="user-chip">
+              <div class="avatar" style="background:linear-gradient(135deg,#22C55E,#0d2014);">SA</div>
+              <div>
+                <div class="name">Sofia Andrade</div>
+                <div class="meta">Black Belt · Brazil</div>
+              </div>
+            </div>
+            <span class="belt belt-black"><div class="belt-stripe"></div>1st Dan</span>
+          </div>
+          <h4 style="font-size:0.95rem;margin-bottom:6px;">Complete Taegeuk 8 breakdown for your Cho Dan test</h4>
+          <p style="font-size:0.82rem;">I filmed this right before my black belt test. Every movement explained — timing, stances, and examiner expectations.</p>
+          <div class="post-actions">
+            <button class="post-action-btn">❤️ 512</button>
+            <button class="post-action-btn">💬 93</button>
+            <button class="post-action-btn">🔖 Save</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Post 3 -->
+      <div class="card">
+        <div class="video-thumb">
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a0d2d,#2e1a4a);display:flex;align-items:center;justify-content:center;font-size:3rem;">💪</div>
+          <div class="play-btn">▶</div>
+          <div class="duration">3:45</div>
+          <div class="video-overlay-badge"><span class="badge badge-gold">Competition</span></div>
+        </div>
+        <div class="post-card">
+          <div class="post-header">
+            <div class="user-chip">
+              <div class="avatar" style="background:linear-gradient(135deg,#E8A020,#3d2200);">TP</div>
+              <div>
+                <div class="name">Tomás Park</div>
+                <div class="meta">5th Dan · Spain</div>
+              </div>
+            </div>
+            <span class="belt belt-black"><div class="belt-stripe"></div>5th Dan</span>
+          </div>
+          <h4 style="font-size:0.95rem;margin-bottom:6px;">My gold-medal Taebaek performance — European Championships 2025</h4>
+          <p style="font-size:0.82rem;">Full performance with timestamp annotations. Happy to answer questions about my preparation routine!</p>
+          <div class="post-actions">
+            <button class="post-action-btn">❤️ 1.2k</button>
+            <button class="post-action-btn">💬 142</button>
+            <button class="post-action-btn">🔖 Save</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     UPCOMING COMPETITIONS PREVIEW
+     ========================================================= -->
+<section class="section" style="background:var(--off-white);">
+  <div class="container">
+    <div class="flex-between" style="margin-bottom:32px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div class="section-label">📅 Competitions</div>
+        <h2>Upcoming Tournaments</h2>
+      </div>
+      <a href="competitions.html" class="btn btn-secondary">All Events →</a>
+    </div>
+    <div class="grid-3">
+
+      <div class="comp-card">
+        <div class="comp-card-banner" style="background:linear-gradient(135deg,#C8102E,#9C0C23);">
+          <span class="badge badge-gold" style="position:relative;z-index:1;">🏆 International</span>
+        </div>
+        <div class="comp-card-body">
+          <h3 style="font-size:1rem;margin-bottom:6px;">World Poomsae Championships 2025</h3>
+          <div class="comp-meta-row">
+            <span>📍 Goyang, South Korea</span>
+            <span>📅 Sep 12–15, 2025</span>
+          </div>
+          <div class="countdown">
+            <div class="unit"><span class="num" id="cd1-d">174</span><span class="lbl">Days</span></div>
+            <div class="sep">:</div>
+            <div class="unit"><span class="num">08</span><span class="lbl">Hrs</span></div>
+            <div class="sep">:</div>
+            <div class="unit"><span class="num">22</span><span class="lbl">Min</span></div>
+          </div>
+          <a href="competitions.html" class="btn btn-primary btn-sm" style="width:100%;justify-content:center;">View Details</a>
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-card-banner" style="background:linear-gradient(135deg,#1C2E40,#0D1B2A);">
+          <span class="badge badge-navy" style="position:relative;z-index:1;">🥊 National</span>
+        </div>
+        <div class="comp-card-body">
+          <h3 style="font-size:1rem;margin-bottom:6px;">US Open Taekwondo Championships</h3>
+          <div class="comp-meta-row">
+            <span>📍 Orlando, FL</span>
+            <span>📅 Jul 4–6, 2025</span>
+          </div>
+          <div class="countdown">
+            <div class="unit"><span class="num">105</span><span class="lbl">Days</span></div>
+            <div class="sep">:</div>
+            <div class="unit"><span class="num">14</span><span class="lbl">Hrs</span></div>
+            <div class="sep">:</div>
+            <div class="unit"><span class="num">37</span><span class="lbl">Min</span></div>
+          </div>
+          <a href="competitions.html" class="btn btn-dark btn-sm" style="width:100%;justify-content:center;">View Details</a>
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-card-banner" style="background:linear-gradient(135deg,#c98a18,#8a5c10);">
+          <span class="badge badge-red" style="position:relative;z-index:1;">🌟 Open</span>
+        </div>
+        <div class="comp-card-body">
+          <h3 style="font-size:1rem;margin-bottom:6px;">ITF World Championships 2025</h3>
+          <div class="comp-meta-row">
+            <span>📍 Vienna, Austria</span>
+            <span>📅 Aug 3–8, 2025</span>
+          </div>
+          <div class="countdown">
+            <div class="unit"><span class="num">135</span><span class="lbl">Days</span></div>
+            <div class="sep">:</div>
+            <div class="unit"><span class="num">11</span><span class="lbl">Hrs</span></div>
+            <div class="sep">:</div>
+            <div class="unit"><span class="unit"><span class="num">52</span><span class="lbl">Min</span></span></div>
+          </div>
+          <a href="competitions.html" class="btn btn-gold btn-sm" style="width:100%;justify-content:center;">View Details</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     CTA BANNER
+     ========================================================= -->
+<section class="section">
+  <div class="container">
+    <div class="cta-banner">
+      <div class="cta-banner-text">
+        <div class="section-label" style="background:rgba(200,16,46,.2);color:#ff8fa3;border:none;">🥋 Join Dobok Today</div>
+        <h2>Share Your Knowledge.<br>Inspire the Next Generation.</h2>
+        <p>Create an account to post training content, start forum threads, advertise your school's competition, and connect with taekwondo practitioners worldwide. 100% free, always.</p>
+      </div>
+      <div class="cta-banner-actions" style="flex-direction:column;">
+        <a href="#" class="btn btn-primary btn-lg">Create Free Account</a>
+        <a href="#" class="btn btn-lg" style="color:rgba(255,255,255,.7);justify-content:center;">Learn more about Dobok →</a>
+        <div class="nonprofit-badge" style="justify-content:center;">♻️ Non-Profit · No Ads · No Paywalls</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">道 Dobok<span>.</span></div>
+        <p>A free, non-profit taekwondo training and community platform. Built by practitioners, for practitioners worldwide. No ads, no paywalls — just great training content.</p>
+        <div class="footer-social">
+          <a href="#">𝕏</a>
+          <a href="#">in</a>
+          <a href="#">▶</a>
+          <a href="#">📸</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Training</h4>
+        <ul>
+          <li><a href="forms.html">Forms Library</a></li>
+          <li><a href="forms.html">WT / Poomsae</a></li>
+          <li><a href="forms.html">ITF Patterns</a></li>
+          <li><a href="forms.html">ATA / Songahm</a></li>
+          <li><a href="forms.html">Belt Curriculum</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Community</h4>
+        <ul>
+          <li><a href="community.html">Browse Posts</a></li>
+          <li><a href="community.html">Upload Content</a></li>
+          <li><a href="forum.html">Forum</a></li>
+          <li><a href="competitions.html">Competitions</a></li>
+          <li><a href="#">Dobok Newsletter</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>About</h4>
+        <ul>
+          <li><a href="#">Our Mission</a></li>
+          <li><a href="#">Non-Profit Info</a></li>
+          <li><a href="#">Content Guidelines</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Dobok. All rights reserved.</span>
+      <div class="nonprofit-badge">♻️ 501(c)(3) Non-Profit Organization</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Hamburger toggle (mobile)
+  document.getElementById('hamburger').addEventListener('click', function() {
+    const links = document.querySelector('.nav-links');
+    if (links.style.display === 'flex') {
+      links.style.display = 'none';
+    } else {
+      links.style.cssText = 'display:flex;flex-direction:column;position:absolute;top:68px;left:0;right:0;background:white;padding:16px 24px;gap:4px;border-bottom:1px solid #e2e6ea;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.1);';
+    }
+  });
+</script>
+</body>
+</html>

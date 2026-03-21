@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Taegeuk Il Jang (태극 1장) — Dobok</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── Page Hero ── */
+    .page-hero {
+      background: linear-gradient(135deg, var(--navy) 0%, #1a2a3a 60%, #2d1218 100%);
+      padding: 64px 0 48px;
+      position: relative; overflow: hidden;
+    }
+    .page-hero-circles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .page-hero-circles span {
+      position: absolute; border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,16,46,.15), transparent 70%);
+    }
+    .page-hero-circles span:nth-child(1) { width: 500px; height: 500px; top: -150px; right: 0; }
+    .page-hero-circles span:nth-child(2) { width: 200px; height: 200px; bottom: -50px; left: 15%; }
+    .page-hero h1 { color: white; margin-bottom: 10px; }
+    .page-hero p  { color: rgba(255,255,255,.65); font-size: 1.05rem; max-width: 580px; margin-bottom: 20px; }
+    .hero-badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+
+    /* ── Two-column layout ── */
+    .anim-layout {
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      gap: 28px;
+      align-items: start;
+      padding: 40px 0 80px;
+    }
+    @media (max-width: 960px) {
+      .anim-layout { grid-template-columns: 1fr; }
+    }
+
+    /* ── Canvas Card ── */
+    .canvas-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      overflow: hidden;
+      position: sticky;
+      top: 88px;
+    }
+    .canvas-wrap {
+      background: #0a0f1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+    canvas#tkCanvas {
+      display: block;
+      border-radius: 8px;
+    }
+
+    /* ── Move Info Bar ── */
+    .move-info {
+      padding: 14px 18px 10px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .move-info-top {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 4px;
+    }
+    .move-icon { font-size: 1.4rem; line-height: 1; }
+    .move-name { font-size: 1rem; font-weight: 700; color: var(--navy); }
+    .move-korean { font-size: 0.82rem; color: var(--gray-400); }
+    .move-desc { font-size: 0.82rem; color: var(--gray-600); line-height: 1.5; margin-top: 6px; }
+
+    /* ── Progress Bar ── */
+    .progress-wrap {
+      padding: 10px 18px 6px;
+      cursor: pointer;
+    }
+    .progress-track {
+      height: 5px;
+      background: var(--gray-100);
+      border-radius: 3px;
+      position: relative;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--red), #ff4d6d);
+      border-radius: 3px;
+      transition: width 0.12s linear;
+    }
+
+    /* ── Controls ── */
+    .controls {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 10px 18px 14px;
+    }
+    .ctrl-btn {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      border: 1.5px solid var(--gray-200);
+      background: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: var(--transition);
+      color: var(--navy);
+    }
+    .ctrl-btn:hover { background: var(--gray-100); }
+    .ctrl-btn.play-btn {
+      width: 44px; height: 44px;
+      background: var(--red); border-color: var(--red);
+      color: white; font-size: 1.1rem;
+      border-radius: 50%;
+    }
+    .ctrl-btn.play-btn:hover { background: #a30d23; }
+    .speed-select {
+      padding: 6px 10px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-family: var(--font);
+      color: var(--navy);
+      background: white;
+      cursor: pointer;
+      margin-left: 4px;
+    }
+
+    /* ── Move List Panel ── */
+    .move-panel {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .move-panel-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--gray-200);
+      background: var(--navy);
+      color: white;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .move-panel-header h3 { color: white; font-size: 1rem; margin: 0; }
+    .move-panel-header span { font-size: 0.8rem; color: rgba(255,255,255,.5); }
+    .move-list { max-height: 560px; overflow-y: auto; }
+    .move-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--gray-100);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .move-row:last-child { border-bottom: none; }
+    .move-row:hover { background: var(--gray-50, #fafafa); }
+    .move-row.active { background: var(--red-light); }
+    .move-num {
+      width: 26px; height: 26px;
+      background: var(--gray-100);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 700; color: var(--gray-500);
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .move-row.active .move-num { background: var(--red); color: white; }
+    .move-row-body { flex: 1; min-width: 0; }
+    .move-row-name { font-size: 0.88rem; font-weight: 600; color: var(--navy); }
+    .move-row-kr   { font-size: 0.76rem; color: var(--gray-400); margin-top: 1px; }
+    .move-row-dir  { font-size: 0.9rem; flex-shrink: 0; margin-top: 3px; }
+    .kihap-badge {
+      display: inline-block;
+      background: var(--red); color: white;
+      font-size: 0.65rem; font-weight: 700;
+      padding: 1px 6px; border-radius: 8px;
+      margin-left: 6px; vertical-align: middle;
+    }
+
+    /* ── Info Section ── */
+    .info-section {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-top: 24px;
+    }
+    .info-section h3 { font-size: 1rem; color: var(--navy); margin-bottom: 14px; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .info-item { }
+    .info-label { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-400); font-weight: 700; margin-bottom: 3px; }
+    .info-value { font-size: 0.9rem; color: var(--navy); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="container">
+    <a href="index.html" class="navbar-logo">
+      <div class="logo-icon">道</div>
+      Dobok<span class="accent">.</span><span class="kr">도복</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="forms.html" class="active">Forms Library</a></li>
+      <li><a href="community.html">Community</a></li>
+      <li><a href="forum.html">Forum</a></li>
+      <li><a href="competitions.html">Competitions</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="#" class="btn btn-secondary btn-sm">Log In</a>
+      <a href="#" class="btn btn-primary btn-sm">Join Free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-circles"><span></span><span></span></div>
+  <div class="container" style="position:relative;z-index:2;">
+    <a href="forms.html" style="color:rgba(255,255,255,.5);font-size:0.82rem;text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-bottom:14px;">
+      ← Back to Forms Library
+    </a>
+    <div class="hero-badge-row">
+      <span class="badge badge-red">WT / Kukkiwon</span>
+      <span class="badge badge-gold">Yellow Belt</span>
+      <span class="badge badge-navy">16 Steps</span>
+    </div>
+    <h1>Taegeuk Il Jang <span style="color:rgba(255,255,255,.4);font-size:0.7em;">태극 1장</span></h1>
+    <p>The first of eight Taegeuk forms. Built on the trigram ☰ <em>Geon</em> (Heaven &amp; Light) — representing the beginning of all things. 16 movements for yellow belt students.</p>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="container">
+  <div class="anim-layout">
+
+    <!-- LEFT: Canvas Card -->
+    <div>
+      <div class="canvas-card">
+        <div class="canvas-wrap">
+          <canvas id="tkCanvas" width="420" height="460"></canvas>
+        </div>
+
+        <!-- Move Info -->
+        <div class="move-info">
+          <div class="move-info-top">
+            <span class="move-icon" id="moveIcon">🙏</span>
+            <div>
+              <div class="move-name" id="moveName">Junbi — Ready Stance</div>
+              <div class="move-korean" id="moveKorean">준비</div>
+            </div>
+          </div>
+          <div class="move-desc" id="moveDesc">Parallel stance, feet shoulder-width. Arms cross at waist in ready guard. Face forward.</div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-wrap" id="progressWrap">
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+          <button class="ctrl-btn" id="btnFirst" title="First move">⏮</button>
+          <button class="ctrl-btn" id="btnPrev"  title="Previous">◀</button>
+          <button class="ctrl-btn play-btn" id="btnPlay" title="Play / Pause">▶</button>
+          <button class="ctrl-btn" id="btnNext"  title="Next">▶</button>
+          <button class="ctrl-btn" id="btnLast"  title="Last move">⏭</button>
+          <select class="speed-select" id="speedSelect">
+            <option value="2000">Slow</option>
+            <option value="1300" selected>Normal</option>
+            <option value="800">Fast</option>
+            <option value="400">Sprint</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Info Card -->
+      <div class="info-section">
+        <h3>Form Details</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Organization</div>
+            <div class="info-value">WT / Kukkiwon</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Belt Level</div>
+            <div class="info-value">Yellow Belt (8th Gup)</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Total Moves</div>
+            <div class="info-value">16</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Trigram Symbol</div>
+            <div class="info-value">☰ Geon (Heaven)</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Techniques</div>
+            <div class="info-value">Blocks, Punches, Kicks</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Kihap Positions</div>
+            <div class="info-value">Moves 9 and 16</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Move List Panel -->
+    <div>
+      <div class="move-panel">
+        <div class="move-panel-header">
+          <h3>16 Steps · All Poses</h3>
+          <span>Click any row to jump</span>
+        </div>
+        <div class="move-list" id="moveList"></div>
+      </div>
+    </div>
+
+  </div><!-- end anim-layout -->
+</div><!-- end container -->
+
+<!-- FOOTER -->
+<footer style="background:var(--navy);color:rgba(255,255,255,.4);text-align:center;padding:28px 0;font-size:0.8rem;">
+  <div class="container">
+    Dobok · 도복 &nbsp;|&nbsp; Built with ♥ for the global taekwondo community &nbsp;|&nbsp; Open-source &amp; non-profit
+  </div>
+</footer>
+
+<script>
+/* ── Constants ── */
+const W = 420, H = 460, CX = 210;
+const TRANS_MS  = 420;
+
+/* ── 20 poses: Junbi · Moves 1–16 (kicks split into chamber+strike) · Baro ── */
+const MOVES = [
+  // 0: Junbi
+  { name:'Junbi — Ready Stance', korean:'준비', icon:'🙏', kihap:false, dir:'↕',
+    desc:'Parallel stance, feet shoulder-width. Arms cross at waist in ready guard. Face forward.',
+    p:{ head:[CX,72], neck:[CX,97], ls:[CX-30,110], rs:[CX+30,110],
+        le:[CX-36,155], re:[CX+36,155], lh:[CX-8,192], rh:[CX+8,192],
+        lhi:[CX-20,205], rhi:[CX+20,205], lk:[CX-22,278], rk:[CX+22,278],
+        lf:[CX-24,350], rf:[CX+24,350] } },
+  // 1: Turn left 90°, walking stance, left foot forward, left low block
+  { name:'Left Low Block', korean:'좌 아래막기 (1)', icon:'🛡️', kihap:false, dir:'←',
+    desc:'Turn left 90°. Walking stance, left foot forward. Left arm sweeps down and across to block the low section.',
+    p:{ head:[CX+5,72], neck:[CX+4,97], ls:[CX-22,108], rs:[CX+38,111],
+        le:[CX-58,148], re:[CX+44,150], lh:[CX-64,200], rh:[CX+52,158],
+        lhi:[CX-2,205], rhi:[CX+18,207], lk:[CX-28,268], rk:[CX+30,282],
+        lf:[CX-44,344], rf:[CX+40,350] } },
+  // 2: Step forward, walking stance, right foot forward, right middle punch
+  { name:'Right Middle Punch', korean:'오른 몸통지르기 (2)', icon:'👊', kihap:false, dir:'←',
+    desc:'Step forward with right foot. Walking stance. Right fist punches to the middle section.',
+    p:{ head:[CX+5,72], neck:[CX+4,97], ls:[CX-22,108], rs:[CX+38,111],
+        le:[CX-32,154], re:[CX-8,144], lh:[CX-38,168], rh:[CX-64,153],
+        lhi:[CX-2,205], rhi:[CX+18,207], lk:[CX+20,282], rk:[CX-40,265],
+        lf:[CX+16,350], rf:[CX-58,342] } },
+  // 3: Turn right 180°, walking stance, right foot forward, right low block
+  { name:'Right Low Block', korean:'우 아래막기 (3)', icon:'🛡️', kihap:false, dir:'→',
+    desc:'Turn right 180°. Walking stance, right foot forward. Right arm sweeps down to block the low section.',
+    p:{ head:[CX-5,72], neck:[CX-4,97], ls:[CX-38,111], rs:[CX+22,108],
+        le:[CX-44,150], re:[CX+58,148], lh:[CX-52,158], rh:[CX+64,200],
+        lhi:[CX-18,207], rhi:[CX+2,205], lk:[CX-30,282], rk:[CX+28,268],
+        lf:[CX-40,350], rf:[CX+44,344] } },
+  // 4: Step forward, walking stance, left foot forward, left middle punch
+  { name:'Left Middle Punch', korean:'왼 몸통지르기 (4)', icon:'👊', kihap:false, dir:'→',
+    desc:'Step forward with left foot. Walking stance. Left fist punches to the middle section.',
+    p:{ head:[CX-5,72], neck:[CX-4,97], ls:[CX-38,111], rs:[CX+22,108],
+        le:[CX+8,144], re:[CX+32,154], lh:[CX+64,153], rh:[CX+38,168],
+        lhi:[CX-18,207], rhi:[CX+2,205], lk:[CX+40,265], rk:[CX-20,282],
+        lf:[CX+58,342], rf:[CX-16,350] } },
+  // 5: Turn left 90°, front stance, left foot forward, low block → right middle punch
+  { name:'Low Block + Middle Punch', korean:'아래막기+지르기 (5)', icon:'⚡', kihap:false, dir:'↑',
+    desc:'Turn left 90°. Deep front stance, left foot forward. First do left low block, then right middle punch. Hold the punch.',
+    p:{ head:[CX,72], neck:[CX,97], ls:[CX-30,108], rs:[CX+30,108],
+        le:[CX-52,155], re:[CX+5,144], lh:[CX-56,170], rh:[CX+66,148],
+        lhi:[CX-18,205], rhi:[CX+18,205], lk:[CX-8,258], rk:[CX+32,290],
+        lf:[CX-12,338], rf:[CX+50,360] } },
+  // 6: Turn right 90°, walking stance, right foot forward, left inside block
+  { name:'Left Inside Block', korean:'왼 안막기 (6)', icon:'🛡️', kihap:false, dir:'→',
+    desc:'Turn right 90°. Walking stance, right foot forward. Left forearm sweeps inward across the body.',
+    p:{ head:[CX-5,72], neck:[CX-4,97], ls:[CX-38,111], rs:[CX+22,108],
+        le:[CX-5,132], re:[CX+38,152], lh:[CX-12,96], rh:[CX+44,165],
+        lhi:[CX-18,207], rhi:[CX+2,205], lk:[CX-24,282], rk:[CX+28,268],
+        lf:[CX-30,350], rf:[CX+44,344] } },
+  // 7: Step forward, walking stance, left foot forward, right middle punch
+  { name:'Right Middle Punch', korean:'오른 몸통지르기 (7)', icon:'👊', kihap:false, dir:'→',
+    desc:'Step forward with left foot. Walking stance. Right fist punches to the middle section.',
+    p:{ head:[CX-5,72], neck:[CX-4,97], ls:[CX-38,111], rs:[CX+22,108],
+        le:[CX-32,154], re:[CX+55,144], lh:[CX-38,168], rh:[CX+70,150],
+        lhi:[CX-18,207], rhi:[CX+2,205], lk:[CX+40,265], rk:[CX-16,282],
+        lf:[CX+58,342], rf:[CX-14,350] } },
+  // 8: Turn left 180°, walking stance, left foot forward, right inside block
+  { name:'Right Inside Block', korean:'오른 안막기 (8)', icon:'🛡️', kihap:false, dir:'←',
+    desc:'Turn left 180°. Walking stance, left foot forward. Right forearm sweeps inward — inside block.',
+    p:{ head:[CX+5,72], neck:[CX+4,97], ls:[CX-22,108], rs:[CX+38,111],
+        le:[CX-38,152], re:[CX+5,132], lh:[CX-44,165], rh:[CX+12,96],
+        lhi:[CX-2,205], rhi:[CX+18,207], lk:[CX-28,268], rk:[CX+24,282],
+        lf:[CX-44,344], rf:[CX+30,350] } },
+  // 9: Step forward, walking stance, right foot forward, left middle punch — KIHAP
+  { name:'Left Middle Punch — KIHAP!', korean:'왼 몸통지르기 기합! (9)', icon:'⚡', kihap:true, dir:'←',
+    desc:'Step forward with right foot. Walking stance. Left fist punches to middle section. KIHAP!',
+    p:{ head:[CX+5,72], neck:[CX+4,97], ls:[CX-22,108], rs:[CX+38,111],
+        le:[CX-55,144], re:[CX+32,154], lh:[CX-65,150], rh:[CX+38,168],
+        lhi:[CX-2,205], rhi:[CX+18,207], lk:[CX+16,282], rk:[CX-40,265],
+        lf:[CX+14,350], rf:[CX-56,342] } },
+  // 10: Turn right 90°, front stance, right foot forward, right low block → left middle punch
+  { name:'Low Block + Middle Punch', korean:'아래막기+지르기 (10)', icon:'⚡', kihap:false, dir:'↑',
+    desc:'Turn right 90°. Deep front stance, right foot forward. First right low block, then left middle punch.',
+    p:{ head:[CX,72], neck:[CX,97], ls:[CX-30,108], rs:[CX+30,108],
+        le:[CX+5,144], re:[CX+52,155], lh:[CX+66,148], rh:[CX+56,170],
+        lhi:[CX-18,205], rhi:[CX+18,205], lk:[CX-32,290], rk:[CX+8,258],
+        lf:[CX-50,360], rf:[CX+12,338] } },
+  // 11: Turn left 90°, walking stance, left foot forward, left high block
+  { name:'Left High Block', korean:'왼 얼굴막기 (11)', icon:'🛡️', kihap:false, dir:'←',
+    desc:'Turn left 90°. Walking stance, left foot forward. Left arm rises above the head — high block.',
+    p:{ head:[CX+5,72], neck:[CX+4,97], ls:[CX-22,108], rs:[CX+38,111],
+        le:[CX-28,88], re:[CX+44,150], lh:[CX-52,72], rh:[CX+52,162],
+        lhi:[CX-2,205], rhi:[CX+18,207], lk:[CX-28,268], rk:[CX+30,282],
+        lf:[CX-44,344], rf:[CX+40,350] } },
+  // 12a: Right front kick (facing left)
+  { name:'Right Front Kick', korean:'오른 앞차기 (12)', icon:'🦵', kihap:false, dir:'←',
+    desc:'Chamber right knee high then snap the foot forward — front kick. Standing on left leg.',
+    p:{ head:[CX+5,68], neck:[CX+4,93], ls:[CX-22,106], rs:[CX+38,108],
+        le:[CX-50,148], re:[CX+48,148], lh:[CX-56,162], rh:[CX+54,162],
+        lhi:[CX-2,200], rhi:[CX+14,200], lk:[CX-24,274], rk:[CX-14,226],
+        lf:[CX-26,352], rf:[CX-40,212] } },
+  // 12b: Land walking stance, right foot forward, right middle punch
+  { name:'Right Middle Punch', korean:'오른 몸통지르기 (12→)', icon:'👊', kihap:false, dir:'←',
+    desc:'Land right foot forward into walking stance. Right fist punches to the middle section.',
+    p:{ head:[CX+5,72], neck:[CX+4,97], ls:[CX-22,108], rs:[CX+38,111],
+        le:[CX-32,154], re:[CX-8,144], lh:[CX-38,168], rh:[CX-64,153],
+        lhi:[CX-2,205], rhi:[CX+18,207], lk:[CX+20,282], rk:[CX-40,265],
+        lf:[CX+16,350], rf:[CX-58,342] } },
+  // 13: Turn right 180°, walking stance, right foot forward, right high block
+  { name:'Right High Block', korean:'오른 얼굴막기 (13)', icon:'🛡️', kihap:false, dir:'→',
+    desc:'Turn right 180°. Walking stance, right foot forward. Right arm rises above the head — high block.',
+    p:{ head:[CX-5,72], neck:[CX-4,97], ls:[CX-38,111], rs:[CX+22,108],
+        le:[CX-44,150], re:[CX+28,88], lh:[CX-52,162], rh:[CX+52,72],
+        lhi:[CX-18,207], rhi:[CX+2,205], lk:[CX-30,282], rk:[CX+28,268],
+        lf:[CX-40,350], rf:[CX+44,344] } },
+  // 14a: Left front kick (facing right)
+  { name:'Left Front Kick', korean:'왼 앞차기 (14)', icon:'🦵', kihap:false, dir:'→',
+    desc:'Chamber left knee high then snap the foot forward — front kick. Standing on right leg.',
+    p:{ head:[CX-5,68], neck:[CX-4,93], ls:[CX-38,108], rs:[CX+22,106],
+        le:[CX-48,148], re:[CX+50,148], lh:[CX-54,162], rh:[CX+56,162],
+        lhi:[CX-14,200], rhi:[CX+2,200], lk:[CX+14,226], rk:[CX+24,274],
+        lf:[CX+40,212], rf:[CX+26,352] } },
+  // 14b: Land walking stance, left foot forward, left middle punch
+  { name:'Left Middle Punch', korean:'왼 몸통지르기 (14→)', icon:'👊', kihap:false, dir:'→',
+    desc:'Land left foot forward into walking stance. Left fist punches to the middle section.',
+    p:{ head:[CX-5,72], neck:[CX-4,97], ls:[CX-38,111], rs:[CX+22,108],
+        le:[CX+8,144], re:[CX+32,154], lh:[CX+64,153], rh:[CX+38,168],
+        lhi:[CX-18,207], rhi:[CX+2,205], lk:[CX+40,265], rk:[CX-20,282],
+        lf:[CX+58,342], rf:[CX-16,350] } },
+  // 15: Turn right 90°, front stance, left foot forward, left low block
+  { name:'Left Low Block', korean:'좌 아래막기 (15)', icon:'🛡️', kihap:false, dir:'↓',
+    desc:'Turn right 90°. Deep front stance, left foot forward. Left arm sweeps down to low block. Facing back toward start.',
+    p:{ head:[CX,72], neck:[CX,97], ls:[CX-30,108], rs:[CX+30,108],
+        le:[CX-68,148], re:[CX+44,150], lh:[CX-72,202], rh:[CX+50,158],
+        lhi:[CX-18,205], rhi:[CX+18,205], lk:[CX-8,258], rk:[CX+32,290],
+        lf:[CX-12,338], rf:[CX+50,360] } },
+  // 16: Step forward, front stance, right foot forward, right middle punch — KIHAP
+  { name:'Right Punch — KIHAP!', korean:'오른 몸통지르기 기합! (16)', icon:'⚡', kihap:true, dir:'↓',
+    desc:'Step forward into front stance, right foot forward. Right middle punch. Final KIHAP!',
+    p:{ head:[CX,72], neck:[CX,97], ls:[CX-30,108], rs:[CX+30,108],
+        le:[CX-50,155], re:[CX+5,144], lh:[CX-54,168], rh:[CX+66,148],
+        lhi:[CX-18,205], rhi:[CX+18,205], lk:[CX-32,290], rk:[CX+8,258],
+        lf:[CX-50,360], rf:[CX+12,338] } },
+  // 17: Baro — Return to Ready
+  { name:'Baro — Return to Ready', korean:'바로 · 경례', icon:'🙏', kihap:false, dir:'↕',
+    desc:'Return to starting position. Bow (인사 — Insa). End of Taegeuk Il Jang. 감사합니다!',
+    p:{ head:[CX,72], neck:[CX,97], ls:[CX-30,110], rs:[CX+30,110],
+        le:[CX-36,155], re:[CX+36,155], lh:[CX-8,192], rh:[CX+8,192],
+        lhi:[CX-20,205], rhi:[CX+20,205], lk:[CX-22,278], rk:[CX+22,278],
+        lf:[CX-24,350], rf:[CX+24,350] } },
+];
+
+/* ── State ── */
+const canvas = document.getElementById('tkCanvas');
+const ctx    = canvas.getContext('2d');
+let moveIdx  = 0;
+let playing  = false;
+let phase    = 'hold';   // 'trans' | 'hold'
+let phaseStart = 0;
+let holdDur  = 1300;
+let transDur = TRANS_MS;
+let fromPose = null;
+let toPose   = null;
+let raf      = null;
+
+/* ── Helpers ── */
+function ease(t) {
+  return t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+}
+function lerp(a, b, t) { return a + (b - a) * t; }
+function lerpPose(from, to, t) {
+  const et = ease(t);
+  const out = {};
+  for (const k in to.p) {
+    out[k] = [
+      lerp(from.p[k][0], to.p[k][0], et),
+      lerp(from.p[k][1], to.p[k][1], et)
+    ];
+  }
+  return out;
+}
+
+/* ── Draw ── */
+function draw(pose) {
+  const m = MOVES[moveIdx];
+  const isKihap = m.kihap;
+
+  // Background
+  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  if (isKihap) {
+    bg.addColorStop(0, '#1a0508');
+    bg.addColorStop(1, '#0a0212');
+  } else {
+    bg.addColorStop(0, '#0d1220');
+    bg.addColorStop(1, '#060910');
+  }
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // Kihap glow
+  if (isKihap) {
+    const glow = ctx.createRadialGradient(CX, H/2, 20, CX, H/2, 220);
+    glow.addColorStop(0, 'rgba(200,16,46,0.28)');
+    glow.addColorStop(1, 'rgba(200,16,46,0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // Subtle grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x <= W; x += 42) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for (let y = 0; y <= H; y += 46) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  // Floor shadow / ground indicator
+  const floorY = 368;
+  const groundGrad = ctx.createLinearGradient(CX-90, 0, CX+90, 0);
+  groundGrad.addColorStop(0, 'rgba(255,255,255,0)');
+  groundGrad.addColorStop(0.5, 'rgba(255,255,255,0.08)');
+  groundGrad.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.strokeStyle = groundGrad;
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(CX-90, floorY); ctx.lineTo(CX+90, floorY); ctx.stroke();
+
+  const p = pose;
+  const LW = 5.5;
+
+  function pt(k) { return p[k]; }
+
+  function limb(a, b, color, lw) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth   = lw || LW;
+    ctx.lineCap     = 'round';
+    ctx.lineJoin    = 'round';
+    ctx.beginPath();
+    ctx.moveTo(pt(a)[0], pt(a)[1]);
+    ctx.lineTo(pt(b)[0], pt(b)[1]);
+    ctx.stroke();
+  }
+
+  // Left foot shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
+  ctx.beginPath();
+  ctx.ellipse(pt('lf')[0], pt('lf')[1]+4, 11, 4, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(pt('rf')[0], pt('rf')[1]+4, 11, 4, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Legs
+  const legColor   = '#4a7fc1';
+  const legShade   = '#2a4f91';
+  limb('lhi','lk',  legColor, LW+0.5);
+  limb('lk', 'lf',  legColor, LW);
+  limb('rhi','rk',  legShade, LW+0.5);
+  limb('rk', 'rf',  legShade, LW);
+
+  // Torso
+  limb('lhi','rhi', '#5a8ad0', LW-1);
+  limb('neck','lhi','#5a8ad0', LW+1);
+  limb('neck','rhi','#5a8ad0', LW+1);
+  limb('ls',  'rs',  '#6a9adf', LW-1);
+
+  // Yellow belt stripe on torso
+  const beltY = (pt('neck')[1]*0.3 + pt('lhi')[1]*0.7);
+  ctx.strokeStyle = '#FFD700';
+  ctx.lineWidth = 3.5;
+  ctx.globalAlpha = 0.9;
+  ctx.beginPath();
+  ctx.moveTo(pt('lhi')[0]+6, beltY);
+  ctx.lineTo(pt('rhi')[0]-6, beltY);
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  // Arms
+  const armCol  = '#6aaae0';
+  const armShad = '#3a7ab0';
+  limb('ls','le', armCol,  LW);
+  limb('le','lh', armCol,  LW-0.5);
+  limb('rs','re', armShad, LW);
+  limb('re','rh', armShad, LW-0.5);
+
+  // Fists
+  function fist(k, col) {
+    const [x,y] = pt(k);
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.arc(x, y, 6.5, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  fist('lh', '#7abbf0');
+  fist('rh', '#4a8bc0');
+
+  // Head
+  const [hx, hy] = pt('head');
+  // Head circle
+  const headGrad = ctx.createRadialGradient(hx-4, hy-5, 3, hx, hy, 18);
+  headGrad.addColorStop(0, '#f5c89a');
+  headGrad.addColorStop(1, '#d4956a');
+  ctx.fillStyle = headGrad;
+  ctx.beginPath();
+  ctx.arc(hx, hy, 17, 0, Math.PI*2);
+  ctx.fill();
+  // Eyes
+  ctx.fillStyle = '#222';
+  ctx.beginPath(); ctx.arc(hx-5, hy-2, 2.2, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(hx+5, hy-2, 2.2, 0, Math.PI*2); ctx.fill();
+  // Smile
+  ctx.strokeStyle = '#555';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(hx, hy+2, 5, 0.2, Math.PI-0.2);
+  ctx.stroke();
+
+  // Move badge (top-left)
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
+  ctx.beginPath();
+  ctx.roundRect(10, 10, 82, 30, 8);
+  ctx.fill();
+  ctx.fillStyle = moveIdx === 0 || moveIdx === MOVES.length-1 ? '#aaa' : '#fff';
+  ctx.font = 'bold 12px system-ui';
+  ctx.textAlign = 'left';
+  ctx.fillText(`${moveIdx}/${MOVES.length-1}`, 36, 29);
+  ctx.font = '14px system-ui';
+  ctx.fillText(m.icon, 14, 30);
+
+  // Direction badge (top-right)
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
+  ctx.beginPath();
+  ctx.roundRect(W-42, 10, 32, 30, 8);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  ctx.font = 'bold 16px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText(m.dir, W-26, 30);
+
+  // Kihap text
+  if (isKihap) {
+    ctx.font = 'bold 28px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(255,80,80,0.9)';
+    ctx.fillText('기합! KIHAP!', CX, 44);
+  }
+
+  ctx.textAlign = 'left';
+}
+
+/* ── Animation Loop ── */
+function tick(now) {
+  if (!playing) return;
+
+  const elapsed = now - phaseStart;
+
+  if (phase === 'trans') {
+    const t = Math.min(elapsed / transDur, 1);
+    const currentPose = lerpPose(fromPose, toPose, t);
+    draw(currentPose);
+    if (t >= 1) {
+      phase      = 'hold';
+      phaseStart = now;
+      draw(toPose.p);
+      updateUI();
+    }
+  } else {
+    // hold
+    draw(MOVES[moveIdx].p);
+    if (elapsed >= holdDur) {
+      // advance
+      const next = moveIdx + 1;
+      if (next >= MOVES.length) {
+        playing = false;
+        updatePlayBtn();
+        return;
+      }
+      startTransition(next);
+    }
+  }
+
+  raf = requestAnimationFrame(tick);
+}
+
+function startTransition(idx) {
+  fromPose   = MOVES[moveIdx];
+  moveIdx    = idx;
+  toPose     = MOVES[moveIdx];
+  phase      = 'trans';
+  phaseStart = performance.now();
+  updateProgress();
+  updateMoveList();
+}
+
+function updateUI() {
+  const m = MOVES[moveIdx];
+  document.getElementById('moveIcon').textContent  = m.icon;
+  document.getElementById('moveName').textContent  = m.name;
+  document.getElementById('moveKorean').textContent= m.korean;
+  document.getElementById('moveDesc').textContent  = m.desc;
+  updateProgress();
+  updateMoveList();
+}
+
+function updateProgress() {
+  const pct = MOVES.length <= 1 ? 0 : (moveIdx / (MOVES.length - 1)) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function updateMoveList() {
+  document.querySelectorAll('.move-row').forEach((el, i) => {
+    el.classList.toggle('active', i === moveIdx);
+  });
+  // Scroll active row into view
+  const active = document.querySelector('.move-row.active');
+  if (active) active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+function updatePlayBtn() {
+  document.getElementById('btnPlay').textContent = playing ? '⏸' : '▶';
+}
+
+/* ── Controls ── */
+document.getElementById('btnPlay').addEventListener('click', () => {
+  if (playing) {
+    playing = false;
+    if (raf) cancelAnimationFrame(raf);
+    updatePlayBtn();
+  } else {
+    if (moveIdx >= MOVES.length - 1) moveIdx = 0;
+    playing    = true;
+    phase      = 'hold';
+    phaseStart = performance.now();
+    updatePlayBtn();
+    raf = requestAnimationFrame(tick);
+  }
+});
+
+document.getElementById('btnNext').addEventListener('click', () => {
+  stopPlay();
+  if (moveIdx < MOVES.length - 1) {
+    startTransition(moveIdx + 1);
+    drawFrame();
+  }
+});
+
+document.getElementById('btnPrev').addEventListener('click', () => {
+  stopPlay();
+  if (moveIdx > 0) {
+    startTransition(moveIdx - 1);
+    drawFrame();
+  }
+});
+
+document.getElementById('btnFirst').addEventListener('click', () => {
+  stopPlay();
+  moveIdx = 0;
+  updateUI();
+  draw(MOVES[0].p);
+});
+
+document.getElementById('btnLast').addEventListener('click', () => {
+  stopPlay();
+  moveIdx = MOVES.length - 1;
+  updateUI();
+  draw(MOVES[moveIdx].p);
+});
+
+document.getElementById('speedSelect').addEventListener('change', (e) => {
+  holdDur = parseInt(e.target.value);
+});
+
+// Progress bar click
+document.getElementById('progressWrap').addEventListener('click', (e) => {
+  const rect = e.currentTarget.getBoundingClientRect();
+  const pct  = (e.clientX - rect.left) / rect.width;
+  const idx  = Math.round(pct * (MOVES.length - 1));
+  stopPlay();
+  moveIdx = Math.max(0, Math.min(idx, MOVES.length - 1));
+  updateUI();
+  draw(MOVES[moveIdx].p);
+});
+
+function stopPlay() {
+  if (playing) {
+    playing = false;
+    if (raf) cancelAnimationFrame(raf);
+    updatePlayBtn();
+  }
+}
+
+function drawFrame() {
+  // After a manual nav, do a quick transition animation for one frame then hold
+  if (!playing) {
+    playing    = true;
+    phase      = 'hold';
+    phaseStart = performance.now() - holdDur + TRANS_MS; // show briefly then stop
+    raf = requestAnimationFrame(function loop(now) {
+      const el = now - phaseStart;
+      draw(MOVES[moveIdx].p);
+      if (el < TRANS_MS) {
+        raf = requestAnimationFrame(loop);
+      } else {
+        playing = false;
+        updatePlayBtn();
+      }
+    });
+  }
+}
+
+/* ── Build Move List ── */
+function buildMoveList() {
+  const list = document.getElementById('moveList');
+  list.innerHTML = '';
+  MOVES.forEach((m, i) => {
+    const row = document.createElement('div');
+    row.className = 'move-row' + (i === moveIdx ? ' active' : '');
+    row.innerHTML = `
+      <div class="move-num">${i}</div>
+      <div class="move-row-body">
+        <div class="move-row-name">${m.name}${m.kihap ? '<span class="kihap-badge">기합</span>' : ''}</div>
+        <div class="move-row-kr">${m.korean}</div>
+      </div>
+      <div class="move-row-dir">${m.dir}</div>
+    `;
+    row.addEventListener('click', () => {
+      stopPlay();
+      moveIdx = i;
+      updateUI();
+      draw(MOVES[i].p);
+    });
+    list.appendChild(row);
+  });
+}
+
+/* ── Init ── */
+buildMoveList();
+updateUI();
+draw(MOVES[0].p);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forum — Dobok</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .page-hero {
+      background: linear-gradient(135deg, #1a0d2d 0%, #2e1a4a 55%, #0d1a2d 100%);
+      padding: 56px 0 40px; position: relative; overflow: hidden;
+    }
+    .page-hero-circles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .page-hero-circles span { position: absolute; border-radius: 50%; }
+    .page-hero-circles span:nth-child(1) { width: 400px; height: 400px; top: -120px; right: 0; background: radial-gradient(circle, rgba(139,92,246,.15), transparent 70%); }
+    .page-hero-circles span:nth-child(2) { width: 250px; height: 250px; bottom: -60px; left: 10%; background: radial-gradient(circle, rgba(200,16,46,.1), transparent 70%); }
+    .page-hero h1 { color: white; }
+    .page-hero p  { color: rgba(255,255,255,.6); max-width: 560px; margin: 10px 0 24px; }
+
+    /* Layout */
+    .forum-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 32px;
+      padding: 48px 0 80px;
+      align-items: start;
+    }
+
+    /* Sidebar */
+    .forum-sidebar { position: sticky; top: 88px; }
+    .forum-nav-card {
+      background: var(--white); border: 1px solid var(--gray-200);
+      border-radius: var(--radius); overflow: hidden; margin-bottom: 16px;
+    }
+    .forum-nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 13px 16px; border-bottom: 1px solid var(--gray-100);
+      cursor: pointer; transition: var(--transition);
+    }
+    .forum-nav-item:last-child { border-bottom: none; }
+    .forum-nav-item:hover { background: var(--gray-50); }
+    .forum-nav-item.active { background: var(--red-light); }
+    .forum-nav-icon {
+      width: 34px; height: 34px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .forum-nav-text { flex: 1; }
+    .forum-nav-text .title { font-size: 0.88rem; font-weight: 700; color: var(--navy); }
+    .forum-nav-text .sub   { font-size: 0.75rem; color: var(--gray-400); }
+    .forum-nav-item.active .forum-nav-text .title { color: var(--red); }
+    .forum-count { font-size: 0.75rem; font-weight: 700; background: var(--gray-100); padding: 2px 7px; border-radius: 10px; color: var(--gray-400); }
+    .forum-nav-item.active .forum-count { background: rgba(200,16,46,.12); color: var(--red); }
+
+    /* Category headers */
+    .category-block { margin-bottom: 36px; }
+    .category-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .category-title {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 16px; background: var(--navy);
+      border-radius: var(--radius) var(--radius) 0 0;
+      cursor: pointer;
+    }
+    .category-title span { font-size: 1.1rem; }
+    .category-title h3 { color: white; font-size: 0.95rem; margin: 0; }
+    .category-title p  { color: rgba(255,255,255,.5); font-size: 0.78rem; }
+
+    /* Thread list */
+    .thread-list {
+      background: var(--white); border: 1px solid var(--gray-200);
+      border-top: none; border-radius: 0 0 var(--radius) var(--radius);
+    }
+    .thread-row {
+      display: grid;
+      grid-template-columns: 1fr 90px 90px 140px;
+      gap: 12px; align-items: center;
+      padding: 14px 18px; border-bottom: 1px solid var(--gray-100);
+      transition: var(--transition); cursor: pointer;
+    }
+    .thread-row:last-child { border-bottom: none; }
+    .thread-row:hover { background: var(--off-white); }
+    .thread-row.pinned { background: #fffbf0; }
+    .thread-row.hot .thread-title::before { content: '🔥 '; }
+    .thread-main { display: flex; flex-direction: column; gap: 4px; }
+    .thread-title { font-size: 0.9rem; font-weight: 700; color: var(--navy); line-height: 1.3; }
+    .thread-title:hover { color: var(--red); }
+    .thread-meta-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .thread-meta-row span { font-size: 0.75rem; color: var(--gray-400); display: flex; align-items: center; gap: 3px; }
+    .thread-stat { text-align: center; }
+    .thread-stat .num { font-size: 1rem; font-weight: 800; color: var(--navy); }
+    .thread-stat .lbl { font-size: 0.7rem; color: var(--gray-400); }
+    .thread-last { display: flex; flex-direction: column; gap: 2px; }
+    .thread-last .user { font-size: 0.78rem; font-weight: 600; color: var(--navy); }
+    .thread-last .time { font-size: 0.72rem; color: var(--gray-400); }
+    .thead {
+      display: grid;
+      grid-template-columns: 1fr 90px 90px 140px;
+      gap: 12px; padding: 8px 18px;
+      background: var(--gray-100); border-radius: var(--radius-sm);
+      margin-bottom: 2px; font-size: 0.72rem; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--gray-400); font-weight: 700;
+    }
+    .thread-stat-head, .thread-last-head { text-align: center; }
+
+    /* New Thread Modal */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.5); z-index: 2000;
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--white); border-radius: var(--radius-lg); width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); }
+    .modal-header { padding: 24px 28px; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; }
+    .modal-body { padding: 28px; }
+    .modal-footer { padding: 20px 28px; border-top: 1px solid var(--gray-200); display: flex; gap: 12px; justify-content: flex-end; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 0.88rem; font-weight: 700; color: var(--navy); margin-bottom: 7px; }
+    .form-input { width: 100%; padding: 10px 14px; border: 2px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 0.9rem; color: var(--gray-800); transition: var(--transition); font-family: var(--font); }
+    .form-input:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(200,16,46,.08); }
+    .close-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--gray-400); }
+
+    /* Online users widget */
+    .online-dot { width: 8px; height: 8px; background: #22C55E; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+    @media (max-width: 900px) {
+      .forum-layout { grid-template-columns: 1fr; }
+      .forum-sidebar { position: static; }
+      .thread-row { grid-template-columns: 1fr 70px 70px; }
+      .thread-row > :last-child { display: none; }
+      .thead { grid-template-columns: 1fr 70px 70px; }
+      .thead > :last-child { display: none; }
+    }
+    @media (max-width: 560px) {
+      .thread-row { grid-template-columns: 1fr 60px; }
+      .thread-row > :nth-child(3), .thread-row > :last-child { display: none; }
+      .thead { grid-template-columns: 1fr 60px; }
+      .thead > :nth-child(3), .thead > :last-child { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="container">
+    <a href="index.html" class="navbar-logo">
+      <div class="logo-icon">道</div>
+      Dobok<span class="accent">.</span><span class="kr">도복</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="forms.html">Forms Library</a></li>
+      <li><a href="community.html">Community</a></li>
+      <li><a href="forum.html" class="active">Forum</a></li>
+      <li><a href="competitions.html">Competitions</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="#" class="btn btn-secondary btn-sm">Log In</a>
+      <a href="#" class="btn btn-primary btn-sm">Join Free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-circles"><span></span><span></span></div>
+  <div class="container" style="position:relative;z-index:2;">
+    <div class="section-label" style="background:rgba(139,92,246,.15);color:#c4b5fd;border:none;">💬 Discussion Forum</div>
+    <h1>Ask. Discuss. Connect.</h1>
+    <p>Technique debates, training questions, school recommendations, gear advice — every taekwondo topic has a home here. All styles welcome.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+      <button class="btn btn-primary" onclick="document.getElementById('newThreadModal').classList.add('open')">+ New Thread</button>
+      <div class="search-bar" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);max-width:360px;flex:1;">
+        <span style="color:rgba(255,255,255,.4);">🔍</span>
+        <input type="text" placeholder="Search forum threads..." style="background:transparent;color:white;" />
+        <button class="btn btn-primary btn-sm">Search</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:32px;flex-wrap:wrap;margin-top:28px;">
+      <div><div style="font-size:1.4rem;font-weight:900;color:white;">12.4k</div><div style="font-size:0.8rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em;">Threads</div></div>
+      <div><div style="font-size:1.4rem;font-weight:900;color:white;">94k<span style="color:var(--red);">+</span></div><div style="font-size:0.8rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em;">Replies</div></div>
+      <div><div style="font-size:1.4rem;font-weight:900;color:white;">248</div><div style="font-size:0.8rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em;">Online Now</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="container">
+  <div class="forum-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="forum-sidebar">
+      <div id="forumNav"></div>
+
+      <!-- Online users -->
+      <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:16px;">
+        <h4 style="font-size:0.82rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;">
+          <span class="online-dot"></span>&nbsp; 248 Online Now
+        </h4>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <div class="avatar" style="background:linear-gradient(135deg,#C8102E,#9C0C23);width:28px;height:28px;font-size:0.7rem;">JK</div>
+          <div class="avatar" style="background:linear-gradient(135deg,#22C55E,#0d2014);width:28px;height:28px;font-size:0.7rem;">SA</div>
+          <div class="avatar" style="background:linear-gradient(135deg,#3B82F6,#1a1a2e);width:28px;height:28px;font-size:0.7rem;">MH</div>
+          <div class="avatar" style="background:linear-gradient(135deg,#E8A020,#3d2200);width:28px;height:28px;font-size:0.7rem;">TP</div>
+          <div class="avatar" style="background:linear-gradient(135deg,#F59E0B,#92400E);width:28px;height:28px;font-size:0.7rem;">LC</div>
+          <div class="avatar" style="background:linear-gradient(135deg,#8B5CF6,#1a0d2d);width:28px;height:28px;font-size:0.7rem;">RK</div>
+          <div style="width:28px;height:28px;border-radius:50%;background:var(--gray-100);display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;color:var(--gray-400);">+242</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN FORUM -->
+    <main>
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
+        <div class="tabs" style="margin-bottom:0;border-bottom:none;">
+          <button class="tab-btn active">🔥 Hot</button>
+          <button class="tab-btn">🕐 Recent</button>
+          <button class="tab-btn">⭐ Top</button>
+          <button class="tab-btn">📌 Pinned</button>
+          <button class="tab-btn">❓ Unanswered</button>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="document.getElementById('newThreadModal').classList.add('open')">+ New Thread</button>
+      </div>
+
+      <!-- ═══════ TECHNIQUE Q&A ═══════ -->
+      <div id="forumContent"></div>
+
+    </main>
+
+  </div>
+</div>
+
+<!-- NEW THREAD MODAL -->
+<div class="modal-overlay" id="newThreadModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Start a New Thread</h3>
+      <button class="close-btn" onclick="document.getElementById('newThreadModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Category *</label>
+        <select class="form-input">
+          <option>— Choose a category —</option>
+          <option>Technique Q&amp;A</option>
+          <option>Forms Discussion</option>
+          <option>Sparring &amp; Combat</option>
+          <option>Training &amp; Fitness</option>
+          <option>Competitions</option>
+          <option>Grading &amp; Testing</option>
+          <option>Gear &amp; Equipment</option>
+          <option>Schools &amp; Clubs</option>
+          <option>Off-Topic</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Thread Title *</label>
+        <input class="form-input" type="text" placeholder="Be specific — a good title gets better answers" />
+      </div>
+      <div class="form-group">
+        <label>Your Post *</label>
+        <textarea class="form-input" rows="6" placeholder="Describe your question or topic in detail. Include your belt level, style (WT/ITF/ATA), and what you've already tried..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Tags (optional)</label>
+        <input class="form-input" type="text" placeholder="e.g. poomsae, black belt, Koryo, technique" />
+      </div>
+      <div class="notice notice-info">
+        ℹ️ First time posting? Read our <a href="#" style="color:var(--red);font-weight:600;">forum guidelines</a> for tips on writing great questions.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="document.getElementById('newThreadModal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-primary">Post Thread →</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">道 Dobok<span>.</span></div>
+        <p>A free, non-profit taekwondo training and community platform.</p>
+        <div class="footer-social"><a href="#">𝕏</a><a href="#">in</a><a href="#">▶</a><a href="#">📸</a></div>
+      </div>
+      <div class="footer-col"><h4>Training</h4><ul><li><a href="forms.html">Forms Library</a></li><li><a href="forms.html">WT / Poomsae</a></li><li><a href="forms.html">ITF Patterns</a></li></ul></div>
+      <div class="footer-col"><h4>Community</h4><ul><li><a href="community.html">Browse Posts</a></li><li><a href="forum.html">Forum</a></li><li><a href="competitions.html">Competitions</a></li></ul></div>
+      <div class="footer-col"><h4>About</h4><ul><li><a href="#">Our Mission</a></li><li><a href="#">Non-Profit Info</a></li><li><a href="#">Contact</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Dobok. All rights reserved.</span>
+      <div class="nonprofit-badge">♻️ 501(c)(3) Non-Profit Organization</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* -- State -- */
+var forumData = null;
+var activeNavId = 'all';
+
+/* -- Inline data (works when opening files directly — no server needed) -- */
+forumData = {"categories":[{"id":"technique-qa","icon":"❓","title":"Technique Q&A","description":"Ask anything about forms, kicks, stances, sparring","bgGradient":"","navIcon":"❓","navBg":"#EFF6FF","navTitle":"Technique Q&A","navSub":"Ask & answer","count":"3.2k","threads":[{"id":1,"title":"Welcome to the Technique Forum — Rules & How to Ask Good Questions","author":"Moderator Team","authorHandle":"Moderator Team","belt":null,"beltLabel":null,"date":"Jan 3, 2025","views":14200,"replies":null,"lastUser":"Mod Team","lastTime":"Pinned post","pinned":true,"hot":false,"answered":true,"badges":[{"label":"📌 Pinned","style":"badge-gold"},{"label":"✅ Answered","style":"badge-green"}]},{"id":2,"title":"Why does my roundhouse kick lose power when I spin? My hip rotation feels off on Taegeuk 7","author":"emily_kicks","authorHandle":"emily_kicks","belt":"blue","beltLabel":"Blue Belt","date":"Today","views":1400,"replies":23,"lastUser":"Jae-Won Kim","lastTime":"12 min ago","pinned":false,"hot":true,"answered":true,"badges":[{"label":"🔥 Hot","style":"badge-red"},{"label":"✅ Answered","style":"badge-green"}]},{"id":3,"title":"Difference between WT and ITF knife-hand block — are they actually the same technique?","author":"dojangnewbie","authorHandle":"dojangnewbie","belt":"yellow","beltLabel":"Yellow Belt","date":"Yesterday","views":892,"replies":18,"lastUser":"Laura Chen","lastTime":"3h ago","pinned":false,"hot":false,"answered":true,"badges":[{"label":"✅ Answered","style":"badge-green"}]},{"id":4,"title":"Help! My back knee keeps bending inward on front stance — is this a flexibility issue or technique?","author":"tk_parent_helper","authorHandle":"tk_parent_helper","belt":null,"beltLabel":null,"date":"2 days ago","views":421,"replies":9,"lastUser":"Sofia Andrade","lastTime":"1d ago","pinned":false,"hot":false,"answered":false,"badges":[]},{"id":5,"title":"Axe kick chambering — should the leg be straight or bent on the way up?","author":"spinnin_tae","authorHandle":"spinnin_tae","belt":"red","beltLabel":"Red Belt","date":"3 days ago","views":667,"replies":14,"lastUser":"Tomás Park","lastTime":"2d ago","pinned":false,"hot":false,"answered":false,"badges":[]}]},{"id":"forms-discussion","icon":"📚","title":"Forms Discussion","description":"Deep dives into poomsae, patterns, and hyung","bgGradient":"linear-gradient(135deg,#1a2a0d,#2a4a1a)","navIcon":"📚","navBg":"#FFF3D6","navTitle":"Forms Discussion","navSub":"Poomsae & patterns","count":"2.8k","threads":[{"id":6,"title":"Koryo vs. Keumgang — which is harder and why? Let's settle this once and for all 😄","author":"poomsae_nerd","authorHandle":"poomsae_nerd","belt":null,"beltLabel":null,"date":"Today","views":3800,"replies":67,"lastUser":"Min-Ho Park","lastTime":"Just now","pinned":false,"hot":true,"answered":false,"badges":[{"label":"🔥 Hot","style":"badge-red"}]},{"id":7,"title":"Resources for learning Chon-Ji as an adult beginner — all videos seem aimed at kids","author":"adult_starter_42","authorHandle":"adult_starter_42","belt":null,"beltLabel":null,"date":"Yesterday","views":589,"replies":11,"lastUser":"Jae-Won Kim","lastTime":"18h ago","pinned":false,"hot":false,"answered":false,"badges":[]},{"id":8,"title":"Does the number of moves in Taegeuk Pal Jang differ between different Kukkiwon books?","author":"forms_historian","authorHandle":"forms_historian","belt":null,"beltLabel":null,"date":"2 days ago","views":312,"replies":8,"lastUser":"Laura Chen","lastTime":"2d ago","pinned":false,"hot":false,"answered":false,"badges":[]},{"id":9,"title":"[MEGATHREAD] All differences between WT poomsae and ITF patterns — comprehensive comparison","author":"Mod Team","authorHandle":"Mod Team","belt":null,"beltLabel":null,"date":"6 months ago","views":28400,"replies":142,"lastUser":"Sofia Andrade","lastTime":"1w ago","pinned":false,"hot":false,"answered":false,"badges":[{"label":"📌 Resource","style":"badge-gold"}]}]},{"id":"grading-testing","icon":"🎓","title":"Grading & Belt Testing","description":"Exam prep, requirements, and success stories","bgGradient":"linear-gradient(135deg,#065f46,#0d4a38)","navIcon":"🎓","navBg":"#ECFDF5","navTitle":"Grading & Testing","navSub":"Belt exams","count":"890","threads":[{"id":10,"title":"I passed my 1st Dan test today after 4 years!! Here's everything I did to prepare 🖤","author":"newblackbelt2025","authorHandle":"newblackbelt2025","belt":null,"beltLabel":null,"date":"Today","views":4200,"replies":88,"lastUser":"Tomás Park","lastTime":"5 min ago","pinned":false,"hot":true,"answered":false,"badges":[{"label":"🔥 Hot","style":"badge-red"}]},{"id":11,"title":"What exactly do Kukkiwon examiners look for in Taegeuk 8? I keep getting vague feedback","author":"pregrading_stress","authorHandle":"pregrading_stress","belt":null,"beltLabel":null,"date":"2 days ago","views":1900,"replies":31,"lastUser":"Laura Chen","lastTime":"1d ago","pinned":false,"hot":false,"answered":false,"badges":[]},{"id":12,"title":"Minimum time between Dan grades — does the Kukkiwon rule differ from USAT?","author":"dan_curious","authorHandle":"dan_curious","belt":null,"beltLabel":null,"date":"4 days ago","views":723,"replies":15,"lastUser":"Jae-Won Kim","lastTime":"3d ago","pinned":false,"hot":false,"answered":false,"badges":[]}]},{"id":"gear-equipment","icon":"🛡️","title":"Gear & Equipment","description":"Dobok, sparring gear, bags, and more","bgGradient":"linear-gradient(135deg,#1a1a0d,#2a2a1a)","navIcon":"🛡️","navBg":"#F0F9FF","navTitle":"Gear & Equipment","navSub":"Dobok, pads, bags","count":"640","threads":[{"id":13,"title":"Best lightweight poomsae dobok for competition — Mooto vs. Adidas vs. WTF brand comparison","author":"gearhead_tk","authorHandle":"gearhead_tk","belt":null,"beltLabel":null,"date":"3 days ago","views":1100,"replies":26,"lastUser":"Sofia Andrade","lastTime":"2d ago","pinned":false,"hot":false,"answered":false,"badges":[]},{"id":14,"title":"Do I need Olympic-style chest protector for local sparring tournaments or is the hard shell ok?","author":"first_comp","authorHandle":"first_comp","belt":null,"beltLabel":null,"date":"5 days ago","views":398,"replies":9,"lastUser":"Min-Ho Park","lastTime":"4d ago","pinned":false,"hot":false,"answered":false,"badges":[]}]}],"navItems":[{"id":"all","icon":"🏠","iconBg":"var(--red-light)","title":"All Categories","sub":"Browse everything","count":"12.4k"},{"id":"technique-qa","icon":"❓","iconBg":"#EFF6FF","title":"Technique Q&A","sub":"Ask & answer","count":"3.2k"},{"id":"forms-discussion","icon":"📚","iconBg":"#FFF3D6","title":"Forms Discussion","sub":"Poomsae & patterns","count":"2.8k"},{"id":"sparring","icon":"🥊","iconBg":"#D1FAE5","title":"Sparring & Combat","sub":"Gyeorugi tactics","count":"1.9k"},{"id":"training","icon":"🏋️","iconBg":"#F3E8FF","title":"Training & Fitness","sub":"Conditioning, drills","count":"1.6k"},{"id":"competitions","icon":"🏆","iconBg":"#FEE2E2","title":"Competitions","sub":"Events & results","count":"1.1k"},{"id":"grading-testing","icon":"🎓","iconBg":"#ECFDF5","title":"Grading & Testing","sub":"Belt exams","count":"890"},{"id":"gear-equipment","icon":"🛡️","iconBg":"#F0F9FF","title":"Gear & Equipment","sub":"Dobok, pads, bags","count":"640"},{"id":"schools","icon":"🏫","iconBg":"#FFFBF0","title":"Schools & Clubs","sub":"Find a dojang","count":"420"},{"id":"off-topic","icon":"💬","iconBg":"var(--gray-100)","title":"Off-Topic","sub":"General chat","count":"380"}]};
+renderNav();
+renderCategories();
+
+/* -- Render sidebar navigation from JSON -- */
+function renderNav() {
+  var nav = document.getElementById('forumNav');
+  var html = '<div class="forum-nav-card">';
+  forumData.navItems.forEach(function(item) {
+    var activeClass = item.id === activeNavId ? ' active' : '';
+    html += '<div class="forum-nav-item' + activeClass + '" data-nav-id="' + item.id + '" onclick="setNavFilter(this, '' + item.id + '')">'
+      + '<div class="forum-nav-icon" style="background:' + item.iconBg + ';">' + item.icon + '</div>'
+      + '<div class="forum-nav-text"><div class="title">' + item.title + '</div><div class="sub">' + item.sub + '</div></div>'
+      + '<div class="forum-count">' + item.count + '</div>'
+      + '</div>';
+  });
+  html += '</div>';
+  nav.innerHTML = html;
+}
+
+/* -- Render forum categories and their thread rows -- */
+function renderCategories() {
+  var main = document.getElementById('forumContent');
+  var categories = forumData.categories;
+
+  /* If a specific category is selected, show only that one. "all" shows everything. */
+  var toShow = categories;
+  if (activeNavId !== 'all') {
+    toShow = categories.filter(function(c) { return c.id === activeNavId; });
+    /* If the nav item doesn't match a category id (e.g. sparring, off-topic), show all */
+    if (toShow.length === 0) toShow = categories;
+  }
+
+  var html = '';
+  toShow.forEach(function(cat) {
+    var headerBg = cat.bgGradient ? ' style="background:' + cat.bgGradient + ';"' : '';
+    html += '<div class="category-block">'
+      + '<div class="category-title"' + headerBg + '>'
+      + '<span>' + cat.icon + '</span>'
+      + '<div><h3>' + cat.title + '</h3><p>' + cat.description + '</p></div>'
+      + '</div>'
+      + '<div class="thead">'
+      + '<div>Thread</div>'
+      + '<div class="thread-stat-head">Replies</div>'
+      + '<div class="thread-stat-head">Views</div>'
+      + '<div class="thread-last-head">Last Activity</div>'
+      + '</div>'
+      + '<div class="thread-list">';
+
+    cat.threads.forEach(function(t) {
+      /* Row CSS classes */
+      var rowClass = 'thread-row';
+      if (t.pinned) rowClass += ' pinned';
+      if (t.hot)    rowClass += ' hot';
+
+      /* Badges */
+      var badgesHtml = '';
+      if (t.badges && t.badges.length) {
+        badgesHtml = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px;">'
+          + t.badges.map(function(b) { return '<span class="badge ' + b.style + '" style="font-size:0.7rem;">' + b.label + '</span>'; }).join('')
+          + '</div>';
+      }
+
+      /* Belt pill */
+      var beltHtml = '';
+      if (t.belt) {
+        beltHtml = '<span class="belt belt-' + t.belt + '" style="font-size:0.72rem;"><div class="belt-stripe" style="width:16px;height:4px;"></div>' + t.beltLabel + '</span>';
+      }
+
+      /* Replies display */
+      var repliesDisplay = t.replies === null ? '&mdash;' : String(t.replies);
+
+      /* Views display */
+      var viewsDisplay = t.views >= 1000
+        ? (t.views / 1000).toFixed(1).replace('.0', '') + 'k'
+        : String(t.views);
+
+      html += '<div class="' + rowClass + '">'
+        + '<div class="thread-main">'
+        + badgesHtml
+        + '<div class="thread-title">' + t.title + '</div>'
+        + '<div class="thread-meta-row">'
+        + '<span>&#128100; ' + t.authorHandle + '</span>'
+        + '<span>&#128197; ' + t.date + '</span>'
+        + beltHtml
+        + '</div></div>'
+        + '<div class="thread-stat"><div class="num">' + repliesDisplay + '</div><div class="lbl">Replies</div></div>'
+        + '<div class="thread-stat"><div class="num">' + viewsDisplay + '</div><div class="lbl">Views</div></div>'
+        + '<div class="thread-last"><div class="user">' + t.lastUser + '</div><div class="time">' + t.lastTime + '</div></div>'
+        + '</div>';
+    });
+
+    html += '</div></div>';
+  });
+
+  html += '<div style="text-align:center;padding:12px 0;"><a href="#" class="btn btn-secondary">View All Forum Categories &rarr;</a></div>';
+  main.innerHTML = html;
+}
+
+/* -- Nav filter click handler -- */
+function setNavFilter(el, id) {
+  activeNavId = id;
+  /* Update active state on nav items */
+  document.querySelectorAll('.forum-nav-item').forEach(function(item) {
+    item.classList.remove('active');
+  });
+  el.classList.add('active');
+  renderCategories();
+}
+
+/* -- Tab buttons (visual only) -- */
+document.querySelectorAll('.tab-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    this.classList.add('active');
+  });
+});
+
+/* -- Close modal on backdrop click -- */
+document.getElementById('newThreadModal').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('open');
+});
+</script>
+</body>
+</html>

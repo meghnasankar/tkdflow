@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Community &mdash; Dobok</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .page-hero {
+      background: linear-gradient(135deg, #0d1a2d 0%, #1a2a3a 55%, #0d1a14 100%);
+      padding: 56px 0 40px; position: relative; overflow: hidden;
+    }
+    .page-hero-circles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .page-hero-circles span { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(34,197,94,.1), transparent 70%); }
+    .page-hero-circles span:nth-child(1) { width: 400px; height: 400px; top: -100px; right: 5%; }
+    .page-hero-circles span:nth-child(2) { width: 200px; height: 200px; bottom: -40px; left: 20%; background: radial-gradient(circle, rgba(200,16,46,.1), transparent 70%); }
+    .page-hero h1 { color: white; }
+    .page-hero p  { color: rgba(255,255,255,.6); max-width: 560px; margin: 10px 0 24px; }
+    .upload-cta {
+      background: rgba(255,255,255,.06); border: 1.5px dashed rgba(255,255,255,.2);
+      border-radius: var(--radius); padding: 20px 24px;
+      display: flex; align-items: center; gap: 16px;
+      cursor: pointer; transition: var(--transition); margin-top: 8px;
+    }
+    .upload-cta:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.4); }
+    .upload-icon { font-size: 2rem; }
+    .upload-cta-text strong { color: white; display: block; font-size: 1rem; }
+    .upload-cta-text span { color: rgba(255,255,255,.5); font-size: 0.85rem; }
+    .community-layout {
+      display: grid; grid-template-columns: 1fr 320px;
+      gap: 32px; padding: 48px 0 80px; align-items: start;
+    }
+    .feed-controls { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+    .community-post { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; margin-bottom: 20px; transition: var(--transition); }
+    .community-post:hover { box-shadow: var(--shadow); }
+    .post-top { padding: 18px 20px 0; display: flex; justify-content: space-between; align-items: flex-start; }
+    .post-content { padding: 12px 20px; }
+    .post-content h3 { font-size: 1rem; margin-bottom: 6px; }
+    .post-media { margin: 0; overflow: hidden; max-height: 340px; display: flex; align-items: center; justify-content: center; background: var(--navy); }
+    .post-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+    .post-footer { padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--gray-100); }
+    .post-actions-row { display: flex; gap: 4px; }
+    .action-btn { display: flex; align-items: center; gap: 5px; padding: 7px 12px; border-radius: var(--radius-sm); font-size: 0.82rem; font-weight: 600; color: var(--gray-500); cursor: pointer; transition: var(--transition); background: none; border: none; font-family: var(--font); }
+    .action-btn:hover { background: var(--gray-100); color: var(--navy); }
+    .action-btn.liked { color: #e11d48; }
+    .widget { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; }
+    .widget h3 { font-size: 0.95rem; margin-bottom: 16px; color: var(--navy); }
+    .top-creator { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--gray-100); }
+    .top-creator:last-child { border-bottom: none; padding-bottom: 0; }
+    .creator-rank { font-size: 0.8rem; font-weight: 900; color: var(--gray-300); min-width: 20px; }
+    .creator-rank.gold { color: var(--gold); }
+    .creator-rank.silver { color: #9CA3AF; }
+    .creator-rank.bronze { color: #CD7F32; }
+    .creator-info { flex: 1; }
+    .creator-info .name { font-size: 0.88rem; font-weight: 700; color: var(--navy); }
+    .creator-info .sub  { font-size: 0.75rem; color: var(--gray-400); }
+    .creator-stat { font-size: 0.78rem; font-weight: 700; color: var(--red); }
+    .tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag-cloud-item { padding: 5px 12px; border-radius: 20px; background: var(--gray-100); font-size: 0.8rem; font-weight: 600; color: var(--gray-600); cursor: pointer; transition: var(--transition); }
+    .tag-cloud-item:hover { background: var(--red-light); color: var(--red); }
+    @media (max-width: 900px) { .community-layout { grid-template-columns: 1fr; } }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--white); border-radius: var(--radius-lg); width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); }
+    .modal-header { padding: 24px 28px; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; }
+    .modal-body { padding: 28px; }
+    .modal-footer { padding: 20px 28px; border-top: 1px solid var(--gray-200); display: flex; gap: 12px; justify-content: flex-end; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 0.88rem; font-weight: 700; color: var(--navy); margin-bottom: 7px; }
+    .form-input { width: 100%; padding: 10px 14px; border: 2px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 0.9rem; color: var(--gray-800); transition: var(--transition); font-family: var(--font); }
+    .form-input:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(200,16,46,.08); }
+    .upload-zone { border: 2px dashed var(--gray-200); border-radius: var(--radius); padding: 40px 20px; text-align: center; cursor: pointer; transition: var(--transition); }
+    .upload-zone:hover { border-color: var(--red); background: var(--red-light); }
+    .upload-zone .icon { font-size: 2.5rem; margin-bottom: 8px; }
+    .upload-zone p { font-size: 0.9rem; color: var(--gray-400); }
+    .upload-zone strong { color: var(--red); }
+    .close-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--gray-400); line-height: 1; }
+    .close-btn:hover { color: var(--navy); }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="container">
+    <a href="index.html" class="navbar-logo">
+      <div class="logo-icon">&#36947;</div>
+      Dobok<span class="accent">.</span><span class="kr">&#46020;&#48373;</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="forms.html">Forms Library</a></li>
+      <li><a href="community.html" class="active">Community</a></li>
+      <li><a href="forum.html">Forum</a></li>
+      <li><a href="competitions.html">Competitions</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="#" class="btn btn-secondary btn-sm">Log In</a>
+      <a href="#" class="btn btn-primary btn-sm">Join Free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-circles"><span></span><span></span></div>
+  <div class="container" style="position:relative;z-index:2;">
+    <div class="section-label" style="background:rgba(34,197,94,.15);color:#4ade80;border:none;">&#129309; Global Community</div>
+    <h1>Share. Learn. Inspire.</h1>
+    <p>Post your training videos, technique tips, competition highlights, and progress updates. Get feedback from thousands of practitioners worldwide.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="document.getElementById('uploadModal').classList.add('open')">+ Upload Content</button>
+      <a href="forum.html" class="btn" style="background:rgba(255,255,255,.1);color:white;border:1.5px solid rgba(255,255,255,.2);">Go to Forum &rarr;</a>
+    </div>
+    <div class="upload-cta" style="max-width:500px;margin-top:24px;" onclick="document.getElementById('uploadModal').classList.add('open')">
+      <div class="upload-icon">&#128228;</div>
+      <div class="upload-cta-text">
+        <strong>Drop your video or images here</strong>
+        <span>MP4, MOV, JPG, PNG &middot; up to 500MB &middot; free forever</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="container">
+  <div class="community-layout">
+
+    <!-- FEED -->
+    <main>
+      <div class="feed-controls">
+        <div class="tabs" style="margin-bottom:0;border-bottom:none;gap:0;">
+          <button class="tab-btn active">&#128293; Trending</button>
+          <button class="tab-btn">&#128336; Recent</button>
+          <button class="tab-btn">&#11088; Top Rated</button>
+          <button class="tab-btn">&#128101; Following</button>
+        </div>
+        <select style="padding:8px 12px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);font-size:0.85rem;color:var(--gray-600);background:white;">
+          <option>All Content</option>
+          <option>Videos Only</option>
+          <option>Images</option>
+          <option>Text Posts</option>
+        </select>
+      </div>
+
+      <div class="filter-pills">
+        <div class="pill active">All</div>
+        <div class="pill">Poomsae</div>
+        <div class="pill">Sparring</div>
+        <div class="pill">Breaking</div>
+        <div class="pill">Technique Tips</div>
+        <div class="pill">Competition</div>
+        <div class="pill">Training</div>
+        <div class="pill">Beginner Help</div>
+      </div>
+
+      <!-- Dynamic community feed — populated by JS from data/community.json -->
+      <div id="communityFeed"></div>
+
+    </main>
+
+    <!-- SIDEBAR -->
+    <aside>
+      <div class="widget" style="background:linear-gradient(135deg,var(--navy),#1a2a3a);border-color:transparent;">
+        <h3 style="color:white;">Share Your Training &#128228;</h3>
+        <p style="font-size:0.85rem;color:rgba(255,255,255,.55);margin-bottom:16px;">Post videos, photos, tips, or questions. Your content helps the global taekwondo community grow.</p>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="document.getElementById('uploadModal').classList.add('open')">+ Create Post</button>
+      </div>
+
+      <div class="widget">
+        <h3>&#127885; Top Contributors This Month</h3>
+        <div class="top-creator">
+          <div class="creator-rank gold">1</div>
+          <div class="avatar" style="background:linear-gradient(135deg,#E8A020,#3d2200);">TP</div>
+          <div class="creator-info"><div class="name">Tom&aacute;s Park</div><div class="sub">5th Dan &middot; Spain</div></div>
+          <div class="creator-stat">48 posts</div>
+        </div>
+        <div class="top-creator">
+          <div class="creator-rank silver">2</div>
+          <div class="avatar" style="background:linear-gradient(135deg,#22C55E,#0d2014);">SA</div>
+          <div class="creator-info"><div class="name">Sofia Andrade</div><div class="sub">1st Dan &middot; Brazil</div></div>
+          <div class="creator-stat">36 posts</div>
+        </div>
+        <div class="top-creator">
+          <div class="creator-rank bronze">3</div>
+          <div class="avatar" style="background:linear-gradient(135deg,#F59E0B,#92400E);">LC</div>
+          <div class="creator-info"><div class="name">Laura Chen</div><div class="sub">4th Dan &middot; Singapore</div></div>
+          <div class="creator-stat">29 posts</div>
+        </div>
+        <div class="top-creator">
+          <div class="creator-rank">4</div>
+          <div class="avatar" style="background:linear-gradient(135deg,#C8102E,#9C0C23);">JK</div>
+          <div class="creator-info"><div class="name">Jae-Won Kim</div><div class="sub">3rd Dan &middot; Korea</div></div>
+          <div class="creator-stat">24 posts</div>
+        </div>
+        <div class="top-creator">
+          <div class="creator-rank">5</div>
+          <div class="avatar" style="background:linear-gradient(135deg,#3B82F6,#1a1a2e);">MH</div>
+          <div class="creator-info"><div class="name">Min-Ho Park</div><div class="sub">2nd Dan &middot; Canada</div></div>
+          <div class="creator-stat">21 posts</div>
+        </div>
+      </div>
+
+      <div class="widget">
+        <h3>&#128278; Trending Topics</h3>
+        <div class="tag-cloud">
+          <div class="tag-cloud-item">#Poomsae</div>
+          <div class="tag-cloud-item">#Koryo</div>
+          <div class="tag-cloud-item">#BlackBeltTest</div>
+          <div class="tag-cloud-item">#Taegeuk8</div>
+          <div class="tag-cloud-item">#ITFPatterns</div>
+          <div class="tag-cloud-item">#SpinningKick</div>
+          <div class="tag-cloud-item">#CompPrep</div>
+          <div class="tag-cloud-item">#BeginnerTips</div>
+          <div class="tag-cloud-item">#KukkiwonDan</div>
+          <div class="tag-cloud-item">#Sparring</div>
+          <div class="tag-cloud-item">#Breaking</div>
+          <div class="tag-cloud-item">#TrainingDiary</div>
+        </div>
+      </div>
+
+      <div class="widget" style="background:var(--off-white);">
+        <h3>&#128203; Community Guidelines</h3>
+        <ul style="font-size:0.83rem;color:var(--gray-600);line-height:2.2;">
+          <li>&#10003; Share original training content</li>
+          <li>&#10003; Credit video sources and instructors</li>
+          <li>&#10003; Give constructive, respectful feedback</li>
+          <li>&#10003; Support beginners &mdash; we all started there</li>
+          <li>&#10007; No spam or promotional links</li>
+          <li>&#10007; No disrespectful or harmful content</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Create a Post</h3>
+      <button class="close-btn" onclick="document.getElementById('uploadModal').classList.remove('open')">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <div class="notice notice-info" style="margin-bottom:20px;">
+        All content is reviewed against our community guidelines before going live.
+      </div>
+      <div class="form-group">
+        <label>Post Title *</label>
+        <input class="form-input" type="text" placeholder="e.g. My Taegeuk 8 Jang breakdown before grading..." />
+      </div>
+      <div class="form-group">
+        <label>Category *</label>
+        <select class="form-input">
+          <option>--- Select category ---</option>
+          <option>Poomsae / Forms</option>
+          <option>Sparring / Gyeorugi</option>
+          <option>Breaking / Power Test</option>
+          <option>Technique Tips</option>
+          <option>Competition Highlights</option>
+          <option>Training Diary</option>
+          <option>Ask for Help</option>
+          <option>General Discussion</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea class="form-input" rows="4" placeholder="Describe your post, give context, ask questions..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Upload Video / Images</label>
+        <div class="upload-zone">
+          <div class="icon">&#128193;</div>
+          <p><strong>Click to browse</strong> or drag and drop here</p>
+          <p style="font-size:0.78rem;margin-top:4px;">MP4, MOV, AVI, JPG, PNG &middot; Max 500MB</p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Or paste a YouTube / Vimeo URL</label>
+        <input class="form-input" type="url" placeholder="https://youtube.com/watch?v=..." />
+      </div>
+      <div class="form-group">
+        <label>Tags (comma separated)</label>
+        <input class="form-input" type="text" placeholder="e.g. Koryo, Black Belt, Slow Motion" />
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <input type="checkbox" id="guidelines" style="width:16px;height:16px;accent-color:var(--red);" />
+        <label for="guidelines" style="font-size:0.85rem;color:var(--gray-600);cursor:pointer;">I agree to the community guidelines and confirm this is my original content or I have permission to post it.</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="document.getElementById('uploadModal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-primary">Publish Post &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">&#36947; Dobok<span>.</span></div>
+        <p>A free, non-profit taekwondo training and community platform. Built by practitioners, for practitioners worldwide.</p>
+        <div class="footer-social"><a href="#">X</a><a href="#">in</a><a href="#">YT</a><a href="#">IG</a></div>
+      </div>
+      <div class="footer-col"><h4>Training</h4><ul><li><a href="forms.html">Forms Library</a></li><li><a href="forms.html">WT / Poomsae</a></li><li><a href="forms.html">ITF Patterns</a></li></ul></div>
+      <div class="footer-col"><h4>Community</h4><ul><li><a href="community.html">Browse Posts</a></li><li><a href="forum.html">Forum</a></li><li><a href="competitions.html">Competitions</a></li></ul></div>
+      <div class="footer-col"><h4>About</h4><ul><li><a href="#">Our Mission</a></li><li><a href="#">Non-Profit Info</a></li><li><a href="#">Contact</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2025 Dobok. All rights reserved.</span>
+      <div class="nonprofit-badge">501(c)(3) Non-Profit Organization</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* -- State -- */
+var allPosts = [];
+var activeCategory = 'all';
+
+/* -- Load data from JSON file -- */
+fetch('data/community.json').then(function(r){return r.json();}).then(function(data){allPosts=data;render();});
+// Disabled inline: [{"id":"post-1","author":"Jae-Won Kim","authorInitials":"JK","authorBelt":"black","authorBeltDan":"3rd Dan","authorLocation":"Seoul, Korea","authorAvatarGradient":"linear-gradient(135deg,#C8102E,#9C0C23)","timeAgo":"2h ago","badge":"Technique","badgeStyle":"badge-red","title":"Breaking down the spinning hook kick transition in Koryo — slow-motion analysis","body":"The pivot foot placement before the spinning hook kick is where most people lose their balance. Here's a frame-by-frame breakdown of the correct hip rotation and chamber position. Filmed at 240fps.","tags":["Poomsae","Koryo","Black Belt"],"tagStyles":["badge-navy","badge-navy","badge-navy"],"mediaType":"video","mediaSrc":"","mediaGradient":"linear-gradient(135deg,#1a2a3a,#2d1218)","mediaEmoji":"🥋","videoDuration":"2:14","likes":284,"comments":47,"liked":false,"category":"Poomsae"},{"id":"post-2","author":"Sofia Andrade","authorInitials":"SA","authorBelt":"black","authorBeltDan":"1st Dan","authorLocation":"São Paulo, Brazil","authorAvatarGradient":"linear-gradient(135deg,#22C55E,#0d2014)","timeAgo":"5h ago","badge":"Tutorial","badgeStyle":"badge-green","title":"Complete Taegeuk 8 Jang walkthrough — filmed week before my Cho Dan test","body":"I filmed this the week before my black belt test. Every single movement explained — stances, transitions, kihap positions, and what examiners focus on. I passed with honors! 🖤","tags":["Taegeuk 8","Black Belt Test","WT"],"tagStyles":["badge-navy","badge-navy","badge-navy"],"mediaType":"video","mediaSrc":"","mediaGradient":"linear-gradient(135deg,#0d2014,#1a3d26)","mediaEmoji":"🎯","videoDuration":"5:02","featuredBadge":"🔥 512 likes","likes":512,"comments":93,"liked":true,"category":"Poomsae"},{"id":"post-3","author":"Min-Ho Park","authorInitials":"MH","authorBelt":"black","authorBeltDan":"2nd Dan","authorLocation":"Toronto, Canada","authorAvatarGradient":"linear-gradient(135deg,#3B82F6,#1a1a2e)","timeAgo":"8h ago","badge":"Training","badgeStyle":"badge-navy","title":"3 years of ITF training — then vs. now comparison 📸","body":"Started as a complete beginner. These two photos are exactly 3 years apart — same pose, same camera angle. The difference in stance depth, chamber, and balance is wild. Hard work pays off!","tags":["ITF","Patterns"],"tagStyles":["badge-navy","badge-navy"],"mediaType":"photo-pair","mediaSrc":"","mediaGradient":"","mediaEmoji":"","videoDuration":null,"likes":347,"comments":62,"liked":false,"category":"Training"},{"id":"post-4","author":"Tomás Park","authorInitials":"TP","authorBelt":"black","authorBeltDan":"5th Dan","authorLocation":"Madrid, Spain","authorAvatarGradient":"linear-gradient(135deg,#E8A020,#3d2200)","timeAgo":"1d ago","badge":"Competition","badgeStyle":"badge-gold","title":"Full gold-medal Taebaek performance — 2025 European Poomsae Championships, Vienna","body":"Score: 8.63 / 9.12 technical average. I've added timestamps for each major section. Huge thanks to everyone who helped with my prep — this one's for the community 🙏","tags":["Taebaek","European Championships","🥇 Gold Medal"],"tagStyles":["badge-navy","badge-navy","badge-gold"],"mediaType":"video","mediaSrc":"","mediaGradient":"linear-gradient(135deg,#1a0d2d,#3d1a5a)","mediaEmoji":"🏆","videoDuration":"3:45","likes":1200,"comments":142,"liked":true,"category":"Competition"},{"id":"post-5","author":"Laura Chen","authorInitials":"LC","authorBelt":"black","authorBeltDan":"4th Dan","authorLocation":"Singapore","authorAvatarGradient":"linear-gradient(135deg,#F59E0B,#92400E)","timeAgo":"2d ago","badge":"Technique Tip","badgeStyle":"badge-navy","title":"The one mistake I see in 90% of beginners' front stances (and how to fix it in 10 minutes)","body":"After coaching 200+ students, the single most common stance error is foot width. Most beginners stand with feet too narrow — this destroys your stability on all forward strikes. Here's a simple wall drill that fixes it immediately...","tags":["Beginner Tips","Stances"],"tagStyles":["badge-navy","badge-navy"],"mediaType":"text","mediaSrc":"","mediaGradient":"","mediaEmoji":"","videoDuration":null,"likes":893,"comments":178,"liked":false,"category":"Technique Tips"}];
+
+/* -- Render: filter then build HTML -- */
+function render() {
+  var feed = document.getElementById('communityFeed');
+
+  var filtered = allPosts.filter(function(p) {
+    if (activeCategory === 'all') return true;
+    return p.category.toLowerCase() === activeCategory.toLowerCase();
+  });
+
+  if (filtered.length === 0) {
+    feed.innerHTML = '<p style="color:var(--gray-400);padding:40px 0;text-align:center;">No posts match the current filter.</p>';
+    return;
+  }
+
+  var html = '';
+  filtered.forEach(function(p) {
+    /* Tag badges */
+    var tagsHtml = p.tags.map(function(t, i) {
+      return '<span class="badge ' + (p.tagStyles[i] || 'badge-navy') + '">' + t + '</span>';
+    }).join('');
+
+    /* Media block */
+    var mediaHtml = '';
+    if (p.mediaType === 'video') {
+      var featBadge = p.featuredBadge
+        ? '<div style="position:absolute;top:12px;left:12px;"><span class="badge badge-gold">' + p.featuredBadge + '</span></div>'
+        : '';
+      mediaHtml = '<div class="post-media">'
+        + '<div style="width:100%;aspect-ratio:16/9;background:' + p.mediaGradient + ';display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;">'
+        + '<div style="font-size:4rem;opacity:0.3;">' + p.mediaEmoji + '</div>'
+        + '<div class="play-btn" style="position:absolute;">&#9654;</div>'
+        + '<div class="duration" style="position:absolute;bottom:12px;right:12px;">' + p.videoDuration + '</div>'
+        + featBadge
+        + '</div></div>';
+    } else if (p.mediaType === 'photo-pair') {
+      mediaHtml = '<div class="post-media">'
+        + '<div style="width:100%;display:grid;grid-template-columns:1fr 1fr;gap:2px;">'
+        + '<div style="aspect-ratio:1;background:linear-gradient(135deg,#1a2a3a,#0d1b2a);display:flex;align-items:center;justify-content:center;font-size:2.5rem;">2022</div>'
+        + '<div style="aspect-ratio:1;background:linear-gradient(135deg,#1a3a5c,#0d2a4a);display:flex;align-items:center;justify-content:center;font-size:2.5rem;">2025</div>'
+        + '</div></div>';
+    }
+
+    /* Like display */
+    var likedClass = p.liked ? 'liked' : '';
+    var likeIcon = p.liked ? 'liked' : 'not-liked';
+    var likesDisplay = p.likes >= 1000
+      ? (p.likes / 1000).toFixed(1).replace('.0', '') + 'k'
+      : String(p.likes);
+
+    html += '<div class="community-post" data-category="' + p.category + '">'
+      + '<div class="post-top">'
+      + '<div class="user-chip">'
+      + '<div class="avatar lg" style="background:' + p.authorAvatarGradient + ';">' + p.authorInitials + '</div>'
+      + '<div><div class="name" style="font-size:0.95rem;">' + p.author + '</div>'
+      + '<div class="meta">' + p.authorBeltDan + ' &middot; ' + p.authorLocation + ' &middot; ' + p.timeAgo + '</div>'
+      + '</div></div>'
+      + '<div style="display:flex;gap:8px;align-items:center;">'
+      + '<span class="badge ' + p.badgeStyle + '">' + p.badge + '</span>'
+      + '<button style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--gray-400);">...</button>'
+      + '</div></div>'
+      + '<div class="post-content"><div class="post-tags">' + tagsHtml + '</div>'
+      + '<h3>' + p.title + '</h3>'
+      + '<p style="font-size:0.88rem;">' + p.body + '</p></div>'
+      + mediaHtml
+      + '<div class="post-footer"><div class="post-actions-row">'
+      + '<button class="action-btn ' + likedClass + '" data-base="' + p.likes + '" data-liked="' + (p.liked ? '1' : '0') + '" onclick="toggleLike(this)">'
+      + (p.liked ? '&#10084;&#65039;' : '&#9825;') + ' ' + likesDisplay
+      + '</button>'
+      + '<button class="action-btn">&#128172; ' + p.comments + ' Comments</button>'
+      + '<button class="action-btn">Share</button>'
+      + '<button class="action-btn">&#128278; Save</button>'
+      + '</div>'
+      + '<span class="belt belt-black"><div class="belt-stripe"></div>' + p.authorBeltDan + '</span>'
+      + '</div></div>';
+  });
+
+  feed.innerHTML = html;
+}
+
+/* -- Like toggle -- */
+function toggleLike(btn) {
+  var base = parseInt(btn.dataset.base, 10);
+  var wasLiked = btn.dataset.liked === '1';
+  var isNowLiked = !wasLiked;
+  btn.dataset.liked = isNowLiked ? '1' : '0';
+  if (isNowLiked) { btn.classList.add('liked'); } else { btn.classList.remove('liked'); }
+  var count = isNowLiked ? base + 1 : base;
+  var display = count >= 1000 ? (count / 1000).toFixed(1).replace('.0', '') + 'k' : String(count);
+  btn.innerHTML = (isNowLiked ? '&#10084;&#65039;' : '&#9825;') + ' ' + display;
+}
+
+/* -- Filter pills -- */
+document.querySelectorAll('.filter-pills .pill').forEach(function(pill) {
+  pill.addEventListener('click', function() {
+    document.querySelectorAll('.filter-pills .pill').forEach(function(p) { p.classList.remove('active'); });
+    this.classList.add('active');
+    var txt = this.textContent.trim().toLowerCase();
+    activeCategory = txt === 'all' ? 'all' : txt;
+    render();
+  });
+});
+
+/* -- Tab buttons (visual toggle only) -- */
+document.querySelectorAll('.tab-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    this.classList.add('active');
+  });
+});
+
+/* -- Close modals on backdrop click -- */
+document.querySelectorAll('.modal-overlay').forEach(function(m) {
+  m.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>
