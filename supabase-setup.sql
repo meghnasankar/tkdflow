@@ -1,6 +1,7 @@
 -- ═══════════════════════════════════════════════════════════════
 --  TKDflow · Supabase Database Setup
 --  Paste this entire file into: Supabase → SQL Editor → Run
+--  Safe to re-run: every statement is idempotent.
 -- ═══════════════════════════════════════════════════════════════
 
 -- 1. Schools table ─────────────────────────────────────────────
@@ -29,21 +30,32 @@ alter table public.profiles enable row level security;
 alter table public.schools   enable row level security;
 
 -- profiles: anyone can read; only owner can write
+drop policy if exists "profiles_select_all"  on public.profiles;
 create policy "profiles_select_all"
   on public.profiles for select using (true);
 
+drop policy if exists "profiles_insert_own"  on public.profiles;
 create policy "profiles_insert_own"
   on public.profiles for insert with check (auth.uid() = id);
 
+drop policy if exists "profiles_update_own"  on public.profiles;
 create policy "profiles_update_own"
   on public.profiles for update using (auth.uid() = id);
 
 -- schools: anyone can read; authenticated users can add
+drop policy if exists "schools_select_all"   on public.schools;
 create policy "schools_select_all"
   on public.schools for select using (true);
 
+drop policy if exists "schools_insert_auth"  on public.schools;
 create policy "schools_insert_auth"
   on public.schools for insert with check (auth.role() = 'authenticated');
+
+-- schools: required by upsert({onConflict:'name'}) — an upsert on an
+-- existing school name performs an UPDATE, which RLS blocks without this.
+drop policy if exists "schools_update_auth"  on public.schools;
+create policy "schools_update_auth"
+  on public.schools for update using (auth.role() = 'authenticated');
 
 -- 4. Auto-update updated_at ────────────────────────────────────
 create or replace function public.handle_updated_at()
@@ -69,7 +81,6 @@ insert into public.schools (name) values
 on conflict (name) do nothing;
 
 -- ═══════════════════════════════════════════════════════════════
---  DONE. After running this SQL, go to:
---  Supabase → Authentication → Providers → Google
---  and enable Google OAuth (see SETUP.md for details).
+--  DONE. Next steps are in SETUP.md — in particular you MUST turn
+--  off "Confirm email", or registration cannot create a profile.
 -- ═══════════════════════════════════════════════════════════════
