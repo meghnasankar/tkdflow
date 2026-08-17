@@ -64,6 +64,44 @@
     .hero-float-card .text strong { display: block; font-size: 0.85rem; color: var(--navy); }
     .hero-float-card .text span { font-size: 0.75rem; color: var(--gray-400); }
 
+    /* ── Hero collage · figures generated from the Taegeuk Il Jang pose data ── */
+    .hero-collage { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    /* Tile aspect is 176:326 (the pose viewBox), so frame height is driven by its
+       width: h = (w - 50) * 1.85 + 50. Bound by viewport height too, or the
+       second row clips on short laptop screens. */
+    .hero-visual .hero-image-frame {
+      width: min(88%, 378px, calc((100vh - 158px) / 1.85 + 50px));
+    }
+    .hero-collage-tile {
+      position: relative; margin: 0; border-radius: 14px; overflow: hidden;
+      background: linear-gradient(180deg, #0d1220, #060910);
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 10px 26px rgba(0,0,0,.4);
+    }
+    .hero-collage-tile:nth-child(odd)  { transform: rotate(-1.5deg); }
+    .hero-collage-tile:nth-child(even) { transform: rotate(1.5deg); }
+    .hero-collage-tile.kihap {
+      background: linear-gradient(180deg, #1a0508, #0a0212);
+      border-color: rgba(200,16,46,.35);
+    }
+    .hero-collage-tile svg { display: block; width: 100%; height: auto; }
+    .hero-collage-tile figcaption {
+      position: absolute; left: 9px; bottom: 7px;
+      display: flex; flex-direction: column; line-height: 1.2;
+    }
+    .hero-collage-tile figcaption .ko { font-size: 0.72rem; font-weight: 700; color: rgba(255,255,255,.88); }
+    .hero-collage-tile figcaption .ro {
+      font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.07em; color: rgba(255,255,255,.42);
+    }
+    /* The collage needs ~380px of its own; below that the hero is text-only,
+       otherwise the stats row wraps and the last stat gets clipped. */
+    /* Fixed, not %: percentage padding resolves against .hero (the viewport),
+       so it over-reserves once the viewport passes the 1180px container and the
+       4-up stats row wraps. 400px clears the collage frame at every width. */
+    @media(min-width: 1101px) { .hero-content { padding-right: 400px; } }
+    @media(max-width: 1100px) { .hero-visual { display: none; } }
+
+
     /* ── Featured Forms Carousel ── */
     .form-scroll {
       display: flex; gap: 20px; overflow-x: auto; padding-bottom: 12px;
@@ -208,6 +246,126 @@
       <div class="hero-stat"><div class="num">140<span>+</span></div><div class="lbl">Forms Covered</div></div>
       <div class="hero-stat"><div class="num">38<span>k</span></div><div class="lbl">Community Members</div></div>
       <div class="hero-stat"><div class="num">90<span>+</span></div><div class="lbl">Countries</div></div>
+    </div>
+  </div>
+  <div class="hero-visual" aria-hidden="true">
+    <div class="hero-image-frame">
+      <div class="hero-collage">
+      <figure class="hero-collage-tile">
+        <svg viewBox="122 46 176 326" role="img" aria-label="Junbi — Ready Stance">
+        <defs><radialGradient id="hdp0" cx="40%" cy="35%"><stop offset="0" stop-color="#f5c89a"/><stop offset="1" stop-color="#d4956a"/></radialGradient></defs>
+        <line x1="140" y1="360" x2="280" y2="360" stroke="rgba(255,255,255,.13)" stroke-width="1.5"/>
+        <ellipse cx="186" cy="354" rx="11" ry="4" fill="rgba(0,0,0,.35)"/>
+        <ellipse cx="234" cy="354" rx="11" ry="4" fill="rgba(0,0,0,.35)"/>
+        <path d="M190 205L188 278" stroke="#4a7fc1" stroke-width="6.0" stroke-linecap="round"/>
+        <path d="M188 278L186 350" stroke="#4a7fc1" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M230 205L232 278" stroke="#2a4f91" stroke-width="6.0" stroke-linecap="round"/>
+        <path d="M232 278L234 350" stroke="#2a4f91" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M190 205L230 205" stroke="#5a8ad0" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M210 97L190 205" stroke="#5a8ad0" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M210 97L230 205" stroke="#5a8ad0" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M180 110L240 110" stroke="#6a9adf" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M196 172.6L224 172.6" stroke="#FFD700" stroke-width="3.5" opacity=".9" stroke-linecap="round"/>
+        <path d="M180 110L174 155" stroke="#6aaae0" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M174 155L202 192" stroke="#6aaae0" stroke-width="5.0" stroke-linecap="round"/>
+        <path d="M240 110L246 155" stroke="#3a7ab0" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M246 155L218 192" stroke="#3a7ab0" stroke-width="5.0" stroke-linecap="round"/>
+        <circle cx="202" cy="192" r="6.5" fill="#7abbf0" stroke="rgba(255,255,255,.25)"/>
+        <circle cx="218" cy="192" r="6.5" fill="#4a8bc0" stroke="rgba(255,255,255,.25)"/>
+        <circle cx="210" cy="72" r="17" fill="url(#hdp0)"/>
+        <circle cx="205" cy="70" r="2.2" fill="#222"/><circle cx="215" cy="70" r="2.2" fill="#222"/>
+        <path d="M205 74A5 5 0 0 0 215 74" stroke="#555" stroke-width="1.5" fill="none"/>
+        </svg>
+        <figcaption><span class="ko">준비</span><span class="ro">Junbi</span></figcaption>
+      </figure>
+      <figure class="hero-collage-tile">
+        <svg viewBox="122 46 176 326" role="img" aria-label="Left High Block">
+        <defs><radialGradient id="hdp11" cx="40%" cy="35%"><stop offset="0" stop-color="#f5c89a"/><stop offset="1" stop-color="#d4956a"/></radialGradient></defs>
+        <line x1="140" y1="360" x2="280" y2="360" stroke="rgba(255,255,255,.13)" stroke-width="1.5"/>
+        <ellipse cx="166" cy="348" rx="11" ry="4" fill="rgba(0,0,0,.35)"/>
+        <ellipse cx="250" cy="354" rx="11" ry="4" fill="rgba(0,0,0,.35)"/>
+        <path d="M208 205L182 268" stroke="#4a7fc1" stroke-width="6.0" stroke-linecap="round"/>
+        <path d="M182 268L166 344" stroke="#4a7fc1" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M228 207L240 282" stroke="#2a4f91" stroke-width="6.0" stroke-linecap="round"/>
+        <path d="M240 282L250 350" stroke="#2a4f91" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M208 205L228 207" stroke="#5a8ad0" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M214 97L208 205" stroke="#5a8ad0" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M214 97L228 207" stroke="#5a8ad0" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M188 108L248 111" stroke="#6a9adf" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M214 172.6L222 172.6" stroke="#FFD700" stroke-width="3.5" opacity=".9" stroke-linecap="round"/>
+        <path d="M188 108L182 88" stroke="#6aaae0" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M182 88L158 72" stroke="#6aaae0" stroke-width="5.0" stroke-linecap="round"/>
+        <path d="M248 111L254 150" stroke="#3a7ab0" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M254 150L262 162" stroke="#3a7ab0" stroke-width="5.0" stroke-linecap="round"/>
+        <circle cx="158" cy="72" r="6.5" fill="#7abbf0" stroke="rgba(255,255,255,.25)"/>
+        <circle cx="262" cy="162" r="6.5" fill="#4a8bc0" stroke="rgba(255,255,255,.25)"/>
+        <circle cx="215" cy="72" r="17" fill="url(#hdp11)"/>
+        <circle cx="210" cy="70" r="2.2" fill="#222"/><circle cx="220" cy="70" r="2.2" fill="#222"/>
+        <path d="M210 74A5 5 0 0 0 220 74" stroke="#555" stroke-width="1.5" fill="none"/>
+        </svg>
+        <figcaption><span class="ko">왼 얼굴막기</span><span class="ro">Momtong Makgi</span></figcaption>
+      </figure>
+      <figure class="hero-collage-tile">
+        <svg viewBox="122 46 176 326" role="img" aria-label="Right Front Kick">
+        <defs><radialGradient id="hdp12" cx="40%" cy="35%"><stop offset="0" stop-color="#f5c89a"/><stop offset="1" stop-color="#d4956a"/></radialGradient></defs>
+        <line x1="140" y1="362" x2="280" y2="362" stroke="rgba(255,255,255,.13)" stroke-width="1.5"/>
+        <ellipse cx="184" cy="356" rx="11" ry="4" fill="rgba(0,0,0,.35)"/>
+        <ellipse cx="170" cy="216" rx="11" ry="4" fill="rgba(0,0,0,.35)"/>
+        <path d="M208 200L186 274" stroke="#4a7fc1" stroke-width="6.0" stroke-linecap="round"/>
+        <path d="M186 274L184 352" stroke="#4a7fc1" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M224 200L196 226" stroke="#2a4f91" stroke-width="6.0" stroke-linecap="round"/>
+        <path d="M196 226L170 212" stroke="#2a4f91" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M208 200L224 200" stroke="#5a8ad0" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M214 93L208 200" stroke="#5a8ad0" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M214 93L224 200" stroke="#5a8ad0" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M188 106L248 108" stroke="#6a9adf" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M214 167.9L218 167.9" stroke="#FFD700" stroke-width="3.5" opacity=".9" stroke-linecap="round"/>
+        <path d="M188 106L160 148" stroke="#6aaae0" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M160 148L154 162" stroke="#6aaae0" stroke-width="5.0" stroke-linecap="round"/>
+        <path d="M248 108L258 148" stroke="#3a7ab0" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M258 148L264 162" stroke="#3a7ab0" stroke-width="5.0" stroke-linecap="round"/>
+        <circle cx="154" cy="162" r="6.5" fill="#7abbf0" stroke="rgba(255,255,255,.25)"/>
+        <circle cx="264" cy="162" r="6.5" fill="#4a8bc0" stroke="rgba(255,255,255,.25)"/>
+        <circle cx="215" cy="68" r="17" fill="url(#hdp12)"/>
+        <circle cx="210" cy="66" r="2.2" fill="#222"/><circle cx="220" cy="66" r="2.2" fill="#222"/>
+        <path d="M210 70A5 5 0 0 0 220 70" stroke="#555" stroke-width="1.5" fill="none"/>
+        </svg>
+        <figcaption><span class="ko">오른 앞차기</span><span class="ro">Ap Chagi</span></figcaption>
+      </figure>
+      <figure class="hero-collage-tile kihap">
+        <svg viewBox="122 46 176 326" role="img" aria-label="Left Middle Punch — KIHAP!">
+        <defs><radialGradient id="hdp9" cx="40%" cy="35%"><stop offset="0" stop-color="#f5c89a"/><stop offset="1" stop-color="#d4956a"/></radialGradient></defs>
+        <defs><radialGradient id="glp9"><stop offset="0" stop-color="rgba(200,16,46,.45)"/><stop offset="1" stop-color="rgba(200,16,46,0)"/></radialGradient></defs>
+        <circle cx="210" cy="210" r="150" fill="url(#glp9)"/>
+        <line x1="140" y1="360" x2="280" y2="360" stroke="rgba(255,255,255,.13)" stroke-width="1.5"/>
+        <ellipse cx="224" cy="354" rx="11" ry="4" fill="rgba(0,0,0,.35)"/>
+        <ellipse cx="154" cy="346" rx="11" ry="4" fill="rgba(0,0,0,.35)"/>
+        <path d="M208 205L226 282" stroke="#4a7fc1" stroke-width="6.0" stroke-linecap="round"/>
+        <path d="M226 282L224 350" stroke="#4a7fc1" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M228 207L170 265" stroke="#2a4f91" stroke-width="6.0" stroke-linecap="round"/>
+        <path d="M170 265L154 342" stroke="#2a4f91" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M208 205L228 207" stroke="#5a8ad0" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M214 97L208 205" stroke="#5a8ad0" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M214 97L228 207" stroke="#5a8ad0" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M188 108L248 111" stroke="#6a9adf" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M214 172.6L222 172.6" stroke="#FFD700" stroke-width="3.5" opacity=".9" stroke-linecap="round"/>
+        <path d="M188 108L155 144" stroke="#6aaae0" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M155 144L145 150" stroke="#6aaae0" stroke-width="5.0" stroke-linecap="round"/>
+        <path d="M248 111L242 154" stroke="#3a7ab0" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M242 154L248 168" stroke="#3a7ab0" stroke-width="5.0" stroke-linecap="round"/>
+        <circle cx="145" cy="150" r="6.5" fill="#7abbf0" stroke="rgba(255,255,255,.25)"/>
+        <circle cx="248" cy="168" r="6.5" fill="#4a8bc0" stroke="rgba(255,255,255,.25)"/>
+        <circle cx="215" cy="72" r="17" fill="url(#hdp9)"/>
+        <circle cx="210" cy="70" r="2.2" fill="#222"/><circle cx="220" cy="70" r="2.2" fill="#222"/>
+        <path d="M210 74A5 5 0 0 0 220 74" stroke="#555" stroke-width="1.5" fill="none"/>
+        </svg>
+        <figcaption><span class="ko">왼 몸통지르기 기합!</span><span class="ro">Jireugi</span></figcaption>
+      </figure>
+      </div>
+      <div class="hero-float-card" style="left:-18px;top:-18px;">
+        <span class="icon">🥋</span>
+        <span class="text"><strong>Taegeuk Il Jang</strong><span>20 poses · step-by-step</span></span>
+      </div>
     </div>
   </div>
 </section>
