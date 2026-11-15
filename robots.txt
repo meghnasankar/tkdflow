@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /auth.html
+Disallow: /profile.html
+
+Sitemap: https://tkdflow.com/sitemap.xml
