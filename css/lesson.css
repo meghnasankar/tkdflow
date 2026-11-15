@@ -18,7 +18,7 @@
   grid-template-areas: "player list" "info list";
   gap: 24px; align-items: start; padding: 28px 0 80px;
 }
-.player-card { grid-area: player; background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; }
+.player-card { scroll-margin-top: 84px; grid-area: player; background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; }
 .move-panel { grid-area: list; }
 .info-section { grid-area: info; }
 
