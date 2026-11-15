@@ -9,8 +9,8 @@ Release, rollback and recovery runbook: [RELEASE.md](RELEASE.md).
 - **Unavailable** — the feature has no real backend/content, so it is now honestly labelled or removed rather than simulated.
 - **Blocked** — the code side is done where possible, but completion needs an external owner/staging action (listed).
 
-**Checks run:** `npm run check` → layout in sync + **159/159 tests pass** (account-service 13, auth-flows 30, catalog 10,
-contrast 11, data 9, db 31, events 12, key-check 5, lesson-player 6, profile-model 10, serve 5, site 17).
+**Checks run:** `npm run check` → layout in sync + **160/160 tests pass** (account-service 13, auth-flows 30, catalog 10,
+contrast 11, data 9, db 31, events 12, key-check 5, lesson-player 6, profile-model 10, serve 5, site 18).
 The same command is configured in CI via `.github/workflows/check.yml`; its remote result must be checked on the review branch.
 In-browser on `node scripts/serve.mjs --port 8901` (CSP enforced): all 10 pages at 320 px width and desktop, mobile menu
 (tap / Enter / Escape / focus return), library search/sort/filters/URL state, lesson Next sync, events archive filters, 404.

@@ -152,7 +152,7 @@ Supabase backups and restores are managed in the Supabase dashboard (type and re
    Confirm that isolation survives the restore and test it before restoring real member data.
    If isolation cannot be guaranteed, do not restore into a publicly reachable target; use a
    separate isolated staging project and a reviewed recovery plan.
-3. **Do not expose restored legacy policies.** A backup from before the hardening migration can
+3. **Never restore the old public policies to a publicly reachable database.** A backup from before the hardening migration can
    contain public profile reads and school renames by any member. While access stays isolated,
    use the administrator's trusted database connection to run `supabase/preflight.sql`, then
    `supabase-setup.sql`, then preflight again. Verify the actual restored permissions on staging;
