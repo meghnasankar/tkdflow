@@ -6,6 +6,12 @@
 .lesson-review { margin-top: 24px; }
 .lesson-review ul { margin: 6px 0 0 18px; list-style: disc; }
 .lesson-review li { margin: 2px 0; }
+.review-details { margin-top: 8px; }
+.review-details summary {
+  cursor: pointer; font-weight: 700; display: inline-flex; align-items: center;
+  min-height: 32px; text-decoration: underline; text-underline-offset: 3px;
+}
+.page-hero .hero-jump { margin-top: 18px; }
 
 .lesson-layout {
   display: grid; grid-template-columns: minmax(0, 440px) minmax(0, 1fr);
@@ -39,6 +45,21 @@
 .lesson-play { width: 52px; height: 52px; border-radius: 50%; background: var(--red); border-color: var(--red); color: white; font-size: 1.1rem; }
 .lesson-play:hover { background: var(--red-dark); }
 .speed-label { display: inline-flex; align-items: center; gap: 6px; font-size: .82rem; font-weight: 600; color: var(--gray-600); margin-left: 4px; }
+.player-region { outline-offset: -3px; }
+.player-keys { padding: 0 18px 14px; font-size: .8rem; color: var(--gray-600); text-align: center; line-height: 1.9; }
+.player-keys kbd {
+  display: inline-block; min-width: 1.6em; padding: 0 5px; border: 1px solid var(--gray-300); border-bottom-width: 2px;
+  border-radius: 5px; background: var(--gray-50); font: inherit; font-weight: 700; color: var(--navy); line-height: 1.5;
+}
+.pose-share { border-top: 1px solid var(--gray-100); padding: 12px 18px 16px; }
+.pose-share-note { font-size: .8rem; color: var(--gray-600); }
+.pose-share-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 8px; }
+.pose-link { font-weight: 600; color: var(--red-dark); text-decoration: underline; text-underline-offset: 3px; display: inline-flex; align-items: center; min-height: 40px; }
+.pose-status { font-size: .85rem; color: var(--navy); margin-top: 6px; }
+.pose-status:empty { display: none; }
+.pose-fallback { margin-top: 8px; }
+.pose-fallback label { display: block; font-size: .8rem; font-weight: 600; color: var(--gray-600); margin-bottom: 4px; }
+.pose-fallback input { width: 100%; padding: 8px 10px; border: 1.5px solid var(--gray-300); border-radius: 8px; font-size: .85rem; color: var(--navy); background: white; min-height: 40px; }
 .speed-select { padding: 8px 10px; border: 1.5px solid var(--gray-300); border-radius: 8px; font-size: .85rem; color: var(--navy); background: white; min-height: 40px; }
 
 .move-panel { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; }

@@ -1,7 +1,13 @@
 /* Taegeuk Il Jang lesson page. One LessonPlayer state drives the canvas,
-   text, Korean label, selected row, progress slider and play button. */
+   text, Korean label, selected row, progress slider, play button and pose
+   link. Pose links (?pose=N#player) open paused; playback pauses whenever
+   the page is hidden or left and never resumes by itself. */
 import { POSES, LESSON } from '../lessons/taegeuk-1-data.js';
 import { LessonPlayer } from '../lib/lesson-player.js';
+import {
+  officialLabel, poseDescription, poseUrl, poseLinkProblemText, handlePlayerKey,
+  createPoseHistory, createLifecyclePause, copyText, copyStatusText,
+} from '../lib/lesson-nav.js';
 import { h, replaceChildren } from '../lib/dom.js';
 import { prefersReducedMotion } from '../site.js';
 
@@ -108,17 +114,33 @@ function animate(fromIndex, toIndex) {
   raf = requestAnimationFrame(step);
 }
 
-/* ── one render function for every state change ── */
-function officialLabel(pose) {
-  if (!pose.official) return null;
-  const nums = pose.official;
-  const base = nums.length > 1 ? `Movements ${nums[0]}–${nums.at(-1)}` : `Movement ${nums[0]}`;
-  return pose.subpose ? `${base} (${pose.subpose})` : base;
+/** Stop any in-flight transition and show the selected pose as-is. */
+function settleCanvas() {
+  cancelAnimationFrame(raf);
+  raf = null;
+  const pose = POSES[player.index];
+  draw(pose.p, pose, player.index);
 }
 
-function render({ index, from, playing }) {
+/* ── status line: deep-link problems and copy results ── */
+let status = { kind: null, pose: null };
+function setStatus(text, kind = null, pose = null) {
+  $('player-status').textContent = text;
+  status = { kind: text ? kind : null, pose };
+  if (kind !== 'copy-failed') $('copy-fallback').hidden = true;
+}
+const MANUAL_CAUSES = new Set(['next', 'prev', 'first', 'last', 'select', 'play', 'advance']);
+
+/* ── one render function for every state change ── */
+function render({ index, from, playing, cause }) {
   const pose = POSES[index];
   const label = officialLabel(pose);
+  canvas.setAttribute('aria-label', poseDescription(pose, index, POSES.length));
+  const link = $('pose-link');
+  link.href = poseUrl(window.location.origin, index);
+  link.textContent = `Link to pose ${index + 1}`;
+  if (status.kind === 'problem' && MANUAL_CAUSES.has(cause)) setStatus('');
+  if ((status.kind === 'copy' || status.kind === 'copy-failed') && status.pose !== index) setStatus('');
   $('move-counter').textContent = `Pose ${index + 1} of ${POSES.length}${label ? ` · ${label} (draft numbering)` : ''}`;
   $('move-name').textContent = pose.name + (pose.kihap ? ' — kihap' : '');
   $('move-korean').textContent = pose.korean;
@@ -141,13 +163,16 @@ function render({ index, from, playing }) {
   const play = $('btn-play');
   play.setAttribute('aria-label', playing ? 'Pause' : (index === POSES.length - 1 ? 'Replay from the start' : 'Play'));
   play.firstElementChild.textContent = playing ? '⏸' : '▶';
+  const focused = document.activeElement;
   $('btn-prev').disabled = index === 0;
   $('btn-first').disabled = index === 0;
   $('btn-next').disabled = index === POSES.length - 1;
   $('btn-last').disabled = index === POSES.length - 1;
+  // A control that just became disabled would drop keyboard focus to the page.
+  if (focused instanceof HTMLButtonElement && focused.disabled) play.focus({ preventScroll: true });
   // Avoid announcing every pose during autoplay; announce manual changes.
   $('move-info').setAttribute('aria-live', playing ? 'off' : 'polite');
-  animate(from ?? index, index);
+  animate(cause === 'link' ? index : (from ?? index), index);
 }
 
 function buildList() {
@@ -164,6 +189,52 @@ function buildList() {
   }));
 }
 
+const poseHistory = createPoseHistory({
+  win: window,
+  player,
+  count: POSES.length,
+  onProblem: (problem) => {
+    if (problem) setStatus(poseLinkProblemText(problem, POSES.length), 'problem');
+    else if (status.kind === 'problem') setStatus('');
+  },
+});
+const lifecycle = createLifecyclePause({ doc: document, win: window, player, onHide: settleCanvas });
+
+function onRegionKey(e) {
+  handlePlayerKey(e, e.currentTarget, player);
+}
+
+function onPoseLinkClick(e) {
+  // Let modified clicks (new tab/window, download) behave natively.
+  if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+  e.preventDefault();
+  const index = player.index;
+  poseHistory.push(index);
+  setStatus(`This page’s address now links to pose ${index + 1}.`, 'copy', index);
+}
+
+let copying = false;
+async function onCopyClick() {
+  if (copying) return;
+  copying = true;
+  const index = player.index;
+  const url = poseUrl(window.location.origin, index);
+  try {
+    const result = await copyText(url, { clipboard: navigator.clipboard });
+    if (player.index !== index) return; // pose changed while copying; nothing to report
+    setStatus(copyStatusText(result, index + 1), result.ok ? 'copy' : 'copy-failed', index);
+    if (!result.ok) {
+      const field = $('pose-url');
+      field.value = url;
+      $('copy-fallback').hidden = false;
+      field.focus();
+      field.select();
+    }
+  } finally {
+    copying = false;
+  }
+}
+
 function init() {
   setupCanvas();
   buildList();
@@ -177,8 +248,13 @@ function init() {
   $('btn-last').addEventListener('click', () => player.last());
   $('lesson-progress').addEventListener('input', (e) => player.select(Number(e.target.value)));
   $('speed').addEventListener('change', (e) => player.setHold(Number(e.target.value)));
+  $('player-region').addEventListener('keydown', onRegionKey);
+  $('pose-link').addEventListener('click', onPoseLinkClick);
+  $('btn-copy-link').addEventListener('click', onCopyClick);
   window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`).addEventListener?.('change', () => { setupCanvas(); render({ index: player.index, playing: player.playing }); });
-  render({ index: 0, from: 0, playing: false });
+  render({ index: 0, from: 0, playing: false, cause: 'init' });
+  poseHistory.start(); // applies ?pose=N (paused) and listens for back/forward
+  lifecycle.start();
 }
 
 init();

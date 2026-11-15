@@ -27,6 +27,8 @@ const PAIRS = [
   ['white on primary red button', 'white', 'red', 4.5],
   ['red accent on navy hero', 'red-on-dark', 'navy', 4.5],
   ['active nav link', 'red-dark', 'red-light', 4.5],
+  ['lesson pose link on white', 'red-dark', 'white', 4.5],
+  ['lesson key-help keycaps', 'navy', 'gray-50', 4.5],
 
 ];
 
