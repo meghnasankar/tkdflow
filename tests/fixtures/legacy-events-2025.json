@@ -1,0 +1,93 @@
+{
+  "_comment": "Test fixture only, never shipped: the five unsourced 2025 listings removed from data/competitions.json on 2026-11-15. Kept to exercise past/archive date and filter cases.",
+  "lastReviewed": "2026-11-15",
+  "note": "These listings were added without an official source and were never verified. All of them are in the past and are kept only as an archive.",
+  "events": [
+    {
+      "id": "wt-poomsae-2025",
+      "name": "World Taekwondo Poomsae Championships 2025",
+      "level": "international",
+      "style": "wt",
+      "eventTypes": [
+        "poomsae"
+      ],
+      "start": "2025-09-12",
+      "end": "2025-09-15",
+      "timezone": "Asia/Seoul",
+      "location": "Goyang, South Korea",
+      "country": "South Korea",
+      "registrationDeadline": null,
+      "source": null,
+      "lastChecked": null
+    },
+    {
+      "id": "us-open-2025",
+      "name": "US Open Taekwondo Championships 2025",
+      "level": "national",
+      "style": "wt",
+      "eventTypes": [
+        "sparring",
+        "poomsae",
+        "breaking"
+      ],
+      "start": "2025-07-04",
+      "end": "2025-07-06",
+      "timezone": "America/New_York",
+      "location": "Orlando, Florida, USA",
+      "country": "United States",
+      "registrationDeadline": null,
+      "source": null,
+      "lastChecked": null
+    },
+    {
+      "id": "itf-world-2025",
+      "name": "ITF World Taekwondo Championships 2025",
+      "level": "international",
+      "style": "itf",
+      "eventTypes": [
+        "patterns",
+        "sparring",
+        "special-techniques",
+        "power-test"
+      ],
+      "start": "2025-08-03",
+      "end": "2025-08-08",
+      "timezone": "Europe/Vienna",
+      "location": "Vienna, Austria",
+      "country": "Austria",
+      "registrationDeadline": null,
+      "source": null,
+      "lastChecked": null
+    },
+    {
+      "id": "pan-am-2025",
+      "name": "Pan American Taekwondo Championships 2025",
+      "level": "international",
+      "style": "wt",
+      "eventTypes": [],
+      "start": "2025-05-22",
+      "end": "2025-05-25",
+      "timezone": "America/Bogota",
+      "location": "Bogotá, Colombia",
+      "country": "Colombia",
+      "registrationDeadline": null,
+      "source": null,
+      "lastChecked": null
+    },
+    {
+      "id": "tri-state-spring-2025",
+      "name": "Tri-State Taekwondo Open — Spring 2025",
+      "level": "local",
+      "style": "open",
+      "eventTypes": [],
+      "start": "2025-04-12",
+      "end": "2025-04-12",
+      "timezone": "America/New_York",
+      "location": "Edison, New Jersey, USA",
+      "country": "United States",
+      "registrationDeadline": null,
+      "source": null,
+      "lastChecked": null
+    }
+  ]
+}

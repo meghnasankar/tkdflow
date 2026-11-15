@@ -39,6 +39,8 @@ Opens `http://127.0.0.1:8899/` (use `-- --port 8901` for another port).
 The preview server applies the `vercel.json` headers and **enforces** the
 Content-Security-Policy, serves `404.html` for unknown paths, refuses
 dot-files and development folders, and only binds to loopback.
+`npm run serve -- --report-only` sends the same policy as
+`Content-Security-Policy-Report-Only` instead, to rehearse a report-only deployment.
 Do not open pages as `file://` — modules and data loading need a server.
 
 ## Checks (run before every release)
@@ -56,6 +58,9 @@ hanging and failing fake clients), preview-server path safety, and the
 database policies in an embedded Postgres (PGlite).
 
 After editing anything in `layout/`, run `npm run sync`.
+
+After a deployment, `npm run check:live -- --csp report-only|enforced [--base <origin>]`
+runs read-only HTTP checks against the live site (see docs/RELEASE.md §5).
 
 Manual checks still required (not automated here): keyboard-only pass and a
 screen-reader spot check on each page, phone widths 320/375/390/768, and the
@@ -75,7 +80,12 @@ accounts rollout, and database recovery that never restores the old public polic
   rejects the known unsupported claims and any email address in pages/data.
 - Events need an `https` `source` and a `lastChecked` date before they show
   a registration link; status (upcoming / ongoing / past) is computed from
-  dates in the event's own time zone.
+  dates in the event's own time zone, so a listing archives itself after its
+  dates. Copy only what the organiser's page states: leave `eventTypes` empty
+  and `registrationDeadline` null without primary evidence (a discount date is
+  not a deadline). If the organiser's tier (e.g. ATA "Class A+") does not map
+  to local/national/international, use level `unspecified` and record the tier
+  as `organiserClass`.
 - Lessons record their review status in their data module
   (`js/lessons/*.js`); do not mark one reviewed without a named reviewer.
 
@@ -133,8 +143,9 @@ during the 2026-11-15 audit. Do not guess a replacement. In order:
 ## Deployment headers
 
 `vercel.json` sets `X-Content-Type-Options`, `X-Frame-Options`,
-`Referrer-Policy`, `Permissions-Policy`, `Cross-Origin-Opener-Policy` and a
-**Report-Only** CSP. After a Vercel preview deploy shows no CSP reports or
-broken pages (including auth once enabled), rename the key to
-`Content-Security-Policy` to enforce it, then confirm the headers on the live
-site.
+`Referrer-Policy`, `Permissions-Policy`, `Cross-Origin-Opener-Policy` and an
+**enforced** `Content-Security-Policy` (no `unsafe-inline`/`unsafe-eval`; only
+the site, Google Fonts, the pinned jsDelivr SDK and `*.supabase.co`).
+`tests/site.test.mjs` fails if the policy falls back to report-only or gains a
+source. Production still runs the earlier report-only policy until the
+enforcement release in docs/RELEASE.md §8 is approved and deployed.

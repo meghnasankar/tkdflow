@@ -1,6 +1,6 @@
 /* competitions.html — listings with status computed from dates. */
 import {
-  DEFAULT_FILTERS, filterEvents, eventStatus, eventWindow, registrationState, countdownParts, createTicker, currentMonth, needsTicking,
+  DEFAULT_FILTERS, LEVELS, filterEvents, eventStatus, registrationState, createTicker, currentMonth, needsTicking,
 } from '../lib/events.js';
 import { validateEvents } from '../lib/validators.js';
 import { loadInto, showEmpty } from '../lib/data.js';
@@ -9,7 +9,7 @@ import { h, replaceChildren, safeHref } from '../lib/dom.js';
 const $ = (id) => document.getElementById(id);
 const LABELS = {
   style: { wt: 'WT / Kukkiwon', itf: 'ITF', ata: 'ATA', open: 'Open / all styles' },
-  level: { local: 'Local / regional', national: 'National', international: 'International' },
+  level: { local: 'Local / regional', national: 'National', international: 'International', unspecified: 'Level not classified' },
   type: { poomsae: 'Poomsae', patterns: 'Patterns (tul)', sparring: 'Sparring', breaking: 'Breaking', 'special-techniques': 'Special techniques', 'power-test': 'Power test' },
 };
 const REG_TEXT = {
@@ -34,8 +34,6 @@ function options(select, values, labels, allLabel) {
 function card(ev, now) {
   const status = eventStatus(ev, now);
   const reg = registrationState(ev, now);
-  const { start } = eventWindow(ev);
-  const cd = status === 'upcoming' ? countdownParts(start, now) : null;
   const href = safeHref(ev.source);
   const dates = ev.start === ev.end ? fmtDate(ev.start) : `${fmtDate(ev.start)} – ${fmtDate(ev.end)}`;
   return h('article', { class: `event-card ${status}` },
@@ -50,13 +48,13 @@ function card(ev, now) {
       h('dl', { class: 'event-meta' },
         h('div', {}, h('dt', {}, 'Dates'), h('dd', {}, dates)),
         h('div', {}, h('dt', {}, 'Location'), h('dd', {}, ev.location)),
+        ev.organiserClass ? h('div', {}, h('dt', {}, 'Organiser’s class'), h('dd', {}, ev.organiserClass)) : null,
         h('div', {}, h('dt', {}, 'Event types'), h('dd', {}, (ev.eventTypes || []).map((t) => LABELS.type[t] || t).join(', ') || 'Not stated')),
         h('div', {}, h('dt', {}, 'Last checked'), h('dd', {}, ev.lastChecked ? fmtDate(ev.lastChecked) : 'Never verified'))),
       h('div', { class: 'event-footer' },
         h('span', {},
-          cd ? h('span', { class: 'countdown' }, `Starts in ${cd.days} d ${cd.hours} h ${cd.minutes} min. `) : null,
           REG_TEXT[reg] || ''),
-        href && status !== 'past'
+        href
           ? h('a', { class: 'btn btn-gold btn-sm', href, rel: 'noopener noreferrer', target: '_blank' }, 'Organiser’s official page',
             h('span', { class: 'sr-only' }, ' (opens in a new tab)'))
           : null)));
@@ -94,7 +92,7 @@ function setup() {
   const ev = doc.events;
   const uniq = (key) => [...new Set(ev.map((e) => e[key]))].sort();
   options($('ev-style'), uniq('style'), LABELS.style, 'All styles');
-  options($('ev-level'), ['local', 'national', 'international'].filter((l) => ev.some((e) => e.level === l)), LABELS.level, 'All levels');
+  options($('ev-level'), LEVELS.filter((l) => ev.some((e) => e.level === l)), LABELS.level, 'All levels');
   options($('ev-country'), uniq('country'), null, 'All countries');
   options($('ev-type'), [...new Set(ev.flatMap((e) => e.eventTypes || []))].sort(), LABELS.type, 'All event types');
   for (const [id, key] of [['ev-style', 'style'], ['ev-level', 'level'], ['ev-country', 'country'], ['ev-type', 'type']]) {
