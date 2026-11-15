@@ -1,0 +1,55 @@
+{
+  "origin": "https://tkdflow.com",
+  "pages": [
+    {
+      "file": "index.html", "key": "home", "path": "/", "sitemap": true,
+      "title": "TKDflow — Taekwondo forms library and lessons",
+      "description": "A free taekwondo forms catalogue covering WT/Kukkiwon, ITF and ATA patterns, with an interactive step-by-step lesson for Taegeuk Il Jang."
+    },
+    {
+      "file": "forms.html", "key": "forms", "path": "/forms.html", "sitemap": true,
+      "title": "Forms Library — TKDflow",
+      "description": "Search and filter taekwondo forms by style, belt and difficulty. WT/Kukkiwon poomsae, ITF patterns and ATA Songahm forms."
+    },
+    {
+      "file": "taegeuk-1.html", "key": "forms", "path": "/taegeuk-1.html", "sitemap": true,
+      "title": "Taegeuk Il Jang (태극 1장) lesson — TKDflow",
+      "description": "Step through Taegeuk Il Jang movement by movement with an animated figure, Korean terms and directions."
+    },
+    {
+      "file": "community.html", "key": "community", "path": "/community.html", "sitemap": true,
+      "title": "Community (preview) — TKDflow",
+      "description": "A preview of the planned TKDflow community space. Posting is not open yet."
+    },
+    {
+      "file": "forum.html", "key": "forum", "path": "/forum.html", "sitemap": true,
+      "title": "Forum (preview) — TKDflow",
+      "description": "A preview of the planned TKDflow discussion forum, shown with example threads. Posting is not open yet."
+    },
+    {
+      "file": "competitions.html", "key": "events", "path": "/competitions.html", "sitemap": true,
+      "title": "Events — TKDflow",
+      "description": "Taekwondo competition listings on TKDflow, with past listings archived."
+    },
+    {
+      "file": "about.html", "key": "about", "path": "/about.html", "sitemap": true,
+      "title": "About & project status — TKDflow",
+      "description": "What TKDflow offers today, which features are paused or in preview, and how content is reviewed."
+    },
+    {
+      "file": "auth.html", "key": "auth", "path": "/auth.html", "sitemap": false, "noindex": true,
+      "title": "Sign in — TKDflow",
+      "description": "Sign in to your TKDflow account."
+    },
+    {
+      "file": "profile.html", "key": "profile", "path": "/profile.html", "sitemap": false, "noindex": true,
+      "title": "My profile — TKDflow",
+      "description": "Manage your TKDflow profile."
+    },
+    {
+      "file": "404.html", "key": "404", "path": "/404.html", "sitemap": false, "noindex": true, "canonical": false,
+      "title": "Page not found — TKDflow",
+      "description": "The page you were looking for could not be found."
+    }
+  ]
+}

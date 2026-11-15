@@ -1,0 +1,14 @@
+# Development-only files: not part of the public site
+node_modules
+tests
+scripts
+layout
+docs
+supabase
+supabase-setup.sql
+package.json
+package-lock.json
+SETUP.md
+CLAUDE.local.md
+.claude
+.github
