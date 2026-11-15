@@ -58,7 +58,7 @@ Keep records in a place the release owner chooses (**TBD**); do not store secret
    - Library: search "Koryo" → one card; lesson filter → one lesson; lesson Next keeps text, row and slider in sync.
    - Events: Past archive filters work; nothing appears as open or upcoming.
    - Auth page shows the paused state (while accounts are off); no form is usable.
-   - Browser console: no errors except the deliberate 404, and **no CSP report-only violations**.
+   - Browser console: no application errors except the deliberate 404. Review CSP messages against the shipped application; record preview-toolbar and browser-automation messages separately. Vercel's preview toolbar loads scripts/frames/styles that this application does not ship, and the report-only `upgrade-insecure-requests` directive produces an ignored-directive warning. The instrumented browser also produced an inline-style warning on the static local 404. Do not claim a warning-free console or loosen the policy to silence these tools. Repeat the application-policy check in a regular browser before enforcing CSP (§8).
 4. Release owner records approval of the preview.
 
 ## 4. First public release (accounts OFF, no database migration)

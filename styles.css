@@ -78,6 +78,10 @@ input, textarea, select { font-family: var(--font); font-size: 1rem; }
   box-shadow: 0 0 0 3px var(--focus-halo);
 }
 main:focus { outline: none; }
+/* Skip-link target: land below the sticky header (68px + 1px border).
+   Set on #main only, so it never adds to the lesson (84px) or prose (90px)
+   section offsets, which are separate targets. */
+#main { scroll-margin-top: 72px; }
 
 /* --- Typography --- */
 h1,h2,h3,h4,h5 { line-height: 1.2; font-weight: 800; color: var(--navy); }

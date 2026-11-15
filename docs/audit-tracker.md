@@ -37,6 +37,15 @@ Included in the draft review branch; no backend, accounts, storage, dependencies
 **Verification limits:** lifecycle hide/pagehide and held-key behavior have deterministic behavioral tests; actual background-tab lifecycle, clipboard refusal and screen-reader output have not been independently checked in a browser.
 Tracker counts are unchanged by this pass: 45 findings — 29 Done (1 of them locally only), 5 Unavailable, 11 Blocked.
 
+## Release-readiness fixes and source review (2026-11-15, on top of `85512dc`)
+
+Included in the draft review. Independently browser-verified locally: at 390 px the skip link focuses `#main`, the heading starts at 117 px and the header ends at 69 px (before: heading 48 px, header 69 px). See the [release-readiness record](release-readiness-2026-11-15.md) for hosted checks and limitations.
+
+- **Skip-link target:** `#main { scroll-margin-top: 72px }` in `styles.css` keeps the sticky header (68 px + 1 px border) off the top of `main` when the skip link is used (reported: `/auth.html#main` at 390 px hid the first 21 px of the h1). The rule is on `#main` only, so it does not add to the lesson `#player` (84 px) or `about.html` prose section (90 px) offsets. Reduced-motion scrolling and `main` focus are unchanged.
+- **Events notice:** `competitions.html` now says the unverified listings' "listed dates have passed" rather than "have all finished". The no-verified-events, unverified-archive and submissions-not-open wording and all filters are unchanged.
+- **Source review scope:** `vercel.json` headers and CSP against what the pages load; `.vercelignore` against the tracked files; `js/config.js` (accounts, sign-up and Google all off, no project values); every element id the page scripts look up exists in its page; every relative module import and fetched `/data/*.json` path resolves; the pose-history and keyboard helpers added since `b0818ca`. **Result:** no release-breaking problem found. Not covered: hosted behaviour beyond the owner's preview checks, Supabase, and the external blockers below.
+- **Validation:** `npm run check` (layout in sync, 191/191) and `git diff --check` (clean).
+
 ## External blockers (owner actions)
 
 | Blocker | Needed for | Exact action |
