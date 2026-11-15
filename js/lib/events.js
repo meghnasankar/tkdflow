@@ -109,16 +109,43 @@ export function createTicker(onTick, { intervalMs = 30000, setIntervalImpl = set
   };
 }
 
+/** Levels TKDflow can state. 'unspecified' = the organiser's own tier
+ *  (e.g. an ATA "Class A+") is not mapped to one of these; never guess. */
+export const LEVELS = Object.freeze(['local', 'national', 'international', 'unspecified']);
+export const STYLES = Object.freeze(['wt', 'itf', 'ata', 'open']);
+export const EVENT_TYPES = Object.freeze(['poomsae', 'patterns', 'sparring', 'breaking', 'special-techniques', 'power-test']);
+
+/** Home-page teaser from the live event list (sourced, not-yet-past events). */
+export function eventsTeaser(events, now = new Date()) {
+  const upcoming = filterEvents(events, { status: 'upcoming' }, now).filter((e) => e.source);
+  if (!upcoming.length) {
+    return { state: 'none', label: 'No upcoming listings', text: 'No upcoming listings right now. Past listings stay in the archive with their official links.' };
+  }
+  const n = upcoming.length;
+  return {
+    state: 'available',
+    label: 'Available',
+    text: `${n} upcoming event${n === 1 ? '' : 's'} listed, each linked to the organiser’s official page with the date it was last checked.`,
+  };
+}
+
 export function eventRecordProblem(ev) {
   for (const k of ['id', 'name', 'level', 'style', 'start', 'end', 'timezone', 'location', 'country']) {
     if (typeof ev[k] !== 'string' || !ev[k]) return `${ev.id || '?'}: "${k}" is required`;
   }
+  if (!LEVELS.includes(ev.level)) return `${ev.id}: level must be one of ${LEVELS.join(', ')}`;
+  if (!STYLES.includes(ev.style)) return `${ev.id}: style must be one of ${STYLES.join(', ')}`;
+  if (ev.organiserClass != null && (typeof ev.organiserClass !== 'string' || !ev.organiserClass.trim() || ev.organiserClass.length > 40)) {
+    return `${ev.id}: organiserClass must be the organiser's own short label (1–40 characters) or absent`;
+  }
+  if (ev.organiserClass != null && !ev.source) return `${ev.id}: organiserClass needs an official source`;
   if (!isCalendarDate(ev.start) || !isCalendarDate(ev.end) || ev.end < ev.start) return `${ev.id}: start/end must be real dates (YYYY-MM-DD), end on or after start`;
   for (const k of ['registrationDeadline', 'lastChecked']) {
     if (ev[k] != null && !isCalendarDate(ev[k])) return `${ev.id}: "${k}" must be a real date (YYYY-MM-DD) or null`;
   }
   if (ev.registrationDeadline && ev.registrationDeadline > ev.end) return `${ev.id}: registrationDeadline is after the event ends`;
   if (ev.eventTypes != null && !Array.isArray(ev.eventTypes)) return `${ev.id}: eventTypes must be a list`;
+  if ((ev.eventTypes || []).some((t) => !EVENT_TYPES.includes(t))) return `${ev.id}: unknown event type`;
   try { new Intl.DateTimeFormat('en-US', { timeZone: ev.timezone }); } catch { return `${ev.id}: bad timezone`; }
   if (ev.source != null && !/^https:\/\//.test(ev.source)) return `${ev.id}: source must be an https URL`;
   if (ev.source && !ev.lastChecked) return `${ev.id}: a source needs a lastChecked date`;

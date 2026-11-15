@@ -3,27 +3,110 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   zonedToUtc, eventStatus, registrationState, filterEvents, overlapsMonth, currentMonth, countdownParts, createTicker, eventRecordProblem,
-  needsTicking, isCalendarDate,
+  needsTicking, isCalendarDate, eventsTeaser,
 } from '../js/lib/events.js';
 import { validateEvents } from '../js/lib/validators.js';
 
 const data = JSON.parse(readFileSync(new URL('../data/competitions.json', import.meta.url), 'utf8'));
+// The five unsourced 2025 listings that used to ship; kept as a fixture for archive/date cases.
+const legacy = JSON.parse(readFileSync(new URL('./fixtures/legacy-events-2025.json', import.meta.url), 'utf8'));
 const REVIEW_DATE = new Date('2026-11-15T12:00:00Z');
 const ev = (over) => ({ id: 'x', name: 'Test Open', level: 'local', style: 'wt', eventTypes: ['poomsae'], start: '2026-12-05', end: '2026-12-06',
   timezone: 'America/New_York', location: 'Boston, USA', country: 'United States', source: null, lastChecked: null, ...over });
 
-test('shipped listings are valid, unverified records with no hard-coded registration claims', () => {
-  for (const e of data.events) assert.equal(eventRecordProblem(e), null);
-  assert.ok(data.lastReviewed);
+test('shipped listings are valid, sourced from the organiser and claim nothing the source did not state', () => {
+  assert.equal(validateEvents(data), null);
+  assert.equal(data.events.length, 3);
+  for (const e of data.events) {
+    assert.equal(eventRecordProblem(e), null, e.id);
+    assert.match(e.source, /^https:\/\/atamartialarts\.com\//, `${e.id} links the organiser's own site`);
+    assert.equal(e.lastChecked, '2026-11-15');
+    assert.equal(e.registrationDeadline, null, `${e.id}: no deadline without primary evidence`);
+    assert.deepEqual(e.eventTypes, [], `${e.id}: no invented event types`);
+    assert.ok(['America/Chicago', 'America/New_York'].includes(e.timezone));
+    assert.equal(e.style, 'ata');
+  }
+  const huLee = data.events.find((e) => e.id === 'ata-hu-lee-classic-2026');
+  assert.deepEqual([huLee.start, huLee.end, huLee.location], ['2026-12-04', '2026-12-05', 'Statehouse Convention Center, Little Rock, Arkansas, United States']);
+  assert.equal(huLee.level, 'unspecified', 'organiser tier is not mapped to a TKDflow level');
+  assert.equal(huLee.organiserClass, 'Class A+');
+  const spring = data.events.find((e) => e.id === 'ata-spring-nationals-2027');
+  assert.deepEqual([spring.start, spring.end, spring.location, spring.level],
+    ['2027-03-17', '2027-03-20', 'Fort Worth Convention Center, Fort Worth, Texas, United States', 'national']);
 });
 
-test('on the review date every shipped event is past and none is open or upcoming', () => {
-  for (const e of data.events) {
+test('legacy fixture: on the review date every old unsourced listing is past and none is open or upcoming', () => {
+  assert.equal(validateEvents(legacy), null);
+  for (const e of legacy.events) {
     assert.equal(eventStatus(e, REVIEW_DATE), 'past', e.id);
     assert.equal(registrationState(e, REVIEW_DATE), 'event-finished');
   }
-  assert.equal(filterEvents(data.events, { status: 'upcoming' }, REVIEW_DATE).length, 0);
-  assert.equal(filterEvents(data.events, { status: 'past' }, REVIEW_DATE).length, data.events.length);
+  assert.equal(filterEvents(legacy.events, { status: 'upcoming' }, REVIEW_DATE).length, 0);
+  assert.equal(filterEvents(legacy.events, { status: 'past' }, REVIEW_DATE).length, legacy.events.length);
+  assert.ok(legacy.events.every((e) => e.source === null), 'fixture keeps the unsourced shape it had');
+});
+
+test('on the review date all shipped events are upcoming, with check-with-organiser wording', () => {
+  assert.deepEqual(filterEvents(data.events, { status: 'upcoming' }, REVIEW_DATE).map((e) => e.id),
+    ['ata-atlantic-city-class-b-2026', 'ata-hu-lee-classic-2026', 'ata-spring-nationals-2027']);
+  assert.equal(filterEvents(data.events, { status: 'past' }, REVIEW_DATE).length, 0);
+  for (const e of data.events) assert.equal(registrationState(e, REVIEW_DATE), 'see-organiser');
+});
+
+test('shipped events move to the archive from their real local dates (America/Chicago)', () => {
+  const [huLee, spring] = ['ata-hu-lee-classic-2026', 'ata-spring-nationals-2027'].map((id) => data.events.find((e) => e.id === id));
+  // H.U. Lee Classic: CST (UTC−6). Starts 00:00 4 Dec local, ends after 5 Dec local.
+  assert.equal(eventStatus(huLee, new Date('2026-12-04T05:59:00Z')), 'upcoming');
+  assert.equal(eventStatus(huLee, new Date('2026-12-04T06:00:00Z')), 'ongoing');
+  assert.equal(eventStatus(huLee, new Date('2026-12-06T05:59:00Z')), 'ongoing');
+  assert.equal(eventStatus(huLee, new Date('2026-12-06T06:00:00Z')), 'past');
+  assert.equal(registrationState(huLee, new Date('2026-12-06T06:00:00Z')), 'event-finished');
+  // Spring Nationals: CDT (UTC−5) after the 14 Mar 2027 DST change.
+  assert.equal(eventStatus(spring, new Date('2027-03-17T04:59:00Z')), 'upcoming');
+  assert.equal(eventStatus(spring, new Date('2027-03-17T05:00:00Z')), 'ongoing');
+  assert.equal(eventStatus(spring, new Date('2027-03-21T04:59:00Z')), 'ongoing');
+  assert.equal(eventStatus(spring, new Date('2027-03-21T05:00:00Z')), 'past');
+  const between = new Date('2027-01-10T12:00:00Z');
+  assert.deepEqual(filterEvents(data.events, { status: 'upcoming' }, between).map((e) => e.id), ['ata-spring-nationals-2027']);
+  assert.deepEqual(filterEvents(data.events, { status: 'past' }, between).map((e) => e.id), ['ata-hu-lee-classic-2026', 'ata-atlantic-city-class-b-2026']);
+  const after = new Date('2027-04-01T12:00:00Z');
+  assert.equal(filterEvents(data.events, { status: 'upcoming' }, after).length, 0);
+  assert.deepEqual(filterEvents(data.events, { status: 'past' }, after).map((e) => e.id),
+    ['ata-spring-nationals-2027', 'ata-hu-lee-classic-2026', 'ata-atlantic-city-class-b-2026'], 'archive lists newest first');
+  assert.equal(needsTicking(data.events, after), false);
+});
+
+test('home teaser counts only sourced, not-yet-past events and says so honestly when none remain', () => {
+  const now = eventsTeaser(data.events, REVIEW_DATE);
+  assert.equal(now.state, 'available');
+  assert.match(now.text, /^3 upcoming events listed, each linked to the organiser’s official page/);
+  assert.match(eventsTeaser(data.events, new Date('2027-01-10T12:00:00Z')).text, /^1 upcoming event listed/);
+  const later = eventsTeaser(data.events, new Date('2027-04-01T12:00:00Z'));
+  assert.equal(later.state, 'none');
+  assert.match(later.text, /No upcoming listings/);
+  assert.equal(eventsTeaser([ev({ start: '2026-12-05', end: '2026-12-06' })], REVIEW_DATE).state, 'none', 'unsourced events are not advertised');
+});
+
+test('level, style, event type and organiser class are validated; unspecified level filters on its own', () => {
+  assert.match(eventRecordProblem(ev({ level: 'regional' })), /level must be one of/);
+  assert.match(eventRecordProblem(ev({ style: 'kickboxing' })), /style must be one of/);
+  assert.match(eventRecordProblem(ev({ eventTypes: ['forms-and-more'] })), /unknown event type/);
+  assert.match(eventRecordProblem(ev({ organiserClass: 'Class A+' })), /needs an official source/);
+  const sourced = { source: 'https://example.org/e', lastChecked: '2026-11-15' };
+  assert.match(eventRecordProblem(ev({ ...sourced, organiserClass: '' })), /organiserClass/);
+  assert.match(eventRecordProblem(ev({ ...sourced, organiserClass: 'x'.repeat(41) })), /organiserClass/);
+  assert.equal(eventRecordProblem(ev({ ...sourced, level: 'unspecified', organiserClass: 'Class A+' })), null);
+  assert.deepEqual(filterEvents(data.events, { level: 'unspecified' }, REVIEW_DATE).map((e) => e.id), ['ata-hu-lee-classic-2026']);
+  assert.deepEqual(filterEvents(data.events, { level: 'national', style: 'ata' }, REVIEW_DATE).map((e) => e.id), ['ata-spring-nationals-2027']);
+});
+
+test('Atlantic City listing has primary evidence and archives at New Jersey midnight', () => {
+  const event = data.events.find((e) => e.id === 'ata-atlantic-city-class-b-2026');
+  assert.deepEqual([event.start, event.end, event.timezone, event.level, event.organiserClass],
+    ['2026-11-20', '2026-11-21', 'America/New_York', 'local', 'Class B']);
+  assert.equal(event.source, 'https://atamartialarts.com/events/event-schedule/class-b/1120-212026-nj-class-b/');
+  assert.equal(eventStatus(event, new Date('2026-11-22T04:59:00Z')), 'ongoing');
+  assert.equal(eventStatus(event, new Date('2026-11-22T05:00:00Z')), 'past');
 });
 
 test('time zones: an event ends at local midnight, not UTC midnight', () => {
@@ -106,7 +189,8 @@ test('the timer keeps running while only ongoing events remain, and stops once a
   assert.equal(needsTicking([e], new Date('2026-12-04T12:00:00Z')), true);   // upcoming
   assert.equal(needsTicking([e], new Date('2026-12-06T12:00:00Z')), true);   // ongoing only
   assert.equal(needsTicking([e], new Date('2026-12-08T12:00:00Z')), false);  // past
-  assert.equal(needsTicking(data.events, REVIEW_DATE), false);
+  assert.equal(needsTicking(legacy.events, REVIEW_DATE), false);
+  assert.equal(needsTicking(data.events, REVIEW_DATE), true, 'shipped upcoming events keep the countdown live');
 });
 
 test('only real calendar dates are accepted everywhere', () => {

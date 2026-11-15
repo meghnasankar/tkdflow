@@ -1,92 +1,53 @@
 {
   "lastReviewed": "2026-11-15",
-  "note": "These listings were added without an official source and were never verified. All of them are in the past and are kept only as an archive.",
+  "note": "Each listing was checked against the organiser’s official page on its lastChecked date. Event types, eligibility and registration are only listed when the organiser states them; always confirm with the organiser.",
   "events": [
     {
-      "id": "wt-poomsae-2025",
-      "name": "World Taekwondo Poomsae Championships 2025",
-      "level": "international",
-      "style": "wt",
-      "eventTypes": [
-        "poomsae"
-      ],
-      "start": "2025-09-12",
-      "end": "2025-09-15",
-      "timezone": "Asia/Seoul",
-      "location": "Goyang, South Korea",
-      "country": "South Korea",
-      "registrationDeadline": null,
-      "source": null,
-      "lastChecked": null
-    },
-    {
-      "id": "us-open-2025",
-      "name": "US Open Taekwondo Championships 2025",
-      "level": "national",
-      "style": "wt",
-      "eventTypes": [
-        "sparring",
-        "poomsae",
-        "breaking"
-      ],
-      "start": "2025-07-04",
-      "end": "2025-07-06",
-      "timezone": "America/New_York",
-      "location": "Orlando, Florida, USA",
-      "country": "United States",
-      "registrationDeadline": null,
-      "source": null,
-      "lastChecked": null
-    },
-    {
-      "id": "itf-world-2025",
-      "name": "ITF World Taekwondo Championships 2025",
-      "level": "international",
-      "style": "itf",
-      "eventTypes": [
-        "patterns",
-        "sparring",
-        "special-techniques",
-        "power-test"
-      ],
-      "start": "2025-08-03",
-      "end": "2025-08-08",
-      "timezone": "Europe/Vienna",
-      "location": "Vienna, Austria",
-      "country": "Austria",
-      "registrationDeadline": null,
-      "source": null,
-      "lastChecked": null
-    },
-    {
-      "id": "pan-am-2025",
-      "name": "Pan American Taekwondo Championships 2025",
-      "level": "international",
-      "style": "wt",
-      "eventTypes": [],
-      "start": "2025-05-22",
-      "end": "2025-05-25",
-      "timezone": "America/Bogota",
-      "location": "Bogotá, Colombia",
-      "country": "Colombia",
-      "registrationDeadline": null,
-      "source": null,
-      "lastChecked": null
-    },
-    {
-      "id": "tri-state-spring-2025",
-      "name": "Tri-State Taekwondo Open — Spring 2025",
+      "id": "ata-atlantic-city-class-b-2026",
+      "name": "ATA Class B Tournament — Atlantic City",
       "level": "local",
-      "style": "open",
+      "organiserClass": "Class B",
+      "style": "ata",
       "eventTypes": [],
-      "start": "2025-04-12",
-      "end": "2025-04-12",
+      "start": "2026-11-20",
+      "end": "2026-11-21",
       "timezone": "America/New_York",
-      "location": "Edison, New Jersey, USA",
+      "location": "Harrah’s Resort Atlantic City, Atlantic City, New Jersey, United States",
       "country": "United States",
       "registrationDeadline": null,
-      "source": null,
-      "lastChecked": null
+      "source": "https://atamartialarts.com/events/event-schedule/class-b/1120-212026-nj-class-b/",
+      "lastChecked": "2026-11-15"
+    },
+    {
+      "id": "ata-hu-lee-classic-2026",
+      "name": "ATA H.U. Lee Classic",
+      "level": "unspecified",
+      "organiserClass": "Class A+",
+      "style": "ata",
+      "eventTypes": [],
+      "start": "2026-12-04",
+      "end": "2026-12-05",
+      "timezone": "America/Chicago",
+      "location": "Statehouse Convention Center, Little Rock, Arkansas, United States",
+      "country": "United States",
+      "registrationDeadline": null,
+      "source": "https://atamartialarts.com/events/hu-lee-classic/",
+      "lastChecked": "2026-11-15"
+    },
+    {
+      "id": "ata-spring-nationals-2027",
+      "name": "ATA Spring Nationals",
+      "level": "national",
+      "style": "ata",
+      "eventTypes": [],
+      "start": "2027-03-17",
+      "end": "2027-03-20",
+      "timezone": "America/Chicago",
+      "location": "Fort Worth Convention Center, Fort Worth, Texas, United States",
+      "country": "United States",
+      "registrationDeadline": null,
+      "source": "https://atamartialarts.com/springnationals",
+      "lastChecked": "2026-11-15"
     }
   ]
 }

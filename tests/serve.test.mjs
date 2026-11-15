@@ -1,12 +1,12 @@
 /* Preview-server path safety, using a throwaway fixture tree (never real
    repository secrets). The fixture has a fake .git/HEAD, a dev folder and a
    symlink that points outside the site root. */
-import { test, before, after } from 'node:test';
+import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync, symlinkSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, symlinkSync, rmSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { canonicalPath, resolveRequest, createPreviewServer } from '../scripts/serve.mjs';
+import { canonicalPath, resolveRequest, createPreviewServer, headersFor } from '../scripts/serve.mjs';
 
 let base; let root; let server; let origin;
 const SECRET = 'FIXTURE-HEAD-ref: refs/heads/fixture';
@@ -127,4 +127,61 @@ test('serves only GET/HEAD and binds to loopback by default', async () => {
   assert.equal(status, 405);
   const src = (await import('node:fs')).readFileSync(new URL('../scripts/serve.mjs', import.meta.url), 'utf8');
   assert.match(src, /arg\('host', '127\.0\.0\.1'\)/);
+});
+
+describe('CSP header mode', () => {
+  const cfg = (key) => ({ headers: [{ source: '/(.*)', headers: [
+    { key: 'X-Frame-Options', value: 'DENY' }, { key, value: "default-src 'self'" },
+  ] }] });
+  const cspKeys = (h) => Object.keys(h).filter((k) => /^content-security-policy/i.test(k));
+
+  test('default is enforced and --report-only always sends report-only, whichever key the config uses', () => {
+    for (const key of ['Content-Security-Policy', 'Content-Security-Policy-Report-Only']) {
+      const enforced = headersFor(cfg(key), '/forms.html');
+      assert.deepEqual(cspKeys(enforced), ['Content-Security-Policy'], `${key} config, default`);
+      assert.equal(enforced['Content-Security-Policy'], "default-src 'self'");
+      const ro = headersFor(cfg(key), '/forms.html', true);
+      assert.deepEqual(cspKeys(ro), ['Content-Security-Policy-Report-Only'], `${key} config, --report-only`);
+      assert.equal(ro['Content-Security-Policy-Report-Only'], "default-src 'self'");
+      assert.equal(ro['X-Frame-Options'], 'DENY', 'other headers unchanged');
+    }
+  });
+
+  test('a config listing both CSP keys still yields exactly one header', () => {
+    const both = { headers: [{ source: '/(.*)', headers: [
+      { key: 'Content-Security-Policy-Report-Only', value: 'a' }, { key: 'Content-Security-Policy', value: 'b' },
+    ] }] };
+    assert.equal(cspKeys(headersFor(both, '/')).length, 1);
+    assert.equal(cspKeys(headersFor(both, '/', true)).length, 1);
+  });
+
+  test('over HTTP with the real deployment config: enforced by default, report-only on request', async () => {
+    const policy = JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'))
+      .headers.find((r) => r.source === '/(.*)').headers.find((h) => /^Content-Security-Policy/.test(h.key)).value;
+    for (const reportOnly of [false, true]) {
+      const srv = await createPreviewServer({ reportOnly });
+      await new Promise((r) => srv.listen(0, '127.0.0.1', r));
+      try {
+        for (const path of ['/', '/this-page-does-not-exist']) {
+          const res = await fetch(`http://127.0.0.1:${srv.address().port}${path}`);
+          await res.arrayBuffer();
+          const want = reportOnly ? 'content-security-policy-report-only' : 'content-security-policy';
+          const other = reportOnly ? 'content-security-policy' : 'content-security-policy-report-only';
+          assert.equal(res.headers.get(want), policy, `${path} ${want}`);
+          assert.equal(res.headers.get(other), null, `${path} must not also send ${other}`);
+        }
+      } finally { srv.close(); }
+    }
+  });
+
+  test('the CLI flag selects report-only and the default announces enforced', async () => {
+    const { spawn } = await import('node:child_process');
+    const banner = (args) => new Promise((resolve, reject) => {
+      const child = spawn(process.execPath, [new URL('../scripts/serve.mjs', import.meta.url).pathname, '--port', '0', ...args]);
+      const timer = setTimeout(() => { child.kill(); reject(new Error('no banner')); }, 5000);
+      child.stdout.on('data', (d) => { clearTimeout(timer); child.kill(); resolve(String(d)); });
+    });
+    assert.match(await banner([]), /CSP enforced/);
+    assert.match(await banner(['--report-only']), /CSP report-only/);
+  });
 });

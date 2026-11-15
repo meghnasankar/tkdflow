@@ -29,7 +29,7 @@
     {
       "file": "competitions.html", "key": "events", "path": "/competitions.html", "sitemap": true,
       "title": "Events — TKDflow",
-      "description": "Taekwondo competition listings on TKDflow, with past listings archived."
+      "description": "Upcoming taekwondo competitions, each linked to the organiser’s official page with the date it was last checked."
     },
     {
       "file": "about.html", "key": "about", "path": "/about.html", "sitemap": true,

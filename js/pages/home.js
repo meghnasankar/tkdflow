@@ -3,7 +3,7 @@ import { ACCOUNTS } from '../config.js';
 import { accountsConfigured } from '../lib/account-service.js';
 import { loadJSON } from '../lib/data.js';
 import { destinationFor } from '../lib/catalog.js';
-import { filterEvents } from '../lib/events.js';
+import { eventsTeaser } from '../lib/events.js';
 import { validateForms, validateEvents } from '../lib/validators.js';
 import { h, replaceChildren, safeGradient } from '../lib/dom.js';
 
@@ -35,12 +35,10 @@ async function forms() {
 async function events() {
   try {
     const doc = await loadJSON('/data/competitions.json', { validate: validateEvents });
-    const upcoming = filterEvents(doc.events, { status: 'upcoming' }).filter((e) => e.source);
-    if (upcoming.length) {
-      $('events-state').textContent = 'Available';
-      $('events-state').className = 'feature-state available';
-      $('events-teaser').textContent = `${upcoming.length} verified upcoming event${upcoming.length === 1 ? '' : 's'} listed, each with the organiser’s official page.`;
-    }
+    const t = eventsTeaser(doc.events);
+    $('events-state').textContent = t.label;
+    $('events-state').className = `feature-state ${t.state === 'available' ? 'available' : 'progress'}`;
+    $('events-teaser').textContent = t.text;
   } catch { /* the static teaser text stays accurate */ }
 }
 
