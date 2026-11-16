@@ -58,3 +58,7 @@
   .hero-content { padding: 48px 16px; }
   .hero-actions .btn { width: 100%; }
 }
+
+.founder-teaser { border-left: 4px solid var(--red); padding: 8px 0 8px 24px; max-width: 760px; }
+.founder-teaser h2 { margin-bottom: 8px; }
+.founder-teaser p { font-size: 1.02rem; }

@@ -37,6 +37,11 @@
       "description": "What TKDflow offers today, which features are paused or in preview, and how content is reviewed."
     },
     {
+      "file": "founder.html", "key": "about", "path": "/founder.html", "sitemap": true,
+      "title": "Meghna Sankar — Founder of TKDflow",
+      "description": "Meghna Sankar is a second-degree Kukkiwon black belt who has trained in taekwondo since age five, and the founder of TKDflow, a free study companion for taekwondo forms."
+    },
+    {
       "file": "auth.html", "key": "auth", "path": "/auth.html", "sitemap": false, "noindex": true,
       "title": "Sign in — TKDflow",
       "description": "Sign in to your TKDflow account."
