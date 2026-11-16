@@ -191,6 +191,6 @@ export function officialLabel(pose) {
 /** Accessible description for the canvas: identifies the selected pose. */
 export function poseDescription(pose, index, count) {
   const label = officialLabel(pose);
-  return `Stick figure, pose ${index + 1} of ${count}: ${pose.name}${pose.kihap ? ', kihap' : ''}`
+  return `3D character, pose ${index + 1} of ${count}: ${pose.name}${pose.kihap ? ', kihap' : ''}`
     + (label ? `. ${label}, draft numbering.` : '.');
 }
