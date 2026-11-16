@@ -399,7 +399,7 @@ describe('page wiring', () => {
   test('canvas description identifies the selected pose and keeps pose and movement numbers apart', () => {
     POSES.forEach((pose, i) => {
       const d = poseDescription(pose, i, COUNT);
-      assert.ok(d.startsWith(`Stick figure, pose ${i + 1} of ${COUNT}: ${pose.name}`), d);
+      assert.ok(d.startsWith(`3D character, pose ${i + 1} of ${COUNT}: ${pose.name}`), d);
       if (pose.official) assert.match(d, /Movements? \d+.*draft numbering\.$/);
       else assert.doesNotMatch(d, /Movement/);
     });

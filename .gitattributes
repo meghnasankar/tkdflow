@@ -1,0 +1,2 @@
+# Keep pinned third-party bytes intact; check whitespace in our own source.
+vendor/three/*.js -whitespace

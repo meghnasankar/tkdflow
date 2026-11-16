@@ -1,127 +1,19 @@
-/* Taegeuk Il Jang lesson page. One LessonPlayer state drives the canvas,
-   text, Korean label, selected row, progress slider, play button and pose
-   link. Pose links (?pose=N#player) open paused; playback pauses whenever
-   the page is hidden or left and never resumes by itself. */
-import { POSES, LESSON } from '../lessons/taegeuk-1-data.js';
-import { LessonPlayer } from '../lib/lesson-player.js';
-import {
-  officialLabel, poseDescription, poseUrl, poseLinkProblemText, handlePlayerKey,
-  createPoseHistory, createLifecyclePause, copyText, copyStatusText,
-} from '../lib/lesson-nav.js';
-import { h, replaceChildren } from '../lib/dom.js';
-import { prefersReducedMotion } from '../site.js';
-
-const W = 420; const H = 460; const CX = 210;
-const TRANSITION_MS = 420;
-const $ = (id) => document.getElementById(id);
-
-const canvas = $('lesson-canvas');
-const ctx = canvas.getContext('2d');
-const player = new LessonPlayer(POSES.length, { holdMs: Number($('speed').value), transitionMs: TRANSITION_MS });
-
-/* ── canvas sizing: crisp on high-density screens, scales with CSS width ── */
-function setupCanvas() {
-  const dpr = Math.min(window.devicePixelRatio || 1, 3);
-  canvas.width = W * dpr;
-  canvas.height = H * dpr;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-
-/* ── drawing (original figure, logical 420×460 coordinates) ── */
-const ease = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
-function lerpPose(a, b, t) {
-  const e = ease(t);
-  const out = {};
-  for (const k of Object.keys(b)) out[k] = [a[k][0] + (b[k][0] - a[k][0]) * e, a[k][1] + (b[k][1] - a[k][1]) * e];
-  return out;
-}
-
-function roundRect(x, y, w, hgt, r) {
-  ctx.beginPath();
-  if (ctx.roundRect) ctx.roundRect(x, y, w, hgt, r);
-  else ctx.rect(x, y, w, hgt);
-}
-
-function draw(p, pose, index) {
-  const kihap = pose.kihap;
-  const bg = ctx.createLinearGradient(0, 0, 0, H);
-  bg.addColorStop(0, kihap ? '#1a0508' : '#0d1220');
-  bg.addColorStop(1, kihap ? '#0a0212' : '#060910');
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, W, H);
-  if (kihap) {
-    const glow = ctx.createRadialGradient(CX, H / 2, 20, CX, H / 2, 220);
-    glow.addColorStop(0, 'rgba(200,16,46,0.28)');
-    glow.addColorStop(1, 'rgba(200,16,46,0)');
-    ctx.fillStyle = glow;
-    ctx.fillRect(0, 0, W, H);
-  }
-  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
-  ctx.lineWidth = 1;
-  for (let x = 0; x <= W; x += 42) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
-  for (let y = 0; y <= H; y += 46) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
-
-  const LW = 5.5;
-  const limb = (a, b, color, lw = LW) => {
-    ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    ctx.beginPath(); ctx.moveTo(p[a][0], p[a][1]); ctx.lineTo(p[b][0], p[b][1]); ctx.stroke();
-  };
-  ctx.fillStyle = 'rgba(0,0,0,0.35)';
-  for (const f of ['lf', 'rf']) { ctx.beginPath(); ctx.ellipse(p[f][0], p[f][1] + 4, 11, 4, 0, 0, Math.PI * 2); ctx.fill(); }
-  limb('lhi', 'lk', '#4a7fc1', LW + 0.5); limb('lk', 'lf', '#4a7fc1');
-  limb('rhi', 'rk', '#2a4f91', LW + 0.5); limb('rk', 'rf', '#2a4f91');
-  limb('lhi', 'rhi', '#5a8ad0', LW - 1); limb('neck', 'lhi', '#5a8ad0', LW + 1);
-  limb('neck', 'rhi', '#5a8ad0', LW + 1); limb('ls', 'rs', '#6a9adf', LW - 1);
-  const beltY = p.neck[1] * 0.3 + p.lhi[1] * 0.7;
-  ctx.strokeStyle = '#FFD700'; ctx.lineWidth = 3.5; ctx.globalAlpha = 0.9;
-  ctx.beginPath(); ctx.moveTo(p.lhi[0] + 6, beltY); ctx.lineTo(p.rhi[0] - 6, beltY); ctx.stroke();
-  ctx.globalAlpha = 1;
-  limb('ls', 'le', '#6aaae0'); limb('le', 'lh', '#6aaae0', LW - 0.5);
-  limb('rs', 're', '#3a7ab0'); limb('re', 'rh', '#3a7ab0', LW - 0.5);
-  for (const [k, col] of [['lh', '#7abbf0'], ['rh', '#4a8bc0']]) {
-    ctx.fillStyle = col; ctx.beginPath(); ctx.arc(p[k][0], p[k][1], 6.5, 0, Math.PI * 2); ctx.fill();
-  }
-  const [hx, hy] = p.head;
-  const head = ctx.createRadialGradient(hx - 4, hy - 5, 3, hx, hy, 18);
-  head.addColorStop(0, '#f5c89a'); head.addColorStop(1, '#d4956a');
-  ctx.fillStyle = head; ctx.beginPath(); ctx.arc(hx, hy, 17, 0, Math.PI * 2); ctx.fill();
-
-  ctx.fillStyle = 'rgba(0,0,0,0.55)'; roundRect(10, 10, 92, 30, 8); ctx.fill();
-  ctx.fillStyle = '#fff'; ctx.font = 'bold 12px system-ui'; ctx.textAlign = 'left';
-  ctx.fillText(`Pose ${index + 1}/${POSES.length}`, 18, 30);
-  ctx.fillStyle = 'rgba(0,0,0,0.55)'; roundRect(W - 42, 10, 32, 30, 8); ctx.fill();
-  ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.font = 'bold 16px system-ui'; ctx.textAlign = 'center';
-  ctx.fillText(pose.dir, W - 26, 31);
-  if (kihap) {
-    ctx.font = 'bold 26px system-ui'; ctx.fillStyle = 'rgba(255,110,110,0.95)';
-    ctx.fillText('기합! KIHAP!', CX, 74);
-  }
-  ctx.textAlign = 'left';
-}
-
-let raf = null;
-function animate(fromIndex, toIndex) {
-  cancelAnimationFrame(raf);
-  const to = POSES[toIndex];
-  if (fromIndex === toIndex || prefersReducedMotion()) { draw(to.p, to, toIndex); return; }
-  const from = POSES[fromIndex].p;
-  const start = performance.now();
-  const step = (now) => {
-    const t = Math.min((now - start) / TRANSITION_MS, 1);
-    draw(lerpPose(from, to.p, t), to, toIndex);
-    if (t < 1) raf = requestAnimationFrame(step);
-  };
-  raf = requestAnimationFrame(step);
-}
-
-/** Stop any in-flight transition and show the selected pose as-is. */
-function settleCanvas() {
-  cancelAnimationFrame(raf);
-  raf = null;
-  const pose = POSES[player.index];
-  draw(pose.p, pose, player.index);
-}
-
+/* The complete twenty-pose lesson, with one continuous clock for body,
+   metadata, controls and deep links. No photo is used on the character. */
+import {POSES,LESSON} from '../lessons/taegeuk-1-data.js';
+import {LessonTimeline} from '../animation/lesson-timeline.js';
+import {createLessonView} from '../animation/lesson-view.js';
+import {DURATION} from '../animation/taegeuk-1-motion.js';
+import {officialLabel,poseDescription,poseUrl,poseLinkProblemText,handlePlayerKey,createPoseHistory,createLifecyclePause,copyText,copyStatusText} from '../lib/lesson-nav.js';
+import {h,replaceChildren} from '../lib/dom.js';
+const $=id=>document.getElementById(id),canvas=$('lesson-canvas'),player=new LessonTimeline();
+let raf=null,lastNow=0,view=null;
+function requestFrame(){if(raf===null)raf=requestAnimationFrame(tick);}
+function tick(now){raf=null;const dt=lastNow?Math.min(.1,(now-lastNow)/1000):0;lastNow=now;if(player.playing)player.advance(dt);view?.draw(player.time);if(player.playing)requestFrame();else lastNow=0;}
+function settleCanvas(){view?.draw(player.time);}
+view=createLessonView(canvas,{requestFrame,onReady(){$('character-loading').hidden=true;},onError(){$('character-loading').hidden=true;canvas.hidden=true;$('lesson-fallback').hidden=false;}});
+let studyScroll=0;
+function setStudy(on){if(on)studyScroll=scrollY;document.body.classList.toggle('lesson-study',on);$('study-view').setAttribute('aria-pressed',String(on));$('study-view').textContent=on?'Exit study view':'Study view';if(!on)window.scrollTo({top:studyScroll,behavior:'instant'});requestFrame();}
 /* ── status line: deep-link problems and copy results ── */
 let status = { kind: null, pose: null };
 function setStatus(text, kind = null, pose = null) {
@@ -129,50 +21,37 @@ function setStatus(text, kind = null, pose = null) {
   status = { kind: text ? kind : null, pose };
   if (kind !== 'copy-failed') $('copy-fallback').hidden = true;
 }
-const MANUAL_CAUSES = new Set(['next', 'prev', 'first', 'last', 'select', 'play', 'advance']);
+const MANUAL_CAUSES = new Set(['next', 'prev', 'first', 'last', 'select', 'play', 'advance', 'seek', 'frame']);
 
 /* ── one render function for every state change ── */
-function render({ index, from, playing, cause }) {
-  const pose = POSES[index];
-  const label = officialLabel(pose);
-  canvas.setAttribute('aria-label', poseDescription(pose, index, POSES.length));
-  const link = $('pose-link');
-  link.href = poseUrl(window.location.origin, index);
-  link.textContent = `Link to pose ${index + 1}`;
-  if (status.kind === 'problem' && MANUAL_CAUSES.has(cause)) setStatus('');
-  if ((status.kind === 'copy' || status.kind === 'copy-failed') && status.pose !== index) setStatus('');
-  $('move-counter').textContent = `Pose ${index + 1} of ${POSES.length}${label ? ` · ${label} (draft numbering)` : ''}`;
-  $('move-name').textContent = pose.name + (pose.kihap ? ' — kihap' : '');
-  $('move-korean').textContent = pose.korean;
-  $('move-desc').textContent = pose.desc;
-  const range = $('lesson-progress');
-  range.value = String(index);
-  range.setAttribute('aria-valuetext', `Pose ${index + 1} of ${POSES.length}: ${pose.name}`);
-  document.querySelectorAll('.move-row').forEach((row, i) => {
-    if (i === index) row.setAttribute('aria-current', 'step');
-    else row.removeAttribute('aria-current');
-  });
-  const list = $('move-list');
-  const active = list.children[index];
-  if (active) {
-    const top = active.offsetTop; // .move-list is the offsetParent (position: relative)
-    if (top < list.scrollTop || top + active.offsetHeight > list.scrollTop + list.clientHeight) {
-      list.scrollTop = top - list.clientHeight / 2 + active.offsetHeight / 2;
-    }
+let previousIndex=-1,previousPlaying=null;
+function render({index,playing,cause,time}) {
+  if(cause==='play')lastNow=0;
+  const pose=POSES[index],label=officialLabel(pose),changed=index!==previousIndex;
+  canvas.setAttribute('aria-label',poseDescription(pose,index,POSES.length));
+  canvas.dataset.playing=String(playing);
+  $('lesson-progress').value=String(time);
+  $('lesson-progress').setAttribute('aria-valuetext',`${time.toFixed(2)} of ${DURATION.toFixed(2)} seconds, pose ${index+1}: ${pose.name}`);
+  $('lesson-clock').textContent=`${time.toFixed(2)} / ${DURATION.toFixed(2)} s`;
+  if (changed || previousPlaying!==playing || (cause!=='tick'&&cause!=='rate')) {
+    const link=$('pose-link');link.href=poseUrl(window.location.origin,index);link.textContent=`Link to pose ${index+1}`;
+    if(status.kind==='problem'&&MANUAL_CAUSES.has(cause))setStatus('');
+    if((status.kind==='copy'||status.kind==='copy-failed')&&status.pose!==index)setStatus('');
+    $('move-counter').textContent=`Pose ${index+1} of ${POSES.length}${label?` · ${label} (draft numbering)`:''}`;
+    $('move-name').textContent=pose.name+(pose.kihap?' — kihap':'');
+    $('move-korean').textContent=pose.korean;$('move-desc').textContent=pose.desc;
+    document.querySelectorAll('.move-row').forEach((row,i)=>{if(i===index)row.setAttribute('aria-current','step');else row.removeAttribute('aria-current');});
+    const list=$('move-list'),active=list.children[index];
+    if(active){const top=active.offsetTop;if(top<list.scrollTop||top+active.offsetHeight>list.scrollTop+list.clientHeight)list.scrollTop=top-list.clientHeight/2+active.offsetHeight/2;}
+    const play=$('btn-play');play.setAttribute('aria-label',playing?'Pause':player.atEnd?'Replay from the start':'Play');
+    play.setAttribute('aria-pressed',String(playing));play.firstElementChild.textContent=playing?'⏸':'▶';$('play-label').textContent=playing?'Pause':'Play';
+    const focused=document.activeElement;
+    $('btn-prev').disabled=$('btn-first').disabled=index===0;
+    $('btn-next').disabled=$('btn-last').disabled=index===POSES.length-1;
+    if(focused instanceof HTMLButtonElement&&focused.disabled)play.focus({preventScroll:true});
+    $('move-info').setAttribute('aria-live',playing?'off':'polite');
   }
-  const play = $('btn-play');
-  play.setAttribute('aria-label', playing ? 'Pause' : (index === POSES.length - 1 ? 'Replay from the start' : 'Play'));
-  play.firstElementChild.textContent = playing ? '⏸' : '▶';
-  const focused = document.activeElement;
-  $('btn-prev').disabled = index === 0;
-  $('btn-first').disabled = index === 0;
-  $('btn-next').disabled = index === POSES.length - 1;
-  $('btn-last').disabled = index === POSES.length - 1;
-  // A control that just became disabled would drop keyboard focus to the page.
-  if (focused instanceof HTMLButtonElement && focused.disabled) play.focus({ preventScroll: true });
-  // Avoid announcing every pose during autoplay; announce manual changes.
-  $('move-info').setAttribute('aria-live', playing ? 'off' : 'polite');
-  animate(cause === 'link' ? index : (from ?? index), index);
+  previousIndex=index;previousPlaying=playing;requestFrame();
 }
 
 function buildList() {
@@ -201,7 +80,11 @@ const poseHistory = createPoseHistory({
 const lifecycle = createLifecyclePause({ doc: document, win: window, player, onHide: settleCanvas });
 
 function onRegionKey(e) {
-  handlePlayerKey(e, e.currentTarget, player);
+  const native=['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)||e.target?.isContentEditable;
+  if(!native&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!e.isComposing&&['ArrowLeft','ArrowRight'].includes(e.key)){
+    e.preventDefault();if(e.shiftKey)player[e.key==='ArrowLeft'?'prev':'next']();else player.step(e.key==='ArrowLeft'?-1:1);return;
+  }
+  handlePlayerKey(e,e.currentTarget,player);
 }
 
 function onPoseLinkClick(e) {
@@ -236,25 +119,29 @@ async function onCopyClick() {
 }
 
 function init() {
-  setupCanvas();
   buildList();
   replaceChildren($('review-questions'), ...LESSON.review.openQuestions.map((q) => h('li', {}, q)));
-  $('lesson-progress').max = String(POSES.length - 1);
+  $('lesson-progress').max = String(DURATION);
   player.subscribe(render);
   $('btn-play').addEventListener('click', () => player.toggle());
   $('btn-next').addEventListener('click', () => player.next());
   $('btn-prev').addEventListener('click', () => player.prev());
   $('btn-first').addEventListener('click', () => player.first());
   $('btn-last').addEventListener('click', () => player.last());
-  $('lesson-progress').addEventListener('input', (e) => player.select(Number(e.target.value)));
-  $('speed').addEventListener('change', (e) => player.setHold(Number(e.target.value)));
+  $('lesson-progress').addEventListener('input', (e) => player.seek(Number(e.target.value)));
+  $('speed').addEventListener('change', (e) => player.setRate(Number(e.target.value)));
   $('player-region').addEventListener('keydown', onRegionKey);
+  $('frame-prev').addEventListener('click',()=>player.step(-1));
+  $('frame-next').addEventListener('click',()=>player.step(1));
+  document.querySelectorAll('[data-lesson-view]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-lesson-view]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));view.setView(button.dataset.lessonView);}));
+  $('study-view').addEventListener('click',()=>setStudy(!document.body.classList.contains('lesson-study')));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('lesson-study')){setStudy(false);$('study-view').focus();}});
   $('pose-link').addEventListener('click', onPoseLinkClick);
   $('btn-copy-link').addEventListener('click', onCopyClick);
-  window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`).addEventListener?.('change', () => { setupCanvas(); render({ index: player.index, playing: player.playing }); });
-  render({ index: 0, from: 0, playing: false, cause: 'init' });
+  render({ index:0,from:0,playing:false,cause:'init',time:0 });
   poseHistory.start(); // applies ?pose=N (paused) and listens for back/forward
   lifecycle.start();
+  window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener?.('change',e=>{if(e.matches)player.pause();});
 }
 
 init();

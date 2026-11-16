@@ -69,7 +69,7 @@
         <span class="sample-label">Unreviewed</span>
       </div>
       <h1>Taegeuk Il Jang <span class="kr-title" lang="ko">태극 1장</span></h1>
-      <p>The first of the eight Taegeuk forms, built on the trigram ☰ <em>Geon</em> (heaven and light). It is commonly counted as 18 movements — a draft mapping until an instructor reviews it. The animation shows 20 poses: it adds the ready and return positions and splits each front kick from the punch that follows it.</p>
+      <p>The first of the eight Taegeuk forms, built on the trigram ☰ <em>Geon</em> (heaven and light). It is commonly counted as 18 movements — a draft mapping until an instructor reviews it. The 3D animation shows 20 poses: it includes ready and return positions, groups two block-and-punch pairs, and separates each front kick from the punch that follows it.</p>
       <p class="hero-jump"><a class="btn btn-primary btn-sm" href="#player">Jump to the player</a></p>
     </div>
   </div>
@@ -89,8 +89,21 @@
       <section class="player-card" id="player">
         <div class="player-region" id="player-region" tabindex="0" role="group" aria-labelledby="player-title" aria-describedby="player-keys">
         <h2 class="sr-only" id="player-title">Animation player</h2>
+        <div class="lesson-view-toolbar">
+          <div><span class="lesson-render-label">3D study aid · unreviewed</span><button type="button" class="lesson-study-toggle" id="study-view" aria-pressed="false">Study view</button></div>
+          <div class="lesson-view-switch" role="group" aria-label="Camera view">
+            <button type="button" data-lesson-view="front" aria-pressed="false">Front</button>
+            <button type="button" data-lesson-view="back" aria-pressed="false">Back</button>
+            <button type="button" data-lesson-view="side" aria-pressed="false">Left</button>
+            <button type="button" data-lesson-view="other-side" aria-pressed="false">Right</button>
+            <button type="button" data-lesson-view="three-quarter" aria-label="Three-quarter view" aria-pressed="true">3/4</button>
+          </div>
+          <p class="lesson-view-note">Views are fixed to the starting stance.</p>
+        </div>
         <div class="canvas-wrap">
-          <canvas id="lesson-canvas" width="420" height="460" role="img" aria-label="Stick figure showing the selected pose"></canvas>
+          <canvas id="lesson-canvas" width="640" height="640" role="img" aria-label="3D character showing the selected pose"></canvas>
+          <p class="character-loading" id="character-loading" role="status">Loading the 3D character…</p>
+          <p class="lesson-fallback" id="lesson-fallback" hidden>The 3D view could not load in this browser. The pose descriptions, movement list and pose links are still available.</p>
         </div>
 
         <div class="move-info" id="move-info" aria-live="polite">
@@ -101,26 +114,29 @@
         </div>
 
         <div class="progress-wrap">
-          <label class="sr-only" for="lesson-progress">Position in the form</label>
-          <input type="range" id="lesson-progress" min="0" max="19" step="1" value="0">
+          <label class="sr-only" for="lesson-progress">Time in the form</label>
+          <input type="range" id="lesson-progress" min="0" max="71.3" step="0.01" value="0">
+          <output id="lesson-clock" class="lesson-clock" for="lesson-progress">0.00 / 71.30 s</output>
         </div>
 
         <div class="lesson-controls" role="group" aria-label="Playback">
           <button type="button" class="lesson-ctrl" id="btn-first" aria-label="First pose"><span aria-hidden="true">⏮</span></button>
           <button type="button" class="lesson-ctrl" id="btn-prev" aria-label="Previous pose"><span aria-hidden="true">◀</span></button>
-          <button type="button" class="lesson-ctrl lesson-play" id="btn-play" aria-label="Play"><span aria-hidden="true">▶</span></button>
+          <button type="button" class="lesson-ctrl lesson-play" id="btn-play" aria-label="Play"><span aria-hidden="true">▶</span><span id="play-label">Play</span></button>
           <button type="button" class="lesson-ctrl" id="btn-next" aria-label="Next pose"><span aria-hidden="true">▶▏</span></button>
           <button type="button" class="lesson-ctrl" id="btn-last" aria-label="Last pose"><span aria-hidden="true">⏭</span></button>
+          <button type="button" class="lesson-ctrl" id="frame-prev" aria-label="Previous frame" title="Previous frame"><span aria-hidden="true">−</span></button>
+          <button type="button" class="lesson-ctrl" id="frame-next" aria-label="Next frame" title="Next frame"><span aria-hidden="true">+</span></button>
           <label class="speed-label" for="speed">Speed
             <select class="speed-select" id="speed">
-              <option value="2000">Slow</option>
-              <option value="1300" selected>Normal</option>
-              <option value="800">Fast</option>
+              <option value="0.25">0.25×</option>
+              <option value="0.5">0.5×</option>
+              <option value="1" selected>1×</option>
             </select>
           </label>
         </div>
 
-        <p class="player-keys" id="player-keys">Keys (with the player selected): <kbd>←</kbd> <kbd>→</kbd> step, <kbd>Home</kbd> <kbd>End</kbd> first/last, <kbd>Space</kbd> or <kbd>K</kbd> play/pause.</p>
+        <p class="player-keys" id="player-keys">Keys (with the player selected): <kbd>←</kbd> <kbd>→</kbd> step one frame (Shift for a pose), <kbd>Home</kbd> <kbd>End</kbd> first/last, <kbd>Space</kbd> or <kbd>K</kbd> play/pause.</p>
         </div>
 
         <div class="pose-share">
