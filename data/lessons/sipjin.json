@@ -1,0 +1,661 @@
+{
+  "id": "sipjin",
+  "sourceVariant": "DTaF 1999 reference edition",
+  "sourceMovements": 28,
+  "headingConvention": "0=initial forward,90=left,-90=right,180=back; body heading and gaze are separate",
+  "sources": [
+    {
+      "url": "https://oddertaekwondo.dk/userfiles/downloads/dtaf_officielle_poomse_bog.pdf",
+      "title": "Danish Taekwondo Federation official poomsae book, 1999 edition",
+      "pdfPages": [
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100,
+        101
+      ]
+    },
+    {
+      "url": "https://www.frontline-ma.co.uk/Poomsae%20Sipjin.pdf",
+      "title": "Frontline Martial Arts own teaching notes, supplementary cross-check"
+    },
+    {
+      "url": "https://www.emacenter.com/Member/sip-jin",
+      "title": "Elite Martial Arts Centers own Sipjin curriculum, explicit laterality and pivot cross-check"
+    }
+  ],
+  "sequence": [
+    {
+      "n": 1,
+      "heading": 0,
+      "stance": "parallel",
+      "lead": null,
+      "actions": [
+        {
+          "type": "bull-block",
+          "side": "both",
+          "level": "overhead",
+          "height": "overhead"
+        }
+      ],
+      "travel": "in-place",
+      "holdSeconds": 5,
+      "notes": "",
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 2,
+      "heading": 90,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "palm-assisted-outside-block",
+          "side": "left"
+        }
+      ],
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 3,
+      "heading": 90,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "wrist-turn",
+          "side": "left",
+          "phase": 0
+        },
+        {
+          "type": "spearhand",
+          "side": "right",
+          "phase": 1,
+          "orientation": "palm-down"
+        },
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "phase": 2
+        },
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "phase": 3
+        }
+      ],
+      "travel": "extend-front-foot",
+      "notes": "",
+      "footAction": "slide-left",
+      "simultaneous": false
+    },
+    {
+      "n": 4,
+      "heading": 180,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "opening-mountain-block",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": 90,
+      "step": "right",
+      "stepHeading": 90,
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 5,
+      "heading": 180,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "target-grab",
+          "side": "left",
+          "phase": 0,
+          "heading": 90
+        },
+        {
+          "type": "side-punch",
+          "side": "right",
+          "phase": 1,
+          "heading": 90
+        }
+      ],
+      "gazeHeading": 90,
+      "kihap": true,
+      "footwork": [
+        {
+          "phase": 0,
+          "stance": "cross",
+          "step": "left",
+          "heading": 90
+        },
+        {
+          "phase": 1,
+          "stance": "horse",
+          "step": "right",
+          "heading": 90
+        }
+      ],
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 6,
+      "heading": 0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "double-side-elbow",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": -90,
+      "turn": 180,
+      "step": "right",
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 7,
+      "heading": -90,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "palm-assisted-outside-block",
+          "side": "right"
+        }
+      ],
+      "step": "right",
+      "intermediate": "closed",
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 8,
+      "heading": -90,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "wrist-turn",
+          "side": "right",
+          "phase": 0
+        },
+        {
+          "type": "spearhand",
+          "side": "left",
+          "phase": 1,
+          "orientation": "palm-down"
+        },
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "phase": 2
+        },
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "phase": 3
+        }
+      ],
+      "travel": "extend-front-foot",
+      "notes": "",
+      "footAction": "slide-right",
+      "simultaneous": false
+    },
+    {
+      "n": 9,
+      "heading": 180,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "opening-mountain-block",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": -90,
+      "step": "left",
+      "stepHeading": -90,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 10,
+      "heading": 180,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "target-grab",
+          "side": "right",
+          "phase": 0,
+          "heading": -90
+        },
+        {
+          "type": "side-punch",
+          "side": "left",
+          "phase": 1,
+          "heading": -90
+        }
+      ],
+      "gazeHeading": -90,
+      "kihap": true,
+      "footwork": [
+        {
+          "phase": 0,
+          "stance": "cross",
+          "step": "right",
+          "heading": -90
+        },
+        {
+          "phase": 1,
+          "stance": "horse",
+          "step": "left",
+          "heading": -90
+        }
+      ],
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 11,
+      "heading": 0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "double-side-elbow",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": 90,
+      "turn": -180,
+      "step": "left",
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 12,
+      "heading": 180,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "palm-assisted-outside-block",
+          "side": "right"
+        }
+      ],
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 13,
+      "heading": 180,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "wrist-turn",
+          "side": "right",
+          "phase": 0
+        },
+        {
+          "type": "spearhand",
+          "side": "left",
+          "phase": 1,
+          "orientation": "palm-down"
+        },
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "phase": 2
+        },
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "phase": 3
+        }
+      ],
+      "travel": "extend-front-foot",
+      "notes": "",
+      "footAction": "slide-right",
+      "simultaneous": false
+    },
+    {
+      "n": 14,
+      "heading": 180,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "double-knifehand-low-block",
+          "side": "both"
+        }
+      ],
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 15,
+      "heading": 180,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "rock-pushing",
+          "side": "both"
+        }
+      ],
+      "holdSeconds": 5,
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 16,
+      "heading": -90,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "ridgehand-opening-block",
+          "side": "both"
+        }
+      ],
+      "turn": 90,
+      "step": "left",
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 17,
+      "heading": -90,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "knifehand-low-opening-block",
+          "side": "both"
+        }
+      ],
+      "travel": "in-place",
+      "holdSeconds": 5,
+      "notes": "",
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 18,
+      "heading": -90,
+      "stance": "wide-parallel",
+      "lead": null,
+      "actions": [
+        {
+          "type": "low-opening-block",
+          "side": "both"
+        }
+      ],
+      "travel": "straighten-knees",
+      "holdSeconds": 5,
+      "notes": "",
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 19,
+      "heading": 0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "lifting-block",
+          "side": "left"
+        }
+      ],
+      "turn": 90,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 20,
+      "heading": 0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "rock-pushing",
+          "side": "both"
+        }
+      ],
+      "travel": "in-place",
+      "holdSeconds": 5,
+      "notes": "",
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 21,
+      "heading": 0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "small-hinge",
+          "side": "both",
+          "phase": 0,
+          "hipSide": "left"
+        },
+        {
+          "type": "front-kick",
+          "side": "right",
+          "phase": 1
+        },
+        {
+          "type": "fork-punch",
+          "side": "both",
+          "phase": 2,
+          "frontSide": "right"
+        }
+      ],
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 22,
+      "heading": 0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "small-hinge",
+          "side": "both",
+          "phase": 0,
+          "hipSide": "right"
+        },
+        {
+          "type": "front-kick",
+          "side": "left",
+          "phase": 1
+        },
+        {
+          "type": "fork-punch",
+          "side": "both",
+          "phase": 2,
+          "frontSide": "left"
+        }
+      ],
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 23,
+      "heading": 0,
+      "stance": "cross",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "small-hinge",
+          "side": "both",
+          "phase": 0,
+          "hipSide": "left"
+        },
+        {
+          "type": "front-kick",
+          "side": "right",
+          "phase": 1
+        },
+        {
+          "type": "assisted-backfist",
+          "side": "right",
+          "phase": 2
+        }
+      ],
+      "stamp": true,
+      "kihap": true,
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 24,
+      "heading": 180,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "rock-pushing",
+          "side": "both"
+        }
+      ],
+      "turn": 180,
+      "holdSeconds": 5,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 25,
+      "heading": 180,
+      "stance": "cat",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-cross-low-block",
+          "side": "both"
+        }
+      ],
+      "travel": "pull-front-foot-back",
+      "notes": "",
+      "footAction": "pull-left",
+      "simultaneous": false
+    },
+    {
+      "n": 26,
+      "heading": 180,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "ridgehand-guard",
+          "side": "both"
+        }
+      ],
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 27,
+      "heading": 180,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "fork-punch",
+          "side": "both",
+          "frontSide": "left"
+        }
+      ],
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 28,
+      "heading": 180,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "fork-punch",
+          "side": "both",
+          "frontSide": "right"
+        }
+      ],
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    }
+  ],
+  "unresolved": [
+    "Horse direction/pivot interpretation is a documented synthesis of1999 illustrated edition with Elite school pivot instructions, not a claim of2026 Kukkiwon verification."
+  ],
+  "sourceMovementsNote": "DTaF/Phoenix count28; existing catalogue31 must not be padded.",
+  "corrections": [
+    {
+      "n": 6,
+      "issue": "DTaF table chest direction conflicts with180pivot described in school source",
+      "chosen": "180left pivot to chestGa; Elite curriculum explicitly pivots left180, and subsequent opposite-side combination requires this."
+    },
+    {
+      "n": 9,
+      "issue": "DTaF table says chestGa; alternate printing/drawing and left sidepunch requireMa",
+      "chosen": "Horse chestMa, gazeRa; both180horse sequences mirror."
+    }
+  ],
+  "return": {
+    "heading": 0,
+    "turn": 180,
+    "stance": "parallel",
+    "step": "left",
+    "action": "ready"
+  },
+  "instructorReviewed": false,
+  "movementCount": 28,
+  "referenceLabel": "DTaF 1999 reference edition",
+  "reviewStatus": "pending"
+}

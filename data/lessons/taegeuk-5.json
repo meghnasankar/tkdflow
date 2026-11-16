@@ -1,0 +1,459 @@
+{
+  "id": "taegeuk-5",
+  "sources": [
+    {
+      "url": "https://lehightaekwondo.com/poomse/taegeuk_o_jang/index.shtml",
+      "title": "Lehigh Valley / Lehigh University Taekwondo: Taegeuk 5"
+    },
+    {
+      "url": "https://www.nbtkda.com/taegeuk-5",
+      "title": "North Bay Taekwondo Academy: Taegeuk 5 and linked technique chart"
+    },
+    {
+      "url": "https://www.sunbae.net/static/uploads/files/handbook-student-2025-02-wfkrbpnpljwb-wfecxcgavcrr.pdf",
+      "title": "Sun Bae Taekwondo 2025 handbook, printed pages 26–27"
+    },
+    {
+      "url": "https://www.msutaekwondo.org/uploads/6/1/3/7/61371437/poomse.pdf",
+      "title": "Michigan State University Taekwondo published curriculum, Taegeuk 5"
+    }
+  ],
+  "sequence": [
+    {
+      "n": 1,
+      "turn": 90.0,
+      "facing": 90.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 90.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 2,
+      "turn": 0.0,
+      "facing": 90.0,
+      "stance": "parallel",
+      "lead": null,
+      "actions": [
+        {
+          "type": "hammerfist",
+          "side": "left"
+        }
+      ],
+      "travel": "draw-front",
+      "notes": "Side/ease stance rather than fully closed attention stance; draw the front foot back. Hammerfist is downward, not a punch.",
+      "movingFoot": "left",
+      "footworkEvidence": "MSU Taegeuk5 step2 explicitly retracts the left foot; North Bay labels left side stance.",
+      "heading": 90.0,
+      "footAction": "pull-left",
+      "simultaneous": false
+    },
+    {
+      "n": 3,
+      "turn": -180.0,
+      "facing": 270.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 4,
+      "turn": 0.0,
+      "facing": 270.0,
+      "stance": "parallel",
+      "lead": null,
+      "actions": [
+        {
+          "type": "hammerfist",
+          "side": "right"
+        }
+      ],
+      "travel": "draw-front",
+      "notes": "Side/ease stance rather than fully closed attention stance; draw the front foot back. Hammerfist is downward, not a punch.",
+      "movingFoot": "right",
+      "footworkEvidence": "MSU Taegeuk5 step4 explicitly retracts the right foot; North Bay labels right side stance.",
+      "heading": 270.0,
+      "footAction": "pull-left",
+      "simultaneous": false
+    },
+    {
+      "n": 5,
+      "turn": 90.0,
+      "facing": 0.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "inside-block",
+          "side": "left"
+        },
+        {
+          "type": "inside-block",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 0.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 6,
+      "turn": 0.0,
+      "facing": 0.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "right"
+        },
+        {
+          "type": "backfist",
+          "side": "right"
+        },
+        {
+          "type": "inside-block",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 0.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 7,
+      "turn": 0.0,
+      "facing": 0.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "left"
+        },
+        {
+          "type": "backfist",
+          "side": "left"
+        },
+        {
+          "type": "inside-block",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 0.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 8,
+      "turn": 0.0,
+      "facing": 0.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "backfist",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 0.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 9,
+      "turn": 270.0,
+      "facing": 270.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-block",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 10,
+      "turn": 0.0,
+      "facing": 270.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "elbow-strike",
+          "side": "right",
+          "assisted": true
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 11,
+      "turn": -180.0,
+      "facing": 90.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "knifehand-block",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 90.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 12,
+      "turn": 0.0,
+      "facing": 90.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "elbow-strike",
+          "side": "left",
+          "assisted": true
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 90.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 13,
+      "turn": 90.0,
+      "facing": 180.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "left"
+        },
+        {
+          "type": "inside-block",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 180.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 14,
+      "turn": 0.0,
+      "facing": 180.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "right"
+        },
+        {
+          "type": "low-block",
+          "side": "right"
+        },
+        {
+          "type": "inside-block",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 180.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 15,
+      "turn": 90.0,
+      "facing": 270.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "high-block",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 16,
+      "turn": 0.0,
+      "facing": 270.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "side-kick",
+          "side": "right"
+        },
+        {
+          "type": "elbow-strike",
+          "side": "left",
+          "detail": "target"
+        }
+      ],
+      "travel": "step",
+      "notes": "Extend same-side fist with the side kick; landing brings opposite elbow to the extended target palm.",
+      "heading": 270.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 17,
+      "turn": -180.0,
+      "facing": 90.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "high-block",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 90.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 18,
+      "turn": 0.0,
+      "facing": 90.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "side-kick",
+          "side": "left"
+        },
+        {
+          "type": "elbow-strike",
+          "side": "right",
+          "detail": "target"
+        }
+      ],
+      "travel": "step",
+      "notes": "Extend same-side fist with the side kick; landing brings opposite elbow to the extended target palm.",
+      "heading": 90.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 19,
+      "turn": 90.0,
+      "facing": 180.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "left"
+        },
+        {
+          "type": "inside-block",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 180.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 20,
+      "turn": 0.0,
+      "facing": 180.0,
+      "stance": "cross",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "right"
+        },
+        {
+          "type": "backfist",
+          "side": "right"
+        }
+      ],
+      "travel": "hop",
+      "notes": "Front kick followed by forward hop/stomp into rear cross stance with right lead; backfist and landing coincide.",
+      "kihap": true,
+      "heading": 180.0,
+      "footAction": "land-right",
+      "simultaneous": false
+    }
+  ],
+  "unresolved": [],
+  "reviewStatus": "pending",
+  "numberingNote": "Command counts follow Sun Bae/Lehigh convention; individual techniques within a count remain separate actions. Original wording; motion distances and timing remain an illustrative draft.",
+  "kihapMovements": [
+    20
+  ],
+  "ready": {
+    "stance": "parallel",
+    "facing": 0,
+    "action": "ready"
+  },
+  "return": {
+    "stance": "parallel",
+    "facing": 0,
+    "action": "ready",
+    "notes": "Return on command; join the prescribed foot rather than travel back along the full floor path."
+  },
+  "movementCount": 20,
+  "referenceLabel": "Lehigh Valley / Lehigh University Taekwondo: Taegeuk 5"
+}

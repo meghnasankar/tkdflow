@@ -46,12 +46,13 @@ export function poseLinkProblemText(problem, count) {
  * links stay on the same host) and a fixed path; nothing from the current
  * URL other than the origin is copied. Non-http(s) origins get a relative link.
  */
-export function poseUrl(origin, index) {
+export function poseUrl(origin, index, path = LESSON_PATH) {
+  const safePath = /^\/[a-z0-9-]+\.html$/.test(path) ? path : LESSON_PATH;
   const query = `?${POSE_PARAM}=${Math.trunc(index) + 1}${PLAYER_HASH}`;
   let base;
   try { base = new URL(String(origin)); } catch { base = null; }
-  if (!base || (base.protocol !== 'http:' && base.protocol !== 'https:')) return `${LESSON_PATH}${query}`;
-  return `${base.origin}${LESSON_PATH}${query}`;
+  if (!base || (base.protocol !== 'http:' && base.protocol !== 'https:')) return `${safePath}${query}`;
+  return `${base.origin}${safePath}${query}`;
 }
 
 /**
@@ -62,7 +63,7 @@ export function poseUrl(origin, index) {
  * - Every applied link selects its pose PAUSED (player.select always pauses).
  * - push(index): selects the pose paused and records its link without reloading.
  */
-export function createPoseHistory({ win, player, count, onProblem = () => {} }) {
+export function createPoseHistory({ win, player, count, path = LESSON_PATH, onProblem = () => {} }) {
   let started = false;
   let lastSearch = null;
   const apply = () => {
@@ -84,7 +85,7 @@ export function createPoseHistory({ win, player, count, onProblem = () => {} }) 
     },
     push(index) {
       player.select(index, 'link');
-      const url = poseUrl(win.location.origin, player.index);
+      const url = poseUrl(win.location.origin, player.index, path);
       const target = new URL(url, win.location.href);
       if (target.search + target.hash !== win.location.search + win.location.hash) {
         win.history.pushState(null, '', url);

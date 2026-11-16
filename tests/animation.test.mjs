@@ -10,7 +10,7 @@ const sub=(a,b)=>a.map((v,i)=>v-b[i]),len=a=>Math.hypot(...a),close=(a,b,e=1e-6)
 const hash=p=>createHash('sha256').update(readFileSync(new URL('../'+p,import.meta.url))).digest('hex');
 test('every available lesson is converted and all original poses remain addressable',()=>{
  const forms=JSON.parse(readFileSync(new URL('../data/forms.json',import.meta.url)));
- assert.deepEqual(forms.filter(f=>f.lessonUrl).map(f=>f.id),['taegeuk-1']);
+ assert.ok(forms.some(f=>f.id==='taegeuk-1'&&f.lessonUrl==='taegeuk-1.html'));
  assert.equal(CHAPTERS.length,POSES.length);assert.equal(CHAPTERS.length,20);
  assert.equal(LESSON.review.status,'pending');assert.equal(LESSON.review.reviewer,null);
  CHAPTERS.forEach((c,i)=>{assert.equal(c.index,i);assert.equal(indexAtTime(c.at),i);if(i){assert.ok(c.start>CHAPTERS[i-1].at);assert.ok(c.at>c.start);}});

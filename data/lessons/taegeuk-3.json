@@ -1,0 +1,463 @@
+{
+  "id": "taegeuk-3",
+  "sources": [
+    {
+      "url": "https://lehightaekwondo.com/poomse/taegeuk_sam_jang/index.shtml",
+      "title": "Lehigh Valley / Lehigh University Taekwondo: Taegeuk 3"
+    },
+    {
+      "url": "https://www.nbtkda.com/taegeuk-3",
+      "title": "North Bay Taekwondo Academy: Taegeuk 3 and linked technique chart"
+    },
+    {
+      "url": "https://www.sunbae.net/static/uploads/files/handbook-student-2025-02-wfkrbpnpljwb-wfecxcgavcrr.pdf",
+      "title": "Sun Bae Taekwondo 2025 handbook, printed pages 22–23"
+    },
+    {
+      "url": "https://www.msutaekwondo.org/uploads/6/1/3/7/61371437/poomse.pdf",
+      "title": "Michigan State University Taekwondo published curriculum, Taegeuk 3"
+    }
+  ],
+  "sequence": [
+    {
+      "n": 1,
+      "turn": 90.0,
+      "facing": 90.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 90.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 2,
+      "turn": 0.0,
+      "facing": 90.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "right"
+        },
+        {
+          "type": "middle-punch",
+          "side": "right"
+        },
+        {
+          "type": "middle-punch",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 90.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 3,
+      "turn": -180.0,
+      "facing": 270.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 4,
+      "turn": 0.0,
+      "facing": 270.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "left"
+        },
+        {
+          "type": "middle-punch",
+          "side": "left"
+        },
+        {
+          "type": "middle-punch",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 5,
+      "turn": 90.0,
+      "facing": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-strike",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 0.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 6,
+      "turn": 0.0,
+      "facing": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "knifehand-strike",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 0.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 7,
+      "turn": 90.0,
+      "facing": 90.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-block",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 90.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 8,
+      "turn": 0.0,
+      "facing": 90.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right"
+        }
+      ],
+      "travel": "shift",
+      "notes": "Same left lead; front foot slides forward from back stance into front stance. Do not add a full walking step.",
+      "movingFoot": "left",
+      "footworkEvidence": "Lehigh/Sun Bae retain left lead while changing back stance to front stance; MSU says only left foot moves forward.",
+      "heading": 90.0,
+      "footAction": "slide-left",
+      "simultaneous": false
+    },
+    {
+      "n": 9,
+      "turn": -180.0,
+      "facing": 270.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "knifehand-block",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 10,
+      "turn": 0.0,
+      "facing": 270.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "left"
+        }
+      ],
+      "travel": "shift",
+      "notes": "Same right lead; shift from back stance to front stance without a full extra step.",
+      "movingFoot": "right",
+      "footworkEvidence": "Mirrored shift from right-lead back stance to right-lead front stance; MSU says right foot moves.",
+      "heading": 270.0,
+      "footAction": "slide-right",
+      "simultaneous": false
+    },
+    {
+      "n": 11,
+      "turn": 90.0,
+      "facing": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "inside-block",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 0.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 12,
+      "turn": 0.0,
+      "facing": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "inside-block",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 0.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 13,
+      "turn": 270.0,
+      "facing": 270.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 14,
+      "turn": 0.0,
+      "facing": 270.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "right"
+        },
+        {
+          "type": "middle-punch",
+          "side": "right"
+        },
+        {
+          "type": "middle-punch",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 15,
+      "turn": -180.0,
+      "facing": 90.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 90.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 16,
+      "turn": 0.0,
+      "facing": 90.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "left"
+        },
+        {
+          "type": "middle-punch",
+          "side": "left"
+        },
+        {
+          "type": "middle-punch",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 90.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 17,
+      "turn": 90.0,
+      "facing": 180.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "left"
+        },
+        {
+          "type": "middle-punch",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 180.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 18,
+      "turn": 0.0,
+      "facing": 180.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "right"
+        },
+        {
+          "type": "middle-punch",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 180.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 19,
+      "turn": 0.0,
+      "facing": 180.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "left"
+        },
+        {
+          "type": "low-block",
+          "side": "left"
+        },
+        {
+          "type": "middle-punch",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 180.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 20,
+      "turn": 0.0,
+      "facing": 180.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "right"
+        },
+        {
+          "type": "low-block",
+          "side": "right"
+        },
+        {
+          "type": "middle-punch",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "kihap": true,
+      "heading": 180.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    }
+  ],
+  "unresolved": [],
+  "reviewStatus": "pending",
+  "numberingNote": "Command counts follow Sun Bae/Lehigh convention; individual techniques within a count remain separate actions. Original wording; motion distances and timing remain an illustrative draft.",
+  "kihapMovements": [
+    20
+  ],
+  "ready": {
+    "stance": "parallel",
+    "facing": 0,
+    "action": "ready"
+  },
+  "return": {
+    "stance": "parallel",
+    "facing": 0,
+    "action": "ready",
+    "notes": "Return on command; join the prescribed foot rather than travel back along the full floor path."
+  },
+  "movementCount": 20,
+  "referenceLabel": "Lehigh Valley / Lehigh University Taekwondo: Taegeuk 3"
+}

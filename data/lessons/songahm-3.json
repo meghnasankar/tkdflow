@@ -1,0 +1,523 @@
+{
+  "id": "songahm-3",
+  "sources": [
+    {
+      "url": "https://media.atamartialarts.com/media/11049/7th-grade-yellow-belt-form-songahm-3final.pdf",
+      "title": "ATA official Songahm 3 form sheet, revised 2024-01-08"
+    }
+  ],
+  "ready": "parallel",
+  "headingConvention": "0 is initial ready facing; positive turns left. lead is the FRONT foot, including L-stance. Action heading overrides body facing when technique goes sideways.",
+  "sequence": [
+    {
+      "n": 1,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-strike",
+          "side": "left",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 2,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "double-knifehand-block",
+          "side": "left",
+          "handShape": "open"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 3,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "right",
+          "ataKickNumber": 4,
+          "height": "middle"
+        }
+      ],
+      "footAction": "close-left-kick-right",
+      "notes": "Retreating #4 kick followed by right front stance.",
+      "simultaneous": false
+    },
+    {
+      "n": 4,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "roundhouse-kick",
+          "side": "left",
+          "ataKickNumber": 2,
+          "height": "middle"
+        }
+      ],
+      "footAction": "kick-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 5,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-low-block",
+          "side": "left",
+          "height": "low"
+        }
+      ],
+      "footAction": "land-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 6,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-high-block",
+          "side": "left",
+          "height": "high"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 7,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-right",
+      "kihap": true,
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 8,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "stay",
+      "kihap": true,
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 9,
+      "heading": 180.0,
+      "turn": 180,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "spearhand",
+          "side": "right",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "turn-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 10,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "spearhand",
+          "side": "left",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 11,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "right",
+          "height": "low"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 12,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 13,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "jump-front-kick",
+          "side": "right",
+          "ataKickNumber": 3,
+          "height": "middle"
+        }
+      ],
+      "footAction": "advance-jump-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 14,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "land-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 15,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "left",
+          "height": "low"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 16,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 17,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "jump-front-kick",
+          "side": "left",
+          "ataKickNumber": 3,
+          "height": "middle"
+        }
+      ],
+      "footAction": "advance-jump-left",
+      "kihap": true,
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 18,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "land-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 19,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "knifehand-strike",
+          "side": "right",
+          "heading": 90.0,
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 20,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "backfist",
+          "side": "left",
+          "heading": -90.0,
+          "height": "high"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 21,
+      "heading": 0.0,
+      "turn": 180,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "knifehand-strike",
+          "side": "left",
+          "heading": 90.0,
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "turn-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 22,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "backfist",
+          "side": "right",
+          "heading": -90.0,
+          "height": "high"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 23,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "knifehand-strike",
+          "side": "right",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 24,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "double-knifehand-block",
+          "side": "right",
+          "handShape": "open"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 25,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "left",
+          "ataKickNumber": 4,
+          "height": "middle"
+        }
+      ],
+      "footAction": "close-right-kick-left",
+      "notes": "Retreating #4 kick followed by left front stance.",
+      "simultaneous": false
+    },
+    {
+      "n": 26,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "roundhouse-kick",
+          "side": "right",
+          "ataKickNumber": 2,
+          "height": "middle"
+        }
+      ],
+      "footAction": "kick-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 27,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "knifehand-low-block",
+          "side": "right",
+          "height": "low"
+        }
+      ],
+      "footAction": "land-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 28,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "knifehand-high-block",
+          "side": "right",
+          "height": "high"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "",
+      "simultaneous": false
+    }
+  ],
+  "unresolved": [
+    "Official summary table mislabels action 18 as left reverse punch; detailed instructions and mirrored footwork specify right reverse punch. Structured sequence follows detailed instructions."
+  ],
+  "reviewStatus": "pending",
+  "returnFoot": "left",
+  "headingMap": {
+    "east": 0,
+    "north": 90,
+    "west": 180,
+    "south": -90
+  },
+  "returnHeading": 0,
+  "readyStepFoot": "left",
+  "movementCount": 28,
+  "referenceLabel": "ATA official Songahm 3 form sheet, revised 2024-01-08"
+}

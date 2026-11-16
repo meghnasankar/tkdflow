@@ -133,9 +133,10 @@ export function createAvatar({onReady,onError}={}){
   const band=mesh(new THREE.CylinderGeometry(.179,.179,.049,48,1,true),black);band.scale.z=.63;band.position.y=.005;chest.add(band);
   const knot=mesh(new THREE.BoxGeometry(.055,.043,.028),black);knot.position.set(0,-.003,.122);chest.add(knot);
   for(const [i,label]of [[0,MEDIA.character.beltName],[1,null]]){const printed=material(0xffffff,.8);printed.map=beltTexture(label,emblem);const tail=mesh(new THREE.BoxGeometry(.036,.25,.009),[black,black,black,black,printed,black]);tail.position.set(i?-.034:.028,-.145,.12);tail.rotation.z=i?-.13:.10;chest.add(tail);}
-  for(const {wrist,sign}of Object.values(arms)){
+  for(const arm of Object.values(arms)){
+   const {wrist,sign}=arm;arm.fingers=[];
    const palm=mesh(new THREE.SphereGeometry(1,24,16),skin);palm.scale.set(.048,.034,.039);palm.position.set(sign*.044,0,0);wrist.add(palm);
-   for(let i=0;i<4;i++){const knuckle=mesh(new THREE.SphereGeometry(.012,12,8),skin);knuckle.position.set(sign*.078,.003,(i-1.5)*.016);wrist.add(knuckle);}
+   for(let i=0;i<4;i++){const knuckle=mesh(new THREE.SphereGeometry(.012,12,8),skin);knuckle.position.set(sign*.078,.003,(i-1.5)*.016);wrist.add(knuckle);arm.fingers.push(knuckle);}
    const thumb=mesh(new THREE.SphereGeometry(1,16,12),skin);thumb.scale.set(.025,.017,.018);thumb.position.set(sign*.035,-.026,.022);wrist.add(thumb);
   }
   for(const leg of Object.values(legs)){
@@ -167,8 +168,9 @@ export function createAvatar({onReady,onError}={}){
    // The elbow plane supplies a common roll frame for sleeve, forearm and fist.
    // Shortest-arc rotations alone left the hands twisting independently.
    armFrame(upper,normal,a.sign,upperQ);armFrame(lower,normal,a.sign,lowerQ);
-   a.upper.quaternion.copy(chestQ).invert().multiply(upperQ);a.lower.quaternion.copy(upperQ).invert().multiply(lowerQ);a.wrist.quaternion.identity();
-   const l=legs[side],leg=pose.legs[side],lateral=new THREE.Vector3(1,0,0).applyAxisAngle(axisY,leg.yaw*RAD);
+   a.upper.quaternion.copy(chestQ).invert().multiply(upperQ);a.lower.quaternion.copy(upperQ).invert().multiply(lowerQ);a.wrist.quaternion.setFromAxisAngle(new THREE.Vector3(a.sign,0,0),(p.roll||0)*RAD);
+   for(let i=0;i<a.fingers.length;i++){const finger=a.fingers[i],open=THREE.MathUtils.clamp(p.open||0,0,1);finger.scale.x=1+open*(1.9-Math.abs(i-1.5)*.2);finger.position.x=a.sign*(.078+.016*open);}
+   const l=legs[side],leg=pose.legs[side],lateral=leg.lateral?new THREE.Vector3(...leg.lateral):new THREE.Vector3(1,0,0).applyAxisAngle(axisY,leg.yaw*RAD);
    legFrame(direction(leg.hip,leg.knee),lateral,upperQ);legFrame(direction(leg.knee,leg.ankle),lateral,lowerQ);
    l.upper.quaternion.copy(rootQ).invert().multiply(upperQ);l.lower.quaternion.copy(upperQ).invert().multiply(lowerQ);
    const footQ=new THREE.Quaternion().setFromEuler(new THREE.Euler(leg.pitch*RAD,leg.yaw*RAD,0,'YXZ'));l.ankle.quaternion.copy(lowerQ).invert().multiply(footQ);

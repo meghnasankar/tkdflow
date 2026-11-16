@@ -1,0 +1,533 @@
+{
+  "id": "pyongwon",
+  "sourceVariant": "DTaF 1999 reference edition",
+  "sourceMovements": 21,
+  "headingConvention": "0=initial forward,90=left,-90=right,180=back; body heading and gaze are separate",
+  "sources": [
+    {
+      "url": "https://oddertaekwondo.dk/userfiles/downloads/dtaf_officielle_poomse_bog.pdf",
+      "title": "Danish Taekwondo Federation official poomsae book, 1999 edition",
+      "pdfPages": [
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81
+      ]
+    },
+    {
+      "url": "https://www.frontline-ma.co.uk/Poomsae%20Pyongwon.pdf",
+      "title": "Frontline Martial Arts own teaching notes, supplementary cross-check"
+    }
+  ],
+  "sequence": [
+    {
+      "n": 1,
+      "heading": 0,
+      "stance": "parallel",
+      "lead": null,
+      "actions": [
+        {
+          "type": "knifehand-low-opening-block",
+          "side": "both"
+        }
+      ],
+      "step": "left",
+      "slow": true,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 2,
+      "heading": 0,
+      "stance": "parallel",
+      "lead": null,
+      "actions": [
+        {
+          "type": "tongmilgi",
+          "side": "both"
+        }
+      ],
+      "travel": "in-place",
+      "notes": "",
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 3,
+      "heading": -90,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "knifehand-low-block",
+          "side": "right"
+        }
+      ],
+      "turn": -90,
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 4,
+      "heading": 90,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-side-block",
+          "side": "left"
+        }
+      ],
+      "turn": 180,
+      "travel": "pivot",
+      "notes": "",
+      "footAction": "pivot",
+      "simultaneous": false
+    },
+    {
+      "n": 5,
+      "heading": 90,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "elbow-strike",
+          "side": "right",
+          "mode": "rising"
+        }
+      ],
+      "travel": "extend-front-foot",
+      "notes": "",
+      "footAction": "slide-left",
+      "simultaneous": false
+    },
+    {
+      "n": 6,
+      "heading": 0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "right",
+          "phase": 0,
+          "heading": 90
+        },
+        {
+          "type": "turning-side-kick",
+          "side": "left",
+          "phase": 1,
+          "heading": 90
+        },
+        {
+          "type": "double-knifehand-block",
+          "side": "both",
+          "phase": 2,
+          "heading": -90
+        }
+      ],
+      "gazeHeading": -90,
+      "footwork": [
+        {
+          "phase": 0,
+          "step": "right",
+          "stance": "front",
+          "lead": "right",
+          "heading": 90
+        },
+        {
+          "phase": 1,
+          "lift": "left",
+          "stance": "crane",
+          "heading": 90
+        },
+        {
+          "phase": 2,
+          "step": "left",
+          "stance": "back",
+          "lead": "right",
+          "heading": 0
+        }
+      ],
+      "notes": "Turning side kick and final defending direction differ; do not turn it into a second ordinary front kick.",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 7,
+      "heading": 0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "double-knifehand-low-block",
+          "side": "both",
+          "heading": -90
+        }
+      ],
+      "gazeHeading": -90,
+      "travel": "in-place",
+      "notes": "",
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 8,
+      "heading": 0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "assisted-high-side-block",
+          "side": "right",
+          "heading": -90
+        }
+      ],
+      "gazeHeading": -90,
+      "travel": "adjust-feet",
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 9,
+      "heading": 0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "pulling-backfist",
+          "side": "right",
+          "phase": 0,
+          "heading": 0
+        },
+        {
+          "type": "pulling-backfist",
+          "side": "left",
+          "phase": 1,
+          "heading": 0
+        }
+      ],
+      "gazeHeading": 0,
+      "step": "right",
+      "stamp": true,
+      "kihap": true,
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 10,
+      "heading": 0,
+      "stance": "cross",
+      "lead": null,
+      "actions": [
+        {
+          "type": "double-side-elbow",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": -90,
+      "step": "left",
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 11,
+      "heading": 0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "mountain-block",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": -90,
+      "step": "right",
+      "stepHeading": -90,
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 12,
+      "heading": 0,
+      "stance": "crane",
+      "lead": null,
+      "actions": [
+        {
+          "type": "diamond-block",
+          "side": "right",
+          "phase": 0,
+          "lowSide": "right",
+          "highSide": "left"
+        },
+        {
+          "type": "small-hinge",
+          "side": "both",
+          "phase": 1,
+          "hipSide": "left"
+        }
+      ],
+      "gazeHeading": -90,
+      "lift": "right",
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 13,
+      "heading": -90,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "side-kick",
+          "side": "right",
+          "phase": 0,
+          "heading": -90
+        },
+        {
+          "type": "elbow-strike",
+          "side": "left",
+          "phase": 1,
+          "mode": "rising"
+        }
+      ],
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 14,
+      "heading": 0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "left",
+          "phase": 0,
+          "heading": -90
+        },
+        {
+          "type": "turning-side-kick",
+          "side": "right",
+          "phase": 1,
+          "heading": -90
+        },
+        {
+          "type": "double-knifehand-block",
+          "side": "both",
+          "phase": 2,
+          "heading": 90
+        }
+      ],
+      "gazeHeading": 90,
+      "footwork": [
+        {
+          "phase": 0,
+          "step": "left",
+          "stance": "front",
+          "lead": "left",
+          "heading": -90
+        },
+        {
+          "phase": 1,
+          "lift": "right",
+          "stance": "crane",
+          "heading": -90
+        },
+        {
+          "phase": 2,
+          "step": "right",
+          "stance": "back",
+          "lead": "left",
+          "heading": 0
+        }
+      ],
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 15,
+      "heading": 0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "double-knifehand-low-block",
+          "side": "both",
+          "heading": 90
+        }
+      ],
+      "gazeHeading": 90,
+      "travel": "in-place",
+      "notes": "",
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 16,
+      "heading": 0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "assisted-high-side-block",
+          "side": "left",
+          "heading": 90
+        }
+      ],
+      "gazeHeading": 90,
+      "travel": "adjust-feet",
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 17,
+      "heading": 0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "pulling-backfist",
+          "side": "left",
+          "phase": 0,
+          "heading": 0
+        },
+        {
+          "type": "pulling-backfist",
+          "side": "right",
+          "phase": 1,
+          "heading": 0
+        }
+      ],
+      "gazeHeading": 0,
+      "step": "left",
+      "stamp": true,
+      "kihap": true,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 18,
+      "heading": 0,
+      "stance": "cross",
+      "lead": null,
+      "actions": [
+        {
+          "type": "double-side-elbow",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": 90,
+      "step": "right",
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 19,
+      "heading": 0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "mountain-block",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": 90,
+      "step": "left",
+      "stepHeading": 90,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 20,
+      "heading": 0,
+      "stance": "crane",
+      "lead": null,
+      "actions": [
+        {
+          "type": "diamond-block",
+          "side": "left",
+          "phase": 0,
+          "lowSide": "left",
+          "highSide": "right"
+        },
+        {
+          "type": "small-hinge",
+          "side": "both",
+          "phase": 1,
+          "hipSide": "right"
+        }
+      ],
+      "gazeHeading": 90,
+      "lift": "left",
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 21,
+      "heading": 90,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "side-kick",
+          "side": "left",
+          "phase": 0,
+          "heading": 90
+        },
+        {
+          "type": "elbow-strike",
+          "side": "right",
+          "phase": 1,
+          "targetHand": "left"
+        }
+      ],
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    }
+  ],
+  "unresolved": [
+    "Turning-side-kick full pivot path at6/14 must be rendered as a distinct technique with the final guard facing the opposite direction. Needs close animation QA, not a generic interpolation."
+  ],
+  "sourceMovementsNote": "DTaF and Phoenix count21; existing catalogue25 should be corrected, not padded.",
+  "ready": "overlapped-hands-closed",
+  "return": {
+    "heading": 0,
+    "stance": "closed",
+    "step": "left",
+    "action": "overlapped-hands"
+  },
+  "corrections": [
+    {
+      "n": 14,
+      "issue": "DTaF line says frontkickDa even though performer facesRa after13",
+      "chosen": "Frontkick along currentRa direction, same-side turningkick then defendDa; consistent with Frontline continuation and mirrored6–13."
+    }
+  ],
+  "instructorReviewed": false,
+  "movementCount": 21,
+  "referenceLabel": "DTaF 1999 reference edition",
+  "reviewStatus": "pending"
+}

@@ -1,0 +1,497 @@
+{
+  "id": "won-hyo",
+  "sources": [
+    {
+      "url": "https://itkdc.com/wp-content/uploads/patterns/won-hyo-pattern.pdf",
+      "title": "NP/Intrepid Won-Hyo numbered school curriculum"
+    }
+  ],
+  "ready": "closed-A",
+  "headingConvention": "0 is initial ready facing; positive turns left. lead is the FRONT foot, including L-stance. Action heading overrides body facing when technique goes sideways.",
+  "sequence": [
+    {
+      "n": 1,
+      "heading": 90.0,
+      "turn": 90.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "twin-forearm-block",
+          "side": "left"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 2,
+      "heading": 90.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-inward-strike",
+          "side": "right",
+          "handShape": "open",
+          "height": "high"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "Left fist remains before right shoulder.",
+      "simultaneous": false
+    },
+    {
+      "n": 3,
+      "heading": 90.0,
+      "turn": 0.0,
+      "stance": "fixed",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "slide-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 4,
+      "heading": -90.0,
+      "turn": -180,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "twin-forearm-block",
+          "side": "right"
+        }
+      ],
+      "footAction": "close-then-step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 5,
+      "heading": -90.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "knifehand-inward-strike",
+          "side": "left",
+          "handShape": "open",
+          "height": "high"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "Right fist remains before left shoulder.",
+      "simultaneous": false
+    },
+    {
+      "n": 6,
+      "heading": -90.0,
+      "turn": 0.0,
+      "stance": "fixed",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "slide-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 7,
+      "heading": 0.0,
+      "turn": 90.0,
+      "stance": "crane",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "bending-ready",
+          "side": "left"
+        }
+      ],
+      "footAction": "close-and-chamber-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 8,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "crane",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "side-kick",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "kick-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 9,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-block",
+          "side": "left",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "land-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 10,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "knifehand-block",
+          "side": "right",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 11,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-block",
+          "side": "left",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 12,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "spearhand",
+          "side": "right",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 13,
+      "heading": -90.0,
+      "turn": 270,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "twin-forearm-block",
+          "side": "left"
+        }
+      ],
+      "footAction": "turn-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 14,
+      "heading": -90.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-inward-strike",
+          "side": "right",
+          "handShape": "open",
+          "height": "high"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "Left fist before right shoulder.",
+      "simultaneous": false
+    },
+    {
+      "n": 15,
+      "heading": -90.0,
+      "turn": 0.0,
+      "stance": "fixed",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "slide-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 16,
+      "heading": 90.0,
+      "turn": -180,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "twin-forearm-block",
+          "side": "right"
+        }
+      ],
+      "footAction": "close-then-step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 17,
+      "heading": 90.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "knifehand-inward-strike",
+          "side": "left",
+          "handShape": "open",
+          "height": "high"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "Right fist before left shoulder.",
+      "simultaneous": false
+    },
+    {
+      "n": 18,
+      "heading": 90.0,
+      "turn": 0.0,
+      "stance": "fixed",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "slide-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 19,
+      "heading": 180.0,
+      "turn": 90.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "circular-block",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "close-then-step-left",
+      "notes": "Prepare left arm diagonally, circle with right inner forearm.",
+      "simultaneous": false
+    },
+    {
+      "n": 20,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "right",
+          "height": "low"
+        }
+      ],
+      "footAction": "kick-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 21,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "land-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 22,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "circular-block",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 23,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "left",
+          "height": "low"
+        }
+      ],
+      "footAction": "kick-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 24,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "land-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 25,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "crane",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "bending-ready",
+          "side": "right"
+        }
+      ],
+      "footAction": "chamber-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 26,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "crane",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "side-kick",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "kick-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 27,
+      "heading": 90.0,
+      "turn": 270,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "forearm-guarding-block",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "land-then-turn-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 28,
+      "heading": -90.0,
+      "turn": -180,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "forearm-guarding-block",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "close-then-step-right",
+      "notes": "",
+      "simultaneous": false
+    }
+  ],
+  "unresolved": [],
+  "reviewStatus": "pending",
+  "returnFoot": "right",
+  "returnHeading": 0,
+  "movementCount": 28,
+  "referenceLabel": "NP/Intrepid Won-Hyo numbered school curriculum"
+}

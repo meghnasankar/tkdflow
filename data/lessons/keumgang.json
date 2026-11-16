@@ -1,0 +1,528 @@
+{
+  "id": "keumgang",
+  "sourceVariant": "DTaF 1999 reference edition",
+  "sourceMovements": 27,
+  "headingConvention": "0=initial forward,90=left,-90=right,180=back; body heading and gaze are separate",
+  "sources": [
+    {
+      "url": "https://oddertaekwondo.dk/userfiles/downloads/dtaf_officielle_poomse_bog.pdf",
+      "title": "Danish Taekwondo Federation official poomsae book, 1999 edition",
+      "pdfPages": [
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48
+      ]
+    },
+    {
+      "url": "https://www.frontline-ma.co.uk/Poomsae%20Keumgang.pdf",
+      "title": "Frontline Martial Arts own teaching notes, supplementary cross-check"
+    }
+  ],
+  "sequence": [
+    {
+      "n": 1,
+      "heading": 0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "opening-block",
+          "side": "both"
+        }
+      ],
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 2,
+      "heading": 0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "palm-strike",
+          "side": "right",
+          "level": "chin",
+          "height": "chin"
+        }
+      ],
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 3,
+      "heading": 0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "palm-strike",
+          "side": "left",
+          "level": "chin",
+          "height": "chin"
+        }
+      ],
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 4,
+      "heading": 0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "palm-strike",
+          "side": "right",
+          "level": "chin",
+          "height": "chin"
+        }
+      ],
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 5,
+      "heading": 0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "inside-knifehand-block",
+          "side": "left"
+        }
+      ],
+      "travel": "retreat",
+      "notes": "",
+      "footAction": "step-right-back",
+      "simultaneous": false
+    },
+    {
+      "n": 6,
+      "heading": 0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "inside-knifehand-block",
+          "side": "right"
+        }
+      ],
+      "travel": "retreat",
+      "notes": "",
+      "footAction": "step-left-back",
+      "simultaneous": false
+    },
+    {
+      "n": 7,
+      "heading": 0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "inside-knifehand-block",
+          "side": "left"
+        }
+      ],
+      "travel": "retreat",
+      "notes": "",
+      "footAction": "step-right-back",
+      "simultaneous": false
+    },
+    {
+      "n": 8,
+      "heading": 0,
+      "stance": "crane",
+      "lead": null,
+      "actions": [
+        {
+          "type": "diamond-block",
+          "side": "left",
+          "lowSide": "left",
+          "highSide": "right"
+        }
+      ],
+      "gazeHeading": 90,
+      "lift": "left",
+      "holdSeconds": 10,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 9,
+      "heading": 0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "large-hinge",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": 90,
+      "step": "left",
+      "stepHeading": 90,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 10,
+      "heading": 0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "large-hinge",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": 0,
+      "spin": 360,
+      "travelHeading": 90,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 11,
+      "heading": 90,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "mountain-block",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": 0,
+      "step": "right",
+      "stepHeading": 0,
+      "stamp": true,
+      "kihap": true,
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 12,
+      "heading": -90,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "opening-block",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": -90,
+      "turn": -180,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 13,
+      "heading": -90,
+      "stance": "parallel",
+      "lead": null,
+      "actions": [
+        {
+          "type": "low-opening-block",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": -90,
+      "step": "left",
+      "travel": "close",
+      "holdSeconds": 5,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 14,
+      "heading": 90,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "mountain-block",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": 90,
+      "turn": -180,
+      "step": "left",
+      "stamp": true,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 15,
+      "heading": 0,
+      "stance": "crane",
+      "lead": null,
+      "actions": [
+        {
+          "type": "diamond-block",
+          "side": "right",
+          "lowSide": "right",
+          "highSide": "left"
+        }
+      ],
+      "gazeHeading": -90,
+      "lift": "right",
+      "holdSeconds": 10,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 16,
+      "heading": 0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "large-hinge",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": -90,
+      "step": "right",
+      "stepHeading": -90,
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 17,
+      "heading": 0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "large-hinge",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": -90,
+      "spin": -360,
+      "travelHeading": -90,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 18,
+      "heading": 0,
+      "stance": "crane",
+      "lead": null,
+      "actions": [
+        {
+          "type": "diamond-block",
+          "side": "right",
+          "lowSide": "right",
+          "highSide": "left"
+        }
+      ],
+      "gazeHeading": -90,
+      "lift": "right",
+      "holdSeconds": 10,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 19,
+      "heading": 0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "large-hinge",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": -90,
+      "step": "right",
+      "stepHeading": -90,
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 20,
+      "heading": 0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "large-hinge",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": 0,
+      "spin": -360,
+      "travelHeading": -90,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 21,
+      "heading": -90,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "mountain-block",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": 0,
+      "step": "left",
+      "stepHeading": 0,
+      "stamp": true,
+      "kihap": true,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 22,
+      "heading": 90,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "opening-block",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": 90,
+      "turn": 180,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 23,
+      "heading": 90,
+      "stance": "parallel",
+      "lead": null,
+      "actions": [
+        {
+          "type": "low-opening-block",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": 90,
+      "step": "right",
+      "travel": "close",
+      "holdSeconds": 5,
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 24,
+      "heading": -90,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "mountain-block",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": -90,
+      "turn": 180,
+      "step": "right",
+      "stamp": true,
+      "notes": "",
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 25,
+      "heading": 0,
+      "stance": "crane",
+      "lead": null,
+      "actions": [
+        {
+          "type": "diamond-block",
+          "side": "left",
+          "lowSide": "left",
+          "highSide": "right"
+        }
+      ],
+      "gazeHeading": 90,
+      "lift": "left",
+      "holdSeconds": 10,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 26,
+      "heading": 0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "large-hinge",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": 90,
+      "step": "left",
+      "stepHeading": 90,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 27,
+      "heading": 0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "large-hinge",
+          "side": "both"
+        }
+      ],
+      "gazeHeading": 0,
+      "spin": 360,
+      "travelHeading": 90,
+      "notes": "",
+      "footAction": "step-left",
+      "simultaneous": false
+    }
+  ],
+  "unresolved": [],
+  "notes": [
+    "Crane and sideways horse positions preserve chest direction separately from gaze; do not interpret every gaze change as a whole-body turn.",
+    "Source drawings inspected for8–27. Source long spins require moving both feet while maintaining stance width/height."
+  ],
+  "instructorReviewed": false,
+  "movementCount": 27,
+  "referenceLabel": "DTaF 1999 reference edition",
+  "reviewStatus": "pending"
+}

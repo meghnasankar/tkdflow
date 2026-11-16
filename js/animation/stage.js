@@ -2,19 +2,19 @@
 import * as THREE from '../../vendor/three/three.module.js';
 
 /** Training mat and floor. The floor never moves. */
-export function createStage() {
+export function createStage({size=3.2}={}) {
   const group = new THREE.Group();
   const floor = new THREE.Mesh(new THREE.CircleGeometry(12, 64), new THREE.MeshStandardMaterial({ color: 0xe2e7eb, roughness: 0.95 }));
   floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true;
   group.add(floor);
-  const border = new THREE.Mesh(new THREE.PlaneGeometry(3.28, 3.28), new THREE.MeshStandardMaterial({ color: 0x9d3448, roughness: 0.9 }));
+  const border = new THREE.Mesh(new THREE.PlaneGeometry(size+.08, size+.08), new THREE.MeshStandardMaterial({ color: 0x9d3448, roughness: 0.9 }));
   border.rotation.x = -Math.PI / 2; border.position.set(0.15, 0.002, -0.05); border.receiveShadow = true;
   group.add(border);
-  const mat = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 3.2), new THREE.MeshStandardMaterial({ color: 0x3d5870, roughness: 0.95 }));
+  const mat = new THREE.Mesh(new THREE.PlaneGeometry(size, size), new THREE.MeshStandardMaterial({ color: 0x3d5870, roughness: 0.95 }));
   mat.rotation.x = -Math.PI / 2; mat.position.set(0.15, 0.004, -0.05); mat.receiveShadow = true;
   group.add(mat);
   const lines=[];
-  for(const v of [-.8,0,.8])lines.push(v+.15,.005,-1.65,v+.15,.005,1.55,-1.45,.005,v-.05,1.75,.005,v-.05);
+  for(let v=-size/2+.8;v<size/2;v+=.8)lines.push(v+.15,.005,-size/2-.05,v+.15,.005,size/2-.05,-size/2+.15,.005,v-.05,size/2+.15,.005,v-.05);
   const seams=new THREE.BufferGeometry();seams.setAttribute('position',new THREE.Float32BufferAttribute(lines,3));
   group.add(new THREE.LineSegments(seams,new THREE.LineBasicMaterial({color:0xb4c6d5,transparent:true,opacity:.11})));
   return group;

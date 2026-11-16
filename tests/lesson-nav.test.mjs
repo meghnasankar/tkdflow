@@ -442,7 +442,7 @@ describe('page wiring', () => {
   });
 
   test('the lesson script uses no browser storage and starts no playback on load', () => {
-    const src = readFileSync(new URL('../js/pages/lesson-taegeuk-1.js', import.meta.url), 'utf8');
+    const src = readFileSync(new URL('../js/pages/lesson-player.js', import.meta.url), 'utf8');
     assert.doesNotMatch(src, /localStorage|sessionStorage|indexedDB|document\.cookie/);
     assert.doesNotMatch(src.slice(src.indexOf('function init()')), /\.play\(\)/, 'init never starts playback');
   });
