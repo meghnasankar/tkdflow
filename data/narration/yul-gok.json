@@ -1,0 +1,493 @@
+{
+  "version": 1,
+  "lessonId": "yul-gok",
+  "provider": "ElevenLabs",
+  "voice": "Sarah",
+  "model": "eleven_multilingual_v2",
+  "audioSrc": "/assets/narration/yul-gok.mp3",
+  "duration": 185.46975,
+  "chapters": [
+    {
+      "index": 0,
+      "start": 0,
+      "at": 0,
+      "duration": 0
+    },
+    {
+      "index": 1,
+      "start": 2.459002,
+      "at": 7.024036,
+      "duration": 4.565034
+    },
+    {
+      "index": 2,
+      "start": 7.574036,
+      "at": 10.574036,
+      "duration": 3
+    },
+    {
+      "index": 3,
+      "start": 11.124036,
+      "at": 14.124036,
+      "duration": 3
+    },
+    {
+      "index": 4,
+      "start": 14.674036,
+      "at": 17.846054,
+      "duration": 3.172018
+    },
+    {
+      "index": 5,
+      "start": 18.396054,
+      "at": 21.396054,
+      "duration": 3
+    },
+    {
+      "index": 6,
+      "start": 21.946054,
+      "at": 24.946054,
+      "duration": 3
+    },
+    {
+      "index": 7,
+      "start": 25.496054,
+      "at": 29.876099,
+      "duration": 4.380045
+    },
+    {
+      "index": 8,
+      "start": 30.426099,
+      "at": 33.626099,
+      "duration": 3.2
+    },
+    {
+      "index": 9,
+      "start": 34.176099,
+      "at": 39.066167,
+      "duration": 4.890068
+    },
+    {
+      "index": 10,
+      "start": 39.616167,
+      "at": 42.616167,
+      "duration": 3
+    },
+    {
+      "index": 11,
+      "start": 43.166167,
+      "at": 48.102176,
+      "duration": 4.936009
+    },
+    {
+      "index": 12,
+      "start": 48.652176,
+      "at": 52.021246,
+      "duration": 3.36907
+    },
+    {
+      "index": 13,
+      "start": 52.571246,
+      "at": 57.577278,
+      "duration": 5.006032
+    },
+    {
+      "index": 14,
+      "start": 58.127278,
+      "at": 61.127278,
+      "duration": 3
+    },
+    {
+      "index": 15,
+      "start": 61.677278,
+      "at": 66.677278,
+      "duration": 5
+    },
+    {
+      "index": 16,
+      "start": 67.227278,
+      "at": 72.227278,
+      "duration": 5
+    },
+    {
+      "index": 17,
+      "start": 72.777278,
+      "at": 75.777278,
+      "duration": 3
+    },
+    {
+      "index": 18,
+      "start": 76.327278,
+      "at": 81.327278,
+      "duration": 5
+    },
+    {
+      "index": 19,
+      "start": 81.877278,
+      "at": 86.877278,
+      "duration": 5
+    },
+    {
+      "index": 20,
+      "start": 87.427278,
+      "at": 90.427278,
+      "duration": 3
+    },
+    {
+      "index": 21,
+      "start": 90.977278,
+      "at": 94.83433,
+      "duration": 3.857052
+    },
+    {
+      "index": 22,
+      "start": 95.38433,
+      "at": 98.498344,
+      "duration": 3.114014
+    },
+    {
+      "index": 23,
+      "start": 99.048344,
+      "at": 102.248344,
+      "duration": 3.2
+    },
+    {
+      "index": 24,
+      "start": 102.798344,
+      "at": 107.792403,
+      "duration": 4.994059
+    },
+    {
+      "index": 25,
+      "start": 108.342403,
+      "at": 111.342403,
+      "duration": 3
+    },
+    {
+      "index": 26,
+      "start": 111.892403,
+      "at": 115.092403,
+      "duration": 3.2
+    },
+    {
+      "index": 27,
+      "start": 115.642403,
+      "at": 120.416417,
+      "duration": 4.774014
+    },
+    {
+      "index": 28,
+      "start": 120.966417,
+      "at": 126.135442,
+      "duration": 5.169025
+    },
+    {
+      "index": 29,
+      "start": 126.685442,
+      "at": 132.191519,
+      "duration": 5.506077
+    },
+    {
+      "index": 30,
+      "start": 132.741519,
+      "at": 137.828548,
+      "duration": 5.087029
+    },
+    {
+      "index": 31,
+      "start": 138.378548,
+      "at": 143.443582,
+      "duration": 5.065034
+    },
+    {
+      "index": 32,
+      "start": 143.993582,
+      "at": 149.487641,
+      "duration": 5.494059
+    },
+    {
+      "index": 33,
+      "start": 150.037641,
+      "at": 153.037641,
+      "duration": 3
+    },
+    {
+      "index": 34,
+      "start": 153.587641,
+      "at": 157.861655,
+      "duration": 4.274014
+    },
+    {
+      "index": 35,
+      "start": 158.411655,
+      "at": 161.411655,
+      "duration": 3
+    },
+    {
+      "index": 36,
+      "start": 161.961655,
+      "at": 166.9217,
+      "duration": 4.960045
+    },
+    {
+      "index": 37,
+      "start": 167.4717,
+      "at": 173.243718,
+      "duration": 5.772018
+    },
+    {
+      "index": 38,
+      "start": 173.793718,
+      "at": 179.51975,
+      "duration": 5.726032
+    },
+    {
+      "index": 39,
+      "start": 180.16975,
+      "at": 184.66975,
+      "duration": 4.5
+    }
+  ],
+  "cues": [
+    {
+      "index": 0,
+      "text": "Stand ready, with your hands held in front.",
+      "start": 0.12,
+      "end": 2.159002267573696
+    },
+    {
+      "index": 1,
+      "text": "Set a horse stance. Extend your left arm to measure the target distance.",
+      "start": 2.539002,
+      "end": 6.804036
+    },
+    {
+      "index": 2,
+      "text": "Punch to the middle with your right fist.",
+      "start": 7.654036,
+      "end": 9.551088
+    },
+    {
+      "index": 3,
+      "text": "Punch to the middle with your left fist.",
+      "start": 11.204036,
+      "end": 13.414104
+    },
+    {
+      "index": 4,
+      "text": "Extend your right arm to measure the target distance.",
+      "start": 14.754036,
+      "end": 17.626054
+    },
+    {
+      "index": 5,
+      "text": "Punch to the middle with your left fist.",
+      "start": 18.476054,
+      "end": 20.686122
+    },
+    {
+      "index": 6,
+      "text": "Punch to the middle with your right fist.",
+      "start": 22.026054,
+      "end": 23.923106
+    },
+    {
+      "index": 7,
+      "text": "Set a walking stance. Block outward with your right inner forearm.",
+      "start": 25.576054,
+      "end": 29.656099
+    },
+    {
+      "index": 8,
+      "text": "Chamber your left knee, then extend a low front kick.",
+      "start": 30.506099,
+      "end": 33.390135
+    },
+    {
+      "index": 9,
+      "text": "Land in a walking stance. Punch to the middle with your left fist.",
+      "start": 34.256099,
+      "end": 38.846167
+    },
+    {
+      "index": 10,
+      "text": "Punch to the middle with your right fist.",
+      "start": 39.696167,
+      "end": 41.593219
+    },
+    {
+      "index": 11,
+      "text": "Turn left into a walking stance. Block outward with your left inner forearm.",
+      "start": 43.246167,
+      "end": 47.882176
+    },
+    {
+      "index": 12,
+      "text": "Chamber your right knee, then extend a low front kick.",
+      "start": 48.732176,
+      "end": 51.801246
+    },
+    {
+      "index": 13,
+      "text": "Land in a walking stance. Punch to the middle with your right fist.",
+      "start": 52.651246,
+      "end": 57.357278
+    },
+    {
+      "index": 14,
+      "text": "Punch to the middle with your left fist.",
+      "start": 58.207278,
+      "end": 60.417346
+    },
+    {
+      "index": 15,
+      "text": "Hook and redirect with your open right hand.",
+      "start": 61.757278,
+      "end": 64.512335
+    },
+    {
+      "index": 16,
+      "text": "Hook and redirect with your open left hand.",
+      "start": 67.307278,
+      "end": 69.947323
+    },
+    {
+      "index": 17,
+      "text": "Punch to the middle with your right fist.",
+      "start": 72.857278,
+      "end": 74.75433
+    },
+    {
+      "index": 18,
+      "text": "Set a walking stance. Hook and redirect with your open left hand.",
+      "start": 76.407278,
+      "end": 80.463332
+    },
+    {
+      "index": 19,
+      "text": "Hook and redirect with your open right hand.",
+      "start": 81.957278,
+      "end": 84.712335
+    },
+    {
+      "index": 20,
+      "text": "Punch to the middle with your left fist.",
+      "start": 87.507278,
+      "end": 89.717346
+    },
+    {
+      "index": 21,
+      "text": "Set a walking stance. Punch to the middle with your right fist.",
+      "start": 91.057278,
+      "end": 94.61433
+    },
+    {
+      "index": 22,
+      "text": "Chamber your left leg beside the supporting knee.",
+      "start": 95.46433,
+      "end": 98.278344
+    },
+    {
+      "index": 23,
+      "text": "Chamber your left knee, then extend a side kick.",
+      "start": 99.128344,
+      "end": 101.849387
+    },
+    {
+      "index": 24,
+      "text": "Land in a walking stance. Drive your right elbow toward the opposite open palm.",
+      "start": 102.878344,
+      "end": 107.572403
+    },
+    {
+      "index": 25,
+      "text": "Chamber your right leg beside the supporting knee.",
+      "start": 108.422403,
+      "end": 110.864444
+    },
+    {
+      "index": 26,
+      "text": "Chamber your right knee, then extend a side kick.",
+      "start": 111.972403,
+      "end": 114.739478
+    },
+    {
+      "index": 27,
+      "text": "Land in a walking stance. Drive your left elbow toward the opposite open palm.",
+      "start": 115.722403,
+      "end": 120.196417
+    },
+    {
+      "index": 28,
+      "text": "Turn left into a back stance. Form the twin knifehand guard with both open hands.",
+      "start": 121.046417,
+      "end": 125.915442
+    },
+    {
+      "index": 29,
+      "text": "Set a walking stance. Thrust your right fingertips forward with the other hand supporting.",
+      "start": 126.765442,
+      "end": 131.971519
+    },
+    {
+      "index": 30,
+      "text": "Turn right into a back stance. Form the twin knifehand guard with both open hands.",
+      "start": 132.821519,
+      "end": 137.608548
+    },
+    {
+      "index": 31,
+      "text": "Set a walking stance. Thrust your left fingertips forward with the other hand supporting.",
+      "start": 138.458548,
+      "end": 143.223582
+    },
+    {
+      "index": 32,
+      "text": "Turn left into a walking stance. Move your left forearm outward to block.",
+      "start": 144.073582,
+      "end": 149.267641
+    },
+    {
+      "index": 33,
+      "text": "Punch to the middle with your right fist.",
+      "start": 150.117641,
+      "end": 152.014693
+    },
+    {
+      "index": 34,
+      "text": "Set a walking stance. Move your right forearm outward to block.",
+      "start": 153.667641,
+      "end": 157.641655
+    },
+    {
+      "index": 35,
+      "text": "Punch to the middle with your left fist.",
+      "start": 158.491655,
+      "end": 160.701723
+    },
+    {
+      "index": 36,
+      "text": "Turn right into a cross stance. Strike forward with your left backfist.",
+      "start": 162.041655,
+      "end": 166.7017
+    },
+    {
+      "index": 37,
+      "text": "Turn right into a walking stance. Block with your right forearm, supported by the other hand.",
+      "start": 167.5517,
+      "end": 173.023718
+    },
+    {
+      "index": 38,
+      "text": "Turn left into a walking stance. Block with your left forearm, supported by the other hand.",
+      "start": 173.873718,
+      "end": 179.29975
+    },
+    {
+      "index": 39,
+      "text": "Return to the ready position.",
+      "start": 180.24975,
+      "end": 181.913832
+    }
+  ]
+}

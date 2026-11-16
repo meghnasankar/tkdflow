@@ -2,12 +2,26 @@ import {LessonTimeline} from '../animation/lesson-timeline.js';
 import {createLessonView} from '../animation/lesson-view.js';
 import {officialLabel,poseDescription,poseUrl,poseLinkProblemText,handlePlayerKey,createPoseHistory,createLifecyclePause,copyText,copyStatusText} from '../lib/lesson-nav.js';
 import {h,replaceChildren} from '../lib/dom.js';
-export function mountLesson({POSES,LESSON,MOTION}){
+import {loadJSON} from '../lib/data.js';
+import {narratedMotion,narrationProblem} from '../animation/narrated-motion.js';
+import {createLessonAudio} from '../lib/lesson-audio.js';
+export async function mountLesson({POSES,LESSON,MOTION}){
+let narration=null;
+try{narration=await loadJSON(`/data/narration/${LESSON.id}.json`,{timeoutMs:6000,validate:data=>narrationProblem(data,MOTION,LESSON.id)});MOTION=narratedMotion(MOTION,narration,LESSON.id);}catch{/* The visual study aid remains usable when recorded voice is unavailable. */}
 const {DURATION}=MOTION,lessonPath=`/${LESSON.id}.html`;
 const $=id=>document.getElementById(id),canvas=$('lesson-canvas'),player=new LessonTimeline(MOTION);
 let raf=null,lastNow=0,view=null;
+const voiceButton=$('voice-toggle'),audio=$('lesson-audio');
+let voiceOn=true;
+if(narration){audio.src=narration.audioSrc;audio.load();}
+const voice=createLessonAudio(narration?audio:null,{onFail(){voiceButton.textContent='No voice';voiceButton.disabled=true;voiceButton.setAttribute('aria-pressed','false');$('voice-status').textContent='Voice could not load. The animation and captions remain available.';requestFrame();}});
+voice.setEnabled(voiceOn);
+voiceButton.disabled=!narration;
+voiceButton.textContent=narration?(voiceOn?'Voice on':'Voice off'):'No voice';
+voiceButton.setAttribute('aria-pressed',String(!!narration&&voiceOn));
+let replaySelection=false;
 function requestFrame(){if(raf===null)raf=requestAnimationFrame(tick);}
-function tick(now){raf=null;const dt=lastNow?Math.min(.1,(now-lastNow)/1000):0;lastNow=now;if(player.playing)player.advance(dt);view?.draw(player.time);if(player.playing)requestFrame();else lastNow=0;}
+function tick(now){raf=null;const dt=lastNow?Math.min(.1,(now-lastNow)/1000):0;lastNow=now;const ready=voice.update({time:player.time,playing:player.playing,rate:player.rate});if(player.playing&&ready)player.advance(dt);view?.draw(player.time);if(player.playing)requestFrame();else lastNow=0;}
 function settleCanvas(){view?.draw(player.time);}
 view=createLessonView(canvas,{motion:MOTION,requestFrame,onReady(){$('character-loading').hidden=true;},onError(){$('character-loading').hidden=true;canvas.hidden=true;$('lesson-fallback').hidden=false;}});
 let studyScroll=0;
@@ -25,6 +39,9 @@ const MANUAL_CAUSES = new Set(['next', 'prev', 'first', 'last', 'select', 'play'
 let previousIndex=-1,previousPlaying=null;
 function render({index,playing,cause,time}) {
   if(cause==='play')lastNow=0;
+  if(['select','next','prev','first','last','link'].includes(cause))replaySelection=true;
+  else if(['play','seek','frame'].includes(cause))replaySelection=false;
+  voice.update({time,playing,rate:player.rate});
   const pose=POSES[index],label=officialLabel(pose),changed=index!==previousIndex;
   canvas.setAttribute('aria-label',poseDescription(pose,index,POSES.length));
   canvas.dataset.playing=String(playing);
@@ -38,6 +55,7 @@ function render({index,playing,cause,time}) {
     $('move-counter').textContent=`Pose ${index+1} of ${POSES.length}${label?` · ${label} (draft numbering)`:''}`;
     $('move-name').textContent=pose.name+(pose.kihap?' — kihap':'');
     $('move-korean').textContent=pose.korean;$('move-desc').textContent=pose.desc;
+    $('voice-instruction').textContent=narration?.cues[index]?.text||'';
     document.querySelectorAll('.move-row').forEach((row,i)=>{if(i===index)row.setAttribute('aria-current','step');else row.removeAttribute('aria-current');});
     const list=$('move-list'),active=list.children[index];
     if(active){const top=active.offsetTop;if(top<list.scrollTop||top+active.offsetHeight>list.scrollTop+list.clientHeight)list.scrollTop=top-list.clientHeight/2+active.offsetHeight/2;}
@@ -77,13 +95,15 @@ const poseHistory = createPoseHistory({
   },
 });
 const lifecycle = createLifecyclePause({ doc: document, win: window, player, onHide: settleCanvas });
+function togglePlayback(){if(!player.playing&&replaySelection&&indexForReplay())player.seek(MOTION.CHAPTERS[player.index].start,'replay-move');player.toggle();}
+const keyboardPlayer={prev:()=>player.prev(),next:()=>player.next(),first:()=>player.first(),last:()=>player.last(),toggle:togglePlayback};
 
 function onRegionKey(e) {
   const native=['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)||e.target?.isContentEditable;
   if(!native&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!e.isComposing&&['ArrowLeft','ArrowRight'].includes(e.key)){
     e.preventDefault();if(e.shiftKey)player[e.key==='ArrowLeft'?'prev':'next']();else player.step(e.key==='ArrowLeft'?-1:1);return;
   }
-  handlePlayerKey(e,e.currentTarget,player);
+  handlePlayerKey(e,e.currentTarget,keyboardPlayer);
 }
 
 function onPoseLinkClick(e) {
@@ -122,7 +142,7 @@ function init() {
   replaceChildren($('review-questions'), ...LESSON.review.openQuestions.map((q) => h('li', {}, q)));
   $('lesson-progress').max = String(DURATION);
   player.subscribe(render);
-  $('btn-play').addEventListener('click', () => player.toggle());
+  $('btn-play').addEventListener('click',togglePlayback);
   $('btn-next').addEventListener('click', () => player.next());
   $('btn-prev').addEventListener('click', () => player.prev());
   $('btn-first').addEventListener('click', () => player.first());
@@ -134,6 +154,7 @@ function init() {
   $('frame-next').addEventListener('click',()=>player.step(1));
   document.querySelectorAll('[data-lesson-view]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-lesson-view]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));view.setView(button.dataset.lessonView);}));
   $('study-view').addEventListener('click',()=>setStudy(!document.body.classList.contains('lesson-study')));
+  voiceButton.addEventListener('click',()=>{voiceOn=!voice.enabled;voice.setEnabled(voiceOn);voiceButton.textContent=voiceOn?'Voice on':'Voice off';voiceButton.setAttribute('aria-pressed',String(voiceOn));voice.update({time:player.time,playing:player.playing,rate:player.rate});requestFrame();});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('lesson-study')){setStudy(false);$('study-view').focus();}});
   $('pose-link').addEventListener('click', onPoseLinkClick);
   $('btn-copy-link').addEventListener('click', onCopyClick);
@@ -145,4 +166,5 @@ function init() {
 
 init();
 
+function indexForReplay(){return !!narration&&voice.enabled&&player.index>0&&!player.atEnd;}
 }

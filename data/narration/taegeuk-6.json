@@ -1,0 +1,409 @@
+{
+  "version": 1,
+  "lessonId": "taegeuk-6",
+  "provider": "ElevenLabs",
+  "voice": "Sarah",
+  "model": "eleven_multilingual_v2",
+  "audioSrc": "/assets/narration/taegeuk-6.mp3",
+  "duration": 153.024283,
+  "chapters": [
+    {
+      "index": 0,
+      "start": 0,
+      "at": 0,
+      "duration": 0
+    },
+    {
+      "index": 1,
+      "start": 2.459002,
+      "at": 7.581043,
+      "duration": 5.122041
+    },
+    {
+      "index": 2,
+      "start": 8.131043,
+      "at": 11.338072,
+      "duration": 3.207029
+    },
+    {
+      "index": 3,
+      "start": 11.888072,
+      "at": 16.453151,
+      "duration": 4.565079
+    },
+    {
+      "index": 4,
+      "start": 17.003151,
+      "at": 21.975214,
+      "duration": 4.972063
+    },
+    {
+      "index": 5,
+      "start": 22.525214,
+      "at": 25.766257,
+      "duration": 3.241043
+    },
+    {
+      "index": 6,
+      "start": 26.316257,
+      "at": 30.591314,
+      "duration": 4.275057
+    },
+    {
+      "index": 7,
+      "start": 31.141314,
+      "at": 36.413377,
+      "duration": 5.272063
+    },
+    {
+      "index": 8,
+      "start": 36.963377,
+      "at": 40.274443,
+      "duration": 3.311066
+    },
+    {
+      "index": 9,
+      "start": 40.824443,
+      "at": 45.389522,
+      "duration": 4.565079
+    },
+    {
+      "index": 10,
+      "start": 45.939522,
+      "at": 48.939522,
+      "duration": 3
+    },
+    {
+      "index": 11,
+      "start": 49.489522,
+      "at": 52.696551,
+      "duration": 3.207029
+    },
+    {
+      "index": 12,
+      "start": 53.246551,
+      "at": 57.30061,
+      "duration": 4.054059
+    },
+    {
+      "index": 13,
+      "start": 57.85061,
+      "at": 62.833649,
+      "duration": 4.983039
+    },
+    {
+      "index": 14,
+      "start": 63.383649,
+      "at": 66.383649,
+      "duration": 3
+    },
+    {
+      "index": 15,
+      "start": 66.933649,
+      "at": 70.174692,
+      "duration": 3.241043
+    },
+    {
+      "index": 16,
+      "start": 70.724692,
+      "at": 75.057753,
+      "duration": 4.333061
+    },
+    {
+      "index": 17,
+      "start": 75.607753,
+      "at": 80.683807,
+      "duration": 5.076054
+    },
+    {
+      "index": 18,
+      "start": 81.233807,
+      "at": 85.589861,
+      "duration": 4.356054
+    },
+    {
+      "index": 19,
+      "start": 86.139861,
+      "at": 89.590927,
+      "duration": 3.451066
+    },
+    {
+      "index": 20,
+      "start": 90.140927,
+      "at": 96.19095,
+      "duration": 6.050023
+    },
+    {
+      "index": 21,
+      "start": 96.74095,
+      "at": 99.981993,
+      "duration": 3.241043
+    },
+    {
+      "index": 22,
+      "start": 100.531993,
+      "at": 104.80705,
+      "duration": 4.275057
+    },
+    {
+      "index": 23,
+      "start": 105.35705,
+      "at": 110.026075,
+      "duration": 4.669025
+    },
+    {
+      "index": 24,
+      "start": 110.576075,
+      "at": 113.783104,
+      "duration": 3.207029
+    },
+    {
+      "index": 25,
+      "start": 114.333104,
+      "at": 118.898183,
+      "duration": 4.565079
+    },
+    {
+      "index": 26,
+      "start": 119.448183,
+      "at": 125.477208,
+      "duration": 6.029025
+    },
+    {
+      "index": 27,
+      "start": 126.027208,
+      "at": 131.172242,
+      "duration": 5.145034
+    },
+    {
+      "index": 28,
+      "start": 131.722242,
+      "at": 135.660247,
+      "duration": 3.938005
+    },
+    {
+      "index": 29,
+      "start": 136.210247,
+      "at": 139.210247,
+      "duration": 3
+    },
+    {
+      "index": 30,
+      "start": 139.760247,
+      "at": 143.524283,
+      "duration": 3.764036
+    },
+    {
+      "index": 31,
+      "start": 144.074283,
+      "at": 147.074283,
+      "duration": 3
+    },
+    {
+      "index": 32,
+      "start": 147.724283,
+      "at": 152.224283,
+      "duration": 4.5
+    }
+  ],
+  "cues": [
+    {
+      "index": 0,
+      "text": "Stand ready, with your hands held in front.",
+      "start": 0.12,
+      "end": 2.159002267573696
+    },
+    {
+      "index": 1,
+      "text": "Turn left into a front stance. Sweep your left arm down for a low block.",
+      "start": 2.539002,
+      "end": 7.361043
+    },
+    {
+      "index": 2,
+      "text": "Chamber your right knee, then extend a front kick.",
+      "start": 8.211043,
+      "end": 11.118072
+    },
+    {
+      "index": 3,
+      "text": "Land in a back stance. Move your left forearm outward to block.",
+      "start": 11.968072,
+      "end": 16.233151
+    },
+    {
+      "index": 4,
+      "text": "Turn right into a front stance. Sweep your right arm down for a low block.",
+      "start": 17.083151,
+      "end": 21.755214
+    },
+    {
+      "index": 5,
+      "text": "Chamber your left knee, then extend a front kick.",
+      "start": 22.605214,
+      "end": 25.546257
+    },
+    {
+      "index": 6,
+      "text": "Land in a back stance. Move your right forearm outward to block.",
+      "start": 26.396257,
+      "end": 30.371314
+    },
+    {
+      "index": 7,
+      "text": "Turn left into a front stance. Raise your right knifehand above your head to block.",
+      "start": 31.221314,
+      "end": 36.193377
+    },
+    {
+      "index": 8,
+      "text": "Chamber your right knee, then extend a roundhouse kick.",
+      "start": 37.043377,
+      "end": 40.054443
+    },
+    {
+      "index": 9,
+      "text": "Land in a front stance. Raise your left forearm outward into a high block.",
+      "start": 40.904443,
+      "end": 45.169522
+    },
+    {
+      "index": 10,
+      "text": "Punch to the middle with your right fist.",
+      "start": 46.019522,
+      "end": 47.916574
+    },
+    {
+      "index": 11,
+      "text": "Chamber your right knee, then extend a front kick.",
+      "start": 49.569522,
+      "end": 52.476551
+    },
+    {
+      "index": 12,
+      "text": "Land in a front stance. Punch to the middle with your left fist.",
+      "start": 53.326551,
+      "end": 57.08061
+    },
+    {
+      "index": 13,
+      "text": "Turn right into a front stance. Raise your right forearm outward into a high block.",
+      "start": 57.93061,
+      "end": 62.613649
+    },
+    {
+      "index": 14,
+      "text": "Punch to the middle with your left fist.",
+      "start": 63.463649,
+      "end": 65.673717
+    },
+    {
+      "index": 15,
+      "text": "Chamber your left knee, then extend a front kick.",
+      "start": 67.013649,
+      "end": 69.954692
+    },
+    {
+      "index": 16,
+      "text": "Land in a front stance. Punch to the middle with your right fist.",
+      "start": 70.804692,
+      "end": 74.837753
+    },
+    {
+      "index": 17,
+      "text": "Turn left into a parallel stance. Spread both forearms outward at a low level.",
+      "start": 75.687753,
+      "end": 80.463807
+    },
+    {
+      "index": 18,
+      "text": "Set a front stance. Raise your left knifehand above your head to block.",
+      "start": 81.313807,
+      "end": 85.369861
+    },
+    {
+      "index": 19,
+      "text": "Chamber your left knee, then extend a roundhouse kick.",
+      "start": 86.219861,
+      "end": 89.370927
+    },
+    {
+      "index": 20,
+      "text": "Land in a front stance. Sweep your right arm down for a low block. Finish with a strong shout.",
+      "start": 90.220927,
+      "end": 95.97095
+    },
+    {
+      "index": 21,
+      "text": "Chamber your left knee, then extend a front kick.",
+      "start": 96.82095,
+      "end": 99.761993
+    },
+    {
+      "index": 22,
+      "text": "Land in a back stance. Move your right forearm outward to block.",
+      "start": 100.611993,
+      "end": 104.58705
+    },
+    {
+      "index": 23,
+      "text": "Turn right into a front stance. Sweep your left arm down for a low block.",
+      "start": 105.43705,
+      "end": 109.806075
+    },
+    {
+      "index": 24,
+      "text": "Chamber your right knee, then extend a front kick.",
+      "start": 110.656075,
+      "end": 113.563104
+    },
+    {
+      "index": 25,
+      "text": "Land in a back stance. Move your left forearm outward to block.",
+      "start": 114.413104,
+      "end": 118.678183
+    },
+    {
+      "index": 26,
+      "text": "Turn left into a back stance. Extend the front knifehand while the other hand guards your body.",
+      "start": 119.528183,
+      "end": 125.257208
+    },
+    {
+      "index": 27,
+      "text": "Set a back stance. Extend the front knifehand while the other hand guards your body.",
+      "start": 126.107208,
+      "end": 130.952242
+    },
+    {
+      "index": 28,
+      "text": "Set a front stance. Press the attack away with your left palm.",
+      "start": 131.802242,
+      "end": 135.440247
+    },
+    {
+      "index": 29,
+      "text": "Punch to the middle with your right fist.",
+      "start": 136.290247,
+      "end": 138.187299
+    },
+    {
+      "index": 30,
+      "text": "Set a front stance. Press the attack away with your right palm.",
+      "start": 139.840247,
+      "end": 143.304283
+    },
+    {
+      "index": 31,
+      "text": "Punch to the middle with your left fist.",
+      "start": 144.154283,
+      "end": 146.364351
+    },
+    {
+      "index": 32,
+      "text": "Return to the ready position.",
+      "start": 147.804283,
+      "end": 149.468365
+    }
+  ]
+}

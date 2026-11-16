@@ -21,6 +21,7 @@ const TYPES = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
   '.mjs': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon', '.png': 'image/png', '.txt': 'text/plain; charset=utf-8', '.xml': 'application/xml; charset=utf-8',
+  '.mp3': 'audio/mpeg', '.wav': 'audio/wav',
 };
 
 /** Development-only top-level entries, mirroring .vercelignore. */
@@ -95,14 +96,29 @@ export function headersFor(config, path, reportOnly) {
 export async function createPreviewServer({ root = DEFAULT_ROOT, reportOnly = false } = {}) {
   const config = JSON.parse(await readFile(join(root, 'vercel.json'), 'utf8'));
 
-  async function send(res, file, status, path) {
+  async function send(req, res, file, status, path) {
     const body = await readFile(file);
-    res.writeHead(status, {
+    const headers = {
       'Content-Type': TYPES[extname(file)] || 'application/octet-stream',
       'Cache-Control': 'no-store',
       ...headersFor(config, path, reportOnly),
-    });
-    res.end(body);
+    };
+    let start=0,end=body.length-1;
+    if(status===200&&extname(file)==='.mp3'){
+      headers['Accept-Ranges']='bytes';
+      if(req.headers.range){
+        const range=/^bytes=(\d*)-(\d*)$/.exec(req.headers.range);
+        if(range&&(range[1]||range[2])){
+          start=range[1]?Number(range[1]):Math.max(0,body.length-Number(range[2]));
+          end=range[1]&&range[2]?Math.min(Number(range[2]),body.length-1):body.length-1;
+        }else start=NaN;
+        if(!Number.isSafeInteger(start)||!Number.isSafeInteger(end)||start<0||start>=body.length||end<start){res.writeHead(416,{...headers,'Content-Range':`bytes */${body.length}`,'Content-Length':0});res.end();return;}
+        status=206;headers['Content-Range']=`bytes ${start}-${end}/${body.length}`;
+      }
+    }
+    const content=body.subarray(start,end+1);headers['Content-Length']=content.length;
+    res.writeHead(status,headers);
+    res.end(req.method==='HEAD'?undefined:content);
   }
 
   return createServer(async (req, res) => {
@@ -133,10 +149,10 @@ export async function createPreviewServer({ root = DEFAULT_ROOT, reportOnly = fa
         return;
       }
       if (result.kind !== 'ok') {
-        await send(res, join(root, '404.html'), 404, '/404.html');
+        await send(req, res, join(root, '404.html'), 404, '/404.html');
         return;
       }
-      await send(res, result.file, 200, `/${result.rel}`);
+      await send(req, res, result.file, 200, `/${result.rel}`);
     } catch {
       if (!res.headersSent) res.writeHead(500, { 'Content-Type': 'text/plain' });
       res.end('Server error');

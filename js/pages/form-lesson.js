@@ -8,7 +8,7 @@ async function start(){
   if(!/^[a-z0-9-]+$/.test(id))throw new Error('Invalid lesson');
   const form=await loadJSON(`/data/lessons/${id}.json`,{validate:f=>f?.id===id&&Array.isArray(f.sequence)&&f.sequence.length&&Array.isArray(f.sources)&&f.sources.length?null:'Missing movement reference'});
   const MOTION=createFormMotion(form);
-  mountLesson({POSES:MOTION.POSES,LESSON:MOTION.LESSON,MOTION});
+  await mountLesson({POSES:MOTION.POSES,LESSON:MOTION.LESSON,MOTION});
  }catch{
   document.getElementById('character-loading').hidden=true;
   document.getElementById('lesson-canvas').hidden=true;

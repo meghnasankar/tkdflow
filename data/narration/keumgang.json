@@ -1,0 +1,361 @@
+{
+  "version": 1,
+  "lessonId": "keumgang",
+  "provider": "ElevenLabs",
+  "voice": "Sarah",
+  "model": "eleven_multilingual_v2",
+  "audioSrc": "/assets/narration/keumgang.mp3",
+  "duration": 207.230044,
+  "chapters": [
+    {
+      "index": 0,
+      "start": 0,
+      "at": 0,
+      "duration": 0
+    },
+    {
+      "index": 1,
+      "start": 2.459002,
+      "at": 7.082041,
+      "duration": 4.623039
+    },
+    {
+      "index": 2,
+      "start": 7.632041,
+      "at": 11.53508,
+      "duration": 3.903039
+    },
+    {
+      "index": 3,
+      "start": 12.08508,
+      "at": 15.733107,
+      "duration": 3.648027
+    },
+    {
+      "index": 4,
+      "start": 16.283107,
+      "at": 20.186146,
+      "duration": 3.903039
+    },
+    {
+      "index": 5,
+      "start": 20.736146,
+      "at": 25.220182,
+      "duration": 4.484036
+    },
+    {
+      "index": 6,
+      "start": 25.770182,
+      "at": 30.416259,
+      "duration": 4.646077
+    },
+    {
+      "index": 7,
+      "start": 30.966259,
+      "at": 35.450295,
+      "duration": 4.484036
+    },
+    {
+      "index": 8,
+      "start": 36.000295,
+      "at": 41.250363,
+      "duration": 5.250068
+    },
+    {
+      "index": 9,
+      "start": 51.800363,
+      "at": 56.38839,
+      "duration": 4.588027
+    },
+    {
+      "index": 10,
+      "start": 56.93839,
+      "at": 62.93839,
+      "duration": 6
+    },
+    {
+      "index": 11,
+      "start": 63.48839,
+      "at": 69.655419,
+      "duration": 6.167029
+    },
+    {
+      "index": 12,
+      "start": 70.205419,
+      "at": 75.072448,
+      "duration": 4.867029
+    },
+    {
+      "index": 13,
+      "start": 75.622448,
+      "at": 80.024489,
+      "duration": 4.402041
+    },
+    {
+      "index": 14,
+      "start": 85.574489,
+      "at": 90.441564,
+      "duration": 4.867075
+    },
+    {
+      "index": 15,
+      "start": 90.991564,
+      "at": 96.218639,
+      "duration": 5.227075
+    },
+    {
+      "index": 16,
+      "start": 106.768639,
+      "at": 111.356666,
+      "duration": 4.588027
+    },
+    {
+      "index": 17,
+      "start": 111.906666,
+      "at": 117.906666,
+      "duration": 6
+    },
+    {
+      "index": 18,
+      "start": 118.456666,
+      "at": 123.683741,
+      "duration": 5.227075
+    },
+    {
+      "index": 19,
+      "start": 134.233741,
+      "at": 138.821768,
+      "duration": 4.588027
+    },
+    {
+      "index": 20,
+      "start": 139.371768,
+      "at": 145.371768,
+      "duration": 6
+    },
+    {
+      "index": 21,
+      "start": 145.921768,
+      "at": 152.088797,
+      "duration": 6.167029
+    },
+    {
+      "index": 22,
+      "start": 152.638797,
+      "at": 157.89984,
+      "duration": 5.261043
+    },
+    {
+      "index": 23,
+      "start": 158.44984,
+      "at": 162.851881,
+      "duration": 4.402041
+    },
+    {
+      "index": 24,
+      "start": 168.401881,
+      "at": 173.791949,
+      "duration": 5.390068
+    },
+    {
+      "index": 25,
+      "start": 174.341949,
+      "at": 179.592017,
+      "duration": 5.250068
+    },
+    {
+      "index": 26,
+      "start": 190.142017,
+      "at": 194.730044,
+      "duration": 4.588027
+    },
+    {
+      "index": 27,
+      "start": 195.280044,
+      "at": 201.280044,
+      "duration": 6
+    },
+    {
+      "index": 28,
+      "start": 201.930044,
+      "at": 206.430044,
+      "duration": 4.5
+    }
+  ],
+  "cues": [
+    {
+      "index": 0,
+      "text": "Stand ready, with your hands held in front.",
+      "start": 0.12,
+      "end": 2.159002267573696
+    },
+    {
+      "index": 1,
+      "text": "Set a front stance. Spread both forearms outward to open the block.",
+      "start": 2.539002,
+      "end": 6.862041
+    },
+    {
+      "index": 2,
+      "text": "Set a front stance. Drive your right palm forward to strike.",
+      "start": 7.712041,
+      "end": 11.31508
+    },
+    {
+      "index": 3,
+      "text": "Set a front stance. Drive your left palm forward to strike.",
+      "start": 12.16508,
+      "end": 15.513107
+    },
+    {
+      "index": 4,
+      "text": "Set a front stance. Drive your right palm forward to strike.",
+      "start": 16.363107,
+      "end": 19.966146
+    },
+    {
+      "index": 5,
+      "text": "Set a back stance. Sweep your left knifehand inward across your body.",
+      "start": 20.816146,
+      "end": 25.000182
+    },
+    {
+      "index": 6,
+      "text": "Set a back stance. Sweep your right knifehand inward across your body.",
+      "start": 25.850182,
+      "end": 30.196259
+    },
+    {
+      "index": 7,
+      "text": "Set a back stance. Sweep your left knifehand inward across your body.",
+      "start": 31.046259,
+      "end": 35.230295
+    },
+    {
+      "index": 8,
+      "text": "Balance on your right leg. Raise one arm high with the other forearm guarding across.",
+      "start": 36.080295,
+      "end": 41.030363
+    },
+    {
+      "index": 9,
+      "text": "Land in a horse stance. Open both forearms outward to the sides.",
+      "start": 51.880363,
+      "end": 56.16839
+    },
+    {
+      "index": 10,
+      "text": "Turn all the way around to the left. Open both forearms outward to the sides.",
+      "start": 57.01839,
+      "end": 61.782426
+    },
+    {
+      "index": 11,
+      "text": "Set a horse stance. Raise both forearms outward into the mountain block. Finish with a strong shout.",
+      "start": 63.56839,
+      "end": 69.435419
+    },
+    {
+      "index": 12,
+      "text": "Turn right into a horse stance. Spread both forearms outward to open the block.",
+      "start": 70.285419,
+      "end": 74.852448
+    },
+    {
+      "index": 13,
+      "text": "Set a parallel stance. Spread both forearms outward at a low level.",
+      "start": 75.702448,
+      "end": 79.804489
+    },
+    {
+      "index": 14,
+      "text": "Turn right into a horse stance. Raise both forearms outward into the mountain block.",
+      "start": 85.654489,
+      "end": 90.221564
+    },
+    {
+      "index": 15,
+      "text": "Balance on your left leg. Raise one arm high with the other forearm guarding across.",
+      "start": 91.071564,
+      "end": 95.998639
+    },
+    {
+      "index": 16,
+      "text": "Land in a horse stance. Open both forearms outward to the sides.",
+      "start": 106.848639,
+      "end": 111.136666
+    },
+    {
+      "index": 17,
+      "text": "Turn all the way around to the right. Open both forearms outward to the sides.",
+      "start": 111.986666,
+      "end": 116.506711
+    },
+    {
+      "index": 18,
+      "text": "Balance on your left leg. Raise one arm high with the other forearm guarding across.",
+      "start": 118.536666,
+      "end": 123.463741
+    },
+    {
+      "index": 19,
+      "text": "Land in a horse stance. Open both forearms outward to the sides.",
+      "start": 134.313741,
+      "end": 138.601768
+    },
+    {
+      "index": 20,
+      "text": "Turn all the way around to the right. Open both forearms outward to the sides.",
+      "start": 139.451768,
+      "end": 143.971813
+    },
+    {
+      "index": 21,
+      "text": "Set a horse stance. Raise both forearms outward into the mountain block. Finish with a strong shout.",
+      "start": 146.001768,
+      "end": 151.868797
+    },
+    {
+      "index": 22,
+      "text": "Turn left into a horse stance. Spread both forearms outward to open the block.",
+      "start": 152.718797,
+      "end": 157.67984
+    },
+    {
+      "index": 23,
+      "text": "Set a parallel stance. Spread both forearms outward at a low level.",
+      "start": 158.52984,
+      "end": 162.631881
+    },
+    {
+      "index": 24,
+      "text": "Turn left into a horse stance. Raise both forearms outward into the mountain block.",
+      "start": 168.481881,
+      "end": 173.571949
+    },
+    {
+      "index": 25,
+      "text": "Balance on your right leg. Raise one arm high with the other forearm guarding across.",
+      "start": 174.421949,
+      "end": 179.372017
+    },
+    {
+      "index": 26,
+      "text": "Land in a horse stance. Open both forearms outward to the sides.",
+      "start": 190.222017,
+      "end": 194.510044
+    },
+    {
+      "index": 27,
+      "text": "Turn all the way around to the left. Open both forearms outward to the sides.",
+      "start": 195.360044,
+      "end": 200.12408
+    },
+    {
+      "index": 28,
+      "text": "Return to the ready position.",
+      "start": 202.010044,
+      "end": 203.674126
+    }
+  ]
+}

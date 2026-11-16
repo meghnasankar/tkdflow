@@ -1,0 +1,313 @@
+{
+  "version": 1,
+  "lessonId": "taegeuk-2",
+  "provider": "ElevenLabs",
+  "voice": "Sarah",
+  "model": "eleven_multilingual_v2",
+  "audioSrc": "/assets/narration/taegeuk-2.mp3",
+  "duration": 129.394987,
+  "chapters": [
+    {
+      "index": 0,
+      "start": 0,
+      "at": 0,
+      "duration": 0
+    },
+    {
+      "index": 1,
+      "start": 2.459002,
+      "at": 7.639048,
+      "duration": 5.180045
+    },
+    {
+      "index": 2,
+      "start": 8.189048,
+      "at": 12.093084,
+      "duration": 3.904036
+    },
+    {
+      "index": 3,
+      "start": 12.643084,
+      "at": 17.97415,
+      "duration": 5.331066
+    },
+    {
+      "index": 4,
+      "start": 18.52415,
+      "at": 22.613175,
+      "duration": 4.089025
+    },
+    {
+      "index": 5,
+      "start": 23.163175,
+      "at": 29.110204,
+      "duration": 5.947029
+    },
+    {
+      "index": 6,
+      "start": 29.660204,
+      "at": 34.933265,
+      "duration": 5.273061
+    },
+    {
+      "index": 7,
+      "start": 35.483265,
+      "at": 40.66331,
+      "duration": 5.180045
+    },
+    {
+      "index": 8,
+      "start": 41.21331,
+      "at": 44.420339,
+      "duration": 3.207029
+    },
+    {
+      "index": 9,
+      "start": 44.970339,
+      "at": 49.245396,
+      "duration": 4.275057
+    },
+    {
+      "index": 10,
+      "start": 49.795396,
+      "at": 55.126462,
+      "duration": 5.331066
+    },
+    {
+      "index": 11,
+      "start": 55.676462,
+      "at": 58.917505,
+      "duration": 3.241043
+    },
+    {
+      "index": 12,
+      "start": 59.467505,
+      "at": 63.533537,
+      "duration": 4.066032
+    },
+    {
+      "index": 13,
+      "start": 64.083537,
+      "at": 69.879591,
+      "duration": 5.796054
+    },
+    {
+      "index": 14,
+      "start": 70.429591,
+      "at": 75.331632,
+      "duration": 4.902041
+    },
+    {
+      "index": 15,
+      "start": 75.881632,
+      "at": 81.828661,
+      "duration": 5.947029
+    },
+    {
+      "index": 16,
+      "start": 82.378661,
+      "at": 88.429727,
+      "duration": 6.051066
+    },
+    {
+      "index": 17,
+      "start": 88.979727,
+      "at": 94.159772,
+      "duration": 5.180045
+    },
+    {
+      "index": 18,
+      "start": 94.709772,
+      "at": 97.916801,
+      "duration": 3.207029
+    },
+    {
+      "index": 19,
+      "start": 98.466801,
+      "at": 103.472833,
+      "duration": 5.006032
+    },
+    {
+      "index": 20,
+      "start": 104.022833,
+      "at": 107.263876,
+      "duration": 3.241043
+    },
+    {
+      "index": 21,
+      "start": 107.813876,
+      "at": 112.703944,
+      "duration": 4.890068
+    },
+    {
+      "index": 22,
+      "start": 113.253944,
+      "at": 116.460973,
+      "duration": 3.207029
+    },
+    {
+      "index": 23,
+      "start": 117.010973,
+      "at": 123.444987,
+      "duration": 6.434014
+    },
+    {
+      "index": 24,
+      "start": 124.094987,
+      "at": 128.594987,
+      "duration": 4.5
+    }
+  ],
+  "cues": [
+    {
+      "index": 0,
+      "text": "Stand ready, with your hands held in front.",
+      "start": 0.12,
+      "end": 2.159002267573696
+    },
+    {
+      "index": 1,
+      "text": "Turn left into a walking stance. Sweep your left arm down for a low block.",
+      "start": 2.539002,
+      "end": 7.419048
+    },
+    {
+      "index": 2,
+      "text": "Set a front stance. Punch to the middle with your right fist.",
+      "start": 8.269048,
+      "end": 11.873084
+    },
+    {
+      "index": 3,
+      "text": "Turn right into a walking stance. Sweep your right arm down for a low block.",
+      "start": 12.723084,
+      "end": 17.75415
+    },
+    {
+      "index": 4,
+      "text": "Set a front stance. Punch to the middle with your left fist.",
+      "start": 18.60415,
+      "end": 22.393175
+    },
+    {
+      "index": 5,
+      "text": "Turn left into a walking stance. Sweep your right forearm inward across your body.",
+      "start": 23.243175,
+      "end": 28.890204
+    },
+    {
+      "index": 6,
+      "text": "Set a walking stance. Sweep your left forearm inward across your body.",
+      "start": 29.740204,
+      "end": 34.713265
+    },
+    {
+      "index": 7,
+      "text": "Turn left into a walking stance. Sweep your left arm down for a low block.",
+      "start": 35.563265,
+      "end": 40.44331
+    },
+    {
+      "index": 8,
+      "text": "Chamber your right knee, then extend a front kick.",
+      "start": 41.29331,
+      "end": 44.200339
+    },
+    {
+      "index": 9,
+      "text": "Land in a front stance. Punch high with your right fist.",
+      "start": 45.050339,
+      "end": 49.025396
+    },
+    {
+      "index": 10,
+      "text": "Turn right into a walking stance. Sweep your right arm down for a low block.",
+      "start": 49.875396,
+      "end": 54.906462
+    },
+    {
+      "index": 11,
+      "text": "Chamber your left knee, then extend a front kick.",
+      "start": 55.756462,
+      "end": 58.697505
+    },
+    {
+      "index": 12,
+      "text": "Land in a front stance. Punch high with your left fist.",
+      "start": 59.547505,
+      "end": 63.313537
+    },
+    {
+      "index": 13,
+      "text": "Turn left into a walking stance. Raise your left forearm above your head to block.",
+      "start": 64.163537,
+      "end": 69.659591
+    },
+    {
+      "index": 14,
+      "text": "Set a walking stance. Raise your right forearm above your head to block.",
+      "start": 70.509591,
+      "end": 75.111632
+    },
+    {
+      "index": 15,
+      "text": "Turn left into a walking stance. Sweep your right forearm inward across your body.",
+      "start": 75.961632,
+      "end": 81.608661
+    },
+    {
+      "index": 16,
+      "text": "Turn right into a walking stance. Sweep your left forearm inward across your body.",
+      "start": 82.458661,
+      "end": 88.209727
+    },
+    {
+      "index": 17,
+      "text": "Turn left into a walking stance. Sweep your left arm down for a low block.",
+      "start": 89.059727,
+      "end": 93.939772
+    },
+    {
+      "index": 18,
+      "text": "Chamber your right knee, then extend a front kick.",
+      "start": 94.789772,
+      "end": 97.696801
+    },
+    {
+      "index": 19,
+      "text": "Land in a walking stance. Punch to the middle with your right fist.",
+      "start": 98.546801,
+      "end": 103.252833
+    },
+    {
+      "index": 20,
+      "text": "Chamber your left knee, then extend a front kick.",
+      "start": 104.102833,
+      "end": 107.043876
+    },
+    {
+      "index": 21,
+      "text": "Land in a walking stance. Punch to the middle with your left fist.",
+      "start": 107.893876,
+      "end": 112.483944
+    },
+    {
+      "index": 22,
+      "text": "Chamber your right knee, then extend a front kick.",
+      "start": 113.333944,
+      "end": 116.240973
+    },
+    {
+      "index": 23,
+      "text": "Land in a walking stance. Punch to the middle with your right fist. Finish with a strong shout.",
+      "start": 117.090973,
+      "end": 123.224987
+    },
+    {
+      "index": 24,
+      "text": "Return to the ready position.",
+      "start": 124.174987,
+      "end": 125.839069
+    }
+  ]
+}
