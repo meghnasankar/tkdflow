@@ -96,7 +96,8 @@
           "type": "knifehand-block",
           "side": "left",
           "handShape": "open",
-          "height": "middle"
+          "height": "middle",
+          "guarding": true
         }
       ],
       "footAction": "turn-left",
@@ -233,7 +234,8 @@
         {
           "type": "wedging-block",
           "side": "both",
-          "simultaneous": true
+          "simultaneous": true,
+          "height": "high"
         }
       ],
       "footAction": "turn-left",
@@ -250,7 +252,8 @@
         {
           "type": "front-kick",
           "side": "right",
-          "height": "middle"
+          "height": "middle",
+          "keepHands": true
         }
       ],
       "footAction": "kick-right",
@@ -301,7 +304,8 @@
         {
           "type": "wedging-block",
           "side": "both",
-          "simultaneous": true
+          "simultaneous": true,
+          "height": "high"
         }
       ],
       "footAction": "turn-right",
@@ -318,7 +322,8 @@
         {
           "type": "front-kick",
           "side": "left",
-          "height": "middle"
+          "height": "middle",
+          "keepHands": true
         }
       ],
       "footAction": "kick-left",

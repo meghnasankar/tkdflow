@@ -55,7 +55,9 @@ export function buildFacialFeatures(skin){
  }
  curveMesh([[-.020,-.058],[-.007,-.060],[0,-.059],[.007,-.060],[.020,-.058]],.00135,lipMat,'upper-lip');
  curveMesh([[-.020,-.058],[0,-.064],[.020,-.058]],.0018,lipMat,'lower-lip');
- curveMesh([[-.019,-.058],[0,-.061],[.019,-.058]],.00065,mouthMat,'gentle-smile');
+ const smile=curveMesh([[-.019,-.058],[0,-.061],[.019,-.058]],.00065,mouthMat,'gentle-smile');
+ const lowerLip=group.getObjectByName('lower-lip'),opening=mesh(new THREE.CircleGeometry(1,32),material(0x36242a,.96));opening.name='kihap-mouth';opening.position.set(0,-.066,faceDepth(0,-.066)+.002);opening.scale.set(.016,.012,1);opening.visible=false;group.add(opening);
+ group.userData.setKihap=amount=>{const open=THREE.MathUtils.clamp(amount,0,1);opening.visible=open>.03;opening.scale.y=.012*open;lowerLip.position.y=-.013*open;smile.visible=open<.15;};
  return group;
 }
 
@@ -99,12 +101,14 @@ export function createAvatar({onReady,onError}={}){
   const arms={};for(const [side,sign]of [['left',1],['right',-1]]){const upper=bone(side+'-upper',chest,[sign*.19,.455,0]),lower=bone(side+'-forearm',upper,[sign*BODY.upperArm,0,0]),wrist=bone(side+'-wrist',lower,[sign*BODY.forearm,0,0]);arms[side]={upper,lower,wrist,sign};}
   const legs={};for(const [side,sign]of [['left',1],['right',-1]]){const upper=bone(side+'-thigh',pelvis,[sign*.095,-.07,0]),lower=bone(side+'-shin',upper,[0,-BODY.thigh,0]),ankle=bone(side+'-ankle',lower,[0,-BODY.shin,0]);legs[side]={upper,lower,ankle};}
   const neck=bone('neck',chest,[0,.545,0]);root.updateMatrixWorld(true);const skeleton=new THREE.Skeleton(bones);
-  for(const kind of ['jacket','trousers']){const garment=new THREE.SkinnedMesh(buildGarmentGeometry(kind),cloth);garment.name='connected-'+kind;garment.castShadow=true;garment.receiveShadow=true;root.add(garment);garment.bind(skeleton,new THREE.Matrix4());garment.normalizeSkinWeights();}
+  // The skeleton travels while the mesh root stays at the stage origin. A
+  // cached rest-pose bounding sphere can therefore hide clothing mid-form.
+  for(const kind of ['jacket','trousers']){const garment=new THREE.SkinnedMesh(buildGarmentGeometry(kind),cloth);garment.name='connected-'+kind;garment.frustumCulled=false;garment.castShadow=true;garment.receiveShadow=true;root.add(garment);garment.bind(skeleton,new THREE.Matrix4());garment.normalizeSkinWeights();}
   const neckSkin=mesh(new THREE.CylinderGeometry(.041,.049,.062,24),skin);neckSkin.name='natural-neck';neckSkin.position.y=-.016;neck.add(neckSkin);
   const head=new THREE.Group();head.name='modeled-girl-head';head.position.y=.098;neck.add(head);
   const headSkin=skin.clone();headSkin.emissiveIntensity=.16;
   const faceSurface=mesh(buildHeadGeometry(),[headSkin,headSkin]);faceSurface.name='skin-head';faceSurface.receiveShadow=false;
-  head.add(faceSurface,buildFacialFeatures(skin));
+  const face=buildFacialFeatures(skin);head.add(faceSurface,face);
   const cap=mesh(buildHairGeometry(),hair);cap.name='scalp-hair';cap.position.y=.098;neck.add(cap);
   const strandMat=material(0x2b2223,.82);
   for(const sign of [-1,1])for(let i=0;i<7;i++){
@@ -145,7 +149,7 @@ export function createAvatar({onReady,onError}={}){
    const foot=mesh(new THREE.SphereGeometry(1,28,18),skin);foot.scale.set(.049,.035,.12);foot.position.set(0,-.035,.055);footRoot.add(foot);
    for(let i=0;i<5;i++){const toe=mesh(new THREE.SphereGeometry(1,12,8),skin);toe.scale.set(.010,.015,.021);toe.position.set((i-2)*.018,-.038,.145-Math.abs(i-1)*.005);footRoot.add(toe);}
   }
-  rig={pelvis,chest,arms,legs,neck,skeleton};root.userData.source=MEDIA.character.src;root.userData.faceSource='modeled-features-no-photo';root.userData.rig='connected-skinned-3d';root.userData.vertices=root.children.filter(x=>x.isSkinnedMesh).reduce((s,m)=>s+m.geometry.attributes.position.count,0);onReady?.();
+  rig={pelvis,chest,arms,legs,neck,skeleton,face};root.userData.source=MEDIA.character.src;root.userData.faceSource='modeled-features-no-photo';root.userData.rig='connected-skinned-3d';root.userData.vertices=root.children.filter(x=>x.isSkinnedMesh).reduce((s,m)=>s+m.geometry.attributes.position.count,0);onReady?.();
  }).catch(onError);
  const axisY=new THREE.Vector3(0,1,0),rootQ=new THREE.Quaternion(),chestQ=new THREE.Quaternion(),upperQ=new THREE.Quaternion(),lowerQ=new THREE.Quaternion();
  const direction=(a,b)=>new THREE.Vector3(...b).sub(new THREE.Vector3(...a)).normalize();
@@ -161,6 +165,7 @@ export function createAvatar({onReady,onError}={}){
   q.setFromRotationMatrix(frame.makeBasis(xAxis,yAxis,zAxis));
  };
  function applyPose(pose){if(!rig)return;
+  rig.face.userData.setKihap(pose.kihap||0);
   const {pelvis,chest,arms,legs,neck}=rig;pelvis.position.set(...pose.pelvis);rootQ.setFromAxisAngle(axisY,pose.yaw*RAD);pelvis.quaternion.copy(rootQ);
   chestQ.setFromEuler(new THREE.Euler(pose.lean*RAD,pose.chestYaw*RAD,0,'YXZ'));chest.quaternion.copy(rootQ).invert().multiply(chestQ);neck.quaternion.setFromAxisAngle(axisY,pose.headYaw*RAD);
   for(const side of ['left','right']){

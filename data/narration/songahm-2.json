@@ -5,7 +5,7 @@
   "voice": "Sarah",
   "model": "eleven_multilingual_v2",
   "audioSrc": "/assets/narration/songahm-2.mp3",
-  "duration": 115.735987,
+  "duration": 135.269776,
   "chapters": [
     {
       "index": 0,
@@ -16,145 +16,145 @@
     {
       "index": 1,
       "start": 2.459002,
-      "at": 7.499048,
-      "duration": 5.040045
+      "at": 8.578104,
+      "duration": 6.119102
     },
     {
       "index": 2,
-      "start": 8.049048,
-      "at": 11.290091,
-      "duration": 3.241043
+      "start": 9.128104,
+      "at": 13.105536,
+      "duration": 3.977432
     },
     {
       "index": 3,
-      "start": 11.840091,
-      "at": 16.115148,
-      "duration": 4.275057
+      "start": 13.655536,
+      "at": 18.863937,
+      "duration": 5.208401
     },
     {
       "index": 4,
-      "start": 16.665148,
-      "at": 19.976214,
-      "duration": 3.311066
+      "start": 19.413937,
+      "at": 23.47473,
+      "duration": 4.060793
     },
     {
       "index": 5,
-      "start": 20.526214,
-      "at": 25.299275,
-      "duration": 4.773061
+      "start": 24.02473,
+      "at": 30.546218,
+      "duration": 6.521488
     },
     {
       "index": 6,
-      "start": 25.849275,
-      "at": 29.857302,
-      "duration": 4.008027
+      "start": 31.096218,
+      "at": 35.986727,
+      "duration": 4.890509
     },
     {
       "index": 7,
-      "start": 30.407302,
-      "at": 33.407302,
+      "start": 36.536727,
+      "at": 39.536727,
       "duration": 3
     },
     {
       "index": 8,
-      "start": 33.957302,
-      "at": 38.103379,
-      "duration": 4.146077
+      "start": 40.086727,
+      "at": 45.141581,
+      "duration": 5.054854
     },
     {
       "index": 9,
-      "start": 38.653379,
-      "at": 41.653379,
+      "start": 45.691581,
+      "at": 48.691581,
       "duration": 3
     },
     {
       "index": 10,
-      "start": 42.203379,
-      "at": 48.742427,
-      "duration": 6.539048
+      "start": 49.241581,
+      "at": 57.145209,
+      "duration": 7.903628
     },
     {
       "index": 11,
-      "start": 49.292427,
-      "at": 52.603493,
-      "duration": 3.311066
+      "start": 57.695209,
+      "at": 61.756002,
+      "duration": 4.060793
     },
     {
       "index": 12,
-      "start": 53.153493,
-      "at": 58.287552,
-      "duration": 5.134059
+      "start": 62.306002,
+      "at": 68.537025,
+      "duration": 6.231023
     },
     {
       "index": 13,
-      "start": 58.837552,
-      "at": 62.044581,
-      "duration": 3.207029
+      "start": 69.087025,
+      "at": 73.023965,
+      "duration": 3.93694
     },
     {
       "index": 14,
-      "start": 62.594581,
-      "at": 66.660613,
-      "duration": 4.066032
+      "start": 73.573965,
+      "at": 78.533527,
+      "duration": 4.959562
     },
     {
       "index": 15,
-      "start": 67.210613,
-      "at": 70.661679,
-      "duration": 3.451066
+      "start": 79.083527,
+      "at": 83.310986,
+      "duration": 4.227459
     },
     {
       "index": 16,
-      "start": 71.211679,
-      "at": 75.98474,
-      "duration": 4.773061
+      "start": 83.860986,
+      "at": 89.912222,
+      "duration": 6.051236
     },
     {
       "index": 17,
-      "start": 76.53474,
-      "at": 80.948799,
-      "duration": 4.414059
+      "start": 90.462222,
+      "at": 95.836102,
+      "duration": 5.37388
     },
     {
       "index": 18,
-      "start": 81.498799,
-      "at": 84.498799,
-      "duration": 3
+      "start": 96.386102,
+      "at": 99.617125,
+      "duration": 3.231023
     },
     {
       "index": 19,
-      "start": 85.048799,
-      "at": 89.531838,
-      "duration": 4.483039
+      "start": 100.167125,
+      "at": 105.623123,
+      "duration": 5.455998
     },
     {
       "index": 20,
-      "start": 90.081838,
-      "at": 93.081838,
-      "duration": 3
+      "start": 106.173123,
+      "at": 109.391026,
+      "duration": 3.217903
     },
     {
       "index": 21,
-      "start": 93.631838,
-      "at": 100.123901,
-      "duration": 6.492063
+      "start": 109.941026,
+      "at": 117.788721,
+      "duration": 7.847695
     },
     {
       "index": 22,
-      "start": 100.673901,
-      "at": 104.124967,
-      "duration": 3.451066
+      "start": 118.338721,
+      "at": 122.56618,
+      "duration": 4.227459
     },
     {
       "index": 23,
-      "start": 104.674967,
-      "at": 109.785987,
-      "duration": 5.11102
+      "start": 123.11618,
+      "at": 129.319776,
+      "duration": 6.203596
     },
     {
       "index": 24,
-      "start": 110.435987,
-      "at": 114.935987,
+      "start": 129.969776,
+      "at": 134.469776,
       "duration": 4.5
     }
   ],
@@ -163,151 +163,397 @@
       "index": 0,
       "text": "Stand ready, with your hands held in front.",
       "start": 0.12,
-      "end": 2.159002267573696
+      "end": 2.159002267573696,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 1,
       "text": "Set a back stance. Block with your left forearm, supported by the other hand.",
       "start": 2.539002,
-      "end": 7.279048
+      "end": 7.279048,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 2,
       "text": "Chamber your left knee, then extend a front kick.",
-      "start": 8.129048,
-      "end": 11.070091
+      "start": 9.208104,
+      "end": 12.149147,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 3,
       "text": "Land in a front stance. Punch high with your right fist.",
-      "start": 11.920091,
-      "end": 15.895148
+      "start": 13.735536,
+      "end": 17.710593,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 4,
       "text": "Chamber your right knee, then extend a roundhouse kick.",
-      "start": 16.745148,
-      "end": 19.756214
+      "start": 19.493937,
+      "end": 22.505003,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 5,
-      "text": "Land in a horse stance. Lower both forearms outward together to block.",
-      "start": 20.606214,
-      "end": 25.079275
+      "text": "Turn left into a horse stance. Lower both forearms outward together to block.",
+      "start": 24.10473,
+      "end": 29.18278,
+      "turn": {
+        "side": "left",
+        "degrees": 90
+      },
+      "kihap": false
     },
     {
       "index": 6,
       "text": "Set a front stance. Move your left forearm outward to block.",
-      "start": 25.929275,
-      "end": 29.637302
+      "start": 31.176218,
+      "end": 34.884245,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 7,
       "text": "Punch high with your right fist.",
-      "start": 30.487302,
-      "end": 32.372336
+      "start": 36.616727,
+      "end": 38.501761,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 8,
       "text": "Set a front stance. Move your right forearm outward to block.",
-      "start": 34.037302,
-      "end": 37.883379
+      "start": 40.166727,
+      "end": 44.012804,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 9,
       "text": "Punch high with your left fist.",
-      "start": 38.733379,
-      "end": 40.676418
+      "start": 45.771581,
+      "end": 47.71462,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 10,
       "text": "Turn left into a back stance. Strike across with the edge of your left hand. Finish with a strong shout.",
-      "start": 42.283379,
-      "end": 48.522427
+      "start": 49.321581,
+      "end": 55.560629,
+      "turn": {
+        "side": "left",
+        "degrees": 90
+      },
+      "kihap": true
     },
     {
       "index": 11,
       "text": "Chamber your right knee, then extend a roundhouse kick.",
-      "start": 49.372427,
-      "end": 52.383493
+      "start": 57.775209,
+      "end": 60.786275,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 12,
       "text": "Land in a back stance. Block with your right forearm, supported by the other hand.",
-      "start": 53.233493,
-      "end": 58.067552
+      "start": 62.386002,
+      "end": 67.220061,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 13,
       "text": "Chamber your right knee, then extend a front kick.",
-      "start": 58.917552,
-      "end": 61.824581
+      "start": 69.167025,
+      "end": 72.074054,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 14,
       "text": "Land in a front stance. Punch high with your left fist.",
-      "start": 62.674581,
-      "end": 66.440613
+      "start": 73.653965,
+      "end": 77.419997,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 15,
       "text": "Chamber your left knee, then extend a roundhouse kick.",
-      "start": 67.290613,
-      "end": 70.441679
+      "start": 79.163527,
+      "end": 82.314593,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 16,
-      "text": "Land in a horse stance. Lower both forearms outward together to block.",
-      "start": 71.291679,
-      "end": 75.76474
+      "text": "Turn right into a horse stance. Lower both forearms outward together to block.",
+      "start": 83.940986,
+      "end": 88.624025,
+      "turn": {
+        "side": "right",
+        "degrees": 90
+      },
+      "kihap": false
     },
     {
       "index": 17,
       "text": "Turn right into a horse stance. Sweep your right arm down for a low block.",
-      "start": 76.61474,
-      "end": 80.728799
+      "start": 90.542222,
+      "end": 94.656281,
+      "turn": {
+        "side": "right",
+        "degrees": 90
+      },
+      "kihap": false
     },
     {
       "index": 18,
       "text": "Strike forward with your right backfist.",
-      "start": 81.578799,
-      "end": 83.892858
+      "start": 96.466102,
+      "end": 98.780161,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 19,
       "text": "Turn right into a horse stance. Sweep your left arm down for a low block.",
-      "start": 85.128799,
-      "end": 89.311838
+      "start": 100.247125,
+      "end": 104.430164,
+      "turn": {
+        "side": "right",
+        "degrees": 180
+      },
+      "kihap": false
     },
     {
       "index": 20,
       "text": "Strike forward with your left backfist.",
-      "start": 90.161838,
-      "end": 92.464877
+      "start": 106.253123,
+      "end": 108.556162,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 21,
       "text": "Turn right into a back stance. Strike across with the edge of your right hand. Finish with a strong shout.",
-      "start": 93.711838,
-      "end": 99.903901
+      "start": 110.021026,
+      "end": 116.213089,
+      "turn": {
+        "side": "right",
+        "degrees": 180
+      },
+      "kihap": true
     },
     {
       "index": 22,
       "text": "Chamber your left knee, then extend a roundhouse kick.",
-      "start": 100.753901,
-      "end": 103.904967
+      "start": 118.418721,
+      "end": 121.569787,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 23,
       "text": "Land in a back stance. Block with your left forearm, supported by the other hand.",
-      "start": 104.754967,
-      "end": 109.565987
+      "start": 123.19618,
+      "end": 128.0072,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 24,
       "text": "Return to the ready position.",
-      "start": 110.515987,
-      "end": 112.180069
+      "start": 130.049776,
+      "end": 131.713858,
+      "turn": null,
+      "kihap": false
+    }
+  ],
+  "effectsSrc": "/assets/narration/songahm-2-effects.mp3",
+  "effects": [
+    {
+      "type": "hand-swish",
+      "pose": 1,
+      "start": 7.455884,
+      "end": 7.624048,
+      "impact": 7.599048
+    },
+    {
+      "type": "kick-swish",
+      "pose": 2,
+      "start": 12.102129,
+      "end": 12.494147,
+      "impact": 12.469147
+    },
+    {
+      "type": "hand-swish",
+      "pose": 3,
+      "start": 17.88743,
+      "end": 18.055593,
+      "impact": 18.030593
+    },
+    {
+      "type": "kick-swish",
+      "pose": 4,
+      "start": 22.457985,
+      "end": 22.850003,
+      "impact": 22.825003
+    },
+    {
+      "type": "hand-swish",
+      "pose": 5,
+      "start": 29.359617,
+      "end": 29.52778,
+      "impact": 29.50278
+    },
+    {
+      "type": "hand-swish",
+      "pose": 6,
+      "start": 35.061082,
+      "end": 35.229246,
+      "impact": 35.204246
+    },
+    {
+      "type": "hand-swish",
+      "pose": 7,
+      "start": 38.913564,
+      "end": 39.081727,
+      "impact": 39.056727
+    },
+    {
+      "type": "hand-swish",
+      "pose": 8,
+      "start": 44.189641,
+      "end": 44.357804,
+      "impact": 44.332804
+    },
+    {
+      "type": "hand-swish",
+      "pose": 9,
+      "start": 48.068418,
+      "end": 48.236581,
+      "impact": 48.211581
+    },
+    {
+      "type": "hand-swish",
+      "pose": 10,
+      "start": 55.737465,
+      "end": 55.905629,
+      "impact": 55.880629
+    },
+    {
+      "type": "kihap",
+      "pose": 10,
+      "start": 55.880629,
+      "end": 56.580629,
+      "impact": 55.880629
+    },
+    {
+      "type": "kick-swish",
+      "pose": 11,
+      "start": 60.739257,
+      "end": 61.131275,
+      "impact": 61.106275
+    },
+    {
+      "type": "hand-swish",
+      "pose": 12,
+      "start": 67.396898,
+      "end": 67.565061,
+      "impact": 67.540061
+    },
+    {
+      "type": "kick-swish",
+      "pose": 13,
+      "start": 72.027036,
+      "end": 72.419055,
+      "impact": 72.394055
+    },
+    {
+      "type": "hand-swish",
+      "pose": 14,
+      "start": 77.596834,
+      "end": 77.764997,
+      "impact": 77.739997
+    },
+    {
+      "type": "kick-swish",
+      "pose": 15,
+      "start": 82.267574,
+      "end": 82.659593,
+      "impact": 82.634593
+    },
+    {
+      "type": "hand-swish",
+      "pose": 16,
+      "start": 88.800861,
+      "end": 88.969024,
+      "impact": 88.944024
+    },
+    {
+      "type": "hand-swish",
+      "pose": 17,
+      "start": 94.833118,
+      "end": 95.001281,
+      "impact": 94.976281
+    },
+    {
+      "type": "hand-swish",
+      "pose": 18,
+      "start": 98.956998,
+      "end": 99.125161,
+      "impact": 99.100161
+    },
+    {
+      "type": "hand-swish",
+      "pose": 19,
+      "start": 104.607,
+      "end": 104.775163,
+      "impact": 104.750163
+    },
+    {
+      "type": "hand-swish",
+      "pose": 20,
+      "start": 108.732998,
+      "end": 108.901162,
+      "impact": 108.876162
+    },
+    {
+      "type": "hand-swish",
+      "pose": 21,
+      "start": 116.389927,
+      "end": 116.55809,
+      "impact": 116.53309
+    },
+    {
+      "type": "kihap",
+      "pose": 21,
+      "start": 116.53309,
+      "end": 117.23309,
+      "impact": 116.53309
+    },
+    {
+      "type": "kick-swish",
+      "pose": 22,
+      "start": 121.522768,
+      "end": 121.914787,
+      "impact": 121.889787
+    },
+    {
+      "type": "hand-swish",
+      "pose": 23,
+      "start": 128.184037,
+      "end": 128.352201,
+      "impact": 128.327201
     }
   ]
 }

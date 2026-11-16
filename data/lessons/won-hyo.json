@@ -36,7 +36,8 @@
           "type": "knifehand-inward-strike",
           "side": "right",
           "handShape": "open",
-          "height": "high"
+          "height": "high",
+          "otherHand": "opposite-shoulder"
         }
       ],
       "footAction": "stay",
@@ -87,7 +88,8 @@
           "type": "knifehand-inward-strike",
           "side": "left",
           "handShape": "open",
-          "height": "high"
+          "height": "high",
+          "otherHand": "opposite-shoulder"
         }
       ],
       "footAction": "stay",
@@ -155,7 +157,8 @@
           "type": "knifehand-block",
           "side": "left",
           "handShape": "open",
-          "height": "middle"
+          "height": "middle",
+          "guarding": true
         }
       ],
       "footAction": "land-left",
@@ -173,7 +176,8 @@
           "type": "knifehand-block",
           "side": "right",
           "handShape": "open",
-          "height": "middle"
+          "height": "middle",
+          "guarding": true
         }
       ],
       "footAction": "step-right",
@@ -191,7 +195,8 @@
           "type": "knifehand-block",
           "side": "left",
           "handShape": "open",
-          "height": "middle"
+          "height": "middle",
+          "guarding": true
         }
       ],
       "footAction": "step-left",
@@ -243,7 +248,8 @@
           "type": "knifehand-inward-strike",
           "side": "right",
           "handShape": "open",
-          "height": "high"
+          "height": "high",
+          "otherHand": "opposite-shoulder"
         }
       ],
       "footAction": "stay",
@@ -294,7 +300,8 @@
           "type": "knifehand-inward-strike",
           "side": "left",
           "handShape": "open",
-          "height": "high"
+          "height": "high",
+          "otherHand": "opposite-shoulder"
         }
       ],
       "footAction": "stay",
@@ -345,7 +352,8 @@
         {
           "type": "front-kick",
           "side": "right",
-          "height": "low"
+          "height": "low",
+          "keepHands": true
         }
       ],
       "footAction": "kick-right",
@@ -396,7 +404,8 @@
         {
           "type": "front-kick",
           "side": "left",
-          "height": "low"
+          "height": "low",
+          "keepHands": true
         }
       ],
       "footAction": "kick-left",

@@ -146,17 +146,20 @@
         {
           "type": "roundhouse-kick",
           "side": "right",
-          "facing": 0
+          "facing": 0,
+          "turn": 0
         },
         {
           "type": "outside-high-block",
           "side": "left",
-          "facing": 90
+          "facing": 90,
+          "turn": 90
         },
         {
           "type": "middle-punch",
           "side": "right",
-          "facing": 90
+          "facing": 90,
+          "turn": 0
         }
       ],
       "travel": "step",
@@ -282,17 +285,20 @@
         {
           "type": "roundhouse-kick",
           "side": "left",
-          "facing": 0
+          "facing": 0,
+          "turn": 0,
+          "kihap": true
         },
         {
           "type": "low-block",
           "side": "right",
-          "facing": 90
+          "facing": 90,
+          "turn": 90
         }
       ],
       "travel": "step",
       "notes": "Left roundhouse faces original front with kihap, then land right low block on leftward branch; counts grouped by19-count convention.",
-      "kihap": true,
+      "kihap": false,
       "heading": 90.0,
       "footAction": "step-right",
       "simultaneous": false

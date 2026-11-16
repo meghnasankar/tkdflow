@@ -67,7 +67,7 @@ const TECHNIQUES={
  'opening-mountain-block':'Open both arms outward into the mountain block.',
  'diamond-block':'Raise one arm high with the other forearm guarding across.',
  'diamond-middle-block':'Set one forearm high and the other forward at the middle.',
- 'opening-block':'Spread both forearms outward to open the block.',
+ 'opening-block':'Spread both forearms outward into a middle block.',
  'low-opening-block':'Spread both forearms outward at a low level.',
  'double-low-block':'Lower both forearms outward together to block.',
  'twin-low-block':'Lower both forearms outward together to block.',
@@ -105,10 +105,10 @@ const TAEGEUK_ONE=[
  'Turn right into a walking stance. Sweep your right arm down to block.',
  'Step forward and punch to the middle with your left fist.',
  'Turn into a front stance. Block low with your left arm, then punch right.',
- 'Turn left. Sweep your left forearm inward to block.',
+ 'Turn right. Sweep your left forearm inward to block.',
  'Step forward and punch to the middle with your right fist.',
- 'Turn right. Sweep your right forearm inward to block.',
- 'Step forward and punch to the middle with your left fist. Finish with a shout.',
+ 'Turn left. Sweep your right forearm inward to block.',
+ 'Step forward and punch to the middle with your left fist.',
  'Turn into a front stance. Block low with your right arm, then punch left.',
  'Turn left and raise your left forearm above your head to block.',
  'Chamber your right knee, then extend a front kick.',
@@ -130,6 +130,10 @@ function actionText(a,plan){
   if(a.repeatedSameLeg)return `Re-chamber the same leg and extend the ${side} ${kind} kick again.`;
   return `Chamber your ${side} knee, then extend a ${(a.height||a.level)==='low'?'low ':''}${kind} kick.`;
  }
+ if(a.type==='diamond-block'&&a.highSide&&a.lowSide)return `Raise your ${a.highSide} forearm above your head and block low with your ${a.lowSide} arm.`;
+ if(a.type==='palm-block'&&(a.level==='downward'||a.height==='downward'))return `Press downward with your ${side} palm.`;
+ if(a.type==='backfist'&&a.height==='middle')return `Strike to the middle with your ${side} backfist.`;
+ if(a.type==='spearhand'&&plan.actions.some(b=>b!==a&&b.side!==a.side))return `Thrust your ${side} fingertips forward as the other hand blocks.`;
  if(a.type==='knee-strike')return `Pull your hands down as your ${side} knee rises.`;
  if(a.type==='mountain-block'&&a.side!=='both')return `Raise your ${side} arm while the other arm blocks low.`;
  if(a.type==='elbow-strike'&&a.mode==='rising')return `Drive your ${side} elbow upward.`;
@@ -147,10 +151,12 @@ export function lessonSpeech({id,POSES,MOTION,reference}){
   if(plan.returning)return {index,text:'Return to the ready position.'};
   const a=plan.actions,entry=plan.entry||{},stance=STANCES[entry.stance],landing=['left','right'].some(s=>plan.before.feet[s].pos[1]>.15&&plan.after.feet[s].pos[1]<.15);
   let prefix='';
-  if(!plan.kick&&!a.some(a=>a.type==='bending-ready')){
+  const prescribedTurn=Number(entry.turn)||0;
+  if(Math.abs(prescribedTurn)>=45&&Math.abs(plan.dyaw)>1){const side=plan.dyaw>0?'left':'right';prefix=Math.abs(prescribedTurn)>=360?`Turn all the way around to the ${side}. `:`Turn ${side}${stance&&!plan.kick?' into a '+stance+' stance':''}. `;}
+  if(!prefix&&!plan.kick&&!a.some(a=>a.type==='bending-ready')){
    if(entry.stance==='crane'){
     const support=plan.after.feet.left.pos[1]<plan.after.feet.right.pos[1]?'left':'right';prefix=`Balance on your ${support} leg. `;
-   }else if(entry.movingFoot===null&&Math.abs(plan.dyaw)>45)prefix='Pivot without stepping. ';
+   }else if(entry.movingFoot===null&&Math.abs(plan.dyaw)>45)prefix=`Pivot ${plan.dyaw>0?'left':'right'} without stepping. `;
    else if(landing&&stance)prefix=`Land in a ${stance} stance. `;
    else if(entry.turn&&Math.abs(entry.turn)>=90&&plan.step){const side=entry.turn>0?'left':'right';prefix=Math.abs(entry.turn)>=360?`Turn all the way around to the ${side}. `:`Turn ${side}${stance?' into a '+stance+' stance':''}. `;}
    else if(stance&&plan.step&&['left','right'].some(s=>distance(plan.before.feet[s].pos,plan.after.feet[s].pos)>.08))prefix=`Set a ${stance} stance. `;

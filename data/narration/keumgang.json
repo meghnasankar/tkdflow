@@ -5,7 +5,7 @@
   "voice": "Sarah",
   "model": "eleven_multilingual_v2",
   "audioSrc": "/assets/narration/keumgang.mp3",
-  "duration": 207.230044,
+  "duration": 207.12321,
   "chapters": [
     {
       "index": 0,
@@ -16,169 +16,169 @@
     {
       "index": 1,
       "start": 2.459002,
-      "at": 7.082041,
-      "duration": 4.623039
+      "at": 8.20552,
+      "duration": 5.746518
     },
     {
       "index": 2,
-      "start": 7.632041,
-      "at": 11.53508,
-      "duration": 3.903039
+      "start": 8.75552,
+      "at": 13.521042,
+      "duration": 4.765522
     },
     {
       "index": 3,
-      "start": 12.08508,
-      "at": 15.733107,
-      "duration": 3.648027
+      "start": 14.071042,
+      "at": 18.532979,
+      "duration": 4.461937
     },
     {
       "index": 4,
-      "start": 16.283107,
-      "at": 20.186146,
-      "duration": 3.903039
+      "start": 19.082979,
+      "at": 23.848501,
+      "duration": 4.765522
     },
     {
       "index": 5,
-      "start": 20.736146,
-      "at": 25.220182,
-      "duration": 4.484036
+      "start": 24.398501,
+      "at": 29.855687,
+      "duration": 5.457186
     },
     {
       "index": 6,
-      "start": 25.770182,
-      "at": 30.416259,
-      "duration": 4.646077
+      "start": 30.405687,
+      "at": 36.055779,
+      "duration": 5.650092
     },
     {
       "index": 7,
-      "start": 30.966259,
-      "at": 35.450295,
-      "duration": 4.484036
+      "start": 36.605779,
+      "at": 42.062965,
+      "duration": 5.457186
     },
     {
       "index": 8,
-      "start": 36.000295,
-      "at": 41.250363,
-      "duration": 5.250068
+      "start": 42.612965,
+      "at": 52.612965,
+      "duration": 10
     },
     {
       "index": 9,
-      "start": 51.800363,
-      "at": 56.38839,
-      "duration": 4.588027
+      "start": 53.162965,
+      "at": 58.74395,
+      "duration": 5.580985
     },
     {
       "index": 10,
-      "start": 56.93839,
-      "at": 62.93839,
-      "duration": 6
+      "start": 59.29395,
+      "at": 65.441612,
+      "duration": 6.147662
     },
     {
       "index": 11,
-      "start": 63.48839,
-      "at": 69.655419,
-      "duration": 6.167029
+      "start": 65.991612,
+      "at": 73.452361,
+      "duration": 7.460749
     },
     {
       "index": 12,
-      "start": 70.205419,
-      "at": 75.072448,
-      "duration": 4.867029
+      "start": 74.002361,
+      "at": 80.565529,
+      "duration": 6.563168
     },
     {
       "index": 13,
-      "start": 75.622448,
-      "at": 80.024489,
-      "duration": 4.402041
+      "start": 81.115529,
+      "at": 86.475101,
+      "duration": 5.359572
     },
     {
       "index": 14,
-      "start": 85.574489,
-      "at": 90.441564,
-      "duration": 4.867075
+      "start": 92.025101,
+      "at": 97.938285,
+      "duration": 5.913184
     },
     {
       "index": 15,
-      "start": 90.991564,
-      "at": 96.218639,
-      "duration": 5.227075
+      "start": 98.488285,
+      "at": 108.488285,
+      "duration": 10
     },
     {
       "index": 16,
-      "start": 106.768639,
-      "at": 111.356666,
-      "duration": 4.588027
+      "start": 109.038285,
+      "at": 114.61927,
+      "duration": 5.580985
     },
     {
       "index": 17,
-      "start": 111.906666,
-      "at": 117.906666,
+      "start": 115.16927,
+      "at": 121.16927,
       "duration": 6
     },
     {
       "index": 18,
-      "start": 118.456666,
-      "at": 123.683741,
-      "duration": 5.227075
+      "start": 121.71927,
+      "at": 131.71927,
+      "duration": 10
     },
     {
       "index": 19,
-      "start": 134.233741,
-      "at": 138.821768,
-      "duration": 4.588027
+      "start": 132.26927,
+      "at": 137.850255,
+      "duration": 5.580985
     },
     {
       "index": 20,
-      "start": 139.371768,
-      "at": 145.371768,
+      "start": 138.400255,
+      "at": 144.400255,
       "duration": 6
     },
     {
       "index": 21,
-      "start": 145.921768,
-      "at": 152.088797,
-      "duration": 6.167029
+      "start": 144.950255,
+      "at": 152.411004,
+      "duration": 7.460749
     },
     {
       "index": 22,
-      "start": 152.638797,
-      "at": 157.89984,
-      "duration": 5.261043
+      "start": 152.961004,
+      "at": 159.799196,
+      "duration": 6.838192
     },
     {
       "index": 23,
-      "start": 158.44984,
-      "at": 162.851881,
-      "duration": 4.402041
+      "start": 160.349196,
+      "at": 165.708768,
+      "duration": 5.359572
     },
     {
       "index": 24,
-      "start": 168.401881,
-      "at": 173.791949,
-      "duration": 5.390068
+      "start": 171.258768,
+      "at": 177.794563,
+      "duration": 6.535795
     },
     {
       "index": 25,
-      "start": 174.341949,
-      "at": 179.592017,
-      "duration": 5.250068
+      "start": 178.344563,
+      "at": 188.344563,
+      "duration": 10
     },
     {
       "index": 26,
-      "start": 190.142017,
-      "at": 194.730044,
-      "duration": 4.588027
+      "start": 188.894563,
+      "at": 194.475548,
+      "duration": 5.580985
     },
     {
       "index": 27,
-      "start": 195.280044,
-      "at": 201.280044,
-      "duration": 6
+      "start": 195.025548,
+      "at": 201.17321,
+      "duration": 6.147662
     },
     {
       "index": 28,
-      "start": 201.930044,
-      "at": 206.430044,
+      "start": 201.82321,
+      "at": 206.32321,
       "duration": 4.5
     }
   ],
@@ -187,175 +187,435 @@
       "index": 0,
       "text": "Stand ready, with your hands held in front.",
       "start": 0.12,
-      "end": 2.159002267573696
+      "end": 2.159002267573696,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 1,
-      "text": "Set a front stance. Spread both forearms outward to open the block.",
+      "text": "Set a front stance. Spread both forearms outward into a middle block.",
       "start": 2.539002,
-      "end": 6.862041
+      "end": 6.966077,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 2,
       "text": "Set a front stance. Drive your right palm forward to strike.",
-      "start": 7.712041,
-      "end": 11.31508
+      "start": 8.83552,
+      "end": 12.438559,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 3,
       "text": "Set a front stance. Drive your left palm forward to strike.",
-      "start": 12.16508,
-      "end": 15.513107
+      "start": 14.151042,
+      "end": 17.499069,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 4,
       "text": "Set a front stance. Drive your right palm forward to strike.",
-      "start": 16.363107,
-      "end": 19.966146
+      "start": 19.162979,
+      "end": 22.766018,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 5,
       "text": "Set a back stance. Sweep your left knifehand inward across your body.",
-      "start": 20.816146,
-      "end": 25.000182
+      "start": 24.478501,
+      "end": 28.662537,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 6,
       "text": "Set a back stance. Sweep your right knifehand inward across your body.",
-      "start": 25.850182,
-      "end": 30.196259
+      "start": 30.485687,
+      "end": 34.831764,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 7,
       "text": "Set a back stance. Sweep your left knifehand inward across your body.",
-      "start": 31.046259,
-      "end": 35.230295
+      "start": 36.685779,
+      "end": 40.869815,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 8,
-      "text": "Balance on your right leg. Raise one arm high with the other forearm guarding across.",
-      "start": 36.080295,
-      "end": 41.030363
+      "text": "Balance on your right leg. Raise your right forearm above your head and block low with your left arm.",
+      "start": 42.692965,
+      "end": 48.386026,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 9,
       "text": "Land in a horse stance. Open both forearms outward to the sides.",
-      "start": 51.880363,
-      "end": 56.16839
+      "start": 53.242965,
+      "end": 57.530992,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 10,
       "text": "Turn all the way around to the left. Open both forearms outward to the sides.",
-      "start": 57.01839,
-      "end": 61.782426
+      "start": 59.37395,
+      "end": 64.137986,
+      "turn": {
+        "side": "left",
+        "degrees": 360
+      },
+      "kihap": false
     },
     {
       "index": 11,
       "text": "Set a horse stance. Raise both forearms outward into the mountain block. Finish with a strong shout.",
-      "start": 63.56839,
-      "end": 69.435419
+      "start": 66.071612,
+      "end": 71.938641,
+      "turn": null,
+      "kihap": true
     },
     {
       "index": 12,
-      "text": "Turn right into a horse stance. Spread both forearms outward to open the block.",
-      "start": 70.285419,
-      "end": 74.852448
+      "text": "Turn right into a horse stance. Spread both forearms outward into a middle block.",
+      "start": 74.082361,
+      "end": 79.195422,
+      "turn": {
+        "side": "right",
+        "degrees": 180
+      },
+      "kihap": false
     },
     {
       "index": 13,
       "text": "Set a parallel stance. Spread both forearms outward at a low level.",
-      "start": 75.702448,
-      "end": 79.804489
+      "start": 81.195529,
+      "end": 85.29757,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 14,
       "text": "Turn right into a horse stance. Raise both forearms outward into the mountain block.",
-      "start": 85.654489,
-      "end": 90.221564
+      "start": 92.105101,
+      "end": 96.672176,
+      "turn": {
+        "side": "right",
+        "degrees": 180
+      },
+      "kihap": false
     },
     {
       "index": 15,
-      "text": "Balance on your left leg. Raise one arm high with the other forearm guarding across.",
-      "start": 91.071564,
-      "end": 95.998639
+      "text": "Balance on your left leg. Raise your left forearm above your head and block low with your right arm.",
+      "start": 98.568285,
+      "end": 104.598308,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 16,
       "text": "Land in a horse stance. Open both forearms outward to the sides.",
-      "start": 106.848639,
-      "end": 111.136666
+      "start": 109.118285,
+      "end": 113.406312,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 17,
       "text": "Turn all the way around to the right. Open both forearms outward to the sides.",
-      "start": 111.986666,
-      "end": 116.506711
+      "start": 115.24927,
+      "end": 119.769315,
+      "turn": {
+        "side": "right",
+        "degrees": 360
+      },
+      "kihap": false
     },
     {
       "index": 18,
-      "text": "Balance on your left leg. Raise one arm high with the other forearm guarding across.",
-      "start": 118.536666,
-      "end": 123.463741
+      "text": "Balance on your left leg. Raise your left forearm above your head and block low with your right arm.",
+      "start": 121.79927,
+      "end": 127.829293,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 19,
       "text": "Land in a horse stance. Open both forearms outward to the sides.",
-      "start": 134.313741,
-      "end": 138.601768
+      "start": 132.34927,
+      "end": 136.637297,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 20,
       "text": "Turn all the way around to the right. Open both forearms outward to the sides.",
-      "start": 139.451768,
-      "end": 143.971813
+      "start": 138.480255,
+      "end": 143.0003,
+      "turn": {
+        "side": "right",
+        "degrees": 360
+      },
+      "kihap": false
     },
     {
       "index": 21,
       "text": "Set a horse stance. Raise both forearms outward into the mountain block. Finish with a strong shout.",
-      "start": 146.001768,
-      "end": 151.868797
+      "start": 145.030255,
+      "end": 150.897284,
+      "turn": null,
+      "kihap": true
     },
     {
       "index": 22,
-      "text": "Turn left into a horse stance. Spread both forearms outward to open the block.",
-      "start": 152.718797,
-      "end": 157.67984
+      "text": "Turn left into a horse stance. Spread both forearms outward into a middle block.",
+      "start": 153.041004,
+      "end": 158.385086,
+      "turn": {
+        "side": "left",
+        "degrees": 180
+      },
+      "kihap": false
     },
     {
       "index": 23,
       "text": "Set a parallel stance. Spread both forearms outward at a low level.",
-      "start": 158.52984,
-      "end": 162.631881
+      "start": 160.429196,
+      "end": 164.531237,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 24,
       "text": "Turn left into a horse stance. Raise both forearms outward into the mountain block.",
-      "start": 168.481881,
-      "end": 173.571949
+      "start": 171.338768,
+      "end": 176.428836,
+      "turn": {
+        "side": "left",
+        "degrees": 180
+      },
+      "kihap": false
     },
     {
       "index": 25,
-      "text": "Balance on your right leg. Raise one arm high with the other forearm guarding across.",
-      "start": 174.421949,
-      "end": 179.372017
+      "text": "Balance on your right leg. Raise your right forearm above your head and block low with your left arm.",
+      "start": 178.424563,
+      "end": 184.117624,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 26,
       "text": "Land in a horse stance. Open both forearms outward to the sides.",
-      "start": 190.222017,
-      "end": 194.510044
+      "start": 188.974563,
+      "end": 193.26259,
+      "turn": null,
+      "kihap": false
     },
     {
       "index": 27,
       "text": "Turn all the way around to the left. Open both forearms outward to the sides.",
-      "start": 195.360044,
-      "end": 200.12408
+      "start": 195.105548,
+      "end": 199.869584,
+      "turn": {
+        "side": "left",
+        "degrees": 360
+      },
+      "kihap": false
     },
     {
       "index": 28,
       "text": "Return to the ready position.",
-      "start": 202.010044,
-      "end": 203.674126
+      "start": 201.90321,
+      "end": 203.567292,
+      "turn": null,
+      "kihap": false
+    }
+  ],
+  "effectsSrc": "/assets/narration/keumgang-effects.mp3",
+  "effects": [
+    {
+      "type": "hand-swish",
+      "pose": 1,
+      "start": 7.142914,
+      "end": 7.311077,
+      "impact": 7.286077
+    },
+    {
+      "type": "hand-swish",
+      "pose": 2,
+      "start": 12.615395,
+      "end": 12.783558,
+      "impact": 12.758558
+    },
+    {
+      "type": "hand-swish",
+      "pose": 3,
+      "start": 17.675906,
+      "end": 17.844069,
+      "impact": 17.819069
+    },
+    {
+      "type": "hand-swish",
+      "pose": 4,
+      "start": 22.942854,
+      "end": 23.111017,
+      "impact": 23.086017
+    },
+    {
+      "type": "hand-swish",
+      "pose": 5,
+      "start": 28.839374,
+      "end": 29.007537,
+      "impact": 28.982537
+    },
+    {
+      "type": "hand-swish",
+      "pose": 6,
+      "start": 35.008601,
+      "end": 35.176764,
+      "impact": 35.151764
+    },
+    {
+      "type": "hand-swish",
+      "pose": 7,
+      "start": 41.046652,
+      "end": 41.214815,
+      "impact": 41.189815
+    },
+    {
+      "type": "hand-swish",
+      "pose": 9,
+      "start": 57.707829,
+      "end": 57.875992,
+      "impact": 57.850992
+    },
+    {
+      "type": "hand-swish",
+      "pose": 10,
+      "start": 64.314823,
+      "end": 64.482986,
+      "impact": 64.457986
+    },
+    {
+      "type": "hand-swish",
+      "pose": 11,
+      "start": 72.115478,
+      "end": 72.283641,
+      "impact": 72.258641
+    },
+    {
+      "type": "kihap",
+      "pose": 11,
+      "start": 72.258641,
+      "end": 72.958641,
+      "impact": 72.258641
+    },
+    {
+      "type": "hand-swish",
+      "pose": 12,
+      "start": 79.372259,
+      "end": 79.540422,
+      "impact": 79.515422
+    },
+    {
+      "type": "hand-swish",
+      "pose": 13,
+      "start": 85.474406,
+      "end": 85.642569,
+      "impact": 85.617569
+    },
+    {
+      "type": "hand-swish",
+      "pose": 14,
+      "start": 96.849012,
+      "end": 97.017176,
+      "impact": 96.992176
+    },
+    {
+      "type": "hand-swish",
+      "pose": 16,
+      "start": 113.583149,
+      "end": 113.751312,
+      "impact": 113.726312
+    },
+    {
+      "type": "hand-swish",
+      "pose": 17,
+      "start": 120.066107,
+      "end": 120.23427,
+      "impact": 120.20927
+    },
+    {
+      "type": "hand-swish",
+      "pose": 19,
+      "start": 136.814134,
+      "end": 136.982297,
+      "impact": 136.957297
+    },
+    {
+      "type": "hand-swish",
+      "pose": 20,
+      "start": 143.297092,
+      "end": 143.465255,
+      "impact": 143.440255
+    },
+    {
+      "type": "hand-swish",
+      "pose": 21,
+      "start": 151.074121,
+      "end": 151.242284,
+      "impact": 151.217284
+    },
+    {
+      "type": "kihap",
+      "pose": 21,
+      "start": 151.217284,
+      "end": 151.917284,
+      "impact": 151.217284
+    },
+    {
+      "type": "hand-swish",
+      "pose": 22,
+      "start": 158.561922,
+      "end": 158.730085,
+      "impact": 158.705085
+    },
+    {
+      "type": "hand-swish",
+      "pose": 23,
+      "start": 164.708073,
+      "end": 164.876236,
+      "impact": 164.851236
+    },
+    {
+      "type": "hand-swish",
+      "pose": 24,
+      "start": 176.605673,
+      "end": 176.773836,
+      "impact": 176.748836
+    },
+    {
+      "type": "hand-swish",
+      "pose": 26,
+      "start": 193.439427,
+      "end": 193.60759,
+      "impact": 193.58259
+    },
+    {
+      "type": "hand-swish",
+      "pose": 27,
+      "start": 200.046421,
+      "end": 200.214584,
+      "impact": 200.189584
     }
   ]
 }

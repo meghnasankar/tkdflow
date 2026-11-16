@@ -18,7 +18,8 @@
       "actions": [
         {
           "type": "assisted-block",
-          "side": "left"
+          "side": "left",
+          "height": "high"
         }
       ],
       "footAction": "step-right-back",
@@ -210,7 +211,8 @@
       "actions": [
         {
           "type": "assisted-block",
-          "side": "right"
+          "side": "right",
+          "height": "high"
         }
       ],
       "footAction": "land-right",
@@ -406,7 +408,8 @@
       "actions": [
         {
           "type": "assisted-block",
-          "side": "left"
+          "side": "left",
+          "height": "high"
         }
       ],
       "footAction": "land-left",

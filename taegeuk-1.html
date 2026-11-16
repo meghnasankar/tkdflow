@@ -90,7 +90,7 @@
         <div class="player-region" id="player-region" tabindex="0" role="group" aria-labelledby="player-title" aria-describedby="player-keys">
         <h2 class="sr-only" id="player-title">Animation player</h2>
         <div class="lesson-view-toolbar">
-          <div><span class="lesson-render-label">3D study aid · unreviewed</span><div class="lesson-actions"><button type="button" class="lesson-voice-toggle" id="voice-toggle" aria-pressed="true" aria-controls="lesson-audio" disabled>Voice on</button><button type="button" class="lesson-study-toggle" id="study-view" aria-pressed="false">Study view</button></div></div>
+          <div><span class="lesson-render-label">3D study aid · unreviewed</span><div class="lesson-actions"><button type="button" class="lesson-voice-toggle" id="voice-toggle" aria-pressed="true" aria-controls="lesson-audio" disabled>Voice on</button><button type="button" class="lesson-effects-toggle" id="effects-toggle" aria-pressed="true" aria-controls="lesson-effects" disabled>Effects on</button><button type="button" class="lesson-study-toggle" id="study-view" aria-pressed="false">Study view</button></div></div>
           <div class="lesson-view-switch" role="group" aria-label="Camera view">
             <button type="button" data-lesson-view="front" aria-pressed="false">Front</button>
             <button type="button" data-lesson-view="back" aria-pressed="false">Back</button>
@@ -98,7 +98,7 @@
             <button type="button" data-lesson-view="other-side" aria-pressed="false">Right</button>
             <button type="button" data-lesson-view="three-quarter" aria-label="Three-quarter view" aria-pressed="true">3/4</button>
           </div>
-          <p class="lesson-view-note">Views are fixed to the starting stance.</p>
+          <p class="lesson-view-note">Views are fixed to the starting stance. Directions use the performer’s left and right.</p>
         </div>
         <div class="canvas-wrap">
           <canvas id="lesson-canvas" width="640" height="640" role="img" aria-label="3D character showing the selected pose"></canvas>
@@ -140,6 +140,7 @@
         <p class="player-keys" id="player-keys">Keys (with the player selected): <kbd>←</kbd> <kbd>→</kbd> step one frame (Shift for a pose), <kbd>Home</kbd> <kbd>End</kbd> first/last, <kbd>Space</kbd> or <kbd>K</kbd> play/pause.</p>
         </div>
 
+        <audio id="lesson-effects" preload="auto" aria-hidden="true"></audio>
         <audio id="lesson-audio" preload="auto" aria-hidden="true"></audio>
         <span class="sr-only" id="voice-status" role="status"></span>
         <div class="pose-share">
@@ -172,8 +173,9 @@
           <div><dt>Trigram</dt><dd>☰ Geon (heaven) — unreviewed</dd></div>
           <div><dt>Belt level</dt><dd>Usually the first colour-belt form; varies by school</dd></div>
           <div><dt>Techniques</dt><dd>Low, middle and high blocks; middle punches; front kicks</dd></div>
-          <div><dt>Kihap (as animated)</dt><dd id="kihap-list">Movements 10 and 18 — under review</dd></div>
+          <div><dt>Kihap (as animated)</dt><dd id="kihap-list">Movement 18 — reference-based, awaiting instructor review</dd></div>
         </dl>
+        <p class="lesson-source">Sequence and kihap reference: <a href="https://lehightaekwondo.com/poomse/taegeuk_il_jang/index.shtml" target="_blank" rel="noopener">Lehigh Valley Taekwondo’s Taegeuk Il Jang curriculum</a>.</p>
         <p class="voice-credit">Voice instructions generated with <a href="https://elevenlabs.io/" target="_blank" rel="noopener noreferrer">ElevenLabs</a> using the stock Sarah voice. Lesson content awaits instructor review.</p>
       </section>
     </div>
