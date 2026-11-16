@@ -35,8 +35,11 @@ function card(f) {
     ? h('a', { class: 'btn btn-gold btn-sm', href: f.lessonUrl }, 'Open lesson', h('span', { class: 'sr-only' }, `: ${f.name}`))
     : h('span', { class: 'badge badge-muted' }, 'Lesson not available yet');
   return h('article', { class: `form-card${f.lessonUrl ? ' has-lesson' : ''}` },
-    h('div', { class: 'form-card-visual', style: { background: safeGradient(f.bgGradient, '') || null }, 'aria-hidden': 'true' },
-      h('span', {}, f.emoji || '')),
+    h('div', { class: 'form-card-visual' },
+      f.thumbnail
+        ? h('img', { src: f.thumbnail.src, width: f.thumbnail.width, height: f.thumbnail.height,
+          alt: f.thumbnail.alt, loading: 'lazy', decoding: 'async' })
+        : h('span', { 'aria-hidden': 'true', style: { background: safeGradient(f.bgGradient, '') || null } }, f.emoji || '')),
     h('div', { class: 'form-card-body' },
       h('div', { class: 'form-tag-row' }, ...tags, f.review?.status === 'approved' ? null : h('span', { class: 'sample-label' }, 'Unreviewed')),
       h('h3', {}, f.name),

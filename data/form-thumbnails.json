@@ -1,0 +1,812 @@
+{
+  "version": 1,
+  "source": "Exact lesson rig and selected source pose endpoints; no generated people or altered technique",
+  "trigramReference": "https://www.nbtkda.com/poomsae",
+  "files": [
+    {
+      "id": "taegeuk-1",
+      "src": "/assets/forms/taegeuk-1.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 1,
+      "poseNumber": 2,
+      "poseName": "Left Low Block",
+      "referenceCounts": [
+        1
+      ],
+      "sourcePoseSha256": "9bc1d0707f1964cb9bc1406d4c2db94a8f6ca3a52e53dacb38a67a57c8cf518e",
+      "theme": "sky",
+      "cameraAngle": 30,
+      "series": "TAEGEUK",
+      "number": 1,
+      "trigram": "111",
+      "meaning": "Heaven & Light",
+      "name": "Taegeuk Il Jang",
+      "alt": "Taegeuk Il Jang: the lesson character performing left low block.",
+      "bytes": 14546,
+      "assetSha256": "9942bb6010be610007e1c84934988d38aee9f2d98ceb47a0d18cdba66b8cb5a7",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 913,
+          "count": 93285,
+          "left": 412,
+          "right": 677,
+          "top": 102
+        },
+        "cameraAngle": 30,
+        "id": "taegeuk-1",
+        "poseHash": "9bc1d0707f1964cb9bc1406d4c2db94a8f6ca3a52e53dacb38a67a57c8cf518e"
+      }
+    },
+    {
+      "id": "taegeuk-2",
+      "src": "/assets/forms/taegeuk-2.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 13,
+      "poseNumber": 14,
+      "poseName": "Left high block",
+      "referenceCounts": [
+        11
+      ],
+      "sourcePoseSha256": "216d8556c386d8e2423198d72ce31e35b12860c9bb63972b6a1735735752181c",
+      "theme": "lake",
+      "cameraAngle": 28,
+      "series": "TAEGEUK",
+      "number": 2,
+      "trigram": "011",
+      "meaning": "Lake & Joy",
+      "name": "Taegeuk Yi Jang",
+      "alt": "Taegeuk Yi Jang: the lesson character performing left high block.",
+      "bytes": 16980,
+      "assetSha256": "efa7eba84aaa080e5bdefcfe484fbf4e23a0a2f1106aac27d9a4d8c42835c0dd",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 922,
+          "count": 95966,
+          "left": 385,
+          "right": 659,
+          "top": 83
+        },
+        "cameraAngle": 28,
+        "id": "taegeuk-2",
+        "poseHash": "216d8556c386d8e2423198d72ce31e35b12860c9bb63972b6a1735735752181c"
+      }
+    },
+    {
+      "id": "taegeuk-3",
+      "src": "/assets/forms/taegeuk-3.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 9,
+      "poseNumber": 10,
+      "poseName": "Right knifehand strike",
+      "referenceCounts": [
+        5
+      ],
+      "sourcePoseSha256": "9afde4ccc197435f9b6209c0bcb3771bec8bd0119ace9899607137645df9117f",
+      "theme": "fire",
+      "cameraAngle": 24,
+      "series": "TAEGEUK",
+      "number": 3,
+      "trigram": "101",
+      "meaning": "Fire & Sun",
+      "name": "Taegeuk Sam Jang",
+      "alt": "Taegeuk Sam Jang: the lesson character performing right knifehand strike.",
+      "bytes": 15424,
+      "assetSha256": "fa6791e293eeb8eb17eb53dda56c4d1ab4640edd739d5244c846678c13b89123",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 900,
+          "count": 98789,
+          "left": 378,
+          "right": 697,
+          "top": 107
+        },
+        "cameraAngle": 24,
+        "id": "taegeuk-3",
+        "poseHash": "9afde4ccc197435f9b6209c0bcb3771bec8bd0119ace9899607137645df9117f"
+      }
+    },
+    {
+      "id": "taegeuk-4",
+      "src": "/assets/forms/taegeuk-4.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 8,
+      "poseNumber": 9,
+      "poseName": "Left side kick",
+      "referenceCounts": [
+        7
+      ],
+      "sourcePoseSha256": "f962cf2990b25bf7da5b74376769a07644a3e380937ad68dc146349299f74b97",
+      "theme": "thunder",
+      "cameraAngle": 65,
+      "series": "TAEGEUK",
+      "number": 4,
+      "trigram": "001",
+      "meaning": "Thunder & Dignity",
+      "name": "Taegeuk Sa Jang",
+      "alt": "Taegeuk Sa Jang: the lesson character performing left side kick.",
+      "bytes": 14208,
+      "assetSha256": "b5fc511388b1eb8703195f3e476eff970d063e8acb6c97a8bd65bb4de59f35b8",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 849,
+          "count": 82906,
+          "left": 329,
+          "right": 762,
+          "top": 115
+        },
+        "cameraAngle": 65,
+        "id": "taegeuk-4",
+        "poseHash": "f962cf2990b25bf7da5b74376769a07644a3e380937ad68dc146349299f74b97"
+      }
+    },
+    {
+      "id": "taegeuk-5",
+      "src": "/assets/forms/taegeuk-5.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 15,
+      "poseNumber": 16,
+      "poseName": "Right elbow strike",
+      "referenceCounts": [
+        10
+      ],
+      "sourcePoseSha256": "4918d0df7eb30480620dcf2e49db636a212945cfb110ce410d8a30af32885d61",
+      "theme": "wind",
+      "cameraAngle": -35,
+      "series": "TAEGEUK",
+      "number": 5,
+      "trigram": "110",
+      "meaning": "Wind & Gentleness",
+      "name": "Taegeuk Oh Jang",
+      "alt": "Taegeuk Oh Jang: the lesson character performing right elbow strike.",
+      "bytes": 17606,
+      "assetSha256": "f09fd0876771052410e5ecab84829f8edfec8582ecbcadf32f2c79c0b0522cdd",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 918,
+          "count": 85044,
+          "left": 459,
+          "right": 684,
+          "top": 108
+        },
+        "cameraAngle": -35,
+        "id": "taegeuk-5",
+        "poseHash": "4918d0df7eb30480620dcf2e49db636a212945cfb110ce410d8a30af32885d61"
+      }
+    },
+    {
+      "id": "taegeuk-6",
+      "src": "/assets/forms/taegeuk-6.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 19,
+      "poseNumber": 20,
+      "poseName": "Left roundhouse kick",
+      "referenceCounts": [
+        12
+      ],
+      "sourcePoseSha256": "6767053f2c2ccdfd9e19d4ad89222c48245e13c5ce0eb16b8e8f11fa2ef546ab",
+      "theme": "water",
+      "cameraAngle": 60,
+      "series": "TAEGEUK",
+      "number": 6,
+      "trigram": "010",
+      "meaning": "Water & Softness",
+      "name": "Taegeuk Yuk Jang",
+      "alt": "Taegeuk Yuk Jang: the lesson character performing left roundhouse kick.",
+      "bytes": 18098,
+      "assetSha256": "44fc2fd64eb811395575d2a14bd869884b0703620f97acecf9e9a861a1a2818b",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 843,
+          "count": 79286,
+          "left": 348,
+          "right": 746,
+          "top": 112
+        },
+        "cameraAngle": 60,
+        "id": "taegeuk-6",
+        "poseHash": "6767053f2c2ccdfd9e19d4ad89222c48245e13c5ce0eb16b8e8f11fa2ef546ab"
+      }
+    },
+    {
+      "id": "taegeuk-7",
+      "src": "/assets/forms/taegeuk-7.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 14,
+      "poseNumber": 15,
+      "poseName": "Left scissor block",
+      "referenceCounts": [
+        12
+      ],
+      "sourcePoseSha256": "e207a361f59c4bd900aa72cf28f2c5785a367a1893851468c11463e5727fb385",
+      "theme": "mountain",
+      "cameraAngle": 30,
+      "series": "TAEGEUK",
+      "number": 7,
+      "trigram": "100",
+      "meaning": "Mountain & Stillness",
+      "name": "Taegeuk Chil Jang",
+      "alt": "Taegeuk Chil Jang: the lesson character performing left scissor block.",
+      "bytes": 15394,
+      "assetSha256": "87e8e3f5b509ef71c512d1042852ae1f2c6a3bd8ec1e966ede3c953c49bb18f4",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 916,
+          "count": 93788,
+          "left": 364,
+          "right": 650,
+          "top": 110
+        },
+        "cameraAngle": 30,
+        "id": "taegeuk-7",
+        "poseHash": "e207a361f59c4bd900aa72cf28f2c5785a367a1893851468c11463e5727fb385"
+      }
+    },
+    {
+      "id": "taegeuk-8",
+      "src": "/assets/forms/taegeuk-8.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 9,
+      "poseNumber": 10,
+      "poseName": "Right mountain block",
+      "referenceCounts": [
+        5
+      ],
+      "sourcePoseSha256": "eb537e460308d7c5e70467bce9e9f8de8126ec9a6d7b3bf4e4169148040e3646",
+      "theme": "earth",
+      "cameraAngle": 35,
+      "series": "TAEGEUK",
+      "number": 8,
+      "trigram": "000",
+      "meaning": "Earth & Infinity",
+      "name": "Taegeuk Pal Jang",
+      "alt": "Taegeuk Pal Jang: the lesson character performing right mountain block.",
+      "bytes": 16542,
+      "assetSha256": "52c15498afe222442606c944f777a873a31cb7a03200a8fb27fc73bfd52bb175",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 896,
+          "count": 99126,
+          "left": 375,
+          "right": 718,
+          "top": 120
+        },
+        "cameraAngle": 35,
+        "id": "taegeuk-8",
+        "poseHash": "eb537e460308d7c5e70467bce9e9f8de8126ec9a6d7b3bf4e4169148040e3646"
+      }
+    },
+    {
+      "id": "koryo",
+      "src": "/assets/forms/koryo.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 3,
+      "poseNumber": 4,
+      "poseName": "Right side kick",
+      "referenceCounts": [
+        2
+      ],
+      "sourcePoseSha256": "af6e3cf2a6429797fbadeea6b69852289d35bce51e76c1e20df87cb9288b6641",
+      "theme": "scholar",
+      "cameraAngle": 60,
+      "series": "BLACK BELT FORM",
+      "number": null,
+      "trigram": null,
+      "meaning": "The Goryeo Kingdom",
+      "name": "Koryo",
+      "alt": "Koryo: the lesson character performing right side kick.",
+      "bytes": 16358,
+      "assetSha256": "cc9a1f0ebf90cc098e52003eec55921dc77a53c4b6c4f46b198f67ed2de5d8c3",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 847,
+          "count": 80174,
+          "left": 302,
+          "right": 735,
+          "top": 132
+        },
+        "cameraAngle": 60,
+        "id": "koryo",
+        "poseHash": "af6e3cf2a6429797fbadeea6b69852289d35bce51e76c1e20df87cb9288b6641"
+      }
+    },
+    {
+      "id": "keumgang",
+      "src": "/assets/forms/keumgang.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 8,
+      "poseNumber": 9,
+      "poseName": "Left diamond block",
+      "referenceCounts": [
+        8
+      ],
+      "sourcePoseSha256": "2fc1fb5423a2f0d255451232f4caf9dad909575a63b2cb747163a939abb51b70",
+      "theme": "diamond",
+      "cameraAngle": 25,
+      "series": "BLACK BELT FORM",
+      "number": null,
+      "trigram": null,
+      "meaning": "Diamond Mountain",
+      "name": "Keumgang",
+      "alt": "Keumgang: the lesson character performing left diamond block.",
+      "bytes": 15616,
+      "assetSha256": "c1d840ee5cecf1e6835a213bea06f21eef3bdc0d339581405ed0f3cba04ac903",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 886,
+          "count": 79748,
+          "left": 445,
+          "right": 656,
+          "top": 84
+        },
+        "cameraAngle": 25,
+        "id": "keumgang",
+        "poseHash": "2fc1fb5423a2f0d255451232f4caf9dad909575a63b2cb747163a939abb51b70"
+      }
+    },
+    {
+      "id": "taebaek",
+      "src": "/assets/forms/taebaek.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 9,
+      "poseNumber": 10,
+      "poseName": "Left knifehand high block + Right knifehand strike",
+      "referenceCounts": [
+        5
+      ],
+      "sourcePoseSha256": "203d684df70f0d3b0e963dfa3408cf5ff693286381713a3349f7b875a197e7d4",
+      "theme": "dawn",
+      "cameraAngle": 30,
+      "series": "BLACK BELT FORM",
+      "number": null,
+      "trigram": null,
+      "meaning": "Baekdu Mountain",
+      "name": "Taebaek",
+      "alt": "Taebaek: the lesson character performing left knifehand high block + right knifehand strike.",
+      "bytes": 16300,
+      "assetSha256": "c7725986bc8efac0ac310175a73bf8bc941d7aacec96a90118523e4af6dae0bb",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 914,
+          "count": 85381,
+          "left": 376,
+          "right": 658,
+          "top": 101
+        },
+        "cameraAngle": 30,
+        "id": "taebaek",
+        "poseHash": "203d684df70f0d3b0e963dfa3408cf5ff693286381713a3349f7b875a197e7d4"
+      }
+    },
+    {
+      "id": "pyongwon",
+      "src": "/assets/forms/pyongwon.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 7,
+      "poseNumber": 8,
+      "poseName": "Left turning side kick",
+      "referenceCounts": [
+        6
+      ],
+      "sourcePoseSha256": "3953ee9f892386565a8c6236cecd281006e4c831f30fb20cba35d6ca86949494",
+      "theme": "plain",
+      "cameraAngle": 60,
+      "series": "BLACK BELT FORM",
+      "number": null,
+      "trigram": null,
+      "meaning": "A Vast Plain",
+      "name": "Pyongwon",
+      "alt": "Pyongwon: the lesson character performing left turning side kick.",
+      "bytes": 17962,
+      "assetSha256": "fb3db158a85e791d709aebf5039c695e6caaf4c84f2a3f7993b7ab3e57b9e6b3",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 835,
+          "count": 78206,
+          "left": 355,
+          "right": 752,
+          "top": 124
+        },
+        "cameraAngle": 60,
+        "id": "pyongwon",
+        "poseHash": "3953ee9f892386565a8c6236cecd281006e4c831f30fb20cba35d6ca86949494"
+      }
+    },
+    {
+      "id": "sipjin",
+      "src": "/assets/forms/sipjin.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 26,
+      "poseNumber": 27,
+      "poseName": "rock pushing",
+      "referenceCounts": [
+        15
+      ],
+      "sourcePoseSha256": "dd8bd906796df9a696b38acc413d46cc1022bb81fc580c87b2c3314daf22b436",
+      "theme": "stone",
+      "cameraAngle": 25,
+      "series": "BLACK BELT FORM",
+      "number": null,
+      "trigram": null,
+      "meaning": "Ten Perfections",
+      "name": "Sipjin",
+      "alt": "Sipjin: the lesson character performing rock pushing.",
+      "bytes": 14868,
+      "assetSha256": "26aa705099d8d3271a2cf919357e8550610c1265f6db724baf449e2dd6870b9c",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 915,
+          "count": 100927,
+          "left": 356,
+          "right": 652,
+          "top": 103
+        },
+        "cameraAngle": 25,
+        "id": "sipjin",
+        "poseHash": "dd8bd906796df9a696b38acc413d46cc1022bb81fc580c87b2c3314daf22b436"
+      }
+    },
+    {
+      "id": "jitae",
+      "src": "/assets/forms/jitae.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 16,
+      "poseNumber": 17,
+      "poseName": "diamond front punch",
+      "referenceCounts": [
+        11
+      ],
+      "sourcePoseSha256": "3fc9c32c34d7c2ad0f45ce6088819ce56400bbcfb37226af617f487cf995853d",
+      "theme": "soil",
+      "cameraAngle": 30,
+      "series": "BLACK BELT FORM",
+      "number": null,
+      "trigram": null,
+      "meaning": "Life on Earth",
+      "name": "Jitae",
+      "alt": "Jitae: the lesson character performing diamond front punch.",
+      "bytes": 14440,
+      "assetSha256": "426eadfcb5d0dcae0cb3259c71194a567fc337d41c4141206281ce21cfa4fd7a",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 896,
+          "count": 94463,
+          "left": 360,
+          "right": 666,
+          "top": 100
+        },
+        "cameraAngle": 30,
+        "id": "jitae",
+        "poseHash": "3fc9c32c34d7c2ad0f45ce6088819ce56400bbcfb37226af617f487cf995853d"
+      }
+    },
+    {
+      "id": "chon-ji",
+      "src": "/assets/forms/chon-ji.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 1,
+      "poseNumber": 2,
+      "poseName": "Left low block",
+      "referenceCounts": [
+        1
+      ],
+      "sourcePoseSha256": "f3524db459edd2d30bbad8d1856c4f3a835845c06c42001203f75f98aff1d2f7",
+      "theme": "horizon",
+      "cameraAngle": 25,
+      "series": "ITF PATTERN",
+      "number": null,
+      "trigram": null,
+      "meaning": "Heaven & Earth",
+      "name": "Chon-Ji",
+      "alt": "Chon-Ji: the lesson character performing left low block.",
+      "bytes": 14354,
+      "assetSha256": "082d0dd7584e951898a79b182643edf4067ee8a6d0fa5f2b25641e5b250e101d",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 914,
+          "count": 99887,
+          "left": 417,
+          "right": 685,
+          "top": 102
+        },
+        "cameraAngle": 25,
+        "id": "chon-ji",
+        "poseHash": "f3524db459edd2d30bbad8d1856c4f3a835845c06c42001203f75f98aff1d2f7"
+      }
+    },
+    {
+      "id": "dan-gun",
+      "src": "/assets/forms/dan-gun.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 9,
+      "poseNumber": 10,
+      "poseName": "Left twin forearm block",
+      "referenceCounts": [
+        9
+      ],
+      "sourcePoseSha256": "852e64cb179d0f3d0bcc79ecd331f83dd4d8b5eaa4854e06496c8b5518de4816",
+      "theme": "forest",
+      "cameraAngle": 30,
+      "series": "ITF PATTERN",
+      "number": null,
+      "trigram": null,
+      "meaning": "Founder of Korea",
+      "name": "Dan-Gun",
+      "alt": "Dan-Gun: the lesson character performing left twin forearm block.",
+      "bytes": 14816,
+      "assetSha256": "04f02e846a5d524df958c3c22549a672bdac49d7656127b7fcfe4a287014802e",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 916,
+          "count": 92596,
+          "left": 376,
+          "right": 730,
+          "top": 119
+        },
+        "cameraAngle": 30,
+        "id": "dan-gun",
+        "poseHash": "852e64cb179d0f3d0bcc79ecd331f83dd4d8b5eaa4854e06496c8b5518de4816"
+      }
+    },
+    {
+      "id": "do-san",
+      "src": "/assets/forms/do-san.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 13,
+      "poseNumber": 14,
+      "poseName": "wedging block",
+      "referenceCounts": [
+        13
+      ],
+      "sourcePoseSha256": "de2fa5233447024d2b74c257551d5fb342c67a30cf2972c0cac4417149aed9d6",
+      "theme": "paper",
+      "cameraAngle": 25,
+      "series": "ITF PATTERN",
+      "number": null,
+      "trigram": null,
+      "meaning": "Ahn Chang-Ho",
+      "name": "Do-San",
+      "alt": "Do-San: the lesson character performing wedging block.",
+      "bytes": 15136,
+      "assetSha256": "e58afe918367b336ac74f125e080313e2a7e928cdf327eb7a36331db84e5621e",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 906,
+          "count": 95284,
+          "left": 384,
+          "right": 692,
+          "top": 102
+        },
+        "cameraAngle": 25,
+        "id": "do-san",
+        "poseHash": "de2fa5233447024d2b74c257551d5fb342c67a30cf2972c0cac4417149aed9d6"
+      }
+    },
+    {
+      "id": "won-hyo",
+      "src": "/assets/forms/won-hyo.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 7,
+      "poseNumber": 8,
+      "poseName": "Left bending ready",
+      "referenceCounts": [
+        7
+      ],
+      "sourcePoseSha256": "7b97caf557faa8df94ed950a71b75033e6f832fdcc2ba28ad92f1d1b1f3e5192",
+      "theme": "lotus",
+      "cameraAngle": 30,
+      "series": "ITF PATTERN",
+      "number": null,
+      "trigram": null,
+      "meaning": "Buddhist Monk",
+      "name": "Won-Hyo",
+      "alt": "Won-Hyo: the lesson character performing left bending ready.",
+      "bytes": 16258,
+      "assetSha256": "99266d8ddcd5b56cb1c7c804f090dda3ede6b689f2835b8a5ce73f0c6705f7dd",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 857,
+          "count": 82624,
+          "left": 373,
+          "right": 707,
+          "top": 109
+        },
+        "cameraAngle": 30,
+        "id": "won-hyo",
+        "poseHash": "7b97caf557faa8df94ed950a71b75033e6f832fdcc2ba28ad92f1d1b1f3e5192"
+      }
+    },
+    {
+      "id": "yul-gok",
+      "src": "/assets/forms/yul-gok.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 24,
+      "poseNumber": 25,
+      "poseName": "Right elbow strike",
+      "referenceCounts": [
+        24
+      ],
+      "sourcePoseSha256": "4b49ff446b0ddef7da28c4fece3925d59f44eebeaa4b6ee64cd0b0c74f9b0733",
+      "theme": "ink",
+      "cameraAngle": -35,
+      "series": "ITF PATTERN",
+      "number": null,
+      "trigram": null,
+      "meaning": "Yi I, Confucian Scholar",
+      "name": "Yul-Gok",
+      "alt": "Yul-Gok: the lesson character performing right elbow strike.",
+      "bytes": 16296,
+      "assetSha256": "102126e4a857453b19f90f4aaad1d2222d387a943f9b2bc3897463f3fbef289a",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 892,
+          "count": 92771,
+          "left": 435,
+          "right": 672,
+          "top": 101
+        },
+        "cameraAngle": -35,
+        "id": "yul-gok",
+        "poseHash": "4b49ff446b0ddef7da28c4fece3925d59f44eebeaa4b6ee64cd0b0c74f9b0733"
+      }
+    },
+    {
+      "id": "joong-gun",
+      "src": "/assets/forms/joong-gun.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 31,
+      "poseNumber": 32,
+      "poseName": "Right u shape block",
+      "referenceCounts": [
+        31
+      ],
+      "sourcePoseSha256": "b6d4f0516100c9fb177b028de461d88d125a7b6b31c9346e41f0cf897de80431",
+      "theme": "resolve",
+      "cameraAngle": 25,
+      "series": "ITF PATTERN",
+      "number": null,
+      "trigram": null,
+      "meaning": "Ahn Joong-Gun",
+      "name": "Joong-Gun",
+      "alt": "Joong-Gun: the lesson character performing right u shape block.",
+      "bytes": 16572,
+      "assetSha256": "e1fe07afc54bdc7a6e1c42191ae05ebc1744b3bdd0172edda7a7f91dfecc8f57",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 913,
+          "count": 101404,
+          "left": 397,
+          "right": 665,
+          "top": 99
+        },
+        "cameraAngle": 25,
+        "id": "joong-gun",
+        "poseHash": "b6d4f0516100c9fb177b028de461d88d125a7b6b31c9346e41f0cf897de80431"
+      }
+    },
+    {
+      "id": "songahm-1",
+      "src": "/assets/forms/songahm-1.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 7,
+      "poseNumber": 8,
+      "poseName": "Right side kick",
+      "referenceCounts": [
+        7
+      ],
+      "sourcePoseSha256": "4f2f0dfa081b3b0e30bea5bb7be8ecf4b40ee8f619f24ab0331dc285f52c5898",
+      "theme": "pine",
+      "cameraAngle": 65,
+      "series": "SONGAHM",
+      "number": 1,
+      "trigram": null,
+      "meaning": "Pine tree & rock",
+      "name": "Songahm 1",
+      "alt": "Songahm 1: the lesson character performing right side kick.",
+      "bytes": 14114,
+      "assetSha256": "a27619b368f85a4840f8d08df6b2162feb5027465be2f31a584732912843e06d",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 902,
+          "count": 79718,
+          "left": 422,
+          "right": 687,
+          "top": 121
+        },
+        "cameraAngle": 65,
+        "id": "songahm-1",
+        "poseHash": "4f2f0dfa081b3b0e30bea5bb7be8ecf4b40ee8f619f24ab0331dc285f52c5898"
+      }
+    },
+    {
+      "id": "songahm-2",
+      "src": "/assets/forms/songahm-2.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 4,
+      "poseNumber": 5,
+      "poseName": "Right roundhouse kick",
+      "referenceCounts": [
+        4
+      ],
+      "sourcePoseSha256": "78cdfa6be643e7b53923d07fa95fb8b0d8d43957f8ff8ef56775ac89cca9fc68",
+      "theme": "pine-sun",
+      "cameraAngle": 60,
+      "series": "SONGAHM",
+      "number": 2,
+      "trigram": null,
+      "meaning": "Pine tree & rock",
+      "name": "Songahm 2",
+      "alt": "Songahm 2: the lesson character performing right roundhouse kick.",
+      "bytes": 14366,
+      "assetSha256": "872149e813ff5111de6eb8eb9de0f055cf13327b60db458a698e47efca8f9414",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 858,
+          "count": 80073,
+          "left": 288,
+          "right": 742,
+          "top": 130
+        },
+        "cameraAngle": 60,
+        "id": "songahm-2",
+        "poseHash": "78cdfa6be643e7b53923d07fa95fb8b0d8d43957f8ff8ef56775ac89cca9fc68"
+      }
+    },
+    {
+      "id": "songahm-3",
+      "src": "/assets/forms/songahm-3.webp",
+      "width": 960,
+      "height": 540,
+      "poseIndex": 9,
+      "poseNumber": 10,
+      "poseName": "Right spearhand",
+      "referenceCounts": [
+        9
+      ],
+      "sourcePoseSha256": "aa051343839b05d6c8a8caca66e0ab221685c1a80e63bdd15546f19c84143602",
+      "theme": "pine-stone",
+      "cameraAngle": 30,
+      "series": "SONGAHM",
+      "number": 3,
+      "trigram": null,
+      "meaning": "Pine tree & rock",
+      "name": "Songahm 3",
+      "alt": "Songahm 3: the lesson character performing right spearhand.",
+      "bytes": 15236,
+      "assetSha256": "459727c73fdfff133b2d457895f4ec20617b97d0c460d3a11351f6eb6bc39c25",
+      "renderProof": {
+        "alphaBounds": {
+          "bottom": 877,
+          "count": 96129,
+          "left": 405,
+          "right": 707,
+          "top": 117
+        },
+        "cameraAngle": 30,
+        "id": "songahm-3",
+        "poseHash": "aa051343839b05d6c8a8caca66e0ab221685c1a80e63bdd15546f19c84143602"
+      }
+    }
+  ]
+}

@@ -122,6 +122,11 @@ export function formRecordProblem(f) {
   if (!Number.isInteger(f.difficulty) || f.difficulty < 1 || f.difficulty > 5) return `${f.id}: difficulty must be 1–5`;
   if (!Array.isArray(f.tags)) return `${f.id}: tags must be a list`;
   if (f.lessonUrl != null && !/^[a-z0-9-]+\.html$/.test(f.lessonUrl)) return `${f.id}: lessonUrl must be a local page`;
+  if (f.thumbnail != null && (f.thumbnail.src !== `/assets/forms/${f.id}.webp`
+      || f.thumbnail.width !== 960 || f.thumbnail.height !== 540
+      || typeof f.thumbnail.alt !== 'string' || !f.thumbnail.alt.trim())) {
+    return `${f.id}: thumbnail must be a local 960 × 540 image with alternative text`;
+  }
   if ('videos' in f || 'hasDiagram' in f) return `${f.id}: media counts/diagram flags need real assets`;
   if (!f.review || !['pending', 'approved'].includes(f.review.status)) return `${f.id}: review.status must be "pending" or "approved"`;
   if (f.review.status === 'approved' && !(f.review.reviewer && f.review.reviewedOn && f.review.source)) {

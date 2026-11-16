@@ -31,6 +31,12 @@
     "review": {
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
+    },
+    "thumbnail": {
+      "src": "/assets/forms/taegeuk-1.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Taegeuk Il Jang: the lesson character performing left low block."
     }
   },
   {
@@ -65,7 +71,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "taegeuk-2.html"
+    "lessonUrl": "taegeuk-2.html",
+    "thumbnail": {
+      "src": "/assets/forms/taegeuk-2.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Taegeuk Yi Jang: the lesson character performing left high block."
+    }
   },
   {
     "id": "taegeuk-3",
@@ -99,7 +111,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "taegeuk-3.html"
+    "lessonUrl": "taegeuk-3.html",
+    "thumbnail": {
+      "src": "/assets/forms/taegeuk-3.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Taegeuk Sam Jang: the lesson character performing right knifehand strike."
+    }
   },
   {
     "id": "taegeuk-4",
@@ -133,7 +151,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "taegeuk-4.html"
+    "lessonUrl": "taegeuk-4.html",
+    "thumbnail": {
+      "src": "/assets/forms/taegeuk-4.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Taegeuk Sa Jang: the lesson character performing left side kick."
+    }
   },
   {
     "id": "taegeuk-5",
@@ -167,7 +191,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "taegeuk-5.html"
+    "lessonUrl": "taegeuk-5.html",
+    "thumbnail": {
+      "src": "/assets/forms/taegeuk-5.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Taegeuk Oh Jang: the lesson character performing right elbow strike."
+    }
   },
   {
     "id": "taegeuk-6",
@@ -201,7 +231,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "taegeuk-6.html"
+    "lessonUrl": "taegeuk-6.html",
+    "thumbnail": {
+      "src": "/assets/forms/taegeuk-6.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Taegeuk Yuk Jang: the lesson character performing left roundhouse kick."
+    }
   },
   {
     "id": "taegeuk-7",
@@ -235,7 +271,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "taegeuk-7.html"
+    "lessonUrl": "taegeuk-7.html",
+    "thumbnail": {
+      "src": "/assets/forms/taegeuk-7.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Taegeuk Chil Jang: the lesson character performing left scissor block."
+    }
   },
   {
     "id": "taegeuk-8",
@@ -269,7 +311,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "taegeuk-8.html"
+    "lessonUrl": "taegeuk-8.html",
+    "thumbnail": {
+      "src": "/assets/forms/taegeuk-8.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Taegeuk Pal Jang: the lesson character performing right mountain block."
+    }
   },
   {
     "id": "koryo",
@@ -303,7 +351,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "koryo.html"
+    "lessonUrl": "koryo.html",
+    "thumbnail": {
+      "src": "/assets/forms/koryo.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Koryo: the lesson character performing right side kick."
+    }
   },
   {
     "id": "keumgang",
@@ -337,7 +391,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "keumgang.html"
+    "lessonUrl": "keumgang.html",
+    "thumbnail": {
+      "src": "/assets/forms/keumgang.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Keumgang: the lesson character performing left diamond block."
+    }
   },
   {
     "id": "taebaek",
@@ -371,7 +431,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "taebaek.html"
+    "lessonUrl": "taebaek.html",
+    "thumbnail": {
+      "src": "/assets/forms/taebaek.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Taebaek: the lesson character performing left knifehand high block + right knifehand strike."
+    }
   },
   {
     "id": "pyongwon",
@@ -405,7 +471,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "pyongwon.html"
+    "lessonUrl": "pyongwon.html",
+    "thumbnail": {
+      "src": "/assets/forms/pyongwon.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Pyongwon: the lesson character performing left turning side kick."
+    }
   },
   {
     "id": "sipjin",
@@ -439,7 +511,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "sipjin.html"
+    "lessonUrl": "sipjin.html",
+    "thumbnail": {
+      "src": "/assets/forms/sipjin.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Sipjin: the lesson character performing rock pushing."
+    }
   },
   {
     "id": "jitae",
@@ -473,7 +551,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "jitae.html"
+    "lessonUrl": "jitae.html",
+    "thumbnail": {
+      "src": "/assets/forms/jitae.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Jitae: the lesson character performing diamond front punch."
+    }
   },
   {
     "id": "chon-ji",
@@ -507,7 +591,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "chon-ji.html"
+    "lessonUrl": "chon-ji.html",
+    "thumbnail": {
+      "src": "/assets/forms/chon-ji.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Chon-Ji: the lesson character performing left low block."
+    }
   },
   {
     "id": "dan-gun",
@@ -541,7 +631,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "dan-gun.html"
+    "lessonUrl": "dan-gun.html",
+    "thumbnail": {
+      "src": "/assets/forms/dan-gun.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Dan-Gun: the lesson character performing left twin forearm block."
+    }
   },
   {
     "id": "do-san",
@@ -575,7 +671,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "do-san.html"
+    "lessonUrl": "do-san.html",
+    "thumbnail": {
+      "src": "/assets/forms/do-san.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Do-San: the lesson character performing wedging block."
+    }
   },
   {
     "id": "won-hyo",
@@ -609,7 +711,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "won-hyo.html"
+    "lessonUrl": "won-hyo.html",
+    "thumbnail": {
+      "src": "/assets/forms/won-hyo.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Won-Hyo: the lesson character performing left bending ready."
+    }
   },
   {
     "id": "yul-gok",
@@ -643,7 +751,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "yul-gok.html"
+    "lessonUrl": "yul-gok.html",
+    "thumbnail": {
+      "src": "/assets/forms/yul-gok.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Yul-Gok: the lesson character performing right elbow strike."
+    }
   },
   {
     "id": "joong-gun",
@@ -677,7 +791,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "joong-gun.html"
+    "lessonUrl": "joong-gun.html",
+    "thumbnail": {
+      "src": "/assets/forms/joong-gun.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Joong-Gun: the lesson character performing right u shape block."
+    }
   },
   {
     "id": "songahm-1",
@@ -711,7 +831,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "songahm-1.html"
+    "lessonUrl": "songahm-1.html",
+    "thumbnail": {
+      "src": "/assets/forms/songahm-1.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Songahm 1: the lesson character performing right side kick."
+    }
   },
   {
     "id": "songahm-2",
@@ -745,7 +871,13 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "songahm-2.html"
+    "lessonUrl": "songahm-2.html",
+    "thumbnail": {
+      "src": "/assets/forms/songahm-2.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Songahm 2: the lesson character performing right roundhouse kick."
+    }
   },
   {
     "id": "songahm-3",
@@ -779,6 +911,12 @@
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
     },
-    "lessonUrl": "songahm-3.html"
+    "lessonUrl": "songahm-3.html",
+    "thumbnail": {
+      "src": "/assets/forms/songahm-3.webp",
+      "width": 960,
+      "height": 540,
+      "alt": "Songahm 3: the lesson character performing right spearhand."
+    }
   }
 ]
