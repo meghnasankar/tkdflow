@@ -1,0 +1,313 @@
+{
+  "version": 1,
+  "lessonId": "songahm-2",
+  "provider": "ElevenLabs",
+  "voice": "Sarah",
+  "model": "eleven_multilingual_v2",
+  "audioSrc": "/assets/narration/songahm-2.mp3",
+  "duration": 115.735987,
+  "chapters": [
+    {
+      "index": 0,
+      "start": 0,
+      "at": 0,
+      "duration": 0
+    },
+    {
+      "index": 1,
+      "start": 2.459002,
+      "at": 7.499048,
+      "duration": 5.040045
+    },
+    {
+      "index": 2,
+      "start": 8.049048,
+      "at": 11.290091,
+      "duration": 3.241043
+    },
+    {
+      "index": 3,
+      "start": 11.840091,
+      "at": 16.115148,
+      "duration": 4.275057
+    },
+    {
+      "index": 4,
+      "start": 16.665148,
+      "at": 19.976214,
+      "duration": 3.311066
+    },
+    {
+      "index": 5,
+      "start": 20.526214,
+      "at": 25.299275,
+      "duration": 4.773061
+    },
+    {
+      "index": 6,
+      "start": 25.849275,
+      "at": 29.857302,
+      "duration": 4.008027
+    },
+    {
+      "index": 7,
+      "start": 30.407302,
+      "at": 33.407302,
+      "duration": 3
+    },
+    {
+      "index": 8,
+      "start": 33.957302,
+      "at": 38.103379,
+      "duration": 4.146077
+    },
+    {
+      "index": 9,
+      "start": 38.653379,
+      "at": 41.653379,
+      "duration": 3
+    },
+    {
+      "index": 10,
+      "start": 42.203379,
+      "at": 48.742427,
+      "duration": 6.539048
+    },
+    {
+      "index": 11,
+      "start": 49.292427,
+      "at": 52.603493,
+      "duration": 3.311066
+    },
+    {
+      "index": 12,
+      "start": 53.153493,
+      "at": 58.287552,
+      "duration": 5.134059
+    },
+    {
+      "index": 13,
+      "start": 58.837552,
+      "at": 62.044581,
+      "duration": 3.207029
+    },
+    {
+      "index": 14,
+      "start": 62.594581,
+      "at": 66.660613,
+      "duration": 4.066032
+    },
+    {
+      "index": 15,
+      "start": 67.210613,
+      "at": 70.661679,
+      "duration": 3.451066
+    },
+    {
+      "index": 16,
+      "start": 71.211679,
+      "at": 75.98474,
+      "duration": 4.773061
+    },
+    {
+      "index": 17,
+      "start": 76.53474,
+      "at": 80.948799,
+      "duration": 4.414059
+    },
+    {
+      "index": 18,
+      "start": 81.498799,
+      "at": 84.498799,
+      "duration": 3
+    },
+    {
+      "index": 19,
+      "start": 85.048799,
+      "at": 89.531838,
+      "duration": 4.483039
+    },
+    {
+      "index": 20,
+      "start": 90.081838,
+      "at": 93.081838,
+      "duration": 3
+    },
+    {
+      "index": 21,
+      "start": 93.631838,
+      "at": 100.123901,
+      "duration": 6.492063
+    },
+    {
+      "index": 22,
+      "start": 100.673901,
+      "at": 104.124967,
+      "duration": 3.451066
+    },
+    {
+      "index": 23,
+      "start": 104.674967,
+      "at": 109.785987,
+      "duration": 5.11102
+    },
+    {
+      "index": 24,
+      "start": 110.435987,
+      "at": 114.935987,
+      "duration": 4.5
+    }
+  ],
+  "cues": [
+    {
+      "index": 0,
+      "text": "Stand ready, with your hands held in front.",
+      "start": 0.12,
+      "end": 2.159002267573696
+    },
+    {
+      "index": 1,
+      "text": "Set a back stance. Block with your left forearm, supported by the other hand.",
+      "start": 2.539002,
+      "end": 7.279048
+    },
+    {
+      "index": 2,
+      "text": "Chamber your left knee, then extend a front kick.",
+      "start": 8.129048,
+      "end": 11.070091
+    },
+    {
+      "index": 3,
+      "text": "Land in a front stance. Punch high with your right fist.",
+      "start": 11.920091,
+      "end": 15.895148
+    },
+    {
+      "index": 4,
+      "text": "Chamber your right knee, then extend a roundhouse kick.",
+      "start": 16.745148,
+      "end": 19.756214
+    },
+    {
+      "index": 5,
+      "text": "Land in a horse stance. Lower both forearms outward together to block.",
+      "start": 20.606214,
+      "end": 25.079275
+    },
+    {
+      "index": 6,
+      "text": "Set a front stance. Move your left forearm outward to block.",
+      "start": 25.929275,
+      "end": 29.637302
+    },
+    {
+      "index": 7,
+      "text": "Punch high with your right fist.",
+      "start": 30.487302,
+      "end": 32.372336
+    },
+    {
+      "index": 8,
+      "text": "Set a front stance. Move your right forearm outward to block.",
+      "start": 34.037302,
+      "end": 37.883379
+    },
+    {
+      "index": 9,
+      "text": "Punch high with your left fist.",
+      "start": 38.733379,
+      "end": 40.676418
+    },
+    {
+      "index": 10,
+      "text": "Turn left into a back stance. Strike across with the edge of your left hand. Finish with a strong shout.",
+      "start": 42.283379,
+      "end": 48.522427
+    },
+    {
+      "index": 11,
+      "text": "Chamber your right knee, then extend a roundhouse kick.",
+      "start": 49.372427,
+      "end": 52.383493
+    },
+    {
+      "index": 12,
+      "text": "Land in a back stance. Block with your right forearm, supported by the other hand.",
+      "start": 53.233493,
+      "end": 58.067552
+    },
+    {
+      "index": 13,
+      "text": "Chamber your right knee, then extend a front kick.",
+      "start": 58.917552,
+      "end": 61.824581
+    },
+    {
+      "index": 14,
+      "text": "Land in a front stance. Punch high with your left fist.",
+      "start": 62.674581,
+      "end": 66.440613
+    },
+    {
+      "index": 15,
+      "text": "Chamber your left knee, then extend a roundhouse kick.",
+      "start": 67.290613,
+      "end": 70.441679
+    },
+    {
+      "index": 16,
+      "text": "Land in a horse stance. Lower both forearms outward together to block.",
+      "start": 71.291679,
+      "end": 75.76474
+    },
+    {
+      "index": 17,
+      "text": "Turn right into a horse stance. Sweep your right arm down for a low block.",
+      "start": 76.61474,
+      "end": 80.728799
+    },
+    {
+      "index": 18,
+      "text": "Strike forward with your right backfist.",
+      "start": 81.578799,
+      "end": 83.892858
+    },
+    {
+      "index": 19,
+      "text": "Turn right into a horse stance. Sweep your left arm down for a low block.",
+      "start": 85.128799,
+      "end": 89.311838
+    },
+    {
+      "index": 20,
+      "text": "Strike forward with your left backfist.",
+      "start": 90.161838,
+      "end": 92.464877
+    },
+    {
+      "index": 21,
+      "text": "Turn right into a back stance. Strike across with the edge of your right hand. Finish with a strong shout.",
+      "start": 93.711838,
+      "end": 99.903901
+    },
+    {
+      "index": 22,
+      "text": "Chamber your left knee, then extend a roundhouse kick.",
+      "start": 100.753901,
+      "end": 103.904967
+    },
+    {
+      "index": 23,
+      "text": "Land in a back stance. Block with your left forearm, supported by the other hand.",
+      "start": 104.754967,
+      "end": 109.565987
+    },
+    {
+      "index": 24,
+      "text": "Return to the ready position.",
+      "start": 110.515987,
+      "end": 112.180069
+    }
+  ]
+}

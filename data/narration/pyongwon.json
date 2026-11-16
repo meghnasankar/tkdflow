@@ -1,0 +1,409 @@
+{
+  "version": 1,
+  "lessonId": "pyongwon",
+  "provider": "ElevenLabs",
+  "voice": "Sarah",
+  "model": "eleven_multilingual_v2",
+  "audioSrc": "/assets/narration/pyongwon.mp3",
+  "duration": 158.532087,
+  "chapters": [
+    {
+      "index": 0,
+      "start": 0,
+      "at": 0,
+      "duration": 0
+    },
+    {
+      "index": 1,
+      "start": 2.459002,
+      "at": 7.756054,
+      "duration": 5.297052
+    },
+    {
+      "index": 2,
+      "start": 8.306054,
+      "at": 11.536077,
+      "duration": 3.230023
+    },
+    {
+      "index": 3,
+      "start": 12.086077,
+      "at": 16.709116,
+      "duration": 4.623039
+    },
+    {
+      "index": 4,
+      "start": 17.259116,
+      "at": 22.451134,
+      "duration": 5.192018
+    },
+    {
+      "index": 5,
+      "start": 23.001134,
+      "at": 26.474195,
+      "duration": 3.473061
+    },
+    {
+      "index": 6,
+      "start": 27.024195,
+      "at": 30.231224,
+      "duration": 3.207029
+    },
+    {
+      "index": 7,
+      "start": 30.781224,
+      "at": 33.981224,
+      "duration": 3.2
+    },
+    {
+      "index": 8,
+      "start": 34.531224,
+      "at": 39.897256,
+      "duration": 5.366032
+    },
+    {
+      "index": 9,
+      "start": 40.447256,
+      "at": 44.223265,
+      "duration": 3.776009
+    },
+    {
+      "index": 10,
+      "start": 44.773265,
+      "at": 50.232313,
+      "duration": 5.459048
+    },
+    {
+      "index": 11,
+      "start": 50.782313,
+      "at": 54.221361,
+      "duration": 3.439048
+    },
+    {
+      "index": 12,
+      "start": 54.771361,
+      "at": 59.789411,
+      "duration": 5.01805
+    },
+    {
+      "index": 13,
+      "start": 60.339411,
+      "at": 64.475465,
+      "duration": 4.136054
+    },
+    {
+      "index": 14,
+      "start": 65.025465,
+      "at": 69.659479,
+      "duration": 4.634014
+    },
+    {
+      "index": 15,
+      "start": 70.209479,
+      "at": 75.436554,
+      "duration": 5.227075
+    },
+    {
+      "index": 16,
+      "start": 75.986554,
+      "at": 80.679615,
+      "duration": 4.693061
+    },
+    {
+      "index": 17,
+      "start": 81.229615,
+      "at": 84.429615,
+      "duration": 3.2
+    },
+    {
+      "index": 18,
+      "start": 84.979615,
+      "at": 88.778663,
+      "duration": 3.799048
+    },
+    {
+      "index": 19,
+      "start": 89.328663,
+      "at": 92.569706,
+      "duration": 3.241043
+    },
+    {
+      "index": 20,
+      "start": 93.119706,
+      "at": 96.319706,
+      "duration": 3.2
+    },
+    {
+      "index": 21,
+      "start": 96.869706,
+      "at": 102.235738,
+      "duration": 5.366032
+    },
+    {
+      "index": 22,
+      "start": 102.785738,
+      "at": 106.561747,
+      "duration": 3.776009
+    },
+    {
+      "index": 23,
+      "start": 107.111747,
+      "at": 112.210795,
+      "duration": 5.099048
+    },
+    {
+      "index": 24,
+      "start": 112.760795,
+      "at": 116.141838,
+      "duration": 3.381043
+    },
+    {
+      "index": 25,
+      "start": 116.691838,
+      "at": 122.223856,
+      "duration": 5.532018
+    },
+    {
+      "index": 26,
+      "start": 122.773856,
+      "at": 126.90991,
+      "duration": 4.136054
+    },
+    {
+      "index": 27,
+      "start": 127.45991,
+      "at": 132.093924,
+      "duration": 4.634014
+    },
+    {
+      "index": 28,
+      "start": 132.643924,
+      "at": 137.893992,
+      "duration": 5.250068
+    },
+    {
+      "index": 29,
+      "start": 138.443992,
+      "at": 143.171067,
+      "duration": 4.727075
+    },
+    {
+      "index": 30,
+      "start": 143.721067,
+      "at": 146.921067,
+      "duration": 3.2
+    },
+    {
+      "index": 31,
+      "start": 147.471067,
+      "at": 152.582087,
+      "duration": 5.11102
+    },
+    {
+      "index": 32,
+      "start": 153.232087,
+      "at": 157.732087,
+      "duration": 4.5
+    }
+  ],
+  "cues": [
+    {
+      "index": 0,
+      "text": "Stand ready, with your hands held in front.",
+      "start": 0.12,
+      "end": 2.159002267573696
+    },
+    {
+      "index": 1,
+      "text": "Set a parallel stance. Spread both open hands outward into the low block.",
+      "start": 2.539002,
+      "end": 7.536054
+    },
+    {
+      "index": 2,
+      "text": "Bring both open hands together in front of your chest.",
+      "start": 8.386054,
+      "end": 11.316077
+    },
+    {
+      "index": 3,
+      "text": "Turn right into a back stance. Sweep your right knifehand down to block.",
+      "start": 12.166077,
+      "end": 16.489116
+    },
+    {
+      "index": 4,
+      "text": "Turn left into a back stance. Extend your left knifehand out to the side.",
+      "start": 17.339116,
+      "end": 22.231134
+    },
+    {
+      "index": 5,
+      "text": "Set a front stance. Drive your right elbow upward.",
+      "start": 23.081134,
+      "end": 26.254195
+    },
+    {
+      "index": 6,
+      "text": "Chamber your right knee, then extend a front kick.",
+      "start": 27.104195,
+      "end": 30.011224
+    },
+    {
+      "index": 7,
+      "text": "Chamber your left knee, then extend a side kick.",
+      "start": 30.861224,
+      "end": 33.582267
+    },
+    {
+      "index": 8,
+      "text": "Land in a back stance. Extend the front knifehand while the other hand guards your body.",
+      "start": 34.611224,
+      "end": 39.677256
+    },
+    {
+      "index": 9,
+      "text": "Lower the front knifehand while the other hand guards your body.",
+      "start": 40.527256,
+      "end": 44.003265
+    },
+    {
+      "index": 10,
+      "text": "Set a horse stance. Raise your right forearm to the side with the other hand supporting.",
+      "start": 44.853265,
+      "end": 50.012313
+    },
+    {
+      "index": 11,
+      "text": "Draw back, then strike with your right backfist.",
+      "start": 50.862313,
+      "end": 54.001361
+    },
+    {
+      "index": 12,
+      "text": "Draw back, then strike with your left backfist. Finish with a strong shout.",
+      "start": 54.851361,
+      "end": 59.569411
+    },
+    {
+      "index": 13,
+      "text": "Set a cross stance. Drive both elbows outward to the sides.",
+      "start": 60.419411,
+      "end": 64.255465
+    },
+    {
+      "index": 14,
+      "text": "Set a horse stance. Raise both forearms outward into the mountain block.",
+      "start": 65.105465,
+      "end": 69.439479
+    },
+    {
+      "index": 15,
+      "text": "Balance on your left leg. Raise one arm high with the other forearm guarding across.",
+      "start": 70.289479,
+      "end": 75.216554
+    },
+    {
+      "index": 16,
+      "text": "Balance on your left leg. Draw both fists back together beside your hip.",
+      "start": 76.066554,
+      "end": 80.459615
+    },
+    {
+      "index": 17,
+      "text": "Chamber your right knee, then extend a side kick.",
+      "start": 81.309615,
+      "end": 84.07669
+    },
+    {
+      "index": 18,
+      "text": "Land in a front stance. Drive your left elbow upward.",
+      "start": 85.059615,
+      "end": 88.558663
+    },
+    {
+      "index": 19,
+      "text": "Chamber your left knee, then extend a front kick.",
+      "start": 89.408663,
+      "end": 92.349706
+    },
+    {
+      "index": 20,
+      "text": "Chamber your right knee, then extend a side kick.",
+      "start": 93.199706,
+      "end": 95.966781
+    },
+    {
+      "index": 21,
+      "text": "Land in a back stance. Extend the front knifehand while the other hand guards your body.",
+      "start": 96.949706,
+      "end": 102.015738
+    },
+    {
+      "index": 22,
+      "text": "Lower the front knifehand while the other hand guards your body.",
+      "start": 102.865738,
+      "end": 106.341747
+    },
+    {
+      "index": 23,
+      "text": "Set a horse stance. Raise your left forearm to the side with the other hand supporting.",
+      "start": 107.191747,
+      "end": 111.990795
+    },
+    {
+      "index": 24,
+      "text": "Draw back, then strike with your left backfist.",
+      "start": 112.840795,
+      "end": 115.921838
+    },
+    {
+      "index": 25,
+      "text": "Draw back, then strike with your right backfist. Finish with a strong shout.",
+      "start": 116.771838,
+      "end": 122.003856
+    },
+    {
+      "index": 26,
+      "text": "Set a cross stance. Drive both elbows outward to the sides.",
+      "start": 122.853856,
+      "end": 126.68991
+    },
+    {
+      "index": 27,
+      "text": "Set a horse stance. Raise both forearms outward into the mountain block.",
+      "start": 127.53991,
+      "end": 131.873924
+    },
+    {
+      "index": 28,
+      "text": "Balance on your right leg. Raise one arm high with the other forearm guarding across.",
+      "start": 132.723924,
+      "end": 137.673992
+    },
+    {
+      "index": 29,
+      "text": "Balance on your right leg. Draw both fists back together beside your hip.",
+      "start": 138.523992,
+      "end": 142.951067
+    },
+    {
+      "index": 30,
+      "text": "Chamber your left knee, then extend a side kick.",
+      "start": 143.801067,
+      "end": 146.52211
+    },
+    {
+      "index": 31,
+      "text": "Land in a front stance. Drive your right elbow toward the opposite open palm.",
+      "start": 147.551067,
+      "end": 152.362087
+    },
+    {
+      "index": 32,
+      "text": "Return to the ready position.",
+      "start": 153.312087,
+      "end": 154.976169
+    }
+  ]
+}

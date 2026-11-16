@@ -1,0 +1,265 @@
+{
+  "version": 1,
+  "lessonId": "chon-ji",
+  "provider": "ElevenLabs",
+  "voice": "Sarah",
+  "model": "eleven_multilingual_v2",
+  "audioSrc": "/assets/narration/chon-ji.mp3",
+  "duration": 100.778846,
+  "chapters": [
+    {
+      "index": 0,
+      "start": 0,
+      "at": 0,
+      "duration": 0
+    },
+    {
+      "index": 1,
+      "start": 2.459002,
+      "at": 7.639048,
+      "duration": 5.180045
+    },
+    {
+      "index": 2,
+      "start": 8.189048,
+      "at": 12.0461,
+      "duration": 3.857052
+    },
+    {
+      "index": 3,
+      "start": 12.5961,
+      "at": 17.927166,
+      "duration": 5.331066
+    },
+    {
+      "index": 4,
+      "start": 18.477166,
+      "at": 22.380205,
+      "duration": 3.903039
+    },
+    {
+      "index": 5,
+      "start": 22.930205,
+      "at": 28.11025,
+      "duration": 5.180045
+    },
+    {
+      "index": 6,
+      "start": 28.66025,
+      "at": 32.517302,
+      "duration": 3.857052
+    },
+    {
+      "index": 7,
+      "start": 33.067302,
+      "at": 38.398368,
+      "duration": 5.331066
+    },
+    {
+      "index": 8,
+      "start": 38.948368,
+      "at": 42.851407,
+      "duration": 3.903039
+    },
+    {
+      "index": 9,
+      "start": 43.401407,
+      "at": 48.104446,
+      "duration": 4.703039
+    },
+    {
+      "index": 10,
+      "start": 48.654446,
+      "at": 52.511498,
+      "duration": 3.857052
+    },
+    {
+      "index": 11,
+      "start": 53.061498,
+      "at": 57.753516,
+      "duration": 4.692018
+    },
+    {
+      "index": 12,
+      "start": 58.303516,
+      "at": 62.206555,
+      "duration": 3.903039
+    },
+    {
+      "index": 13,
+      "start": 62.756555,
+      "at": 67.459594,
+      "duration": 4.703039
+    },
+    {
+      "index": 14,
+      "start": 68.009594,
+      "at": 71.866646,
+      "duration": 3.857052
+    },
+    {
+      "index": 15,
+      "start": 72.416646,
+      "at": 77.108664,
+      "duration": 4.692018
+    },
+    {
+      "index": 16,
+      "start": 77.658664,
+      "at": 81.561703,
+      "duration": 3.903039
+    },
+    {
+      "index": 17,
+      "start": 82.111703,
+      "at": 85.968755,
+      "duration": 3.857052
+    },
+    {
+      "index": 18,
+      "start": 86.518755,
+      "at": 90.421794,
+      "duration": 3.903039
+    },
+    {
+      "index": 19,
+      "start": 90.971794,
+      "at": 94.828846,
+      "duration": 3.857052
+    },
+    {
+      "index": 20,
+      "start": 95.478846,
+      "at": 99.978846,
+      "duration": 4.5
+    }
+  ],
+  "cues": [
+    {
+      "index": 0,
+      "text": "Stand ready, with your hands held in front.",
+      "start": 0.12,
+      "end": 2.159002267573696
+    },
+    {
+      "index": 1,
+      "text": "Turn left into a walking stance. Sweep your left arm down for a low block.",
+      "start": 2.539002,
+      "end": 7.419048
+    },
+    {
+      "index": 2,
+      "text": "Set a walking stance. Punch to the middle with your right fist.",
+      "start": 8.269048,
+      "end": 11.8261
+    },
+    {
+      "index": 3,
+      "text": "Turn right into a walking stance. Sweep your right arm down for a low block.",
+      "start": 12.6761,
+      "end": 17.707166
+    },
+    {
+      "index": 4,
+      "text": "Set a walking stance. Punch to the middle with your left fist.",
+      "start": 18.557166,
+      "end": 22.160205
+    },
+    {
+      "index": 5,
+      "text": "Turn left into a walking stance. Sweep your left arm down for a low block.",
+      "start": 23.010205,
+      "end": 27.89025
+    },
+    {
+      "index": 6,
+      "text": "Set a walking stance. Punch to the middle with your right fist.",
+      "start": 28.74025,
+      "end": 32.297302
+    },
+    {
+      "index": 7,
+      "text": "Turn right into a walking stance. Sweep your right arm down for a low block.",
+      "start": 33.147302,
+      "end": 38.178368
+    },
+    {
+      "index": 8,
+      "text": "Set a walking stance. Punch to the middle with your left fist.",
+      "start": 39.028368,
+      "end": 42.631407
+    },
+    {
+      "index": 9,
+      "text": "Turn left into a back stance. Block outward with your left inner forearm.",
+      "start": 43.481407,
+      "end": 47.884446
+    },
+    {
+      "index": 10,
+      "text": "Set a walking stance. Punch to the middle with your right fist.",
+      "start": 48.734446,
+      "end": 52.291498
+    },
+    {
+      "index": 11,
+      "text": "Turn right into a back stance. Block outward with your right inner forearm.",
+      "start": 53.141498,
+      "end": 57.533516
+    },
+    {
+      "index": 12,
+      "text": "Set a walking stance. Punch to the middle with your left fist.",
+      "start": 58.383516,
+      "end": 61.986555
+    },
+    {
+      "index": 13,
+      "text": "Turn left into a back stance. Block outward with your left inner forearm.",
+      "start": 62.836555,
+      "end": 67.239594
+    },
+    {
+      "index": 14,
+      "text": "Set a walking stance. Punch to the middle with your right fist.",
+      "start": 68.089594,
+      "end": 71.646646
+    },
+    {
+      "index": 15,
+      "text": "Turn right into a back stance. Block outward with your right inner forearm.",
+      "start": 72.496646,
+      "end": 76.888664
+    },
+    {
+      "index": 16,
+      "text": "Set a walking stance. Punch to the middle with your left fist.",
+      "start": 77.738664,
+      "end": 81.341703
+    },
+    {
+      "index": 17,
+      "text": "Set a walking stance. Punch to the middle with your right fist.",
+      "start": 82.191703,
+      "end": 85.748755
+    },
+    {
+      "index": 18,
+      "text": "Set a walking stance. Punch to the middle with your left fist.",
+      "start": 86.598755,
+      "end": 90.201794
+    },
+    {
+      "index": 19,
+      "text": "Set a walking stance. Punch to the middle with your right fist.",
+      "start": 91.051794,
+      "end": 94.608846
+    },
+    {
+      "index": 20,
+      "text": "Return to the ready position.",
+      "start": 95.558846,
+      "end": 97.222928
+    }
+  ]
+}

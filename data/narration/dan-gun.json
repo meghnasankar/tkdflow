@@ -1,0 +1,289 @@
+{
+  "version": 1,
+  "lessonId": "dan-gun",
+  "provider": "ElevenLabs",
+  "voice": "Sarah",
+  "model": "eleven_multilingual_v2",
+  "audioSrc": "/assets/narration/dan-gun.mp3",
+  "duration": 114.326916,
+  "chapters": [
+    {
+      "index": 0,
+      "start": 0,
+      "at": 0,
+      "duration": 0
+    },
+    {
+      "index": 1,
+      "start": 2.459002,
+      "at": 7.152018,
+      "duration": 4.693016
+    },
+    {
+      "index": 2,
+      "start": 7.702018,
+      "at": 11.687052,
+      "duration": 3.985034
+    },
+    {
+      "index": 3,
+      "start": 12.237052,
+      "at": 16.639093,
+      "duration": 4.402041
+    },
+    {
+      "index": 4,
+      "start": 17.189093,
+      "at": 21.313175,
+      "duration": 4.124082
+    },
+    {
+      "index": 5,
+      "start": 21.863175,
+      "at": 27.04322,
+      "duration": 5.180045
+    },
+    {
+      "index": 6,
+      "start": 27.59322,
+      "at": 31.578254,
+      "duration": 3.985034
+    },
+    {
+      "index": 7,
+      "start": 32.128254,
+      "at": 36.252336,
+      "duration": 4.124082
+    },
+    {
+      "index": 8,
+      "start": 36.802336,
+      "at": 40.78737,
+      "duration": 3.985034
+    },
+    {
+      "index": 9,
+      "start": 41.33737,
+      "at": 47.724399,
+      "duration": 6.387029
+    },
+    {
+      "index": 10,
+      "start": 48.274399,
+      "at": 52.259433,
+      "duration": 3.985034
+    },
+    {
+      "index": 11,
+      "start": 52.809433,
+      "at": 59.093469,
+      "duration": 6.284036
+    },
+    {
+      "index": 12,
+      "start": 59.643469,
+      "at": 63.767551,
+      "duration": 4.124082
+    },
+    {
+      "index": 13,
+      "start": 64.317551,
+      "at": 69.497596,
+      "duration": 5.180045
+    },
+    {
+      "index": 14,
+      "start": 70.047596,
+      "at": 73.047596,
+      "duration": 3
+    },
+    {
+      "index": 15,
+      "start": 73.597596,
+      "at": 78.499637,
+      "duration": 4.902041
+    },
+    {
+      "index": 16,
+      "start": 79.049637,
+      "at": 83.358662,
+      "duration": 4.309025
+    },
+    {
+      "index": 17,
+      "start": 83.908662,
+      "at": 88.810703,
+      "duration": 4.902041
+    },
+    {
+      "index": 18,
+      "start": 89.360703,
+      "at": 93.86678,
+      "duration": 4.506077
+    },
+    {
+      "index": 19,
+      "start": 94.41678,
+      "at": 98.401814,
+      "duration": 3.985034
+    },
+    {
+      "index": 20,
+      "start": 98.951814,
+      "at": 103.702834,
+      "duration": 4.75102
+    },
+    {
+      "index": 21,
+      "start": 104.252834,
+      "at": 108.376916,
+      "duration": 4.124082
+    },
+    {
+      "index": 22,
+      "start": 109.026916,
+      "at": 113.526916,
+      "duration": 4.5
+    }
+  ],
+  "cues": [
+    {
+      "index": 0,
+      "text": "Stand ready, with your hands held in front.",
+      "start": 0.12,
+      "end": 2.159002267573696
+    },
+    {
+      "index": 1,
+      "text": "Turn left into a back stance. Extend your left knifehand to block.",
+      "start": 2.539002,
+      "end": 6.932018
+    },
+    {
+      "index": 2,
+      "text": "Set a walking stance. Punch high with your right fist.",
+      "start": 7.782018,
+      "end": 11.467052
+    },
+    {
+      "index": 3,
+      "text": "Turn right into a back stance. Extend your right knifehand to block.",
+      "start": 12.317052,
+      "end": 16.419093
+    },
+    {
+      "index": 4,
+      "text": "Set a walking stance. Punch high with your left fist.",
+      "start": 17.269093,
+      "end": 21.093175
+    },
+    {
+      "index": 5,
+      "text": "Turn left into a walking stance. Sweep your left arm down for a low block.",
+      "start": 21.943175,
+      "end": 26.82322
+    },
+    {
+      "index": 6,
+      "text": "Set a walking stance. Punch high with your right fist.",
+      "start": 27.67322,
+      "end": 31.358254
+    },
+    {
+      "index": 7,
+      "text": "Set a walking stance. Punch high with your left fist.",
+      "start": 32.208254,
+      "end": 36.032336
+    },
+    {
+      "index": 8,
+      "text": "Set a walking stance. Punch high with your right fist.",
+      "start": 36.882336,
+      "end": 40.56737
+    },
+    {
+      "index": 9,
+      "text": "Turn left into a back stance. Raise one forearm high while the other forearm blocks forward.",
+      "start": 41.41737,
+      "end": 47.504399
+    },
+    {
+      "index": 10,
+      "text": "Set a walking stance. Punch high with your right fist.",
+      "start": 48.354399,
+      "end": 52.039433
+    },
+    {
+      "index": 11,
+      "text": "Turn right into a back stance. Raise one forearm high while the other forearm blocks forward.",
+      "start": 52.889433,
+      "end": 58.873469
+    },
+    {
+      "index": 12,
+      "text": "Set a walking stance. Punch high with your left fist.",
+      "start": 59.723469,
+      "end": 63.547551
+    },
+    {
+      "index": 13,
+      "text": "Turn left into a walking stance. Sweep your left arm down for a low block.",
+      "start": 64.397551,
+      "end": 69.277596
+    },
+    {
+      "index": 14,
+      "text": "Raise your left forearm above your head to block.",
+      "start": 70.127596,
+      "end": 72.801655
+    },
+    {
+      "index": 15,
+      "text": "Set a walking stance. Raise your right forearm above your head to block.",
+      "start": 73.677596,
+      "end": 78.279637
+    },
+    {
+      "index": 16,
+      "text": "Set a walking stance. Raise your left forearm above your head to block.",
+      "start": 79.129637,
+      "end": 83.138662
+    },
+    {
+      "index": 17,
+      "text": "Set a walking stance. Raise your right forearm above your head to block.",
+      "start": 83.988662,
+      "end": 88.590703
+    },
+    {
+      "index": 18,
+      "text": "Turn left into a back stance. Strike across with the edge of your left hand.",
+      "start": 89.440703,
+      "end": 93.64678
+    },
+    {
+      "index": 19,
+      "text": "Set a walking stance. Punch high with your right fist.",
+      "start": 94.49678,
+      "end": 98.181814
+    },
+    {
+      "index": 20,
+      "text": "Turn right into a back stance. Strike across with the edge of your right hand.",
+      "start": 99.031814,
+      "end": 103.482834
+    },
+    {
+      "index": 21,
+      "text": "Set a walking stance. Punch high with your left fist.",
+      "start": 104.332834,
+      "end": 108.156916
+    },
+    {
+      "index": 22,
+      "text": "Return to the ready position.",
+      "start": 109.106916,
+      "end": 110.770998
+    }
+  ]
+}

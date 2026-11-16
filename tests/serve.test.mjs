@@ -8,6 +8,15 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { canonicalPath, resolveRequest, createPreviewServer } from '../scripts/serve.mjs';
 
+test('narration audio supports byte seeking, suffix ranges and HEAD',async()=>{
+ const r=await fetch(origin+'/voice.mp3',{headers:{Range:'bytes=2-5'}});assert.equal(r.status,206);assert.equal(r.headers.get('content-type'),'audio/mpeg');assert.equal(r.headers.get('accept-ranges'),'bytes');assert.equal(r.headers.get('content-range'),'bytes 2-5/10');assert.equal(await r.text(),'2345');
+ const tail=await fetch(origin+'/voice.mp3',{headers:{Range:'bytes=-3'}});assert.equal(tail.status,206);assert.equal(await tail.text(),'789');
+ const head=await fetch(origin+'/voice.mp3',{method:'HEAD'});assert.equal(head.status,200);assert.equal(head.headers.get('content-length'),'10');assert.equal(await head.text(),'');
+});
+test('invalid audio ranges are bounded and return no file content',async()=>{
+ for(const range of ['bytes=90-100','bytes=7-2','bytes=-0','bytes=1-2,4-5','bytes=999999999999999999999-']){const r=await fetch(origin+'/voice.mp3',{headers:{Range:range}});assert.equal(r.status,416,range);assert.equal(r.headers.get('content-range'),'bytes */10');assert.equal(await r.text(),'');}
+});
+
 let base; let root; let server; let origin;
 const SECRET = 'FIXTURE-HEAD-ref: refs/heads/fixture';
 const OUTSIDE = 'FIXTURE-OUTSIDE-CONTENT';
@@ -22,6 +31,7 @@ before(async () => {
   writeFileSync(join(root, 'index.html'), '<h1>home</h1>');
   writeFileSync(join(root, '404.html'), '<h1>not found</h1>');
   writeFileSync(join(root, 'js', 'app.js'), 'export {}');
+  writeFileSync(join(root, 'voice.mp3'), Buffer.from('0123456789'));
   writeFileSync(join(root, '.git', 'HEAD'), SECRET);
   writeFileSync(join(root, 'tests', 'x.test.mjs'), 'dev only');
   writeFileSync(join(base, 'outside', 'file.txt'), OUTSIDE);

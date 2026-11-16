@@ -5,12 +5,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Taegeuk Sam Jang — 3D study lesson | TKDflow</title>
-<meta name="description" content="Study Taegeuk Sam Jang with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review.">
+<meta name="description" content="Study Taegeuk Sam Jang with full-body 3D animation, spoken move instructions, slow playback and camera views. Awaiting instructor review.">
 <link rel="canonical" href="https://tkdflow.com/taegeuk-3.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="TKDflow">
 <meta property="og:title" content="Taegeuk Sam Jang — 3D study lesson | TKDflow">
-<meta property="og:description" content="Study Taegeuk Sam Jang with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review.">
+<meta property="og:description" content="Study Taegeuk Sam Jang with full-body 3D animation, spoken move instructions, slow playback and camera views. Awaiting instructor review.">
 <meta property="og:url" content="https://tkdflow.com/taegeuk-3.html">
 <meta property="og:image" content="https://tkdflow.com/assets/og-image.png">
 <meta property="og:image:type" content="image/png">
@@ -90,7 +90,7 @@
         <div class="player-region" id="player-region" tabindex="0" role="group" aria-labelledby="player-title" aria-describedby="player-keys">
         <h2 class="sr-only" id="player-title">Animation player</h2>
         <div class="lesson-view-toolbar">
-          <div><span class="lesson-render-label">3D study aid · unreviewed</span><button type="button" class="lesson-study-toggle" id="study-view" aria-pressed="false">Study view</button></div>
+          <div><span class="lesson-render-label">3D study aid · unreviewed</span><div class="lesson-actions"><button type="button" class="lesson-voice-toggle" id="voice-toggle" aria-pressed="true" aria-controls="lesson-audio" disabled>Voice on</button><button type="button" class="lesson-study-toggle" id="study-view" aria-pressed="false">Study view</button></div></div>
           <div class="lesson-view-switch" role="group" aria-label="Camera view">
             <button type="button" data-lesson-view="front" aria-pressed="false">Front</button>
             <button type="button" data-lesson-view="back" aria-pressed="false">Back</button>
@@ -109,6 +109,7 @@
         <div class="move-info" id="move-info" aria-live="polite">
           <p class="move-counter" id="move-counter">Ready position</p>
           <h3 class="move-name" id="move-name">Ready stance</h3>
+          <p class="voice-caption" id="voice-instruction"></p>
           <p class="move-korean" lang="ko" id="move-korean"></p>
           <p class="move-desc" id="move-desc"></p>
         </div>
@@ -139,6 +140,8 @@
         <p class="player-keys" id="player-keys">Keys (with the player selected): <kbd>←</kbd> <kbd>→</kbd> step one frame (Shift for a pose), <kbd>Home</kbd> <kbd>End</kbd> first/last, <kbd>Space</kbd> or <kbd>K</kbd> play/pause.</p>
         </div>
 
+        <audio id="lesson-audio" preload="auto" aria-hidden="true"></audio>
+        <span class="sr-only" id="voice-status" role="status"></span>
         <div class="pose-share">
           <p class="pose-share-note">Pose numbers count the animation’s poses, not the form’s movements.</p>
           <div class="pose-share-actions">
@@ -179,6 +182,7 @@
         </ul>
         <p>Timing and movement paths are approximate. Check stance, target height and performance requirements with your instructor.</p>
         <p><a href="/forms.html">Choose another form →</a></p>
+        <p class="voice-credit">Voice instructions generated with <a href="https://elevenlabs.io/" target="_blank" rel="noopener noreferrer">ElevenLabs</a> using the stock Sarah voice. Lesson content awaits instructor review.</p>
       </section>
     </div>
   </div>
