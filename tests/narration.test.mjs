@@ -11,7 +11,7 @@ const forms=json('data/forms.json'),catalog=json('data/narration/catalog.json');
 const baseFor=id=>id==='taegeuk-1'?original:createFormMotion(json(`data/lessons/${id}.json`));
 const near=(a,b)=>Math.abs(a-b)<1e-6;
 test('all 23 lessons have real ElevenLabs audio covering all 748 poses',()=>{
- assert.equal(catalog.files.length,23);assert.equal(catalog.provider,'ElevenLabs');assert.equal(catalog.stockVoice,true);assert.equal(catalog.voiceCloning,false);assert.equal(catalog.generationRequests,6);
+ assert.equal(catalog.files.length,23);assert.equal(catalog.provider,'ElevenLabs');assert.equal(catalog.stockVoice,true);assert.equal(catalog.voiceCloning,false);assert.equal(catalog.generationRequests,7);
  let cues=0;
  for(const f of forms){const d=json(`data/narration/${f.id}.json`),base=baseFor(f.id),record=catalog.files.find(r=>r.lessonId===f.id);
   assert.equal(narrationProblem(d,base,f.id),null);assert.equal(d.provider,'ElevenLabs');cues+=d.cues.length;

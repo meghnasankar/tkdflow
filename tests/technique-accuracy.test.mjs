@@ -3,9 +3,9 @@ import {createFormMotion} from '../js/animation/form-motion.js';import * as orig
 const json=p=>JSON.parse(fs.readFileSync(new URL('../'+p,import.meta.url))),forms=json('data/forms.json'),base=id=>id==='taegeuk-1'?{...original,POSES}:createFormMotion(json('data/lessons/'+id+'.json')),motions=new Map(forms.map(f=>{const b=base(f.id),d=json('data/narration/'+f.id+'.json');return[f.id,{b,d,m:narratedMotion(b,d,f.id)}];})),distance=(a,b)=>Math.hypot(...a.map((v,i)=>v-b[i]));
 test('all spoken turn directions agree with the rendered body and prescribed turn path',()=>{
  let turns=0;for(const {b,d,m} of motions.values())for(let i=1;i<d.cues.length;i++){
-  const c=m.CHAPTERS[i],turn=d.cues[i].text.match(/(?:Turn|Pivot) (left|right)|Turn all the way around to the (left|right)/i),delta=m.poseAtTime(c.at).yaw-m.poseAtTime(c.start).yaw,p=b.referencePlans[i];
+  const c=m.CHAPTERS[i],turn=d.cues[i].text.match(/(?:Turn|Pivot) (left|right)|Turn all the way around to the (left|right)|three-quarter turn to your (left|right)/i),delta=m.poseAtTime(c.at).yaw-m.poseAtTime(c.start).yaw,p=b.referencePlans[i];
   if(p.entry?.turn)assert.ok(Math.sign(p.entry.turn)===Math.sign(p.dyaw),'Prescribed turn path was reversed');
-  if(turn){turns++;assert.ok(((turn[1]||turn[2])==='left'?1:-1)*delta>0,d.lessonId+' pose '+(i+1));}
+  if(turn){turns++;assert.ok(((turn[1]||turn[2]||turn[3])==='left'?1:-1)*delta>0,d.lessonId+' pose '+(i+1));}
   if(d.cues[i].turn)assert.equal(d.cues[i].turn.side,delta>0?'left':'right');
  }assert.ok(turns>150);
  const t=motions.get('taegeuk-1').d;assert.match(t.cues[6].text,/Turn right/);assert.match(t.cues[8].text,/Turn left/);
@@ -51,4 +51,9 @@ test('powerful narrated execution keeps dense speed and acceleration within the 
    for(const side of ['left','right'])for(const [part,joints]of [['arms',['shoulder','elbow','wrist']],['legs',['hip','knee','ankle']]])for(const joint of joints){const key=side+part+joint,v=p[part][side][joint].map((x,i)=>(x-previous[part][side][joint][i])/dt);assert.ok(v.every(Number.isFinite));maxSpeed=Math.max(maxSpeed,Math.hypot(...v));if(velocities[key])maxAcceleration=Math.max(maxAcceleration,Math.hypot(...v.map((x,i)=>(x-velocities[key][i])/dt)));velocities[key]=v;}previous=p;
   }assert.ok(maxSpeed<3,d.lessonId+' speed '+maxSpeed);assert.ok(maxAcceleration<18,d.lessonId+' acceleration '+maxAcceleration);
  }
+});
+
+test('every source-prescribed 270-degree turn is spoken explicitly as a three-quarter turn',()=>{
+ let count=0;for(const {d}of motions.values())for(const cue of d.cues)if(cue.turn?.degrees===270){count++;assert.match(cue.text,new RegExp('^Make a three-quarter turn to your '+cue.turn.side));}
+ assert.equal(count,15);
 });

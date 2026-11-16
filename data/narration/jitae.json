@@ -5,7 +5,7 @@
   "voice": "Sarah",
   "model": "eleven_multilingual_v2",
   "audioSrc": "/assets/narration/jitae.mp3",
-  "duration": 236.316826,
+  "duration": 238.085912,
   "chapters": [
     {
       "index": 0,
@@ -220,31 +220,31 @@
     {
       "index": 35,
       "start": 202.522625,
-      "at": 209.431004,
-      "duration": 6.908379
+      "at": 211.20009,
+      "duration": 8.677465
     },
     {
       "index": 36,
-      "start": 209.981004,
-      "at": 216.225092,
+      "start": 211.75009,
+      "at": 217.994178,
       "duration": 6.244088
     },
     {
       "index": 37,
-      "start": 216.775092,
-      "at": 223.572738,
+      "start": 218.544178,
+      "at": 225.341824,
       "duration": 6.797646
     },
     {
       "index": 38,
-      "start": 224.122738,
-      "at": 230.366826,
+      "start": 225.891824,
+      "at": 232.135912,
       "duration": 6.244088
     },
     {
       "index": 39,
-      "start": 231.016826,
-      "at": 235.516826,
+      "start": 232.785912,
+      "at": 237.285912,
       "duration": 4.5
     }
   ],
@@ -540,9 +540,9 @@
     },
     {
       "index": 35,
-      "text": "Turn left into a back stance. Lower the front knifehand while the other hand guards your body.",
+      "text": "Make a three-quarter turn to your left, then set a back stance. Lower the front knifehand while the other hand guards your body.",
       "start": 202.602625,
-      "end": 208.005664,
+      "end": 209.491695,
       "turn": {
         "side": "left",
         "degrees": 270
@@ -552,16 +552,16 @@
     {
       "index": 36,
       "text": "Set a back stance. Extend the front knifehand while the other hand guards your body.",
-      "start": 210.061004,
-      "end": 214.906038,
+      "start": 211.83009,
+      "end": 216.675124,
       "turn": null,
       "kihap": false
     },
     {
       "index": 37,
       "text": "Turn right into a back stance. Lower the front knifehand while the other hand guards your body.",
-      "start": 216.855092,
-      "end": 222.165115,
+      "start": 218.624178,
+      "end": 223.934201,
       "turn": {
         "side": "right",
         "degrees": 180
@@ -571,16 +571,16 @@
     {
       "index": 38,
       "text": "Set a back stance. Extend the front knifehand while the other hand guards your body.",
-      "start": 224.202738,
-      "end": 229.047772,
+      "start": 225.971824,
+      "end": 230.816858,
       "turn": null,
       "kihap": false
     },
     {
       "index": 39,
       "text": "Return to the ready position.",
-      "start": 231.096826,
-      "end": 232.760908,
+      "start": 232.865912,
+      "end": 234.529994,
       "turn": null,
       "kihap": false
     }
@@ -814,30 +814,30 @@
     {
       "type": "hand-swish",
       "pose": 35,
-      "start": 208.1825,
-      "end": 208.350663,
-      "impact": 208.325663
+      "start": 209.668532,
+      "end": 209.836696,
+      "impact": 209.811696
     },
     {
       "type": "hand-swish",
       "pose": 36,
-      "start": 215.082875,
-      "end": 215.251038,
-      "impact": 215.226038
+      "start": 216.851961,
+      "end": 217.020124,
+      "impact": 216.995124
     },
     {
       "type": "hand-swish",
       "pose": 37,
-      "start": 222.341951,
-      "end": 222.510115,
-      "impact": 222.485115
+      "start": 224.111037,
+      "end": 224.279201,
+      "impact": 224.254201
     },
     {
       "type": "hand-swish",
       "pose": 38,
-      "start": 229.224609,
-      "end": 229.392772,
-      "impact": 229.367772
+      "start": 230.993695,
+      "end": 231.161858,
+      "impact": 231.136858
     }
   ]
 }
