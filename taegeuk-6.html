@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- layout:head -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Taegeuk Yuk Jang — 3D study lesson | TKDflow</title>
+<meta name="description" content="Study Taegeuk Yuk Jang with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review.">
+<link rel="canonical" href="https://tkdflow.com/taegeuk-6.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TKDflow">
+<meta property="og:title" content="Taegeuk Yuk Jang — 3D study lesson | TKDflow">
+<meta property="og:description" content="Study Taegeuk Yuk Jang with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review.">
+<meta property="og:url" content="https://tkdflow.com/taegeuk-6.html">
+<meta property="og:image" content="https://tkdflow.com/assets/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="TKDflow logo with the text: Taekwondo forms library. Learn step by step.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://tkdflow.com/assets/og-image.png">
+<meta name="twitter:image:alt" content="TKDflow logo with the text: Taekwondo forms library. Learn step by step.">
+<meta name="theme-color" content="#0D1B2A">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Noto+Sans+KR:wght@400;700&amp;display=swap">
+<link rel="stylesheet" href="/styles.css">
+<script type="module" src="/js/site.js"></script>
+<!-- /layout:head -->
+  <link rel="stylesheet" href="/css/lesson.css">
+  <script type="module" src="/js/pages/form-lesson.js"></script>
+</head>
+<body data-page="forms" data-form-id="taegeuk-6">
+<!-- layout:header -->
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="navbar">
+  <div class="container">
+    <a href="/" class="navbar-logo" data-nav="home">
+      <span class="logo-icon" aria-hidden="true">道</span>
+      <span>TKDflow</span><span class="kr" lang="ko">태권도 플로우</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+      <span class="sr-only">Open menu</span><span class="nav-toggle-bars" aria-hidden="true"></span>
+    </button>
+    <nav class="site-nav" aria-label="Main">
+      <ul class="nav-links" id="site-nav">
+        <li><a href="/" data-nav="home">Home</a></li>
+        <li><a href="/forms.html" data-nav="forms" class="active" aria-current="page">Forms Library</a></li>
+        <li><a href="/community.html" data-nav="community">Community</a></li>
+        <li><a href="/forum.html" data-nav="forum">Forum</a></li>
+        <li><a href="/competitions.html" data-nav="events">Events</a></li>
+        <li class="nav-account" id="nav-account"><a href="/auth.html" class="btn btn-secondary btn-sm nav-account-link">Account</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<!-- /layout:header -->
+
+<main id="main" tabindex="-1">
+  <div class="page-hero">
+    <div class="container">
+      <a class="back-link" href="/forms.html">← Back to the forms library</a>
+      <div class="hero-badge-row">
+        <span class="badge badge-red">WT</span>
+        <span class="badge badge-gold">Intermediate</span>
+        <span class="badge badge-navy">19 reference counts</span>
+        <span class="sample-label">Unreviewed</span>
+      </div>
+      <h1>Taegeuk Yuk Jang <span class="kr-title" lang="ko">태극 6장</span></h1>
+      <p>The sixth Taegeuk form, based on the Gam trigram — water. Study the source-based sequence with the full-body 3D character, fixed camera views, slow playback and frame controls. Combination counts are split into separate study poses.</p>
+      <p class="hero-jump"><a class="btn btn-primary btn-sm" href="#player">Jump to the player</a></p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="notice notice-warn lesson-review" id="review-notice">
+      <div>
+        <p><strong>Not yet reviewed by a qualified instructor.</strong> Use this as a study aid alongside your own instructor’s teaching. The choreography, stance depths, hand shapes and timing are illustrative drafts. This follows the reference edition linked below; your school may teach a different version.</p>
+        <details class="review-details">
+          <summary>Open review questions</summary>
+          <ul id="review-questions"></ul>
+        </details>
+      </div>
+    </div>
+
+    <div class="lesson-layout">
+      <section class="player-card" id="player">
+        <div class="player-region" id="player-region" tabindex="0" role="group" aria-labelledby="player-title" aria-describedby="player-keys">
+        <h2 class="sr-only" id="player-title">Animation player</h2>
+        <div class="lesson-view-toolbar">
+          <div><span class="lesson-render-label">3D study aid · unreviewed</span><button type="button" class="lesson-study-toggle" id="study-view" aria-pressed="false">Study view</button></div>
+          <div class="lesson-view-switch" role="group" aria-label="Camera view">
+            <button type="button" data-lesson-view="front" aria-pressed="false">Front</button>
+            <button type="button" data-lesson-view="back" aria-pressed="false">Back</button>
+            <button type="button" data-lesson-view="side" aria-pressed="false">Left</button>
+            <button type="button" data-lesson-view="other-side" aria-pressed="false">Right</button>
+            <button type="button" data-lesson-view="three-quarter" aria-label="Three-quarter view" aria-pressed="true">3/4</button>
+          </div>
+          <p class="lesson-view-note">Views are fixed to the starting stance.</p>
+        </div>
+        <div class="canvas-wrap">
+          <canvas id="lesson-canvas" width="640" height="640" role="img" aria-label="3D character showing the selected pose"></canvas>
+          <p class="character-loading" id="character-loading" role="status">Loading the 3D character…</p>
+          <p class="lesson-fallback" id="lesson-fallback" hidden>The 3D view could not load in this browser. The pose descriptions, movement list and pose links are still available.</p>
+        </div>
+
+        <div class="move-info" id="move-info" aria-live="polite">
+          <p class="move-counter" id="move-counter">Ready position</p>
+          <h3 class="move-name" id="move-name">Ready stance</h3>
+          <p class="move-korean" lang="ko" id="move-korean"></p>
+          <p class="move-desc" id="move-desc"></p>
+        </div>
+
+        <div class="progress-wrap">
+          <label class="sr-only" for="lesson-progress">Time in the form</label>
+          <input type="range" id="lesson-progress" min="0" max="1" step="0.01" value="0">
+          <output id="lesson-clock" class="lesson-clock" for="lesson-progress">Loading lesson…</output>
+        </div>
+
+        <div class="lesson-controls" role="group" aria-label="Playback">
+          <button type="button" class="lesson-ctrl" id="btn-first" aria-label="First pose"><span aria-hidden="true">⏮</span></button>
+          <button type="button" class="lesson-ctrl" id="btn-prev" aria-label="Previous pose"><span aria-hidden="true">◀</span></button>
+          <button type="button" class="lesson-ctrl lesson-play" id="btn-play" aria-label="Play"><span aria-hidden="true">▶</span><span id="play-label">Play</span></button>
+          <button type="button" class="lesson-ctrl" id="btn-next" aria-label="Next pose"><span aria-hidden="true">▶▏</span></button>
+          <button type="button" class="lesson-ctrl" id="btn-last" aria-label="Last pose"><span aria-hidden="true">⏭</span></button>
+          <button type="button" class="lesson-ctrl" id="frame-prev" aria-label="Previous frame" title="Previous frame"><span aria-hidden="true">−</span></button>
+          <button type="button" class="lesson-ctrl" id="frame-next" aria-label="Next frame" title="Next frame"><span aria-hidden="true">+</span></button>
+          <label class="speed-label" for="speed">Speed
+            <select class="speed-select" id="speed">
+              <option value="0.25">0.25×</option>
+              <option value="0.5">0.5×</option>
+              <option value="1" selected>1×</option>
+            </select>
+          </label>
+        </div>
+
+        <p class="player-keys" id="player-keys">Keys (with the player selected): <kbd>←</kbd> <kbd>→</kbd> step one frame (Shift for a pose), <kbd>Home</kbd> <kbd>End</kbd> first/last, <kbd>Space</kbd> or <kbd>K</kbd> play/pause.</p>
+        </div>
+
+        <div class="pose-share">
+          <p class="pose-share-note">Pose numbers count the animation’s poses, not the form’s movements.</p>
+          <div class="pose-share-actions">
+            <a class="pose-link" id="pose-link" href="/taegeuk-6.html?pose=1#player">Link to pose 1</a>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-link">Copy pose link</button>
+          </div>
+          <p class="pose-status" id="player-status" role="status"></p>
+          <div class="pose-fallback" id="copy-fallback" hidden>
+            <label for="pose-url">Pose link</label>
+            <input type="text" id="pose-url" readonly>
+          </div>
+        </div>
+      </section>
+
+      <section class="move-panel" aria-labelledby="moves-title">
+        <div class="move-panel-header">
+          <h2 id="moves-title">All poses</h2>
+          <span>Reference count and study pose are shown separately</span>
+        </div>
+        <ol class="move-list" id="move-list"></ol>
+      </section>
+
+      <section class="info-section" aria-labelledby="details-title">
+        <h2 id="details-title">Reference and review</h2>
+        <dl class="info-grid">
+          <div><dt>Organisation</dt><dd>WT</dd></div>
+          <div><dt>Reference counts</dt><dd>19 — combinations can contain several study poses</dd></div>
+          <div><dt>Reference edition</dt><dd>Lehigh Valley / Lehigh University Taekwondo: Taegeuk 6</dd></div>
+          <div><dt>Review status</dt><dd>Awaiting review by a qualified instructor</dd></div>
+        </dl>
+        <h3>Movement references</h3>
+        <p>Original 3D visualization of the referenced movement sequence. Source videos and illustrations have not been copied. Camera labels refer to the starting stance.</p>
+        <ul class="lesson-sources">
+          <li><a href="https://lehightaekwondo.com/poomse/taegeuk_yuk_jang/index.shtml" target="_blank" rel="noopener noreferrer">Lehigh Valley / Lehigh University Taekwondo: Taegeuk 6</a></li>
+          <li><a href="https://www.nbtkda.com/taegeuk-6" target="_blank" rel="noopener noreferrer">North Bay Taekwondo Academy: Taegeuk 6 and linked technique chart</a></li>
+          <li><a href="https://www.sunbae.net/static/uploads/files/handbook-student-2025-02-wfkrbpnpljwb-wfecxcgavcrr.pdf" target="_blank" rel="noopener noreferrer">Sun Bae Taekwondo 2025 handbook, printed pages 28–29</a></li>
+          <li><a href="https://www.msutaekwondo.org/uploads/6/1/3/7/61371437/poomse.pdf" target="_blank" rel="noopener noreferrer">Michigan State University Taekwondo published curriculum, Taegeuk 6</a></li>
+        </ul>
+        <p>Timing and movement paths are approximate. Check stance, target height and performance requirements with your instructor.</p>
+        <p><a href="/forms.html">Choose another form →</a></p>
+      </section>
+    </div>
+  </div>
+</main>
+
+<!-- layout:footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <p class="logo">TKDflow<span>.</span></p>
+        <p>A free taekwondo forms catalogue and training resource. Lesson content is awaiting review by a qualified instructor.</p>
+      </div>
+      <div class="footer-col">
+        <h2>Learn</h2>
+        <ul>
+          <li><a href="/forms.html">Forms library</a></li>
+          <li><a href="/taegeuk-1.html">Taegeuk Il Jang lesson</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>Community</h2>
+        <ul>
+          <li><a href="/community.html">Community preview</a></li>
+          <li><a href="/forum.html">Forum preview</a></li>
+          <li><a href="/competitions.html">Events</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>About</h2>
+        <ul>
+          <li><a href="/about.html">About &amp; project status</a></li>
+          <li><a href="/founder.html">Meet Meghna</a></li>
+          <li><a href="/about.html#privacy">Privacy</a></li>
+          <li><a href="/about.html#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-current-year>2026</span> TKDflow</span>
+      <span>Free to use · No ads</span>
+    </div>
+  </div>
+</footer>
+<!-- /layout:footer -->
+</body>
+</html>

@@ -1,0 +1,501 @@
+{
+  "id": "taegeuk-6",
+  "sources": [
+    {
+      "url": "https://lehightaekwondo.com/poomse/taegeuk_yuk_jang/index.shtml",
+      "title": "Lehigh Valley / Lehigh University Taekwondo: Taegeuk 6"
+    },
+    {
+      "url": "https://www.nbtkda.com/taegeuk-6",
+      "title": "North Bay Taekwondo Academy: Taegeuk 6 and linked technique chart"
+    },
+    {
+      "url": "https://www.sunbae.net/static/uploads/files/handbook-student-2025-02-wfkrbpnpljwb-wfecxcgavcrr.pdf",
+      "title": "Sun Bae Taekwondo 2025 handbook, printed pages 28–29"
+    },
+    {
+      "url": "https://www.msutaekwondo.org/uploads/6/1/3/7/61371437/poomse.pdf",
+      "title": "Michigan State University Taekwondo published curriculum, Taegeuk 6"
+    }
+  ],
+  "sequence": [
+    {
+      "n": 1,
+      "turn": 90.0,
+      "facing": 90.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 90.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 2,
+      "turn": 0.0,
+      "facing": 90.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "right",
+          "landing": "return"
+        },
+        {
+          "type": "outside-block",
+          "side": "left"
+        }
+      ],
+      "travel": "in-place",
+      "notes": "",
+      "movingFoot": "right",
+      "footworkEvidence": "Kick uses this foot and returns it to its prior position; resulting stance retains the opposite lead. MSU/Lehigh sequence and Sun Bae diagram agree.",
+      "footwork": [
+        {
+          "foot": "right",
+          "action": "kick-and-return"
+        }
+      ],
+      "heading": 90.0,
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 3,
+      "turn": -180.0,
+      "facing": 270.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 4,
+      "turn": 0.0,
+      "facing": 270.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "left",
+          "landing": "return"
+        },
+        {
+          "type": "outside-block",
+          "side": "right"
+        }
+      ],
+      "travel": "in-place",
+      "notes": "",
+      "movingFoot": "left",
+      "footworkEvidence": "Kick uses this foot and returns it to its prior position; resulting stance retains the opposite lead. MSU/Lehigh sequence and Sun Bae diagram agree.",
+      "footwork": [
+        {
+          "foot": "left",
+          "action": "kick-and-return"
+        }
+      ],
+      "heading": 270.0,
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 5,
+      "turn": 90.0,
+      "facing": 0.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-high-block",
+          "side": "right",
+          "detail": "twisting"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 0.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 6,
+      "turn": 90.0,
+      "facing": 90.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "roundhouse-kick",
+          "side": "right",
+          "facing": 0
+        },
+        {
+          "type": "outside-high-block",
+          "side": "left",
+          "facing": 90
+        },
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "facing": 90
+        }
+      ],
+      "travel": "step",
+      "notes": "Roundhouse first faces original front; then turn left into the left forearm high outward block and right punch. Do not turn before the kick.",
+      "heading": 90.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 7,
+      "turn": 0.0,
+      "facing": 90.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "right"
+        },
+        {
+          "type": "middle-punch",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 90.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 8,
+      "turn": -180.0,
+      "facing": 270.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "outside-high-block",
+          "side": "right"
+        },
+        {
+          "type": "middle-punch",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 9,
+      "turn": 0.0,
+      "facing": 270.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "left"
+        },
+        {
+          "type": "middle-punch",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 10,
+      "turn": 90.0,
+      "facing": 0.0,
+      "stance": "parallel",
+      "lead": null,
+      "actions": [
+        {
+          "type": "low-opening-block",
+          "side": "both",
+          "simultaneous": true
+        }
+      ],
+      "travel": "draw-front",
+      "notes": "Slow low spreading block, five seconds; right and left hands move together.",
+      "duration": 5,
+      "movingFoot": "left",
+      "footworkEvidence": "North Bay low opening block: left steps into parallel stance; MSU low wedge block: left foot moves toward original front before parallel stance.",
+      "heading": 0.0,
+      "footAction": "pull-left",
+      "simultaneous": false
+    },
+    {
+      "n": 11,
+      "turn": 0.0,
+      "facing": 0.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "knifehand-high-block",
+          "side": "left",
+          "detail": "twisting"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 0.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 12,
+      "turn": 90.0,
+      "facing": 90.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "roundhouse-kick",
+          "side": "left",
+          "facing": 0
+        },
+        {
+          "type": "low-block",
+          "side": "right",
+          "facing": 90
+        }
+      ],
+      "travel": "step",
+      "notes": "Left roundhouse faces original front with kihap, then land right low block on leftward branch; counts grouped by19-count convention.",
+      "kihap": true,
+      "heading": 90.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 13,
+      "turn": 0.0,
+      "facing": 90.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "left",
+          "landing": "return"
+        },
+        {
+          "type": "outside-block",
+          "side": "right"
+        }
+      ],
+      "travel": "in-place",
+      "notes": "",
+      "movingFoot": "left",
+      "footworkEvidence": "Kick uses this foot and returns it to its prior position; resulting stance retains the opposite lead. MSU/Lehigh sequence and Sun Bae diagram agree.",
+      "footwork": [
+        {
+          "foot": "left",
+          "action": "kick-and-return"
+        }
+      ],
+      "heading": 90.0,
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 14,
+      "turn": -180.0,
+      "facing": 270.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 15,
+      "turn": 0.0,
+      "facing": 270.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "right",
+          "landing": "return"
+        },
+        {
+          "type": "outside-block",
+          "side": "left"
+        }
+      ],
+      "travel": "in-place",
+      "notes": "",
+      "movingFoot": "right",
+      "footworkEvidence": "Kick uses this foot and returns it to its prior position; resulting stance retains the opposite lead. MSU/Lehigh sequence and Sun Bae diagram agree.",
+      "footwork": [
+        {
+          "foot": "right",
+          "action": "kick-and-return"
+        }
+      ],
+      "heading": 270.0,
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 16,
+      "turn": 90.0,
+      "facing": 0.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "double-knifehand-block",
+          "side": "left",
+          "simultaneous": true
+        }
+      ],
+      "travel": "retreat-turn",
+      "notes": "",
+      "movingFoot": "right",
+      "footworkEvidence": "MSU pivots on left foot to original front; left lead is retained while right foot changes rear position.",
+      "footwork": [
+        {
+          "foot": "left",
+          "action": "support-pivot"
+        },
+        {
+          "foot": "right",
+          "action": "step-back-turn"
+        }
+      ],
+      "heading": 0.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 17,
+      "turn": 0.0,
+      "facing": 0.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "double-knifehand-block",
+          "side": "right",
+          "simultaneous": true
+        }
+      ],
+      "travel": "retreat",
+      "notes": "",
+      "movingFoot": "left",
+      "footworkEvidence": "Retreat exchanges front foot: former front foot steps behind, leaving opposite foot as resulting lead. MSU/Lehigh retreat sequence.",
+      "heading": 0.0,
+      "footAction": "step-left-back",
+      "simultaneous": false
+    },
+    {
+      "n": 18,
+      "turn": 0.0,
+      "facing": 0.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "palm-block",
+          "side": "left"
+        },
+        {
+          "type": "middle-punch",
+          "side": "right"
+        }
+      ],
+      "travel": "retreat",
+      "notes": "",
+      "movingFoot": "right",
+      "footworkEvidence": "Retreat exchanges front foot: former front foot steps behind, leaving opposite foot as resulting lead. MSU/Lehigh retreat sequence.",
+      "heading": 0.0,
+      "footAction": "step-right-back",
+      "simultaneous": false
+    },
+    {
+      "n": 19,
+      "turn": 0.0,
+      "facing": 0.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "palm-block",
+          "side": "right"
+        },
+        {
+          "type": "middle-punch",
+          "side": "left"
+        }
+      ],
+      "travel": "retreat",
+      "notes": "",
+      "movingFoot": "left",
+      "footworkEvidence": "Retreat exchanges front foot: former front foot steps behind, leaving opposite foot as resulting lead. MSU/Lehigh retreat sequence.",
+      "heading": 0.0,
+      "footAction": "step-left-back",
+      "simultaneous": false
+    }
+  ],
+  "unresolved": [],
+  "reviewStatus": "pending",
+  "numberingNote": "Command counts follow Sun Bae/Lehigh convention; individual techniques within a count remain separate actions. Original wording; motion distances and timing remain an illustrative draft.",
+  "kihapMovements": [
+    12
+  ],
+  "ready": {
+    "stance": "parallel",
+    "facing": 0,
+    "action": "ready"
+  },
+  "return": {
+    "stance": "parallel",
+    "facing": 0,
+    "action": "ready",
+    "notes": "Return on command; join the prescribed foot rather than travel back along the full floor path."
+  },
+  "catalogueCorrection": "Existing23 count uses another grouping. This sequence follows19 commands; all techniques retained.",
+  "movementCount": 19,
+  "referenceLabel": "Lehigh Valley / Lehigh University Taekwondo: Taegeuk 6"
+}

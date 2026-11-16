@@ -1,0 +1,591 @@
+{
+  "id": "taegeuk-7",
+  "sources": [
+    {
+      "url": "https://lehightaekwondo.com/poomse/taegeuk_chil_jang/index.shtml",
+      "title": "Lehigh Valley / Lehigh University Taekwondo: Taegeuk 7"
+    },
+    {
+      "url": "https://www.nbtkda.com/taegeuk-7",
+      "title": "North Bay Taekwondo Academy: Taegeuk 7 and linked technique chart"
+    },
+    {
+      "url": "https://www.sunbae.net/static/uploads/files/handbook-student-2025-02-wfkrbpnpljwb-wfecxcgavcrr.pdf",
+      "title": "Sun Bae Taekwondo 2025 handbook, printed pages 30–31"
+    },
+    {
+      "url": "https://www.msutaekwondo.org/uploads/6/1/3/7/61371437/poomse.pdf",
+      "title": "Michigan State University Taekwondo published curriculum, Taegeuk 7"
+    }
+  ],
+  "sequence": [
+    {
+      "n": 1,
+      "turn": 90.0,
+      "facing": 90.0,
+      "stance": "cat",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "palm-block",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 90.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 2,
+      "turn": 0.0,
+      "facing": 90.0,
+      "stance": "cat",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "right",
+          "landing": "return"
+        },
+        {
+          "type": "inside-block",
+          "side": "left"
+        }
+      ],
+      "travel": "in-place",
+      "notes": "",
+      "movingFoot": "right",
+      "footworkEvidence": "Kick uses this foot and returns it to its prior position; resulting stance retains the opposite lead. MSU/Lehigh sequence and Sun Bae diagram agree.",
+      "footwork": [
+        {
+          "foot": "right",
+          "action": "kick-and-return"
+        }
+      ],
+      "heading": 90.0,
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 3,
+      "turn": -180.0,
+      "facing": 270.0,
+      "stance": "cat",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "palm-block",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 4,
+      "turn": 0.0,
+      "facing": 270.0,
+      "stance": "cat",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "left",
+          "landing": "return"
+        },
+        {
+          "type": "inside-block",
+          "side": "right"
+        }
+      ],
+      "travel": "in-place",
+      "notes": "",
+      "movingFoot": "left",
+      "footworkEvidence": "Kick uses this foot and returns it to its prior position; resulting stance retains the opposite lead. MSU/Lehigh sequence and Sun Bae diagram agree.",
+      "footwork": [
+        {
+          "foot": "left",
+          "action": "kick-and-return"
+        }
+      ],
+      "heading": 270.0,
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 5,
+      "turn": 90.0,
+      "facing": 0.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-low-block",
+          "side": "left",
+          "assisted": true
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 0.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 6,
+      "turn": 0.0,
+      "facing": 0.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "knifehand-low-block",
+          "side": "right",
+          "assisted": true
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 0.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 7,
+      "turn": 90.0,
+      "facing": 90.0,
+      "stance": "cat",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "palm-block",
+          "side": "right",
+          "assisted": true
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 90.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 8,
+      "turn": 0.0,
+      "facing": 90.0,
+      "stance": "cat",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "backfist",
+          "side": "right",
+          "assisted": true
+        }
+      ],
+      "travel": "in-place",
+      "notes": "",
+      "movingFoot": null,
+      "footworkEvidence": "Same stance as previous action; hand technique with feet retained. Sun Bae/Lehigh sequence.",
+      "heading": 90.0,
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 9,
+      "turn": -180.0,
+      "facing": 270.0,
+      "stance": "cat",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "palm-block",
+          "side": "left",
+          "assisted": true
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 10,
+      "turn": 0.0,
+      "facing": 270.0,
+      "stance": "cat",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "backfist",
+          "side": "left",
+          "assisted": true
+        }
+      ],
+      "travel": "in-place",
+      "notes": "",
+      "movingFoot": null,
+      "footworkEvidence": "Same stance as previous action; hand technique with feet retained. Sun Bae/Lehigh sequence.",
+      "heading": 270.0,
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 11,
+      "turn": 90.0,
+      "facing": 0.0,
+      "stance": "closed",
+      "lead": null,
+      "actions": [
+        {
+          "type": "covered-ready",
+          "side": "both",
+          "simultaneous": true
+        }
+      ],
+      "travel": "draw-front",
+      "notes": "Left hand covers right fist at chin in closed stance; slow five-second preparation.",
+      "duration": 5,
+      "movingFoot": "left",
+      "footworkEvidence": "Sun Bae printed page31 table explicitly says move LEFT foot; MSU step11 brings left beside right.",
+      "heading": 0.0,
+      "footAction": "pull-left",
+      "simultaneous": false
+    },
+    {
+      "n": 12,
+      "turn": 0.0,
+      "facing": 0.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "scissor-block",
+          "side": "left",
+          "simultaneous": true
+        },
+        {
+          "type": "scissor-block",
+          "side": "right",
+          "simultaneous": true
+        }
+      ],
+      "travel": "step",
+      "notes": "First scissors: left arm outward/right arm low. Second reverses them.",
+      "heading": 0.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 13,
+      "turn": 0.0,
+      "facing": 0.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "scissor-block",
+          "side": "right",
+          "simultaneous": true
+        },
+        {
+          "type": "scissor-block",
+          "side": "left",
+          "simultaneous": true
+        }
+      ],
+      "travel": "step",
+      "notes": "First scissors: right arm outward/left arm low. Second reverses them.",
+      "heading": 0.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 14,
+      "turn": 270.0,
+      "facing": 270.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "opening-block",
+          "side": "both",
+          "simultaneous": true
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 15,
+      "turn": 0.0,
+      "facing": 270.0,
+      "stance": "cross",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "knee-strike",
+          "side": "right"
+        },
+        {
+          "type": "double-uppercut",
+          "side": "both",
+          "simultaneous": true
+        }
+      ],
+      "travel": "hop",
+      "notes": "Pull both hands down with raised knee; hop into cross stance and perform both upturned punches together.",
+      "heading": 270.0,
+      "footAction": "land-right",
+      "simultaneous": false
+    },
+    {
+      "n": 16,
+      "turn": 0.0,
+      "facing": 270.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "cross-low-block",
+          "side": "both",
+          "simultaneous": true
+        }
+      ],
+      "travel": "rear-step",
+      "notes": "",
+      "movingFoot": "left",
+      "footworkEvidence": "MSU step16: keep right foot fixed and move left foot to rear; right lead front stance.",
+      "heading": 270.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 17,
+      "turn": -180.0,
+      "facing": 90.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "opening-block",
+          "side": "both",
+          "simultaneous": true
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 90.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 18,
+      "turn": 0.0,
+      "facing": 90.0,
+      "stance": "cross",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knee-strike",
+          "side": "left"
+        },
+        {
+          "type": "double-uppercut",
+          "side": "both",
+          "simultaneous": true
+        }
+      ],
+      "travel": "hop",
+      "notes": "Pull both hands down with raised knee; hop into cross stance and perform both upturned punches together.",
+      "heading": 90.0,
+      "footAction": "land-left",
+      "simultaneous": false
+    },
+    {
+      "n": 19,
+      "turn": 0.0,
+      "facing": 90.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "cross-low-block",
+          "side": "both",
+          "simultaneous": true
+        }
+      ],
+      "travel": "rear-step",
+      "notes": "",
+      "movingFoot": "right",
+      "footworkEvidence": "MSU step19: bring right foot rearward; left lead front stance.",
+      "heading": 90.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 20,
+      "turn": 90.0,
+      "facing": 180.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "backfist",
+          "side": "left",
+          "path": "outward"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 180.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 21,
+      "turn": 0.0,
+      "facing": 180.0,
+      "stance": "horse",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "crescent-kick",
+          "side": "right"
+        },
+        {
+          "type": "elbow-strike",
+          "side": "right",
+          "detail": "target"
+        }
+      ],
+      "travel": "step",
+      "notes": "Inward crescent kick contacts opposite target palm, lands in side-facing horse stance, then same-side elbow meets that palm. Distinct from front kick.",
+      "heading": 180.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 22,
+      "turn": 0.0,
+      "facing": 180.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "backfist",
+          "side": "right",
+          "path": "outward"
+        }
+      ],
+      "travel": "draw-front",
+      "notes": "",
+      "movingFoot": "right",
+      "footworkEvidence": "Sun Bae printed page31 table says move the front foot forward slightly; right-lead walking stance. MSU also describes a trailing left-foot draw, so preserve variant note.",
+      "footwork": [
+        {
+          "foot": "right",
+          "action": "small-forward-step"
+        },
+        {
+          "foot": "left",
+          "action": "follow-close"
+        }
+      ],
+      "footworkVariant": "Sun Bae table specifies slight front-foot advance; MSU describes right-foot pivot and left-foot draw. Both finish right-lead walking stance. Instructor should confirm exact variant before technical certification.",
+      "heading": 180.0,
+      "footAction": "pull-right",
+      "simultaneous": false
+    },
+    {
+      "n": 23,
+      "turn": 0.0,
+      "facing": 180.0,
+      "stance": "horse",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "crescent-kick",
+          "side": "left"
+        },
+        {
+          "type": "elbow-strike",
+          "side": "left",
+          "detail": "target"
+        }
+      ],
+      "travel": "step",
+      "notes": "Inward crescent kick contacts opposite target palm, lands in side-facing horse stance, then same-side elbow meets that palm. Distinct from front kick.",
+      "heading": 180.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 24,
+      "turn": 0.0,
+      "facing": 180.0,
+      "stance": "horse",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-block",
+          "side": "left",
+          "detail": "side"
+        }
+      ],
+      "travel": "in-place",
+      "notes": "Keep horse stance; left knifehand side block. Lehigh overview incorrectly duplicates elbow in this row; Sun Bae diagram/table and NBTKDA show knifehand.",
+      "movingFoot": null,
+      "footworkEvidence": "Same stance as previous action; hand technique with feet retained. Sun Bae/Lehigh sequence.",
+      "heading": 180.0,
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 25,
+      "turn": 0.0,
+      "facing": 180.0,
+      "stance": "horse",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "side-punch",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "Right side punch in horse stance; torso faces90 degrees from punch direction, eyes follow fist. Do not use a forward-facing straight punch.",
+      "kihap": true,
+      "heading": 180.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    }
+  ],
+  "unresolved": [],
+  "reviewStatus": "pending",
+  "numberingNote": "Command counts follow Sun Bae/Lehigh convention; individual techniques within a count remain separate actions. Original wording; motion distances and timing remain an illustrative draft.",
+  "kihapMovements": [
+    25
+  ],
+  "ready": {
+    "stance": "parallel",
+    "facing": 0,
+    "action": "ready"
+  },
+  "return": {
+    "stance": "parallel",
+    "facing": 0,
+    "action": "ready",
+    "notes": "Return on command; join the prescribed foot rather than travel back along the full floor path."
+  },
+  "movementCount": 25,
+  "referenceLabel": "Lehigh Valley / Lehigh University Taekwondo: Taegeuk 7"
+}

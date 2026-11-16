@@ -146,3 +146,6 @@
 }
 
 .lesson-view-note { color: var(--gray-600); font-size: .7rem; line-height: 1.4; }
+
+.lesson-sources { padding-left: 1.25rem; overflow-wrap: anywhere; }
+.lesson-sources li { margin-block: .65rem; }

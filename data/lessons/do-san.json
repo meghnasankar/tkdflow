@@ -1,0 +1,443 @@
+{
+  "id": "do-san",
+  "sources": [
+    {
+      "url": "https://itf-d.de/files/itf-d/downloads/taekwondo/english/Tul/03%20Do-San%20Tul%20booklet.pdf",
+      "title": "ITF Deutschland English Do-San booklet (2013)"
+    },
+    {
+      "url": "https://itkdc.com/wp-content/uploads/patterns/do-san-pattern.pdf",
+      "title": "NP/Intrepid Do-San numbered school curriculum (crosscheck)"
+    },
+    {
+      "url": "https://southburytkd.com/Media/Patterns/Do-San.pdf",
+      "title": "Southbury Taekwon-Do school movement crosscheck"
+    }
+  ],
+  "ready": "parallel",
+  "headingConvention": "0 is initial ready facing; positive turns left. lead is the FRONT foot, including L-stance. Action heading overrides body facing when technique goes sideways.",
+  "sequence": [
+    {
+      "n": 1,
+      "heading": 90.0,
+      "turn": 90.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "outside-block",
+          "side": "left",
+          "height": "high"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 2,
+      "heading": 90.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 3,
+      "heading": -90.0,
+      "turn": -180,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "outside-block",
+          "side": "right",
+          "height": "high"
+        }
+      ],
+      "footAction": "turn-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 4,
+      "heading": -90.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 5,
+      "heading": 0.0,
+      "turn": 90.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-block",
+          "side": "left",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "turn-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 6,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "spearhand",
+          "side": "right",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 7,
+      "heading": 0.0,
+      "turn": 360,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "backfist",
+          "side": "left",
+          "height": "high"
+        }
+      ],
+      "footAction": "spin-left",
+      "notes": "Release right hand; turn fully left before left backfist.",
+      "simultaneous": false
+    },
+    {
+      "n": 8,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "backfist",
+          "side": "right",
+          "height": "high"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 9,
+      "heading": -90,
+      "turn": 270,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "outside-block",
+          "side": "left",
+          "height": "high"
+        }
+      ],
+      "footAction": "turn-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 10,
+      "heading": -90,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 11,
+      "heading": 90,
+      "turn": -180,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "outside-block",
+          "side": "right",
+          "height": "high"
+        }
+      ],
+      "footAction": "turn-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 12,
+      "heading": 90,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 13,
+      "heading": -135,
+      "turn": 135,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "wedging-block",
+          "side": "both",
+          "simultaneous": true
+        }
+      ],
+      "footAction": "turn-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 14,
+      "heading": -135,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "kick-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 15,
+      "heading": -135,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "land-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 16,
+      "heading": -135,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 17,
+      "heading": 135,
+      "turn": -90,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "wedging-block",
+          "side": "both",
+          "simultaneous": true
+        }
+      ],
+      "footAction": "turn-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 18,
+      "heading": 135,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "kick-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 19,
+      "heading": 135,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "land-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 20,
+      "heading": 135,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 21,
+      "heading": 180.0,
+      "turn": 45,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "high-block",
+          "side": "left",
+          "height": "high"
+        }
+      ],
+      "footAction": "turn-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 22,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "high-block",
+          "side": "right",
+          "height": "high"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 23,
+      "heading": 0.0,
+      "turn": 180,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "knifehand-strike",
+          "side": "left",
+          "heading": 90.0,
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "turn-left",
+      "notes": "Body faces ready direction; strike sideways left.",
+      "simultaneous": false
+    },
+    {
+      "n": 24,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "horse",
+      "lead": null,
+      "actions": [
+        {
+          "type": "knifehand-strike",
+          "side": "right",
+          "heading": -90.0,
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "close-then-step-right",
+      "notes": "Body keeps same facing; strike sideways right.",
+      "simultaneous": false
+    }
+  ],
+  "unresolved": [
+    "Federation booklet wording contains obvious typos (including 90-degree instead of 270-degree turn at 9 and conflicting diagonal annotations). Heading mapping follows the actual diagram, conventional 45-degree diagonals and crosschecked named targets. Instructor review pending."
+  ],
+  "reviewStatus": "pending",
+  "returnFoot": "right",
+  "returnHeading": 0,
+  "movementCount": 24,
+  "referenceLabel": "ITF Deutschland English Do-San booklet (2013)"
+}

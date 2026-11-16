@@ -1,0 +1,468 @@
+{
+  "id": "taegeuk-4",
+  "sources": [
+    {
+      "url": "https://lehightaekwondo.com/poomse/taegeuk_sa_jang/index.shtml",
+      "title": "Lehigh Valley / Lehigh University Taekwondo: Taegeuk 4"
+    },
+    {
+      "url": "https://www.nbtkda.com/taegeuk-4",
+      "title": "North Bay Taekwondo Academy: Taegeuk 4 and linked technique chart"
+    },
+    {
+      "url": "https://www.sunbae.net/static/uploads/files/handbook-student-2025-02-wfkrbpnpljwb-wfecxcgavcrr.pdf",
+      "title": "Sun Bae Taekwondo 2025 handbook, printed pages 24–25"
+    },
+    {
+      "url": "https://www.msutaekwondo.org/uploads/6/1/3/7/61371437/poomse.pdf",
+      "title": "Michigan State University Taekwondo published curriculum, Taegeuk 4"
+    }
+  ],
+  "sequence": [
+    {
+      "n": 1,
+      "turn": 90.0,
+      "facing": 90.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "double-knifehand-block",
+          "side": "left",
+          "simultaneous": true
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 90.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 2,
+      "turn": 0.0,
+      "facing": 90.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "spearhand",
+          "side": "right",
+          "assisted": true
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 90.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 3,
+      "turn": -180.0,
+      "facing": 270.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "double-knifehand-block",
+          "side": "right",
+          "simultaneous": true
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 4,
+      "turn": 0.0,
+      "facing": 270.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "spearhand",
+          "side": "left",
+          "assisted": true
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 5,
+      "turn": 90.0,
+      "facing": 0.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "swallow-strike",
+          "side": "right",
+          "simultaneous": true
+        }
+      ],
+      "travel": "step",
+      "notes": "Left open-hand high block and right inward knifehand neck strike are simultaneous.",
+      "heading": 0.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 6,
+      "turn": 0.0,
+      "facing": 0.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "right"
+        },
+        {
+          "type": "middle-punch",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 0.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 7,
+      "turn": 0.0,
+      "facing": 0.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "side-kick",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "Side kick travels in the original forward direction while trunk turns sideways. Land ready for right side kick; do not change floor-path heading.",
+      "heading": 0.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 8,
+      "turn": 0.0,
+      "facing": 0.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "side-kick",
+          "side": "right"
+        },
+        {
+          "type": "double-knifehand-block",
+          "side": "right",
+          "simultaneous": true
+        }
+      ],
+      "travel": "step",
+      "notes": "Right side kick in same floor-path direction, followed by right-lead knifehand guard.",
+      "heading": 0.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 9,
+      "turn": 270.0,
+      "facing": 270.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "outside-block",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 10,
+      "turn": 0.0,
+      "facing": 270.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "right",
+          "landing": "return"
+        },
+        {
+          "type": "inside-block",
+          "side": "right"
+        }
+      ],
+      "travel": "in-place",
+      "notes": "",
+      "movingFoot": "right",
+      "footworkEvidence": "Kick uses this foot and returns it to its prior position; resulting stance retains the opposite lead. MSU/Lehigh sequence and Sun Bae diagram agree.",
+      "footwork": [
+        {
+          "foot": "right",
+          "action": "kick-and-return"
+        }
+      ],
+      "heading": 270.0,
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 11,
+      "turn": -180.0,
+      "facing": 90.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "outside-block",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 90.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 12,
+      "turn": 0.0,
+      "facing": 90.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "left",
+          "landing": "return"
+        },
+        {
+          "type": "inside-block",
+          "side": "left"
+        }
+      ],
+      "travel": "in-place",
+      "notes": "",
+      "movingFoot": "left",
+      "footworkEvidence": "Kick uses this foot and returns it to its prior position; resulting stance retains the opposite lead. MSU/Lehigh sequence and Sun Bae diagram agree.",
+      "footwork": [
+        {
+          "foot": "left",
+          "action": "kick-and-return"
+        }
+      ],
+      "heading": 90.0,
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 13,
+      "turn": 90.0,
+      "facing": 180.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "swallow-strike",
+          "side": "right",
+          "simultaneous": true
+        }
+      ],
+      "travel": "step",
+      "notes": "Left open-hand high block and right inward knifehand neck strike are simultaneous.",
+      "heading": 180.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 14,
+      "turn": 0.0,
+      "facing": 180.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "right"
+        },
+        {
+          "type": "backfist",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 180.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 15,
+      "turn": 90.0,
+      "facing": 270.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "inside-block",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 270.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 16,
+      "turn": 0.0,
+      "facing": 270.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right"
+        }
+      ],
+      "travel": "in-place",
+      "notes": "",
+      "movingFoot": null,
+      "footworkEvidence": "Same stance as previous action; hand technique with feet retained. Sun Bae/Lehigh sequence.",
+      "heading": 270.0,
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 17,
+      "turn": -180.0,
+      "facing": 90.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "inside-block",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 90.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    },
+    {
+      "n": 18,
+      "turn": 0.0,
+      "facing": 90.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "left"
+        }
+      ],
+      "travel": "in-place",
+      "notes": "",
+      "movingFoot": null,
+      "footworkEvidence": "Same stance as previous action; hand technique with feet retained. Sun Bae/Lehigh sequence.",
+      "heading": 90.0,
+      "footAction": "stay",
+      "simultaneous": false
+    },
+    {
+      "n": 19,
+      "turn": 90.0,
+      "facing": 180.0,
+      "stance": "front",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "inside-block",
+          "side": "left"
+        },
+        {
+          "type": "middle-punch",
+          "side": "right"
+        },
+        {
+          "type": "middle-punch",
+          "side": "left"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "heading": 180.0,
+      "footAction": "step-left",
+      "simultaneous": false
+    },
+    {
+      "n": 20,
+      "turn": 0.0,
+      "facing": 180.0,
+      "stance": "front",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "inside-block",
+          "side": "right"
+        },
+        {
+          "type": "middle-punch",
+          "side": "left"
+        },
+        {
+          "type": "middle-punch",
+          "side": "right"
+        }
+      ],
+      "travel": "step",
+      "notes": "",
+      "kihap": true,
+      "heading": 180.0,
+      "footAction": "step-right",
+      "simultaneous": false
+    }
+  ],
+  "unresolved": [],
+  "reviewStatus": "pending",
+  "numberingNote": "Command counts follow Sun Bae/Lehigh convention; individual techniques within a count remain separate actions. Original wording; motion distances and timing remain an illustrative draft.",
+  "kihapMovements": [
+    20
+  ],
+  "ready": {
+    "stance": "parallel",
+    "facing": 0,
+    "action": "ready"
+  },
+  "return": {
+    "stance": "parallel",
+    "facing": 0,
+    "action": "ready",
+    "notes": "Return on command; join the prescribed foot rather than travel back along the full floor path."
+  },
+  "movementCount": 20,
+  "referenceLabel": "Lehigh Valley / Lehigh University Taekwondo: Taegeuk 4"
+}

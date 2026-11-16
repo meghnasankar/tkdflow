@@ -2,59 +2,272 @@
   "origin": "https://tkdflow.com",
   "pages": [
     {
-      "file": "index.html", "key": "home", "path": "/", "sitemap": true,
+      "file": "index.html",
+      "key": "home",
+      "path": "/",
+      "sitemap": true,
       "title": "TKDflow — Taekwondo forms library and lessons",
-      "description": "A free taekwondo forms catalogue covering WT/Kukkiwon, ITF and ATA patterns, with an interactive step-by-step lesson for Taegeuk Il Jang."
+      "description": "A free taekwondo forms library with interactive 3D study lessons for WT/Kukkiwon, ITF and ATA patterns. Lesson content awaits instructor review."
     },
     {
-      "file": "forms.html", "key": "forms", "path": "/forms.html", "sitemap": true,
+      "file": "forms.html",
+      "key": "forms",
+      "path": "/forms.html",
+      "sitemap": true,
       "title": "Forms Library — TKDflow",
       "description": "Search and filter taekwondo forms by style, belt and difficulty. WT/Kukkiwon poomsae, ITF patterns and ATA Songahm forms."
     },
     {
-      "file": "taegeuk-1.html", "key": "forms", "path": "/taegeuk-1.html", "sitemap": true,
+      "file": "taegeuk-1.html",
+      "key": "forms",
+      "path": "/taegeuk-1.html",
+      "sitemap": true,
       "title": "Taegeuk Il Jang (태극 1장) lesson — TKDflow",
       "description": "Step through Taegeuk Il Jang movement by movement with an animated figure, Korean terms and directions."
     },
     {
-      "file": "community.html", "key": "community", "path": "/community.html", "sitemap": true,
+      "file": "community.html",
+      "key": "community",
+      "path": "/community.html",
+      "sitemap": true,
       "title": "Community (preview) — TKDflow",
       "description": "A preview of the planned TKDflow community space. Posting is not open yet."
     },
     {
-      "file": "forum.html", "key": "forum", "path": "/forum.html", "sitemap": true,
+      "file": "forum.html",
+      "key": "forum",
+      "path": "/forum.html",
+      "sitemap": true,
       "title": "Forum (preview) — TKDflow",
       "description": "A preview of the planned TKDflow discussion forum, shown with example threads. Posting is not open yet."
     },
     {
-      "file": "competitions.html", "key": "events", "path": "/competitions.html", "sitemap": true,
+      "file": "competitions.html",
+      "key": "events",
+      "path": "/competitions.html",
+      "sitemap": true,
       "title": "Events — TKDflow",
       "description": "Taekwondo competition listings on TKDflow, with past listings archived."
     },
     {
-      "file": "about.html", "key": "about", "path": "/about.html", "sitemap": true,
+      "file": "about.html",
+      "key": "about",
+      "path": "/about.html",
+      "sitemap": true,
       "title": "About & project status — TKDflow",
       "description": "What TKDflow offers today, which features are paused or in preview, and how content is reviewed."
     },
     {
-      "file": "founder.html", "key": "about", "path": "/founder.html", "sitemap": true,
+      "file": "founder.html",
+      "key": "about",
+      "path": "/founder.html",
+      "sitemap": true,
       "title": "Meghna Sankar — Founder of TKDflow",
       "description": "Meghna Sankar is a second-degree Kukkiwon black belt who has trained in taekwondo since age five, and the founder of TKDflow, a free study companion for taekwondo forms."
     },
     {
-      "file": "auth.html", "key": "auth", "path": "/auth.html", "sitemap": false, "noindex": true,
+      "file": "auth.html",
+      "key": "auth",
+      "path": "/auth.html",
+      "sitemap": false,
+      "noindex": true,
       "title": "Sign in — TKDflow",
       "description": "Sign in to your TKDflow account."
     },
     {
-      "file": "profile.html", "key": "profile", "path": "/profile.html", "sitemap": false, "noindex": true,
+      "file": "profile.html",
+      "key": "profile",
+      "path": "/profile.html",
+      "sitemap": false,
+      "noindex": true,
       "title": "My profile — TKDflow",
       "description": "Manage your TKDflow profile."
     },
     {
-      "file": "404.html", "key": "404", "path": "/404.html", "sitemap": false, "noindex": true, "canonical": false,
+      "file": "404.html",
+      "key": "404",
+      "path": "/404.html",
+      "sitemap": false,
+      "noindex": true,
+      "canonical": false,
       "title": "Page not found — TKDflow",
       "description": "The page you were looking for could not be found."
+    },
+    {
+      "file": "taegeuk-2.html",
+      "key": "forms",
+      "path": "/taegeuk-2.html",
+      "sitemap": true,
+      "title": "Taegeuk Yi Jang — 3D study lesson | TKDflow",
+      "description": "Study Taegeuk Yi Jang with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "taegeuk-3.html",
+      "key": "forms",
+      "path": "/taegeuk-3.html",
+      "sitemap": true,
+      "title": "Taegeuk Sam Jang — 3D study lesson | TKDflow",
+      "description": "Study Taegeuk Sam Jang with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "taegeuk-4.html",
+      "key": "forms",
+      "path": "/taegeuk-4.html",
+      "sitemap": true,
+      "title": "Taegeuk Sa Jang — 3D study lesson | TKDflow",
+      "description": "Study Taegeuk Sa Jang with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "taegeuk-5.html",
+      "key": "forms",
+      "path": "/taegeuk-5.html",
+      "sitemap": true,
+      "title": "Taegeuk Oh Jang — 3D study lesson | TKDflow",
+      "description": "Study Taegeuk Oh Jang with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "taegeuk-6.html",
+      "key": "forms",
+      "path": "/taegeuk-6.html",
+      "sitemap": true,
+      "title": "Taegeuk Yuk Jang — 3D study lesson | TKDflow",
+      "description": "Study Taegeuk Yuk Jang with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "taegeuk-7.html",
+      "key": "forms",
+      "path": "/taegeuk-7.html",
+      "sitemap": true,
+      "title": "Taegeuk Chil Jang — 3D study lesson | TKDflow",
+      "description": "Study Taegeuk Chil Jang with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "taegeuk-8.html",
+      "key": "forms",
+      "path": "/taegeuk-8.html",
+      "sitemap": true,
+      "title": "Taegeuk Pal Jang — 3D study lesson | TKDflow",
+      "description": "Study Taegeuk Pal Jang with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "chon-ji.html",
+      "key": "forms",
+      "path": "/chon-ji.html",
+      "sitemap": true,
+      "title": "Chon-Ji — 3D study lesson | TKDflow",
+      "description": "Study Chon-Ji with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "dan-gun.html",
+      "key": "forms",
+      "path": "/dan-gun.html",
+      "sitemap": true,
+      "title": "Dan-Gun — 3D study lesson | TKDflow",
+      "description": "Study Dan-Gun with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "do-san.html",
+      "key": "forms",
+      "path": "/do-san.html",
+      "sitemap": true,
+      "title": "Do-San — 3D study lesson | TKDflow",
+      "description": "Study Do-San with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "won-hyo.html",
+      "key": "forms",
+      "path": "/won-hyo.html",
+      "sitemap": true,
+      "title": "Won-Hyo — 3D study lesson | TKDflow",
+      "description": "Study Won-Hyo with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "yul-gok.html",
+      "key": "forms",
+      "path": "/yul-gok.html",
+      "sitemap": true,
+      "title": "Yul-Gok — 3D study lesson | TKDflow",
+      "description": "Study Yul-Gok with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "joong-gun.html",
+      "key": "forms",
+      "path": "/joong-gun.html",
+      "sitemap": true,
+      "title": "Joong-Gun — 3D study lesson | TKDflow",
+      "description": "Study Joong-Gun with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "songahm-1.html",
+      "key": "forms",
+      "path": "/songahm-1.html",
+      "sitemap": true,
+      "title": "Songahm 1 — 3D study lesson | TKDflow",
+      "description": "Study Songahm 1 with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "songahm-2.html",
+      "key": "forms",
+      "path": "/songahm-2.html",
+      "sitemap": true,
+      "title": "Songahm 2 — 3D study lesson | TKDflow",
+      "description": "Study Songahm 2 with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "songahm-3.html",
+      "key": "forms",
+      "path": "/songahm-3.html",
+      "sitemap": true,
+      "title": "Songahm 3 — 3D study lesson | TKDflow",
+      "description": "Study Songahm 3 with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "keumgang.html",
+      "key": "forms",
+      "path": "/keumgang.html",
+      "sitemap": true,
+      "title": "Keumgang — 3D study lesson | TKDflow",
+      "description": "Study Keumgang with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "koryo.html",
+      "key": "forms",
+      "path": "/koryo.html",
+      "sitemap": true,
+      "title": "Koryo — 3D study lesson | TKDflow",
+      "description": "Study Koryo with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "taebaek.html",
+      "key": "forms",
+      "path": "/taebaek.html",
+      "sitemap": true,
+      "title": "Taebaek — 3D study lesson | TKDflow",
+      "description": "Study Taebaek with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "pyongwon.html",
+      "key": "forms",
+      "path": "/pyongwon.html",
+      "sitemap": true,
+      "title": "Pyongwon — 3D study lesson | TKDflow",
+      "description": "Study Pyongwon with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "sipjin.html",
+      "key": "forms",
+      "path": "/sipjin.html",
+      "sitemap": true,
+      "title": "Sipjin — 3D study lesson | TKDflow",
+      "description": "Study Sipjin with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
+    },
+    {
+      "file": "jitae.html",
+      "key": "forms",
+      "path": "/jitae.html",
+      "sitemap": true,
+      "title": "Jitae — 3D study lesson | TKDflow",
+      "description": "Study Jitae with a full-body 3D animation, five camera views, slow playback and movement references. Awaiting instructor review."
     }
   ]
 }

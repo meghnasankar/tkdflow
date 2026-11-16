@@ -1,0 +1,579 @@
+{
+  "id": "joong-gun",
+  "sources": [
+    {
+      "url": "https://itkdc.com/wp-content/uploads/patterns/joong-gun-pattern.pdf",
+      "title": "NP/Intrepid Joong-Gun numbered school curriculum"
+    },
+    {
+      "url": "https://southburytkd.com/Media/Patterns/Joong-Gun.pdf",
+      "title": "Southbury Taekwon-Do source crosscheck for counts18/27 (2026)"
+    }
+  ],
+  "ready": "closed-B",
+  "headingConvention": "0 is initial ready facing; positive turns left. lead is the FRONT foot, including L-stance. Action heading overrides body facing when technique goes sideways.",
+  "sequence": [
+    {
+      "n": 1,
+      "heading": 90.0,
+      "turn": 90.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "reverse-knifehand-block",
+          "side": "left",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 2,
+      "heading": 90.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "left",
+          "height": "low"
+        }
+      ],
+      "footAction": "kick-left",
+      "notes": "Low side-front snap kick; retain hands.",
+      "simultaneous": false
+    },
+    {
+      "n": 3,
+      "heading": 90.0,
+      "turn": 0.0,
+      "stance": "rear-foot",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "upward-palm-block",
+          "side": "right",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "land-left-then-step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 4,
+      "heading": -90.0,
+      "turn": -180,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "reverse-knifehand-block",
+          "side": "right",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "turn-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 5,
+      "heading": -90.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "front-kick",
+          "side": "right",
+          "height": "low"
+        }
+      ],
+      "footAction": "kick-right",
+      "notes": "Low side-front snap kick; retain hands.",
+      "simultaneous": false
+    },
+    {
+      "n": 6,
+      "heading": -90.0,
+      "turn": 0.0,
+      "stance": "rear-foot",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "upward-palm-block",
+          "side": "left",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "land-right-then-step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 7,
+      "heading": 0.0,
+      "turn": 90.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-block",
+          "side": "left",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 8,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "upward-elbow",
+          "side": "right",
+          "height": "high"
+        }
+      ],
+      "footAction": "slide-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 9,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "knifehand-block",
+          "side": "right",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 10,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "upward-elbow",
+          "side": "left",
+          "height": "high"
+        }
+      ],
+      "footAction": "slide-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 11,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "twin-vertical-punch",
+          "side": "both",
+          "height": "high",
+          "simultaneous": true
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 12,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "double-uppercut",
+          "side": "both",
+          "simultaneous": true
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 13,
+      "heading": 180.0,
+      "turn": 180,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "x-rising-block",
+          "side": "both",
+          "height": "high",
+          "simultaneous": true
+        }
+      ],
+      "footAction": "turn-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 14,
+      "heading": -90.0,
+      "turn": 90.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "backfist",
+          "side": "left",
+          "height": "high"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 15,
+      "heading": -90.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "wrist-release",
+          "side": "left"
+        }
+      ],
+      "footAction": "slide-left",
+      "tempo": "fast",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 16,
+      "heading": -90.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "high-punch",
+          "side": "right",
+          "height": "high"
+        }
+      ],
+      "footAction": "stay",
+      "tempo": "fast",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 17,
+      "heading": 90.0,
+      "turn": -180,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "backfist",
+          "side": "right",
+          "height": "high"
+        }
+      ],
+      "footAction": "close-then-step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 18,
+      "heading": 90.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "wrist-release",
+          "side": "right"
+        }
+      ],
+      "footAction": "slide-right",
+      "tempo": "fast",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 19,
+      "heading": 90.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "high-punch",
+          "side": "left",
+          "height": "high"
+        }
+      ],
+      "footAction": "stay",
+      "tempo": "fast",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 20,
+      "heading": 180.0,
+      "turn": 90.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "assisted-block",
+          "side": "left"
+        }
+      ],
+      "footAction": "close-then-step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 21,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "pull-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 22,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "side-kick",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "kick-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 23,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "assisted-block",
+          "side": "right"
+        }
+      ],
+      "footAction": "land-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 24,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "pull-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 25,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "side-kick",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "kick-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 26,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "forearm-guarding-block",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "land-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 27,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "low",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "pressing-block",
+          "side": "right",
+          "handShape": "open"
+        }
+      ],
+      "footAction": "slide-left",
+      "tempo": "slow",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 28,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "forearm-guarding-block",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 29,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "low",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "pressing-block",
+          "side": "left",
+          "handShape": "open"
+        }
+      ],
+      "footAction": "slide-right",
+      "tempo": "slow",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 30,
+      "heading": -90.0,
+      "turn": 90.0,
+      "stance": "closed",
+      "lead": null,
+      "actions": [
+        {
+          "type": "angle-punch",
+          "side": "right"
+        }
+      ],
+      "footAction": "close-left",
+      "tempo": "slow",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 31,
+      "heading": -90.0,
+      "turn": 0.0,
+      "stance": "fixed",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "u-shape-block",
+          "side": "right",
+          "handShape": "open"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 32,
+      "heading": 90.0,
+      "turn": 180,
+      "stance": "fixed",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "u-shape-block",
+          "side": "left",
+          "handShape": "open"
+        }
+      ],
+      "footAction": "close-then-step-left",
+      "notes": "",
+      "simultaneous": false
+    }
+  ],
+  "unresolved": [
+    "NP sheet direction typos at18(E/F) and27(D/C) are corrected using Southbury primary curriculum crosscheck; choreography, timing and body angles remain pending instructor review."
+  ],
+  "reviewStatus": "pending",
+  "returnFoot": "left",
+  "returnHeading": 0,
+  "movementCount": 32,
+  "referenceLabel": "NP/Intrepid Joong-Gun numbered school curriculum"
+}

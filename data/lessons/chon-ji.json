@@ -1,0 +1,342 @@
+{
+  "id": "chon-ji",
+  "sources": [
+    {
+      "url": "https://itf-d.de/files/itf-d/downloads/taekwondo/english/Tul/01%20Chon-Ji%20Tul%20booklet.pdf",
+      "title": "ITF Deutschland English Chon-Ji booklet (2013)"
+    }
+  ],
+  "ready": "parallel",
+  "headingConvention": "0 is initial ready facing; positive turns left. lead is the FRONT foot, including L-stance. Action heading overrides body facing when technique goes sideways.",
+  "sequence": [
+    {
+      "n": 1,
+      "heading": 90.0,
+      "turn": 90.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "left",
+          "height": "low"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 2,
+      "heading": 90.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 3,
+      "heading": -90.0,
+      "turn": -180,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "right",
+          "height": "low"
+        }
+      ],
+      "footAction": "turn-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 4,
+      "heading": -90.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 5,
+      "heading": 0.0,
+      "turn": 90.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "left",
+          "height": "low"
+        }
+      ],
+      "footAction": "turn-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 6,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 7,
+      "heading": 180.0,
+      "turn": -180,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "right",
+          "height": "low"
+        }
+      ],
+      "footAction": "turn-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 8,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 9,
+      "heading": -90.0,
+      "turn": 90.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "inner-forearm-outward-block",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "turn-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 10,
+      "heading": -90.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 11,
+      "heading": 90.0,
+      "turn": -180,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "inner-forearm-outward-block",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "turn-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 12,
+      "heading": 90.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 13,
+      "heading": 180.0,
+      "turn": 90.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "inner-forearm-outward-block",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "turn-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 14,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 15,
+      "heading": 0.0,
+      "turn": -180,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "inner-forearm-outward-block",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "turn-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 16,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 17,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 18,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "left",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-right-back",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 19,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "middle-punch",
+          "side": "right",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-left-back",
+      "notes": "",
+      "simultaneous": false
+    }
+  ],
+  "unresolved": [],
+  "reviewStatus": "pending",
+  "returnFoot": "left",
+  "returnHeading": 0,
+  "movementCount": 19,
+  "referenceLabel": "ITF Deutschland English Chon-Ji booklet (2013)"
+}

@@ -1,0 +1,382 @@
+{
+  "id": "dan-gun",
+  "sources": [
+    {
+      "url": "https://itf-d.de/files/itf-d/downloads/taekwondo/english/Tul/02%20Dan-Gun%20Tul%20booklet.pdf",
+      "title": "ITF Deutschland English Dan-Gun booklet (2013)"
+    },
+    {
+      "url": "https://itkdc.com/patterns/dan-gun/",
+      "title": "NP/Intrepid Dan-Gun numbered curriculum crosscheck"
+    }
+  ],
+  "ready": "parallel",
+  "headingConvention": "0 is initial ready facing; positive turns left. lead is the FRONT foot, including L-stance. Action heading overrides body facing when technique goes sideways.",
+  "sequence": [
+    {
+      "n": 1,
+      "heading": 90.0,
+      "turn": 90.0,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-block",
+          "side": "left",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 2,
+      "heading": 90.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "high-punch",
+          "side": "right",
+          "height": "high"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 3,
+      "heading": -90.0,
+      "turn": -180,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "knifehand-block",
+          "side": "right",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "turn-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 4,
+      "heading": -90.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "high-punch",
+          "side": "left",
+          "height": "high"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 5,
+      "heading": 0.0,
+      "turn": 90.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "left",
+          "height": "low"
+        }
+      ],
+      "footAction": "turn-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 6,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "high-punch",
+          "side": "right",
+          "height": "high"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 7,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "high-punch",
+          "side": "left",
+          "height": "high"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 8,
+      "heading": 0.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "high-punch",
+          "side": "right",
+          "height": "high"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 9,
+      "heading": -90.0,
+      "turn": 270,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "twin-forearm-block",
+          "side": "left"
+        }
+      ],
+      "footAction": "turn-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 10,
+      "heading": -90.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "high-punch",
+          "side": "right",
+          "height": "high"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 11,
+      "heading": 90.0,
+      "turn": -180,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "twin-forearm-block",
+          "side": "right"
+        }
+      ],
+      "footAction": "turn-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 12,
+      "heading": 90.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "high-punch",
+          "side": "left",
+          "height": "high"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 13,
+      "heading": 180.0,
+      "turn": 90.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "low-block",
+          "side": "left",
+          "height": "low"
+        }
+      ],
+      "footAction": "turn-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 14,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "high-block",
+          "side": "left",
+          "height": "high"
+        }
+      ],
+      "footAction": "stay",
+      "notes": "Connected with preceding low block.",
+      "simultaneous": false
+    },
+    {
+      "n": 15,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "high-block",
+          "side": "right",
+          "height": "high"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 16,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "high-block",
+          "side": "left",
+          "height": "high"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 17,
+      "heading": 180.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "high-block",
+          "side": "right",
+          "height": "high"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "Right forearm per alternating 14–17 and school crosscheck. Federation English PDF erroneously repeats left at 17.",
+      "simultaneous": false
+    },
+    {
+      "n": 18,
+      "heading": 90.0,
+      "turn": 270,
+      "stance": "back",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "knifehand-strike",
+          "side": "left",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "turn-left",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 19,
+      "heading": 90.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "high-punch",
+          "side": "right",
+          "height": "high"
+        }
+      ],
+      "footAction": "step-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 20,
+      "heading": -90.0,
+      "turn": -180,
+      "stance": "back",
+      "lead": "right",
+      "actions": [
+        {
+          "type": "knifehand-strike",
+          "side": "right",
+          "handShape": "open",
+          "height": "middle"
+        }
+      ],
+      "footAction": "turn-right",
+      "notes": "",
+      "simultaneous": false
+    },
+    {
+      "n": 21,
+      "heading": -90.0,
+      "turn": 0.0,
+      "stance": "walking",
+      "lead": "left",
+      "actions": [
+        {
+          "type": "high-punch",
+          "side": "left",
+          "height": "high"
+        }
+      ],
+      "footAction": "step-left",
+      "notes": "",
+      "simultaneous": false
+    }
+  ],
+  "unresolved": [],
+  "reviewStatus": "pending",
+  "returnFoot": "left",
+  "returnHeading": 0,
+  "movementCount": 21,
+  "referenceLabel": "ITF Deutschland English Dan-Gun booklet (2013)"
+}

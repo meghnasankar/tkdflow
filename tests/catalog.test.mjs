@@ -48,8 +48,8 @@ test('combined style + belt + difficulty + lesson filters intersect', () => {
   const r = applyState(forms, S({ org: 'wt', belt: 'yellow', level: '1' }));
   assert.ok(r.length > 0);
   for (const f of r) assert.ok(f.category === 'wt' && f.belt === 'yellow' && f.difficulty === 1);
-  assert.deepEqual(names(applyState(forms, S({ lesson: true }))), ['Taegeuk Il Jang']);
-  assert.equal(applyState(forms, S({ org: 'itf', lesson: true })).length, 0);
+  assert.equal(applyState(forms, S({ lesson: true })).length, 23);
+  assert.equal(applyState(forms, S({ org: 'itf', lesson: true })).length, 6);
 });
 
 test('facet counts reflect the other active filters and add up', () => {
@@ -72,7 +72,8 @@ test('named forms route to their lesson or their library search', () => {
   const t1 = forms.find((f) => f.id === 'taegeuk-1');
   const koryo = forms.find((f) => f.id === 'koryo');
   assert.equal(destinationFor(t1), 'taegeuk-1.html');
-  assert.equal(destinationFor(koryo), 'forms.html?q=Koryo');
+  assert.equal(destinationFor(koryo), 'koryo.html');
+  assert.equal(destinationFor({...koryo,lessonUrl:null}), 'forms.html?q=Koryo');
 });
 
 test('an empty catalogue yields zero results and zero counts (no crash)', () => {
