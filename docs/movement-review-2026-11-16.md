@@ -47,14 +47,14 @@ switches. Pause, scrubbing, replay, slow playback and page hiding synchronize
 both tracks. Kihaps occur after the spoken instruction at the actual finish,
 with a small modeled mouth movement. The face uses no photo or cloned voice.
 
-Existing speech banks were reused. Only 2,257 new script characters, two speech
+Existing speech banks were reused. Only 3,780 new script characters, three speech
 requests and three short effect requests were generated. Public media hashes and
 provider provenance are in data/narration/catalog.json. No account/plan changes
 or credentials are included.
 
 ## Validation and practical limits
 
-243 release checks pass. Independent dense samples at 120 Hz cover all 23
+244 release checks pass. Independent dense samples at 120 Hz cover all 23
 narrated forms: maximum joint speed 2.31 m/s, maximum acceleration 14.92 m/s²,
 finite connected limbs and no phase-boundary discontinuities. These numerical
 checks detect mismatches and jumps; they do not certify biomechanics or style.
@@ -102,3 +102,13 @@ https://tkdflow-er9fl7mf2-meghnasankars-projects.vercel.app
 
 Accounts, SQL, hosting security configuration, founder page/photo, the approved
 character artwork and the vendored renderer are outside this release.
+
+
+## Clarifying long turns
+
+The user observed that a cue saying only "turn left" could precede a 270-degree
+turn. The attributed Frontline Taebaek teaching reference explicitly describes
+that longer left-shoulder path at the corresponding diamond block. All 15
+source-prescribed 270-degree turn cues now say "three-quarter turn" aloud; the
+visible cue retains 270°. Full turns already say "all the way around". This is a
+wording correction, not substitution of a shorter path to the same endpoint.

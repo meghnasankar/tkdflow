@@ -4,9 +4,9 @@
   "model": "eleven_multilingual_v2",
   "stockVoice": true,
   "voiceCloning": false,
-  "generationCharacters": 28739,
-  "uniqueUtterances": 400,
-  "generationRequests": 6,
+  "generationCharacters": 30262,
+  "uniqueUtterances": 413,
+  "generationRequests": 7,
   "accountOrPlanChanges": false,
   "soundEffects": [
     {
@@ -52,13 +52,13 @@
     {
       "lessonId": "taegeuk-2",
       "cues": 25,
-      "duration": 152.87327,
-      "audio_duration": 152.913288,
-      "bytes": 1835720,
-      "sha256": "2977010b7174db94bb6adbcc1b07dd45451397355d99f8e770b284cc1e336e93",
+      "duration": 153.941135,
+      "audio_duration": 153.981179,
+      "bytes": 1848573,
+      "sha256": "225516a5d6e2917150e89c9d92607f97da3baac2e0b1b820d6c5c21514d793f6",
       "effects": {
-        "bytes": 171814,
-        "sha256": "45abc3bae5dbf6d9f9c39fbf0c0555c924b2d05648fc893d92ac1f1023bb0141",
+        "bytes": 173168,
+        "sha256": "74312388c17ac0af08961636919380651ff92b4769b9d01074d27ea68bfb8c2e",
         "events": 24,
         "kihaps": 1
       }
@@ -66,13 +66,13 @@
     {
       "lessonId": "taegeuk-3",
       "cues": 36,
-      "duration": 190.624976,
-      "audio_duration": 190.664989,
-      "bytes": 2288684,
-      "sha256": "3c8f6e66faa128ef75223cdb8b7f263307b122a14a43281d78c1c33770f1f911",
+      "duration": 192.048743,
+      "audio_duration": 192.088753,
+      "bytes": 2305924,
+      "sha256": "4bb4ccef8dde0666c14b22c26fce09621846c56d84ba0049e418df63eab5a6fe",
       "effects": {
-        "bytes": 218079,
-        "sha256": "16996780f0cacfe665d844c5b035ed421c3d5c7fac0e43537161953e7cf5e703",
+        "bytes": 219350,
+        "sha256": "b84b846b1cd63d0c28888845922a28f598f170b17d391f5f28562fd1a7c90d78",
         "events": 35,
         "kihaps": 1
       }
@@ -80,13 +80,13 @@
     {
       "lessonId": "taegeuk-4",
       "cues": 31,
-      "duration": 172.622523,
-      "audio_duration": 172.66254,
-      "bytes": 2072703,
-      "sha256": "b5c03fc25bfd61b04f0f85e8357796a08a5e0fc474209355d27c9276a83a9479",
+      "duration": 174.585648,
+      "audio_duration": 174.625669,
+      "bytes": 2096213,
+      "sha256": "e72bcdf21e6cdeedf6bf8b3ee6a1f5c34e8983abf99baadeaa68324c95b6ed0c",
       "effects": {
-        "bytes": 196283,
-        "sha256": "2b833e6617948af64657f9e1099340d50cac538f38e39f3d384a33d6a8700620",
+        "bytes": 198052,
+        "sha256": "bf30ba533c5181c5cd0b6e8b9511968b35fad31becd0d090524ea8f92d5a978a",
         "events": 30,
         "kihaps": 1
       }
@@ -94,13 +94,13 @@
     {
       "lessonId": "taegeuk-5",
       "cues": 34,
-      "duration": 189.392917,
-      "audio_duration": 189.432925,
-      "bytes": 2273950,
-      "sha256": "e4929d63f7d3407a18f3b9c6aec6d819ea300c4808d1dc0233aea7c4a51cad30",
+      "duration": 191.106069,
+      "audio_duration": 191.146077,
+      "bytes": 2294639,
+      "sha256": "360849d6b036be9c30b5c3834436994e5aaaead1caca04fd8a17098f95df9dde",
       "effects": {
-        "bytes": 215193,
-        "sha256": "533ae37b34e04a05ab148d869b399b25c8cdad926ca9d9ed307f037e4476c5b3",
+        "bytes": 216880,
+        "sha256": "ab0cd4576a3121bb80eb86d9055ad28ba92dd79adba7292f4b58a729961e7f0e",
         "events": 33,
         "kihaps": 1
       }
@@ -122,13 +122,13 @@
     {
       "lessonId": "taegeuk-7",
       "cues": 35,
-      "duration": 199.249759,
-      "audio_duration": 199.289796,
-      "bytes": 2392442,
-      "sha256": "a59d18784fd063e5ed02fd881fe8d1d20406aa800d2f614b070b93f3e2aa162d",
+      "duration": 200.673579,
+      "audio_duration": 200.713605,
+      "bytes": 2409369,
+      "sha256": "8affb642988b3502f618805a153ecb69d62962f090ac8e39c0e3f43952934ab6",
       "effects": {
-        "bytes": 225229,
-        "sha256": "e0b6df49b59e57b68daafda57d6a77ae5c3d978691324139aeba5f70a4ec1962",
+        "bytes": 226655,
+        "sha256": "f48ed8deda2ea727bae369f88e2c70a7fe9295d5d7b3fdd6fcecac1acb4a4d69",
         "events": 33,
         "kihaps": 1
       }
@@ -136,13 +136,13 @@
     {
       "lessonId": "taegeuk-8",
       "cues": 40,
-      "duration": 219.971289,
-      "audio_duration": 220.011293,
-      "bytes": 2641023,
-      "sha256": "dacec95fb7f122326171c372f4d2302c8f252b91ca5104f64ed5bed111fe0d99",
+      "duration": 223.24518,
+      "audio_duration": 223.285215,
+      "bytes": 2680207,
+      "sha256": "af2c8a86f177b46295e97347cf81b77cbadaae1688a1a441d4820a4b6bffa77e",
       "effects": {
-        "bytes": 251099,
-        "sha256": "8280c7d0a4a64b4842c36febe06cdb9864abec96d032e29ea4c622282458a91d",
+        "bytes": 254846,
+        "sha256": "385dfb383c54592eda360c70a54238a78b8ec63843f641aa6a9080982a6413bf",
         "events": 38,
         "kihaps": 2
       }
@@ -178,13 +178,13 @@
     {
       "lessonId": "taebaek",
       "cues": 44,
-      "duration": 251.03124,
-      "audio_duration": 251.071247,
-      "bytes": 3013738,
-      "sha256": "6548d901b91ee7cb8ecf96f6c69d7c238dbd1c28e51d209005db197283ebd1d5",
+      "duration": 255.28834,
+      "audio_duration": 255.328345,
+      "bytes": 3064834,
+      "sha256": "881ea7536bb4a848842e727765cd781f94391562efbafd2b590b070e8fc57cd2",
       "effects": {
-        "bytes": 286776,
-        "sha256": "6f9e626370ab2e81d7fc032cd903d7183d6daf58b6bb4120808737b818b0d2fb",
+        "bytes": 291326,
+        "sha256": "3a3cd92f69551bcdbb2f0709176b06a7eca634fb72ac04e738328c2ad7506c4e",
         "events": 44,
         "kihaps": 2
       }
@@ -220,13 +220,13 @@
     {
       "lessonId": "jitae",
       "cues": 40,
-      "duration": 236.316826,
-      "audio_duration": 236.356984,
-      "bytes": 2837255,
-      "sha256": "32b2159c23755473eea8017d447643524f25586b67713f54384b4c2c15d719f5",
+      "duration": 238.085912,
+      "audio_duration": 238.125941,
+      "bytes": 2858257,
+      "sha256": "550b55779a5b018eca39ee461a2a06404d2a76d4276cb6a2953af0b94094f08d",
       "effects": {
-        "bytes": 266573,
-        "sha256": "388a319f7218806640cc6a46f111a5365c608563d44a4299b53d77317e09c264",
+        "bytes": 268369,
+        "sha256": "9764643f74788081126f998ebd1af7772c3a55b3f9ef0aff4f0b08ba893def7e",
         "events": 36,
         "kihaps": 2
       }
@@ -248,13 +248,13 @@
     {
       "lessonId": "dan-gun",
       "cues": 23,
-      "duration": 134.875637,
-      "audio_duration": 134.915646,
-      "bytes": 1619740,
-      "sha256": "71ff75ab455789ba52f487a3aebfcb3721f0a2675057d137ca7c681c984d082c",
+      "duration": 139.260099,
+      "audio_duration": 139.300136,
+      "bytes": 1672403,
+      "sha256": "29baae7b391f95e892187727711afa8c3fed5d39228bd7927c095fad0e9ce1fd",
       "effects": {
-        "bytes": 150680,
-        "sha256": "9402a63eb039cfb371ae0ee3bd3e81942c30f5ec8d2ebca986e0eae71a04985a",
+        "bytes": 154342,
+        "sha256": "bb1d1754a313f7b24882ebcb7dcbd8cd7272954b3b6c81013c03d8fd0709816f",
         "events": 21,
         "kihaps": 0
       }
@@ -262,13 +262,13 @@
     {
       "lessonId": "do-san",
       "cues": 26,
-      "duration": 144.549552,
-      "audio_duration": 144.589569,
-      "bytes": 1736037,
-      "sha256": "f82f85ba9d5834e8d9a840d90a028eef80d109c53873030a19768886d8d4769e",
+      "duration": 146.319771,
+      "audio_duration": 146.359773,
+      "bytes": 1757039,
+      "sha256": "66971d0ab56cd4dbdb7588ffbbe9897445a41127e59f861ca8fe48a355e9d5f8",
       "effects": {
-        "bytes": 162382,
-        "sha256": "bd85a677ce99411d8c0a2f04dc1ede3a9a01d1f61660059f99ab33f4d974bd0b",
+        "bytes": 163622,
+        "sha256": "d71d8980918732830c1db50448da37e05b46026f5e69b641d267da1ad072cba8",
         "events": 24,
         "kihaps": 0
       }
@@ -276,13 +276,13 @@
     {
       "lessonId": "won-hyo",
       "cues": 30,
-      "duration": 160.109346,
-      "audio_duration": 160.149388,
-      "bytes": 1922551,
-      "sha256": "26e558a79a9952a0c172539cfccf32553c48dec80e0bc979cca47011c6024e40",
+      "duration": 163.664146,
+      "audio_duration": 163.704172,
+      "bytes": 1965183,
+      "sha256": "9f38fe8b25e78cc6bf1bd3ee003a2cdaa2b60e4582e90d726786e0d6395119f5",
       "effects": {
-        "bytes": 179700,
-        "sha256": "5278d6c351f99a4a0e86d6e54c9446fa94fcbea604543f4e0683d84595f0923f",
+        "bytes": 183262,
+        "sha256": "88bea540250d684996c800cf1bc1f36f4eee82c907596e102de5adc0d4e1bed1",
         "events": 26,
         "kihaps": 0
       }

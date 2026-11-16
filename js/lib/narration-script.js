@@ -152,7 +152,7 @@ export function lessonSpeech({id,POSES,MOTION,reference}){
   const a=plan.actions,entry=plan.entry||{},stance=STANCES[entry.stance],landing=['left','right'].some(s=>plan.before.feet[s].pos[1]>.15&&plan.after.feet[s].pos[1]<.15);
   let prefix='';
   const prescribedTurn=Number(entry.turn)||0;
-  if(Math.abs(prescribedTurn)>=45&&Math.abs(plan.dyaw)>1){const side=plan.dyaw>0?'left':'right';prefix=Math.abs(prescribedTurn)>=360?`Turn all the way around to the ${side}. `:`Turn ${side}${stance&&!plan.kick?' into a '+stance+' stance':''}. `;}
+  if(Math.abs(prescribedTurn)>=45&&Math.abs(plan.dyaw)>1){const side=plan.dyaw>0?'left':'right';prefix=Math.abs(prescribedTurn)>=360?`Turn all the way around to the ${side}. `:Math.abs(prescribedTurn)>=270?`Make a three-quarter turn to your ${side}${stance&&!plan.kick?', then set a '+stance+' stance':''}. `:`Turn ${side}${stance&&!plan.kick?' into a '+stance+' stance':''}. `;}
   if(!prefix&&!plan.kick&&!a.some(a=>a.type==='bending-ready')){
    if(entry.stance==='crane'){
     const support=plan.after.feet.left.pos[1]<plan.after.feet.right.pos[1]?'left':'right';prefix=`Balance on your ${support} leg. `;
