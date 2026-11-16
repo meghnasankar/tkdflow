@@ -716,24 +716,24 @@
       ],
       "sourcePoseSha256": "4f2f0dfa081b3b0e30bea5bb7be8ecf4b40ee8f619f24ab0331dc285f52c5898",
       "theme": "pine",
-      "cameraAngle": 65,
+      "cameraAngle": -25,
       "series": "SONGAHM",
       "number": 1,
       "trigram": null,
       "meaning": "Pine tree & rock",
       "name": "Songahm 1",
       "alt": "Songahm 1: the lesson character performing right side kick.",
-      "bytes": 14114,
-      "assetSha256": "a27619b368f85a4840f8d08df6b2162feb5027465be2f31a584732912843e06d",
+      "bytes": 14324,
+      "assetSha256": "5df0698ae5f13e620110eb82996ec7da6295b4fe952bf027f5a2cbd34931c63a",
       "renderProof": {
         "alphaBounds": {
-          "bottom": 902,
-          "count": 79718,
-          "left": 422,
-          "right": 687,
-          "top": 121
+          "bottom": 872,
+          "count": 97512,
+          "left": 254,
+          "right": 790,
+          "top": 111
         },
-        "cameraAngle": 65,
+        "cameraAngle": -25,
         "id": "songahm-1",
         "poseHash": "4f2f0dfa081b3b0e30bea5bb7be8ecf4b40ee8f619f24ab0331dc285f52c5898"
       }

@@ -5,7 +5,7 @@ const specs=[
  ['taegeuk-1',1,'low','sky',30],['taegeuk-2',11,'high-block','lake',28],['taegeuk-3',5,'knifehand-strike','fire',24],['taegeuk-4',7,'side-kick','thunder',65],['taegeuk-5',10,'elbow-strike','wind',-35],['taegeuk-6',12,'roundhouse-kick','water',60],['taegeuk-7',12,'scissor-block','mountain',30],['taegeuk-8',5,'mountain-block','earth',35],
  ['koryo',2,'side-kick','scholar',60],['keumgang',8,'diamond-block','diamond',25],['taebaek',5,'knifehand-high-block','dawn',30],['pyongwon',6,'turning-side-kick','plain',60],['sipjin',15,'rock-pushing','stone',25],['jitae',11,'diamond-front-punch','soil',30],
  ['chon-ji',1,'low-block','horizon',25],['dan-gun',9,'twin-forearm-block','forest',30],['do-san',13,'wedging-block','paper',25],['won-hyo',7,'bending-ready','lotus',30],['yul-gok',24,'elbow-strike','ink',-35],['joong-gun',31,'u-shape-block','resolve',25],
- ['songahm-1',7,'side-kick','pine',65],['songahm-2',4,'roundhouse-kick','pine-sun',60],['songahm-3',9,'spearhand','pine-stone',30],
+ ['songahm-1',7,'side-kick','pine',-25],['songahm-2',4,'roundhouse-kick','pine-sun',60],['songahm-3',9,'spearhand','pine-stone',30],
 ];
 const trigrams=['111','011','101','001','110','010','100','000']; // top line → bottom line
 const forms=JSON.parse(readFileSync('data/forms.json')),files=[];
