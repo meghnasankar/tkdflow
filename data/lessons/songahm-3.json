@@ -355,7 +355,7 @@
           "type": "backfist",
           "side": "left",
           "heading": -90.0,
-          "height": "high"
+          "height": "middle"
         }
       ],
       "footAction": "stay",
@@ -392,7 +392,7 @@
           "type": "backfist",
           "side": "right",
           "heading": -90.0,
-          "height": "high"
+          "height": "middle"
         }
       ],
       "footAction": "stay",
@@ -519,5 +519,11 @@
   "returnHeading": 0,
   "readyStepFoot": "left",
   "movementCount": 28,
-  "referenceLabel": "ATA official Songahm 3 form sheet, revised 2024-01-08"
+  "referenceLabel": "ATA official Songahm 3 form sheet, revised 2024-01-08",
+  "corrections": [
+    {
+      "n": "20/22",
+      "chosen": "Backfists are middle section, following the detailed official ATA form sheet; the previous visualization used high section."
+    }
+  ]
 }

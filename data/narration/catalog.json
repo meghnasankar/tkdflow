@@ -4,194 +4,358 @@
   "model": "eleven_multilingual_v2",
   "stockVoice": true,
   "voiceCloning": false,
-  "generationCharacters": 26482,
-  "uniqueUtterances": 371,
-  "generationRequests": 4,
+  "generationCharacters": 28739,
+  "uniqueUtterances": 400,
+  "generationRequests": 6,
   "accountOrPlanChanges": false,
+  "soundEffects": [
+    {
+      "name": "hand-swish",
+      "provider": "ElevenLabs",
+      "model": "eleven_text_to_sound_v2",
+      "bytes": 3178,
+      "sha256": "d546db3ee6e75f8e5574752b56f6fe5d0527e711080d5bacbfbc9987b77234d3",
+      "duration": 0.16816326530612244
+    },
+    {
+      "name": "kick-swish",
+      "provider": "ElevenLabs",
+      "model": "eleven_text_to_sound_v2",
+      "bytes": 5999,
+      "sha256": "816021d3fb0b6f897d7792eaeab408516b1b9c04468b792cd9aad278e52d8c40",
+      "duration": 0.3920181405895692
+    },
+    {
+      "name": "kihap",
+      "provider": "ElevenLabs",
+      "model": "eleven_text_to_sound_v2",
+      "bytes": 9448,
+      "sha256": "997ce2c03dafa5708d8993c58709973ed1901230b8c6da88f57b75779a94fd74",
+      "duration": 0.7
+    }
+  ],
   "files": [
     {
       "lessonId": "taegeuk-1",
       "cues": 20,
-      "duration": 90.426894,
-      "audio_duration": 90.466939,
-      "bytes": 1086528,
-      "sha256": "57ad4d5e0667eb8f4674d0e3cea72f414cdb24c748d0f5ccd968465285d0352b"
+      "duration": 104.638516,
+      "audio_duration": 104.678549,
+      "bytes": 1257056,
+      "sha256": "8d345a2d6f619911764ca76cc431a0871fc6cc82cfd9a79388836765d832dae3",
+      "effects": {
+        "bytes": 122234,
+        "sha256": "e06c4f9a1879a99b6aca57726c6cf7f79118fdc6aae6318d1e832b3cc1adcf2f",
+        "events": 21,
+        "kihaps": 1
+      }
     },
     {
       "lessonId": "taegeuk-2",
       "cues": 25,
-      "duration": 129.394987,
-      "audio_duration": 129.435011,
-      "bytes": 1553911,
-      "sha256": "10eb3499962dd545cac3d98450f5dcc51397f63582c908ca8c11e3b0a0e74446"
+      "duration": 152.87327,
+      "audio_duration": 152.913288,
+      "bytes": 1835720,
+      "sha256": "2977010b7174db94bb6adbcc1b07dd45451397355d99f8e770b284cc1e336e93",
+      "effects": {
+        "bytes": 171814,
+        "sha256": "45abc3bae5dbf6d9f9c39fbf0c0555c924b2d05648fc893d92ac1f1023bb0141",
+        "events": 24,
+        "kihaps": 1
+      }
     },
     {
       "lessonId": "taegeuk-3",
       "cues": 36,
-      "duration": 164.764215,
-      "audio_duration": 164.804218,
-      "bytes": 1978349,
-      "sha256": "8bc6461cc1d1ac856f7b53d2aa27fbfa29cde2fd20bcd600d071ac23a161140c"
+      "duration": 190.624976,
+      "audio_duration": 190.664989,
+      "bytes": 2288684,
+      "sha256": "3c8f6e66faa128ef75223cdb8b7f263307b122a14a43281d78c1c33770f1f911",
+      "effects": {
+        "bytes": 218079,
+        "sha256": "16996780f0cacfe665d844c5b035ed421c3d5c7fac0e43537161953e7cf5e703",
+        "events": 35,
+        "kihaps": 1
+      }
     },
     {
       "lessonId": "taegeuk-4",
       "cues": 31,
-      "duration": 148.854034,
-      "audio_duration": 148.894059,
-      "bytes": 1787446,
-      "sha256": "2c18d31dfb1766c590619e01f4330a7679130aaafeaff1e4a29868266f116b43"
+      "duration": 172.622523,
+      "audio_duration": 172.66254,
+      "bytes": 2072703,
+      "sha256": "b5c03fc25bfd61b04f0f85e8357796a08a5e0fc474209355d27c9276a83a9479",
+      "effects": {
+        "bytes": 196283,
+        "sha256": "2b833e6617948af64657f9e1099340d50cac538f38e39f3d384a33d6a8700620",
+        "events": 30,
+        "kihaps": 1
+      }
     },
     {
       "lessonId": "taegeuk-5",
       "cues": 34,
-      "duration": 160.275373,
-      "audio_duration": 160.315374,
-      "bytes": 1924746,
-      "sha256": "7263746fe937ad5235ae6ae93aab3afd2b7f0ea3f64a79bbc2f276fc7832ae6e"
+      "duration": 189.392917,
+      "audio_duration": 189.432925,
+      "bytes": 2273950,
+      "sha256": "e4929d63f7d3407a18f3b9c6aec6d819ea300c4808d1dc0233aea7c4a51cad30",
+      "effects": {
+        "bytes": 215193,
+        "sha256": "533ae37b34e04a05ab148d869b399b25c8cdad926ca9d9ed307f037e4476c5b3",
+        "events": 33,
+        "kihaps": 1
+      }
     },
     {
       "lessonId": "taegeuk-6",
       "cues": 33,
-      "duration": 153.024283,
-      "audio_duration": 153.064308,
-      "bytes": 1837601,
-      "sha256": "0157c133034c1cdee05d49bee035addf8d854d55a4772b688b950163d4f1733d"
+      "duration": 179.247297,
+      "audio_duration": 179.287302,
+      "bytes": 2152324,
+      "sha256": "28969516c34f307ad6459ed14a150d365513c99114c582bafb946683550000d8",
+      "effects": {
+        "bytes": 203621,
+        "sha256": "d9c7a982ea5a5286cf3b701cd1470f58a93694dae4c4ce108cc86b1920a6da48",
+        "events": 31,
+        "kihaps": 1
+      }
     },
     {
       "lessonId": "taegeuk-7",
       "cues": 35,
-      "duration": 170.768095,
-      "audio_duration": 170.808118,
-      "bytes": 2050447,
-      "sha256": "30e02472e3dbfbc7f211f6fb5ff93b439af4ca4e1c7c3fc43900d652c5fd6523"
+      "duration": 199.249759,
+      "audio_duration": 199.289796,
+      "bytes": 2392442,
+      "sha256": "a59d18784fd063e5ed02fd881fe8d1d20406aa800d2f614b070b93f3e2aa162d",
+      "effects": {
+        "bytes": 225229,
+        "sha256": "e0b6df49b59e57b68daafda57d6a77ae5c3d978691324139aeba5f70a4ec1962",
+        "events": 33,
+        "kihaps": 1
+      }
     },
     {
       "lessonId": "taegeuk-8",
       "cues": 40,
-      "duration": 193.179953,
-      "audio_duration": 193.219955,
-      "bytes": 2319404,
-      "sha256": "c9765164e02ec647ddeacb51364c1d9bf2b8b3003e1079120a9386b37a9d31c3"
+      "duration": 219.971289,
+      "audio_duration": 220.011293,
+      "bytes": 2641023,
+      "sha256": "dacec95fb7f122326171c372f4d2302c8f252b91ca5104f64ed5bed111fe0d99",
+      "effects": {
+        "bytes": 251099,
+        "sha256": "8280c7d0a4a64b4842c36febe06cdb9864abec96d032e29ea4c622282458a91d",
+        "events": 38,
+        "kihaps": 2
+      }
     },
     {
       "lessonId": "koryo",
       "cues": 52,
-      "duration": 243.671836,
-      "audio_duration": 243.711837,
-      "bytes": 2925340,
-      "sha256": "099c2f192ef01fd44f10490e23ab7a9e497ec3882bf7f6515be440b1d5ea6a6b"
+      "duration": 285.000306,
+      "audio_duration": 285.040317,
+      "bytes": 3421248,
+      "sha256": "351f84a60a43b6d6b04b6613aef3a55158d07e32afe1aac600efc99845d51fd5",
+      "effects": {
+        "bytes": 325387,
+        "sha256": "8fbfeb9ebe3449eac42c6dc03e1eb3b9da2c07e88a94131d3585b7f5698f7da9",
+        "events": 51,
+        "kihaps": 2
+      }
     },
     {
       "lessonId": "keumgang",
       "cues": 29,
-      "duration": 207.230044,
-      "audio_duration": 207.270068,
-      "bytes": 2488050,
-      "sha256": "da7a4698c45bde531f3fd4f3e31c34ad5d89bebb5947ee6681168b7c852f633d"
+      "duration": 207.12321,
+      "audio_duration": 207.16322,
+      "bytes": 2486796,
+      "sha256": "b35c66d792cd67f010e19d8336f5128bce65f322fee35b7f10620c05b5ac9602",
+      "effects": {
+        "bytes": 229227,
+        "sha256": "445b2707689c4ce81cd38eb6e5a9e76c69bcf121165b439dfc70659754129813",
+        "events": 25,
+        "kihaps": 2
+      }
     },
     {
       "lessonId": "taebaek",
       "cues": 44,
-      "duration": 216.95637,
-      "audio_duration": 216.996372,
-      "bytes": 2604661,
-      "sha256": "d5f5e2e9d1df0f99d1440dde094b660a0000e6f30a9c3e6cc9d000795ea1bdc5"
+      "duration": 251.03124,
+      "audio_duration": 251.071247,
+      "bytes": 3013738,
+      "sha256": "6548d901b91ee7cb8ecf96f6c69d7c238dbd1c28e51d209005db197283ebd1d5",
+      "effects": {
+        "bytes": 286776,
+        "sha256": "6f9e626370ab2e81d7fc032cd903d7183d6daf58b6bb4120808737b818b0d2fb",
+        "events": 44,
+        "kihaps": 2
+      }
     },
     {
       "lessonId": "pyongwon",
       "cues": 33,
-      "duration": 158.532087,
-      "audio_duration": 158.572109,
-      "bytes": 1903743,
-      "sha256": "36574d9762f4613df23da4454889799e7f3f5f43b1e572b1f0284e1b989615ec"
+      "duration": 187.467251,
+      "audio_duration": 187.508005,
+      "bytes": 2251067,
+      "sha256": "a7ea07c1cdb4f17b6956af5b5ba6619b3ca20e725fd802dfd404ecded0145fc4",
+      "effects": {
+        "bytes": 213627,
+        "sha256": "c92bfeb8756e0dc0fec47229f1e14feba370cf4d7bcf033c2a118dfccd00965d",
+        "events": 31,
+        "kihaps": 2
+      }
     },
     {
       "lessonId": "sipjin",
       "cues": 47,
-      "duration": 254.077797,
-      "audio_duration": 254.117823,
-      "bytes": 3050101,
-      "sha256": "10eca0171a5370e015319a08556b626f48832737600562168bd084851d017739"
+      "duration": 289.307598,
+      "audio_duration": 289.347619,
+      "bytes": 3472971,
+      "sha256": "98a88b8a4ecf4bba1951bf1637ea60775e17ea4fb4759bbb842900c515586655",
+      "effects": {
+        "bytes": 327729,
+        "sha256": "40563af69f8b34fb6abc146217edb3aee490b8ebb52268b7b5dccb3182043c4e",
+        "events": 45,
+        "kihaps": 3
+      }
     },
     {
       "lessonId": "jitae",
       "cues": 40,
-      "duration": 205.79129,
-      "audio_duration": 205.831293,
-      "bytes": 2470809,
-      "sha256": "d84f8fbd41ac8a95fc6e854b74e6bd8e69bef5d388866352640e681786634731"
+      "duration": 236.316826,
+      "audio_duration": 236.356984,
+      "bytes": 2837255,
+      "sha256": "32b2159c23755473eea8017d447643524f25586b67713f54384b4c2c15d719f5",
+      "effects": {
+        "bytes": 266573,
+        "sha256": "388a319f7218806640cc6a46f111a5365c608563d44a4299b53d77317e09c264",
+        "events": 36,
+        "kihaps": 2
+      }
     },
     {
       "lessonId": "chon-ji",
       "cues": 21,
-      "duration": 100.778846,
-      "audio_duration": 100.818866,
-      "bytes": 1210662,
-      "sha256": "cf30bd929ff73bd0539e3d18a43b53f87526de11cbb05ab9111120640681f54f"
+      "duration": 118.749287,
+      "audio_duration": 118.789297,
+      "bytes": 1426329,
+      "sha256": "b3b0fb33ec6ad7212c7683c86df76ef958973552338bc2ba3860c5461e2affc6",
+      "effects": {
+        "bytes": 132894,
+        "sha256": "e93fef54587a6d711fabae69ef425beafe8240f5e82ded78797499ecedd2c972",
+        "events": 19,
+        "kihaps": 0
+      }
     },
     {
       "lessonId": "dan-gun",
       "cues": 23,
-      "duration": 114.326916,
-      "audio_duration": 114.366939,
-      "bytes": 1373353,
-      "sha256": "89c579266dbf06ee908273086f6e97cfbf7757b9432e2f3a94b23b8d80a6ddbc"
+      "duration": 134.875637,
+      "audio_duration": 134.915646,
+      "bytes": 1619740,
+      "sha256": "71ff75ab455789ba52f487a3aebfcb3721f0a2675057d137ca7c681c984d082c",
+      "effects": {
+        "bytes": 150680,
+        "sha256": "9402a63eb039cfb371ae0ee3bd3e81942c30f5ec8d2ebca986e0eae71a04985a",
+        "events": 21,
+        "kihaps": 0
+      }
     },
     {
       "lessonId": "do-san",
       "cues": 26,
-      "duration": 125.593786,
-      "audio_duration": 125.633787,
-      "bytes": 1508458,
-      "sha256": "6e7bab88f84ea4941265dd03cf3aedac97dbb6cea216d10045ba6dc36c6d95f2"
+      "duration": 144.549552,
+      "audio_duration": 144.589569,
+      "bytes": 1736037,
+      "sha256": "f82f85ba9d5834e8d9a840d90a028eef80d109c53873030a19768886d8d4769e",
+      "effects": {
+        "bytes": 162382,
+        "sha256": "bd85a677ce99411d8c0a2f04dc1ede3a9a01d1f61660059f99ab33f4d974bd0b",
+        "events": 24,
+        "kihaps": 0
+      }
     },
     {
       "lessonId": "won-hyo",
       "cues": 30,
-      "duration": 137.97374,
-      "audio_duration": 138.013741,
-      "bytes": 1657043,
-      "sha256": "993c3576b84647c2dddd735c75a833d588ebfb4ca5acfe4b90827380ba8bd896"
+      "duration": 160.109346,
+      "audio_duration": 160.149388,
+      "bytes": 1922551,
+      "sha256": "26e558a79a9952a0c172539cfccf32553c48dec80e0bc979cca47011c6024e40",
+      "effects": {
+        "bytes": 179700,
+        "sha256": "5278d6c351f99a4a0e86d6e54c9446fa94fcbea604543f4e0683d84595f0923f",
+        "events": 26,
+        "kihaps": 0
+      }
     },
     {
       "lessonId": "yul-gok",
       "cues": 40,
-      "duration": 185.46975,
-      "audio_duration": 185.509751,
-      "bytes": 2226930,
-      "sha256": "dc8fc3b2a8a2fbe270304c48fea5bf56dd2ced02a71fcf6bcab4946af084450e"
+      "duration": 210.005619,
+      "audio_duration": 210.045624,
+      "bytes": 2521278,
+      "sha256": "f23d0c7db8987196659fb66ad9f2bc5cdd0b8c02f61b3ecd8a38c2533590f771",
+      "effects": {
+        "bytes": 231517,
+        "sha256": "fdb180497476d3aaa4c83ce21d62ba89f6c36e9e166552e6a7d1fb65e97663a9",
+        "events": 30,
+        "kihaps": 0
+      }
     },
     {
       "lessonId": "joong-gun",
       "cues": 34,
-      "duration": 171.497008,
-      "audio_duration": 171.537052,
-      "bytes": 2059224,
-      "sha256": "1dbf611507fcd17b688ca4e6ecfc901b90f1716b076330af6d3e8ce7a02d409c"
+      "duration": 197.837284,
+      "audio_duration": 197.877324,
+      "bytes": 2375201,
+      "sha256": "1e2e3a912eff03906cfa06a6954dc9ebff6f9e965d9573f970f0352167c93d86",
+      "effects": {
+        "bytes": 218562,
+        "sha256": "316b69958b1b4bd8fc840ffd5f972077bcc103ca9b48e4c80fb65a3d641f8f13",
+        "events": 29,
+        "kihaps": 0
+      }
     },
     {
       "lessonId": "songahm-1",
       "cues": 20,
-      "duration": 95.069658,
-      "audio_duration": 95.10966,
-      "bytes": 1142013,
-      "sha256": "ca008fe23f04e62550b45938e612e121745dab7698ef1fb195b0625b1ffcf21a"
+      "duration": 110.664627,
+      "audio_duration": 110.704671,
+      "bytes": 1329154,
+      "sha256": "e452a1a3559672bacc17a4ba354f77f07dc7e61a7f4e93673cca769979707b1f",
+      "effects": {
+        "bytes": 128651,
+        "sha256": "eebe6183d72619c995f7391fc10745ec4616a0c049f4502c5b8266eaf028535d",
+        "events": 20,
+        "kihaps": 2
+      }
     },
     {
       "lessonId": "songahm-2",
       "cues": 25,
-      "duration": 115.735987,
-      "audio_duration": 115.776009,
-      "bytes": 1390280,
-      "sha256": "d7686681b2f7bcfa28693426eb72d0cc25ca46ac54d7eb3beed4fb2830e35911"
+      "duration": 135.269776,
+      "audio_duration": 135.309796,
+      "bytes": 1624442,
+      "sha256": "b9f94ba87e9a47d613c8c7548b041262d1a43c12cfcf36b7074213adfb6a20ae",
+      "effects": {
+        "bytes": 157204,
+        "sha256": "a9cf4da20df471cc0efb664a3274feb5dddba6849ef68a172ab0bdbbc728d022",
+        "events": 25,
+        "kihaps": 2
+      }
     },
     {
       "lessonId": "songahm-3",
       "cues": 30,
-      "duration": 131.893151,
-      "audio_duration": 131.933152,
-      "bytes": 1584004,
-      "sha256": "8bb91314324bf68d5fc752d2a26b968e2769f7fdbcffac108b5abb813499345b"
+      "duration": 152.917786,
+      "audio_duration": 152.957823,
+      "bytes": 1836347,
+      "sha256": "89144397d5c1268794444ce6c3b8d6aa4edef6d46cd15c1877fdf22e3d16d495",
+      "effects": {
+        "bytes": 181208,
+        "sha256": "e620376d2579f241e220156908c30b70decf07b463c2d4d57594e54539a2ebf9",
+        "events": 31,
+        "kihaps": 3
+      }
     }
   ]
 }

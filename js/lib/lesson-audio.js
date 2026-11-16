@@ -7,6 +7,9 @@ export function createLessonAudio(audio,{onFail=()=>{},now=()=>performance.now()
  function update({time,playing,rate}){
   if(!audio||failed||!enabled)return true;
   if(!playing){stop();return true;}
+  // A decoder can reach the padded end a frame before the visual clock.
+  // Calling play() on an ended element would restart it at zero.
+  if(audio.ended&&Number.isFinite(audio.duration)&&time>=audio.duration-.20){stop();return true;}
   if(audio.playbackRate!==rate)audio.playbackRate=rate;
   if(audio.readyState>=1&&Math.abs(audio.currentTime-time)>.16&&(!audio.seeking||lastSeek===null||Math.abs(lastSeek-time)>.05)){
    try{audio.currentTime=time;lastSeek=time;}catch{fail();return true;}

@@ -41,7 +41,8 @@
         {
           "type": "front-kick",
           "side": "left",
-          "height": "low"
+          "height": "low",
+          "keepHands": true
         }
       ],
       "footAction": "kick-left",
@@ -94,7 +95,8 @@
         {
           "type": "front-kick",
           "side": "right",
-          "height": "low"
+          "height": "low",
+          "keepHands": true
         }
       ],
       "footAction": "kick-right",
@@ -130,7 +132,8 @@
           "type": "knifehand-block",
           "side": "left",
           "handShape": "open",
-          "height": "middle"
+          "height": "middle",
+          "guarding": true
         }
       ],
       "footAction": "step-left",
@@ -165,7 +168,8 @@
           "type": "knifehand-block",
           "side": "right",
           "handShape": "open",
-          "height": "middle"
+          "height": "middle",
+          "guarding": true
         }
       ],
       "footAction": "step-right",
@@ -355,7 +359,8 @@
       "actions": [
         {
           "type": "assisted-block",
-          "side": "left"
+          "side": "left",
+          "height": "high"
         }
       ],
       "footAction": "close-then-step-left",
@@ -405,7 +410,8 @@
       "actions": [
         {
           "type": "assisted-block",
-          "side": "right"
+          "side": "right",
+          "height": "high"
         }
       ],
       "footAction": "land-right",

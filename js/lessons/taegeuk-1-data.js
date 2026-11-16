@@ -77,8 +77,8 @@ const RAW = [
         lhi:[CX-2,205], rhi:[CX+18,207], lk:[CX-28,268], rk:[CX+24,282],
         lf:[CX-44,344], rf:[CX+30,350] } },
   // 9: Step forward, walking stance, right foot forward, left middle punch — KIHAP
-  { name:'Left Middle Punch — KIHAP!', korean:'왼 몸통지르기 기합! (9)', icon:'⚡', kihap:true, dir:'←',
-    desc:'Step forward with right foot. Walking stance. Left fist punches to middle section. KIHAP!',
+  { name:'Left Middle Punch — KIHAP!', korean:'왼 몸통지르기 기합! (9)', icon:'⚡', kihap:false, dir:'←',
+    desc:'Step forward with right foot. Walking stance. Left fist punches to middle section.',
     p:{ head:[CX+5,72], neck:[CX+4,97], ls:[CX-22,108], rs:[CX+38,111],
         le:[CX-55,144], re:[CX+32,154], lh:[CX-65,150], rh:[CX+38,168],
         lhi:[CX-2,205], rhi:[CX+18,207], lk:[CX+16,282], rk:[CX-40,265],
@@ -186,18 +186,18 @@ export const LESSON = Object.freeze({
   officialMovements: 18,          // commonly cited count — DRAFT until reviewed
   mappingStatus: 'draft',        // movement numbers, Korean terms and kihap cues are a draft mapping
   poseCount: 20,
-  // Kihap placement as authored in the original animation (movements 10 and 18).
-  kihapMovements: [10, 18],
+  // Lehigh Valley Taekwondo's published 18-count reference marks movement 18.
+  kihapMovements: [18],
   review: Object.freeze({
     status: 'pending',
     reviewer: null,
     reviewedOn: null,
     openQuestions: Object.freeze([
-      'Kihap placement: the animation marks movements 10 and 18; many schools teach a single kihap on movement 18.',
+      'Kihap follows movement 18 in the linked Lehigh Valley Taekwondo reference; school teaching conventions may vary.',
       'Korean technique names (e.g. 반대지르기 / 바로지르기) and the pose-to-movement mapping are a draft and need checking against an authoritative source.',
       'Movement numbering follows the 18-count Kukkiwon convention; confirm against the reference text used by the school.',
       'Belt level at which the form is taught varies by school and organisation.',
-      'Stance depth and arm paths in the stick figure are approximate.',
+      'The modeled stance depth, hand shapes and movement paths remain illustrative and need instructor review.',
     ]),
   }),
 });

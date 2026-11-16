@@ -24,7 +24,8 @@
           "type": "knifehand-block",
           "side": "left",
           "handShape": "open",
-          "height": "middle"
+          "height": "middle",
+          "guarding": true
         }
       ],
       "footAction": "step-left",
@@ -59,7 +60,8 @@
           "type": "knifehand-block",
           "side": "right",
           "handShape": "open",
-          "height": "middle"
+          "height": "middle",
+          "guarding": true
         }
       ],
       "footAction": "turn-right",

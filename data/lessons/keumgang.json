@@ -156,10 +156,11 @@
       ],
       "gazeHeading": 90,
       "lift": "left",
-      "holdSeconds": 10,
       "notes": "",
       "footAction": "step-left",
-      "simultaneous": false
+      "simultaneous": false,
+      "tempo": "slow",
+      "duration": 10
     },
     {
       "n": 9,
@@ -287,10 +288,11 @@
       ],
       "gazeHeading": -90,
       "lift": "right",
-      "holdSeconds": 10,
       "notes": "",
       "footAction": "step-left",
-      "simultaneous": false
+      "simultaneous": false,
+      "tempo": "slow",
+      "duration": 10
     },
     {
       "n": 16,
@@ -343,10 +345,11 @@
       ],
       "gazeHeading": -90,
       "lift": "right",
-      "holdSeconds": 10,
       "notes": "",
       "footAction": "step-left",
-      "simultaneous": false
+      "simultaneous": false,
+      "tempo": "slow",
+      "duration": 10
     },
     {
       "n": 19,
@@ -474,10 +477,11 @@
       ],
       "gazeHeading": 90,
       "lift": "left",
-      "holdSeconds": 10,
       "notes": "",
       "footAction": "step-left",
-      "simultaneous": false
+      "simultaneous": false,
+      "tempo": "slow",
+      "duration": 10
     },
     {
       "n": 26,

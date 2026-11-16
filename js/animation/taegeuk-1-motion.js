@@ -2,6 +2,7 @@
    Draft study aid: not instructor-reviewed. One clock drives the shared rig. */
 import {POSES} from '../lessons/taegeuk-1-data.js';
 import {BODY,clamp,add,sub,scale,norm,rotY,rotX,solveTwoBone,softArmTarget,minimumJerk} from './motion-math.js';
+import {IMPACT,driveStart} from './technique-timing.js';
 const mix=(a,b,u)=>a+(b-a)*u,mix3=(a,b,u)=>a.map((v,i)=>mix(v,b[i],u));
 const phase=(u,a=0,b=1)=>minimumJerk((u-a)/(b-a));
 const arc=u=>Math.sin(Math.PI*clamp(u,0,1))**2;
@@ -72,18 +73,19 @@ export function indexAtTime(t){
  for(let i=1;i<plans.length;i++){if(t<plans[i].start)return i-1;if(t<=plans[i].at)return i;}
  return plans.length-1;
 }
-function armPath(plan,u){
+function armPath(plan,u,durationScale=1){
  const {kind,side,before,after}=plan;
  if(kind==='ready'||kind==='kick')return {hands:mixHands(before.hands,after.hands,phase(u)),poles:mixHands(before.poles,after.poles,phase(u))};
- const mid=chamber(kind==='combo'?'low':kind,side);
+ const mid=chamber(kind==='combo'?'low':kind,side),drive=driveStart(plan.duration,durationScale);
  if(kind==='combo'){
   const block=armTargets('low',side);
-  if(u<.30)return {hands:mixHands(before.hands,mid.hands,phase(u,0,.30)),poles:mixHands(before.poles,mid.poles,phase(u,0,.30))};
-  if(u<.63)return {hands:mixHands(mid.hands,block.hands,phase(u,.30,.63)),poles:mixHands(mid.poles,block.poles,phase(u,.30,.63))};
-  return {hands:mixHands(block.hands,after.hands,phase(u,.63,1)),poles:mixHands(block.poles,after.poles,phase(u,.63,1))};
+  const blockAt=.46,blockDrive=driveStart(plan.duration,durationScale,false,blockAt);
+  if(u<blockDrive)return {hands:mixHands(before.hands,mid.hands,phase(u,0,blockDrive)),poles:mixHands(before.poles,mid.poles,phase(u,0,blockDrive))};
+  if(u<blockAt)return {hands:mixHands(mid.hands,block.hands,phase(u,blockDrive,blockAt)),poles:mixHands(mid.poles,block.poles,phase(u,blockDrive,blockAt))};
+  return {hands:mixHands(block.hands,after.hands,phase(u,drive,IMPACT)),poles:mixHands(block.poles,after.poles,phase(u,drive,IMPACT))};
  }
- if(u<.42)return {hands:mixHands(before.hands,mid.hands,phase(u,0,.42)),poles:mixHands(before.poles,mid.poles,phase(u,0,.42))};
- const v=phase(u,.42,1),hands=mixHands(mid.hands,after.hands,v);
+ if(u<drive)return {hands:mixHands(before.hands,mid.hands,phase(u,0,drive)),poles:mixHands(before.poles,mid.poles,phase(u,0,drive))};
+ const v=phase(u,drive,IMPACT),hands=mixHands(mid.hands,after.hands,v);
  if(kind==='low'){hands[side][0]+=sign(side)*.04*arc(v);hands[side][2]+=.03*arc(v);}
  return {hands,poles:mixHands(mid.poles,after.poles,v)};
 }
@@ -106,10 +108,10 @@ function solvePose({pelvis,yaw,feet,hands,poles,lean=0,twist=0,headYaw=0},t){
  }
  return{t,pelvis,yaw,chestYaw,lean,headYaw,breath:0,arms,legs};
 }
-export function poseAtTime(rawT){
+export function poseAtTime(rawT,{durationScale=1}={}){
  const t=clamp(rawT,0,DURATION),i=indexAtTime(t),plan=plans[i];
  if(i===0)return solvePose(initial,t);
- const u=clamp((t-plan.start)/plan.duration,0,1),step=phase(u,0,plan.kind==='combo'?.63:1),q=phase(u);
+ const u=clamp((t-plan.start)/plan.duration,0,1),step=phase(u,0,plan.kind==='combo'?.46:i===19?1:IMPACT),q=phase(u,0,i===19?1:IMPACT);
  const yaw=plan.before.yaw+plan.dyaw*q,pelvis=mix3(plan.before.pelvis,plan.after.pelvis,step);
  if(plan.kind!=='kick'&&i!==19){const shift=rotY([-sign(plan.moving)*.035*arc(step),-.012*arc(step),0],yaw);for(let c=0;c<3;c++)pelvis[c]+=shift[c];}
  const feet={};
@@ -119,12 +121,12 @@ export function poseAtTime(rawT){
   if(i===19){const f=phase(u,side==='right'?0:.45,side==='right'?.55:1);pos=mix3(a.pos,b.pos,f);pos[1]+=.065*arc(f);}
   else if(plan.kind==='kick'&&side===plan.side){
    const knee=add(pelvis,rotY([sign(side)*.095,-.22,.14],yaw)),end=add(pelvis,rotY([sign(side)*.095,.13,.83],yaw));
-   pos=u<.55?mix3(a.pos,knee,phase(u,0,.55)):mix3(knee,end,phase(u,.55,1));
+   const drive=driveStart(plan.duration,durationScale,true);pos=u<drive?mix3(a.pos,knee,phase(u,0,drive)):mix3(knee,end,phase(u,drive,IMPACT));
   }else if(side===plan.support){
    const ball=add(a.pos,rotY([0,0,BODY.ballOffset],a.yaw));pos=sub(ball,rotY([0,0,BODY.ballOffset],fyaw));
   }else if(plan.landing){
    const chamber=add(pelvis,rotY([sign(side)*.095,-.22,.14],yaw));
-   pos=u<.35?mix3(a.pos,chamber,phase(u,0,.35)):mix3(chamber,b.pos,phase(u,.35,1));
+   pos=u<.35?mix3(a.pos,chamber,phase(u,0,.35)):mix3(chamber,b.pos,phase(u,.35,IMPACT));
   }else{
    pos=mix3(a.pos,b.pos,step);pos[1]+=.068*arc(step);
    const detour=rotY([sign(side)*.04*arc(step),0,0],yaw);pos=add(pos,detour);
@@ -132,7 +134,9 @@ export function poseAtTime(rawT){
   feet[side]={pos,yaw:fyaw,pitch:mix(a.pitch||0,b.pitch||0,q)};
  }
  if(i===19){pelvis[0]=(feet.left.pos[0]+feet.right.pos[0])/2;pelvis[2]=(feet.left.pos[2]+feet.right.pos[2])/2;pelvis[1]=mix(plan.before.pelvis[1],1,q)-.04*arc(q);}
- const arms=armPath(plan,u),lean=mix(plan.before.lean||0,plan.after.lean||0,q)+.6*arc(q);
+ const arms=armPath(plan,u,durationScale),lean=mix(plan.before.lean||0,plan.after.lean||0,q)+.6*arc(q);
  return solvePose({pelvis,yaw,feet,...arms,lean:i===19?lean+6*arc(phase(u,.6,1)):lean,twist:-3*arc(q),headYaw:clamp(plan.dyaw*.045,-8,8)*arc(q)},t);
 }
 export function poseAtIndex(i){return poseAtTime(CHAPTERS[clamp(Math.trunc(i),0,CHAPTERS.length-1)].at);}
+
+export const referencePlans=plans;

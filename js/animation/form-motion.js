@@ -1,6 +1,7 @@
 /* Source-specific movement plans, retargeted to the approved connected rig.
    Geometry and timing are illustrative; source counts remain separate from poses. */
 import {BODY,clamp,add,sub,scale,norm,rotY,rotX,solveTwoBone,softArmTarget,minimumJerk} from './motion-math.js';
+import {IMPACT,isDeliberate,driveStart} from './technique-timing.js';
 const sides=['left','right'],sign=s=>s==='left'?1:-1,other=s=>s==='left'?'right':'left';
 const mix=(a,b,u)=>a+(b-a)*u,mix3=(a,b,u)=>a.map((v,i)=>mix(v,b[i],u));
 const phase=(u,a=0,b=1)=>minimumJerk((u-a)/(b-a));
@@ -90,14 +91,14 @@ const compoundTypes=new Set(['double-knifehand-block','twin-knifehand-block','do
 export const SUPPORTED_TECHNIQUES=Object.freeze([...Object.keys(targets),...compoundTypes,'front-kick','side-kick','turning-side-kick','roundhouse-kick','crescent-kick','knee-strike','jump-front-kick','jump-side-kick','double-front-kick','bending-ready','ready']);
 function neutral(){return {hands:{left:[.085,.08,.21],right:[-.085,.08,.21]},open:{left:0,right:0},roll:{left:0,right:0}};}
 function armTargets(actions,bodyHeading=0){
- const state=neutral();
+ const state=neutral(),activeSides=new Set(actions.filter(a=>!a.type.includes('kick')&&!['knee-strike','bending-ready','ready'].includes(a.type)).flatMap(a=>a.side==='both'?sides:[a.side]));
  for(const action of actions){
   const {type}=action,side=(action.side==='both'?action.leadSide:action.side)==='right'?'right':'left',s=sign(side),o=other(side);
   if(type==='ready')continue;
   if(type.includes('kick')||type==='knee-strike'||type==='bending-ready'){
-   for(const v of sides)state.hands[v]=[sign(v)*.16,.35,.23];continue;
+   for(const v of sides)if(!activeSides.has(v))state.hands[v]=[sign(v)*.16,.35,.23];continue;
   }
-  state.hands[o]=[sign(o)*.15,.05,0];
+  if(!activeSides.has(o))state.hands[o]=[sign(o)*.15,.05,0];
   if(targets[type])state.hands[side]=targets[type](s);
   else if(type==='double-knifehand-block'||type==='twin-knifehand-block'){
    state.hands[side]=[s*.18,.37,.38];state.hands[o]=[-s*.04,.26,.21];
@@ -116,10 +117,12 @@ function armTargets(actions,bodyHeading=0){
    state.hands.left=[.38,.68,.05];state.hands.right=[-.38,.68,.05];
    if(action.side!=='both'&&type==='mountain-block'){state.hands[side]=[s*.35,.76,.09];state.hands[o]=[-s*.28,.06,.23];}
   }else if(type==='diamond-block'){
-   state.hands[side]=[s*.13,.82,.14];state.hands[o]=[-s*.26,.39,.33];
+   state.hands[side]=[s*.13,.82,.14];state.hands[o]=[-s*.23,-.06,.18];
   }else if(type==='diamond-middle-block'){
    state.hands[side]=[s*.24,.43,.30];state.hands[o]=[-s*.14,.69,.20];
-  }else if(['opening-block','low-opening-block','knifehand-low-opening-block','double-low-block','twin-low-block'].includes(type)){
+  }else if(type==='opening-block'){
+   state.hands.left=[.27,.43,.26];state.hands.right=[-.27,.43,.26];
+  }else if(['low-opening-block','knifehand-low-opening-block','double-low-block','twin-low-block'].includes(type)){
    state.hands.left=[.29,.10,.22];state.hands.right=[-.29,.10,.22];
    if(type==='knifehand-low-opening-block')state.open.left=state.open.right=1;
   }else if(['assisted-block','palm-assisted-outside-block','assisted-inside-block','assisted-high-side-block'].includes(type)){
@@ -161,19 +164,24 @@ function armTargets(actions,bodyHeading=0){
    state.hands.left=[.025,type==='covered-ready'?.52:.43,.23];state.hands.right=[-.025,type==='covered-ready'?.52:.43,.23];state.open.left=1;
   }else throw new Error(`Unsupported technique: ${type}`);
   if(openTypes.has(type)){state.open[side]=1;if(type.includes('double')||type.includes('twin'))state.open[o]=1;}
-  if(type==='spearhand'){state.hands[o]=[s*.07,.24,.26];state.open[o]=1;}
+  if(type==='spearhand'&&!activeSides.has(o)){state.hands[o]=[s*.07,.24,.26];state.open[o]=1;}
   if(type==='elbow-strike'){state.hands[o]=[s*.25,.33,.34];state.open[o]=1;}
   if(type==='target-punch'||type==='target-hammerfist'){state.hands[o]=[s*.11,type==='target-punch'?.32:.10,.48];state.open[o]=1;}
   if(type==='knee-break'){state.hands[o]=[-s*.04,.22,.38];state.open[o]=1;}
   if(type==='low-upturned-spearhand'||type==='pulling-uppercut')state.roll[side]=s*90;
   if(type==='reverse-knifehand-block')state.roll[side]=s*150;
+  if(type==='grasp-chamber'&&action.side==='both'){state.hands.left=[.10,.17,.17];state.hands.right=[-.10,.17,.17];}
   if(type==='small-hinge'&&action.hipSide){const h=sign(action.hipSide);state.hands.left=[h*.16,.08,.05];state.hands.right=[h*.10,.12,.09];}
   if(type==='wrist-turn')state.roll[side]=s*160;
   if(type==='target-grab')state.open[side]=1;
   if(type==='elbow-strike'&&action.mode==='rising'){state.hands[side]=[s*.06,.48,.10];state.hands[o]=[-s*.14,.05,0];}
-  if(type==='diamond-block'&&action.highSide){state.hands[action.highSide]=[sign(action.highSide)*.13,.82,.14];state.hands[action.lowSide]=[sign(action.lowSide)*.26,.39,.33];}
+  if(type==='diamond-block'&&action.highSide){state.hands[action.highSide]=[sign(action.highSide)*.13,.82,.14];state.hands[action.lowSide]=[sign(action.lowSide)*.23,-.06,.18];}
   if(action.highSide&&type==='mountain-block')state.hands[action.highSide][1]=.78;
-  if(action.height==='high'&&!['high-block','knifehand-high-block','x-rising-block'].includes(type))state.hands[side][1]=Math.max(.51,state.hands[side][1]);
+  if(action.guarding&&type==='knifehand-block'){state.hands[o]=[-s*.04,.26,.21];state.open[o]=1;}
+  if(action.otherHand==='opposite-shoulder')state.hands[o]=[s*.18,.43,.13];
+  if(action.height==='high'&&!['high-block','knifehand-high-block','x-rising-block'].includes(type)){for(const hand of action.side==='both'?sides:[side])state.hands[hand][1]=Math.max(['outside-block','inner-forearm-outward-block','assisted-block','wedging-block'].includes(type)?.60:.51,state.hands[hand][1]);}
+  if(type==='palm-block'&&(action.level==='downward'||action.height==='downward'))state.hands[side]=[s*.10,.13,.32];
+  if(type==='backfist'&&action.height==='middle')state.hands[side][1]=.30;
   if(action.height==='low')state.hands[side][1]=Math.min(.10,state.hands[side][1]);
   if(action.handShape==='open')state.open[side]=1;
   if(action.heading!==undefined)for(const hand of action.side==='both'?sides:[side]){const shoulder=[sign(hand)*BODY.shoulderOffset[0],BODY.shoulderOffset[1],0];state.hands[hand]=add(shoulder,rotY(sub(state.hands[hand],shoulder),action.heading-bodyHeading));}
@@ -188,7 +196,13 @@ function mixArms(a,b,u){return {
 function chamber(actions,bodyHeading){
  const a=armTargets(actions,bodyHeading);
  for(const {type,side='left'}of actions){
-  if(type.includes('kick')||type==='knee-strike'||type==='bending-ready'||compoundTypes.has(type)||type==='ready')continue;
+  if(type.includes('kick')||type==='knee-strike'||type==='bending-ready'||type==='ready')continue;
+  if(compoundTypes.has(type)){
+   if(!['covered-ready','tongmilgi','rock-pushing','small-hinge','large-hinge'].includes(type)){
+    a.hands.left=[-.065,.36,.24];a.hands.right=[.065,.40,.22];
+   }
+   continue;
+  }
   const s=sign(side);
   a.hands[side]=type.includes('punch')?[s*.15,.06,0]:type==='inside-block'?[s*.33,.38,.25]:type==='high-block'?[-s*.10,.26,.20]:[-s*.10,.40,.17];
   a.hands[other(side)]=[-s*.09,.19,.37];
@@ -198,7 +212,7 @@ function chamber(actions,bodyHeading){
 const initial=(ready='parallel')=>{
  ready=typeof ready==='object'?ready.stance:ready;
  const p={yaw:0,pelvis:[0,1,0],feet:{left:{pos:[.15,.07,0],yaw:0,pitch:0},right:{pos:[-.15,.07,0],yaw:0,pitch:0}},...neutral(),lean:0};
- if(ready.startsWith('closed')){p.feet.left.pos[0]=.035;p.feet.right.pos[0]=-.035;p.hands.left=[.025,ready==='closed-A'?.52:.32,.22];p.hands.right=[-.025,ready==='closed-A'?.52:.32,.22];p.open.left=1;}
+ if(ready.startsWith('closed')){p.feet.left.pos[0]=.035;p.feet.right.pos[0]=-.035;p.hands.left=[.025,ready==='closed-A'?.52:.12,.22];p.hands.right=[-.025,ready==='closed-A'?.52:.12,.22];p.open.left=1;}
  if(ready==='tongmilgi'){p.hands.left=[.04,.43,.25];p.hands.right=[-.04,.43,.25];p.open.left=p.open.right=1;}
  if(ready==='overlapped-hands-closed'){p.feet.left.pos[0]=.035;p.feet.right.pos[0]=-.035;p.hands.left=[.02,.05,.22];p.hands.right=[-.02,.05,.22];p.open.left=p.open.right=1;}
  return p;
@@ -236,7 +250,7 @@ function stanceFeet(before,entry,yaw){
   const raised=entry.lift||lead,support=other(raised),sx=sign(raised);
   feet[support]={...before.feet[support],pos:[...before.feet[support].pos],yaw};feet[support].pos[1]=.07;
   pelvis.splice(0,3,...add(feet[support].pos,rotY([sx*.04,.94,0],yaw)));
-  feet[raised]={pos:add(pelvis,rotY([sx*.10,-.37,.02],yaw)),yaw,pitch:0};
+  feet[raised]={pos:add(pelvis,rotY([sx*.10,-.37,.02],yaw)),yaw,pitch:65};
  }
  return {feet,pelvis};
 }
@@ -301,6 +315,7 @@ export function createFormMotion(form){
   for(let g=0;g<groups.length;g++){
    const part=rawEntry.footwork?.find?.(f=>f.phase===(groups[g][0].phase??g));
    const entry={...rawEntry,...part,turn:g?undefined:rawEntry.spin??rawEntry.turn};
+   if(groups[g][0].turn!==undefined)entry.turn=groups[g][0].turn;
    if(part?.step)entry.footAction='step-'+part.step;
    const actions=groups[g].map(a=>({...a,leadSide:entry.lead}));for(const a of actions)if(!SUPPORTED_TECHNIQUES.includes(a.type))throw new Error(`${form.id} movement ${entry.n}: unknown ${a.type}`);
    const yaw=actions[0].facing??entry.heading??entry.facing??before.yaw+(g?0:entry.turn||0);
@@ -322,6 +337,7 @@ export function createFormMotion(form){
     after.yaw=kick.heading!==undefined?yaw:yaw+(side?-s*70:round?-s*40:0);after.lean=side?-5:-2;
     if(kick.type==='crescent-kick'){const target=other(moving);after.hands[target]=[-s*.02,.31,.48];after.open[target]=1;}
    }
+   if(kick?.keepHands){after.hands=structuredClone(before.hands);after.open={...before.open};after.roll={...before.roll};}
    const bend=actions.find(a=>a.type==='bending-ready');
    if(bend){const raised=bend.side,support=other(raised);after.pelvis=add(before.feet[support].pos,rotY([sign(raised)*.04,.94,0],yaw));after.feet=structuredClone(before.feet);after.feet[raised]={pos:add(after.pelvis,rotY([sign(raised)*.11,-.37,.02],yaw)),yaw,pitch:0};}
    const rawTurn=g&&!part?yawDelta(before.yaw,after.yaw):(entry.turn??yawDelta(before.yaw,after.yaw));
@@ -332,7 +348,7 @@ export function createFormMotion(form){
    const start=time+(plans.length===1?1.3:.55),at=start+duration,index=plans.length;
    plans.push({index,start,at,duration,before,after,actions,moving,support,kick,kickYaw,dyaw,footStages,returning:false,step:(g===0||airborneBefore)&&moving!==null&&entry.footAction!=='stay',entry});
    const names=actions.map(a=>a.label||`${a.side&&a.side!=='both'?a.side[0].toUpperCase()+a.side.slice(1)+' ':''}${a.type.replaceAll('-',' ')}`);
-   POSES.push({name:entry.label&&groups.length===1?entry.label:names.join(' + '),korean:entry.korean||'',desc:entry.notes||`${entry.stance||'Front'} stance. ${names.join(' and ')}.`,official:[entry.n],subpose:groups.length>1?String(g+1):null,dir:['↑','←','↓','→'][((Math.round(yaw/90)%4)+4)%4],kihap:!!entry.kihap&&g===groups.length-1});
+   POSES.push({name:entry.label&&groups.length===1?entry.label:names.join(' + '),korean:entry.korean||'',desc:entry.notes||`${entry.stance||'Front'} stance. ${names.join(' and ')}.`,official:[entry.n],subpose:groups.length>1?String(g+1):null,dir:['↑','←','↓','→'][((Math.round(yaw/90)%4)+4)%4],kihap:actions.some(a=>a.kihap)||!!entry.kihap&&g===groups.length-1});
    before=after;time=at+(entry.holdSeconds||0);
   }
  }
@@ -343,14 +359,14 @@ export function createFormMotion(form){
  POSES.push({name:'Return to ready',korean:'',desc:'Return to the ready position. This closing transition is illustrative.',official:null,dir:'↑',kihap:false});
  const CHAPTERS=plans.map(({index,start,at,duration=0})=>({index,start,at,duration})),DURATION=at+.8;
  function indexAtTime(t){for(let i=1;i<plans.length;i++){if(t<plans[i].start)return i-1;if(t<=plans[i].at)return i;}return plans.length-1;}
- function stateAtTime(raw){
+ function stateAtTime(raw,durationScale=1){
   const t=clamp(raw,0,DURATION),index=indexAtTime(t),p=plans[index];if(index===0)return p.after;
-  const u=clamp((t-p.start)/p.duration,0,1),q=phase(u),a=p.before,b=p.after;
+  const u=clamp((t-p.start)/p.duration,0,1),deliberate=isDeliberate(p),impact=deliberate?1:IMPACT,drive=driveStart(p.duration,durationScale,!!p.kick,impact),q=phase(u,0,impact),a=p.before,b=p.after;
   const state={yaw:a.yaw+p.dyaw*q,chestYaw:(a.chestYaw??a.yaw)+(p.dyaw+yawDelta((a.chestYaw??a.yaw)+p.dyaw,b.chestYaw??b.yaw))*q,pelvis:mix3(a.pelvis,b.pelvis,q),feet:{},lean:mix(a.lean||0,b.lean||0,q),headYaw:mix(a.headYaw||0,b.headYaw||0,q)};
   for(const side of sides){
    const f=a.feet[side],end=b.feet[side],footTurn=Math.abs(p.dyaw)>=270?p.dyaw+yawDelta(f.yaw+p.dyaw,end.yaw):yawDelta(f.yaw,end.yaw),fyaw=f.yaw+footTurn*q;
    let pos;
-   if(p.footStages){const n=p.footStages.length-1,x=u*n,j=Math.min(n-1,Math.floor(x)),local=x-j,v=phase(local),from=p.footStages[j][side],to=p.footStages[j+1][side];
+   if(p.footStages){const n=p.footStages.length-1,x=clamp(u/impact,0,1)*n,j=Math.min(n-1,Math.floor(x)),local=x-j,v=phase(local),from=p.footStages[j][side],to=p.footStages[j+1][side];
     if(from.pos[1]>.15&&to.pos[1]<.15){const chamber=add(state.pelvis,rotY([sign(side)*.10,-.24,.15],state.yaw));pos=local<.38?mix3(from.pos,chamber,phase(local,0,.38)):mix3(chamber,to.pos,phase(local,.38,1));}
     else pos=mix3(from.pos,to.pos,v);
     if(Math.hypot(...sub(from.pos,to.pos))>.01)pos[1]+=.065*arc(v);
@@ -358,36 +374,41 @@ export function createFormMotion(form){
    else if(p.returning){const v=phase(u,side==='right'?0:.45,side==='right'?.55:1);pos=mix3(f.pos,end.pos,v);pos[1]+=.065*arc(v);}
    else if(p.kick&&side===p.moving){
     const chamber=add(state.pelvis,rotY([sign(side)*.095,-.24,.14],p.kickYaw));
-    pos=u<.52?mix3(f.pos,chamber,phase(u,0,.52)):mix3(chamber,end.pos,phase(u,.52,1));
+    pos=u<drive?mix3(f.pos,chamber,phase(u,0,drive)):mix3(chamber,end.pos,phase(u,drive,impact));
     if(p.kick.type.includes('roundhouse'))pos=add(pos,rotY([sign(side)*.10*arc(q),0,0],p.kickYaw));
-    if(p.kick.type==='crescent-kick')pos=add(pos,rotY([sign(side)*.23*Math.sin(Math.PI*phase(u,.52,1)),.12*arc(q),0],p.kickYaw));
+    if(p.kick.type==='crescent-kick')pos=add(pos,rotY([sign(side)*.23*Math.sin(Math.PI*phase(u,drive,impact)),.12*arc(q),0],p.kickYaw));
    }else if(f.pos[1]>.15&&end.pos[1]<.15){
-    const chamber=add(state.pelvis,rotY([sign(side)*.10,-.24,.15],state.yaw));pos=u<.38?mix3(f.pos,chamber,phase(u,0,.38)):mix3(chamber,end.pos,phase(u,.38,1));
+    const chamber=add(state.pelvis,rotY([sign(side)*.10,-.24,.15],state.yaw));pos=u<.38?mix3(f.pos,chamber,phase(u,0,.38)):mix3(chamber,end.pos,phase(u,.38,impact));
    }else if(/close-then-step/.test(p.entry?.footAction||'')&&side===p.moving){
-    const gathered=add(a.feet[other(side)].pos,rotY([sign(side)*.06,0,0],a.yaw));pos=u<.4?mix3(f.pos,gathered,phase(u,0,.4)):mix3(gathered,end.pos,phase(u,.4,1));pos[1]+=.065*arc(q);
+    const gathered=add(a.feet[other(side)].pos,rotY([sign(side)*.06,0,0],a.yaw));pos=u<.4?mix3(f.pos,gathered,phase(u,0,.4)):mix3(gathered,end.pos,phase(u,.4,impact));pos[1]+=.065*arc(q);
    }else{pos=mix3(f.pos,end.pos,q);if(side===p.moving&&p.step)pos[1]+=.065*arc(q);}
    state.feet[side]={pos,yaw:fyaw,pitch:mix(f.pitch||0,end.pitch||0,q)};
   }
   if(p.footStages){const mid=scale(add(state.feet.left.pos,state.feet.right.pos),.5),startOffset=sub(a.pelvis,scale(add(a.feet.left.pos,a.feet.right.pos),.5)),endOffset=sub(b.pelvis,scale(add(b.feet.left.pos,b.feet.right.pos),.5));for(const c of [0,2])state.pelvis[c]=mid[c]+mix(startOffset[c],endOffset[c],q);}
   if(p.returning){state.pelvis[0]=mix(a.pelvis[0],(state.feet.left.pos[0]+state.feet.right.pos[0])/2,q);state.pelvis[2]=mix(a.pelvis[2],(state.feet.left.pos[2]+state.feet.right.pos[2])/2,q);}
   if(p.kick?.type.startsWith('jump-')||p.kick?.airborne||p.entry?.footAction==='jump-back'||p.entry?.travel==='hop'&&!p.kick){const lift=.15*arc(q);state.pelvis[1]+=lift;for(const s of sides)state.feet[s].pos[1]+=lift;}
-  const mid=chamber(p.actions,b.yaw),arms=p.returning?mixArms(a,b,q):u<.4?mixArms(a,mid,phase(u,0,.4)):mixArms(mid,b,phase(u,.4,1));
+  const mid=chamber(p.actions,b.yaw),prepare=deliberate?.4:drive,arms=p.kick?.keepHands?{hands:structuredClone(a.hands),open:{...a.open},roll:{...a.roll}}:p.returning?mixArms(a,b,q):u<prepare?mixArms(a,mid,phase(u,0,prepare)):mixArms(mid,b,phase(u,prepare,impact));
   Object.assign(state,arms);return state;
  }
  // Rotation-minimizing joint planes are prepared on the same deterministic
  // timeline. They follow the previous anatomical plane through side kicks
  // and overhead/cross-body paths, rather than switching poles at a threshold.
- const frameRate=60,frames=[];let previous=null;
- for(let n=0;n<=Math.ceil(DURATION*frameRate);n++){const t=Math.min(DURATION,n/frameRate),p=solve(stateAtTime(t),t,previous,true);frames.push(p._planes);previous=p._planes;}
- function planeAt(t){
+ const frameRate=90;
+ function buildPlanes(scales=[]){const table=[];let previous=null;
+  for(let n=0;n<=Math.ceil(DURATION*frameRate);n++){const t=Math.min(DURATION,n/frameRate),scale=scales[indexAtTime(t)]||1,p=solve(stateAtTime(t,scale),t,previous,true);table.push(p._planes);previous=p._planes;}
+  return table;
+ }
+ const frames=buildPlanes();
+ function planeAt(t,table=frames){
   const x=clamp(t,0,DURATION)*frameRate,i=Math.floor(x),u=x-i,result={};
-  for(const key of Object.keys(frames[0])){
-   const a=frames[Math.max(0,i-1)][key].bend,b=frames[Math.min(i,frames.length-1)][key].bend,c=frames[Math.min(i+1,frames.length-1)][key].bend,d=frames[Math.min(i+2,frames.length-1)][key].bend;
+  for(const key of Object.keys(table[0])){
+   const a=table[Math.max(0,i-1)][key].bend,b=table[Math.min(i,table.length-1)][key].bend,c=table[Math.min(i+1,table.length-1)][key].bend,d=table[Math.min(i+2,table.length-1)][key].bend;
    result[key]={bend:norm(b.map((v,j)=>.5*((2*v)+(-a[j]+c[j])*u+(2*a[j]-5*v+4*c[j]-d[j])*u*u+(-a[j]+3*v-3*c[j]+d[j])*u*u*u)))};
   }
   return result;
  }
- function poseAtTime(t){return solve(stateAtTime(t),t,planeAt(t));}
+ function poseAtTime(t,{durationScale=1}={}){return solve(stateAtTime(t,durationScale),t,planeAt(t));}
+ function narrationSampler(scales){const calibrated=buildPlanes(scales);return(t,{durationScale=1}={})=>solve(stateAtTime(t,durationScale),t,planeAt(t,calibrated));}
  const LESSON={id:form.id,officialMovements:form.movementCount??form.sequence.length,poseCount:POSES.length,mappingStatus:'draft',review:{status:'pending',reviewer:null,reviewedOn:null,openQuestions:[`Reference: ${form.referenceLabel||'the sources linked below'}.`,...(form.unresolved||[]),...(form.corrections||[]).map(c=>`Reference interpretation at count ${c.n}: ${c.chosen}`),...form.sequence.filter(e=>e.footworkVariant).map(e=>`Count ${e.n}: ${e.footworkVariant}`),'The modeled stance depths, hand shapes, paths, timing and closing transition need instructor review.','Belt mappings and teaching conventions vary by school.']}};
- return {POSES,LESSON,CHAPTERS,DURATION,indexAtTime,poseAtTime,referencePlans:plans,poseAtIndex:i=>poseAtTime(CHAPTERS[clamp(Math.trunc(i),0,CHAPTERS.length-1)].at)};
+ return {POSES,LESSON,CHAPTERS,DURATION,indexAtTime,poseAtTime,referencePlans:plans,narrationSampler,poseAtIndex:i=>poseAtTime(CHAPTERS[clamp(Math.trunc(i),0,CHAPTERS.length-1)].at)};
 }
