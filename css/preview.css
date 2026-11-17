@@ -64,3 +64,39 @@
 @media (max-width: 480px) {
   .event-filters, .event-meta { grid-template-columns: minmax(0, 1fr); }
 }
+
+.event-card.major-event { border-color: #ad7a23; }
+.event-card.major-event .strip { background: var(--gold); }
+.event-location { color: var(--gray-600); }
+.event-notes { font-size: .84rem; margin: 12px 0; color: var(--gray-600); }
+.event-links { display:flex; flex-wrap:wrap; align-items:center; gap:12px; }
+.event-body h3 a { color:inherit; text-decoration:none; }
+.event-body h3 a:hover { text-decoration:underline; }
+.filter-field .major-filter { display:flex; gap:8px; align-items:center; min-height:44px; }
+.major-filter input { width:18px; min-height:18px; }
+
+.discussion-card,.topic-detail { background:white;border:1px solid var(--gray-200);border-radius:var(--radius);padding:22px;margin-bottom:18px; }
+.discussion-card h3 { margin:10px 0; font-size:1.08rem; }
+.discussion-card h3 a { color:var(--navy); }
+.discussion-card p,.topic-detail p { margin:12px 0; overflow-wrap:anywhere; }
+.topic-detail { scroll-margin-top:90px; }
+.topic-detail h2 { margin:20px 0 10px; }
+.topic-author { font-size:.84rem;color:var(--gray-600); }
+.discussion-reply { padding:16px 0; border-bottom:1px solid var(--gray-200); }
+.discussion-form { display:grid;gap:10px;margin:24px 0;padding:20px;background:var(--off-white);border-radius:var(--radius); }
+.discussion-form label { font-weight:600; }
+.discussion-form textarea,.discussion-form input,.discussion-form select { width:100%;border:1px solid var(--gray-300);padding:12px;border-radius:6px;font:inherit; }
+.discussion-form .discussion-consent { display:flex;align-items:flex-start;gap:10px;font-size:.86rem; }
+.discussion-consent input { width:18px;flex:0 0 18px;margin-top:3px; }
+.discussion-form button { justify-self:start; }
+.report-button { text-decoration:underline;color:var(--gray-600);font-size:.82rem;padding:8px 0;display:block; }
+.community-guidelines { padding:0 0 60px; }
+.form-status.error { color:var(--red-dark); }
+
+.event-advanced { grid-column:1 / -1; }
+.event-advanced summary,.calendar-coverage summary { cursor:pointer; padding:8px 0;font-size:.88rem;font-weight:600; }
+.advanced-grid { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:12px 0; }
+.major-shortcuts { display:flex;flex-wrap:wrap;gap:10px;margin:18px 0; }
+.major-shortcuts a { color:var(--navy);font-weight:700;font-size:.84rem;border:1px solid #d4b77b;border-radius:20px;padding:8px 14px;background:#fff8e7; }
+.calendar-coverage p { font-size:.84rem; }
+@media(max-width:600px){.advanced-grid{grid-template-columns:1fr;}.events-hero{padding-top:30px;padding-bottom:30px;}}

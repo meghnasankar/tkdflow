@@ -7,9 +7,32 @@ import {
   bounded, fetchOwnProfile, ensureSchool, usernameAvailable, upsertProfile, updateProfile, currentSession,
 } from './account-ops.js';
 import { validateProfileInput, validatePasswordPair, diffProfile, routeForProfileLookup, pendingProfileFrom } from './profile-model.js';
+import { mayCreateAccount, isUnderMinimumAge, isKnownUnderMinimumProfile } from './age-gate.js';
 
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const TAKEN = 'That username is already taken. Try another.';
+
+/* Age policy gates (docs/account-age-policy.md). Any flow that can create an
+   account or a profile — sign-up, Google, profile completion — first needs
+   the age screen's explicit 'eligible' result for this session. Until then
+   it returns { kind: 'age-screen' } WITHOUT touching the client: no signUp,
+   no username RPC, no school write, no OAuth redirect. A whole-number age
+   under 13 typed into the profile form returns { kind: 'ineligible' } (the
+   page records it) — also before any call. Password sign-in, reset and
+   logout are not gated: they cannot create accounts. */
+const AGE_SCREEN = Object.freeze({ kind: 'age-screen' });
+const INELIGIBLE = Object.freeze({ kind: 'ineligible' });
+/* A stored legacy profile with an age under 13: the account is held — no
+   profile view/edit, no profile or school writes, nothing converted or
+   deleted. (This is a UI/flow rule; it does not block direct API access,
+   which needs the server-side gate and the owner review.) */
+const HELD = Object.freeze({ kind: 'held' });
+function ageGate(eligibility, rawAge) {
+  if (eligibility === 'ineligible') return INELIGIBLE;
+  if (!mayCreateAccount(eligibility)) return AGE_SCREEN;
+  if (isUnderMinimumAge(rawAge)) return INELIGIBLE;
+  return null;
+}
 
 /** Tracks which user a page is showing; in-flight results for an older
  *  user/session are discarded instead of rendered. */
@@ -42,13 +65,18 @@ async function provision(client, userId, values, isNewSchool, opts) {
   return { error };
 }
 
-/** After any sign-in: decide between profile page, completion form or error. */
+/** After any sign-in: decide between profile page, completion form or error.
+ *  Existing members go straight to their profile. A signed-in user with no
+ *  profile yet must have passed the age screen in this session before any
+ *  profile or school is written (opts.eligibility). */
 export async function routeSignedIn(client, session, opts = {}) {
   const lookup = await fetchOwnProfile(client, session.user.id, opts.ms);
   const route = routeForProfileLookup(lookup);
-  if (route === 'profile') return { kind: 'profile' };
+  if (route === 'profile') return isKnownUnderMinimumProfile(lookup.data) ? HELD : { kind: 'profile' };
   if (route === 'error') return { kind: 'error', message: friendlyError(lookup.error, 'Your profile could not be loaded. Please try again.') };
   const pending = pendingProfileFrom(session.user);
+  if (opts.eligibility === 'ineligible' || pending?.underMinimum) return INELIGIBLE;
+  if (!mayCreateAccount(opts.eligibility)) return { ...AGE_SCREEN, values: pending?.values || null };
   if (pending?.valid) {
     const r = await provision(client, session.user.id, pending.values, Boolean(pending.values.school_name), opts);
     if (!r.error) return { kind: 'profile' };
@@ -63,7 +91,9 @@ function profileError(r) {
   return { message: friendlyError(r.error, 'Your profile could not be saved. Please try again.') };
 }
 
-export async function register(client, { raw, email, password, confirm, redirectTo }, opts = {}) {
+export async function register(client, { raw, email, password, confirm, redirectTo, eligibility, enrollmentTicket }, opts = {}) {
+  const gate = ageGate(eligibility, raw?.age);
+  if (gate) return gate;
   const { values, errors, isNewSchool } = validateProfileInput(raw);
   if (Object.keys(errors).length) return { kind: 'invalid', fieldErrors: errors, message: 'Please fix the highlighted fields.' };
   if (!EMAIL_RE.test(email || '')) return { kind: 'invalid', field: 'email', message: 'Enter a valid email address.' };
@@ -75,7 +105,7 @@ export async function register(client, { raw, email, password, confirm, redirect
 
   const { data, error } = await bounded(() => client.auth.signUp({
     email, password,
-    options: { emailRedirectTo: redirectTo, data: { full_name: values.full_name, pending_profile: values } },
+    options: { emailRedirectTo: redirectTo, data: { full_name: values.full_name, pending_profile: values, ...(enrollmentTicket?{enrollment_ticket:enrollmentTicket}:{}) } },
   }), { ...opts, label: 'Sign-up' });
   if (error) return { kind: 'error', message: friendlyError(error, 'The account could not be created. Please try again.') };
   if (!data?.session) return { kind: 'check-email' };      // email confirmation required (or address already registered)
@@ -85,6 +115,8 @@ export async function register(client, { raw, email, password, confirm, redirect
 }
 
 export async function completeProfile(client, raw, opts = {}) {
+  const gate = ageGate(opts.eligibility, raw?.age);
+  if (gate) return gate;
   const { values, errors, isNewSchool } = validateProfileInput(raw);
   if (Object.keys(errors).length) return { kind: 'invalid', fieldErrors: errors, message: 'Please fix the highlighted fields.' };
   const { session, error } = await currentSession(client, opts.ms);
@@ -135,10 +167,12 @@ export async function loadOwnProfile(client, guard, opts = {}) {
   if (!guard.isCurrent(t)) return { kind: 'stale' };
   if (error) return { kind: 'error', message: friendlyError(error, 'Your profile could not be loaded. Please try again.') };
   if (!data) return { kind: 'missing' };
+  if (isKnownUnderMinimumProfile(data)) return HELD;        // never hand a held profile to the edit form
   return { kind: 'ok', profile: data };
 }
 
 export async function saveProfile(client, guard, original, raw, opts = {}) {
+  if (isKnownUnderMinimumProfile(original) || isUnderMinimumAge(raw?.age)) return HELD;
   const t = guard.token();
   const { values, errors, isNewSchool } = validateProfileInput(raw);
   if (Object.keys(errors).length) return { kind: 'invalid', fieldErrors: errors, message: 'Please fix the highlighted fields.' };
@@ -170,7 +204,11 @@ export async function saveProfile(client, guard, original, raw, opts = {}) {
   return { kind: 'saved', changes, profile: { ...original, ...changes } };
 }
 
+/** "Continue with Google" can create a new account, so it is gated like
+ *  sign-up: no OAuth redirect starts without the age screen's result. */
 export async function startGoogle(client, redirectTo, opts = {}) {
+  const gate = ageGate(opts.eligibility, '');
+  if (gate) return gate;
   const { error } = await bounded(() => client.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } }), { ...opts, label: 'Google sign-in' });
   return error ? { kind: 'error', message: friendlyError(error, 'Google sign-in could not start. Please try again.') } : { kind: 'redirecting' };
 }

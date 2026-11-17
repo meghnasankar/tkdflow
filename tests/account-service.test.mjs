@@ -106,3 +106,22 @@ test('friendlyError never echoes raw server text', () => {
   assert.match(friendlyError({ code: '42501', message: 'permission denied for table profiles' }), /sign in again/);
   assert.equal(friendlyError({ message: '<img src=x onerror=alert(1)>' }, 'fallback'), 'fallback');
 });
+
+// Browser privacy settings can block the property getter before getItem runs.
+test('a throwing localStorage getter cannot break session checks or held-account sign-out', () => {
+  const original = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  let reads = 0;
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, get() {
+    reads += 1;
+    throw new DOMException('Storage blocked', 'SecurityError');
+  } });
+  try {
+    assert.equal(hasStoredSession(cfg()), false);
+    assert.equal(reads, 1);
+    assert.equal(hasStoredSession(cfg({ supabaseUrl: 'not a url' })), false);
+    assert.equal(reads, 1, 'invalid configuration never reads storage');
+  } finally {
+    if (original) Object.defineProperty(globalThis, 'localStorage', original);
+    else delete globalThis.localStorage;
+  }
+});

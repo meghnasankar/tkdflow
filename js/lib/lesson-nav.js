@@ -193,5 +193,5 @@ export function officialLabel(pose) {
 export function poseDescription(pose, index, count) {
   const label = officialLabel(pose);
   return `3D character, pose ${index + 1} of ${count}: ${pose.name}${pose.kihap ? ', kihap' : ''}`
-    + (label ? `. ${label}, draft numbering.` : '.');
+    + (label ? `. ${label}.` : '.');
 }

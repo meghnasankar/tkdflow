@@ -1,23 +1,31 @@
 /* auth.html controller. Decisions live in lib/auth-flows.js; this file maps
    their outcomes to panels and messages. The requested mode is visible
    immediately; submit buttons stay disabled until the account client is
-   ready, and optional data (the school list) never blocks the page. */
+   ready, and optional data (the school list) never blocks the page.
+   Anything that can create an account (Create account, Continue with Google,
+   finishing a new profile) goes through the age screen first; see
+   lib/age-gate.js and docs/account-age-policy.md. */
 import { ACCOUNTS } from '../config.js';
 import { getAccountService, accountsConfigured, hasStoredSession } from '../lib/account-service.js';
 import { parseAuthLocation } from '../lib/profile-model.js';
-import { fetchSchoolNames, currentSession } from '../lib/account-ops.js';
+import { fetchSchoolNames, currentSession, bounded } from '../lib/account-ops.js';
 import {
-  signIn, register, completeProfile, requestReset, updatePassword, routeSignedIn, startGoogle,
+  signIn, register, completeProfile, requestReset, updatePassword, routeSignedIn, startGoogle, logout,
 } from '../lib/auth-flows.js';
+import {
+  createEligibilityStore, classifyAge, authEntryPanel, AGE_SCREEN_RETRY, ELIGIBLE, INELIGIBLE,
+} from '../lib/age-gate.js';
 import {
   populateBelts, populateSchools, wireNewSchool, readProfileForm, showFieldErrors, createStatus, withBusy,
 } from '../lib/profile-form.js';
 
 const $ = (id) => document.getElementById(id);
 const status = createStatus($('auth-msg'));
-const PANELS = ['status', 'login', 'register', 'check-email', 'complete', 'forgot', 'recovery'];
+const PANELS = ['status', 'age', 'age-guidance', 'login', 'register', 'check-email', 'complete', 'forgot', 'recovery'];
 const HERO = {
   status: ['Your TKDflow account', 'Member accounts'],
+  age: ['Join TKDflow', 'One quick question'],
+  'age-guidance': ['Learn with TKDflow', 'No account needed'],
   login: ['Welcome back', 'Sign in to your TKDflow account'],
   register: ['Join TKDflow', 'Free · No ads'],
   'check-email': ['Almost there', 'Confirm your email address'],
@@ -32,6 +40,9 @@ let flow = null;          // non-null while a flow owns navigation (prevents aut
 let routing = null;
 let schoolNames = [];
 let schoolsFailed = false;
+const eligibility = createEligibilityStore();   // 'eligible' | 'ineligible' | null — never the age itself
+let enrollmentTicket=null, enrollmentExpires=0;
+let afterAge = null;                            // what to continue with once the screen is passed
 
 function setReady(ready) {
   for (const id of SUBMITS) {
@@ -61,14 +72,83 @@ function showPanel(name, { keepStatus = false } = {}) {
 
 function goto(mode) {
   const target = mode === 'register' && !ACCOUNTS.signupEnabled ? 'login' : mode;
+  const entry = authEntryPanel(eligibility.read(), target);
+  if (entry === 'age-guidance') { showGuidance(); return; }   // known under-13 result: no login/reset forms either
+  if (target === 'register') { requireAge(showRegister); return; }
   showPanel(target);
   $(`panel-${target}`).querySelector('input, select')?.focus();
+}
+
+function showRegister() {
+  showPanel('register');
+  $('reg-name').focus();
+}
+
+/* ── age screen ── */
+function showGuidance() {
+  afterAge = null;
+  showPanel('age-guidance');
+  $('age-guidance-title').focus();
+}
+
+/** Run `next` only after an 'eligible' result in this session. */
+function requireAge(next) {
+  const state = eligibility.read();
+  if (state === INELIGIBLE) { showGuidance(); return; }
+  if (state === ELIGIBLE && (next!==showRegister || enrollmentTicket&&Date.now()<enrollmentExpires)) { next(); return; }
+  afterAge = next;
+  $('form-age').reset();
+  showFieldError('age-screen', '');
+  showPanel('age');
+  $('age-screen').focus();
+}
+
+function showFieldError(id, text) {
+  const input = $(id);
+  const msg = $(`${id}-error`);
+  msg.textContent = text;
+  msg.hidden = !text;
+  if (text) input.setAttribute('aria-invalid', 'true');
+  else input.removeAttribute('aria-invalid');
+}
+
+async function onAge(e) {
+  e.preventDefault();
+  const inputAge=Number($('age-screen').value);
+  const { result } = classifyAge($('age-screen').value);
+  if (result === 'unknown') {
+    showFieldError('age-screen', AGE_SCREEN_RETRY);
+    $('age-screen').focus();
+    return;
+  }
+  const next = afterAge || showRegister;
+  $('form-age').reset();                         // the typed age is not kept, even in the page
+  showFieldError('age-screen', '');
+  if (eligibility.record(result) !== ELIGIBLE) { showGuidance(); return; }
+  if(next===showRegister){
+    const button=$('form-age').querySelector('button');button.disabled=true;
+    const response=await bounded(()=>client.functions.invoke('enroll',{body:{age:inputAge}}),{label:'Enrollment'});button.disabled=false;
+    if(response.error||typeof response.data?.ticket!=='string'){status.show('The account service could not complete enrollment. Please try again.','error');return;}
+    enrollmentTicket=response.data.ticket;enrollmentExpires=Date.now()+response.data.expiresIn*1000;
+  }
+  afterAge = null;
+  next();
+}
+
+/** A whole-number age under 13 was entered in a profile form: record it,
+ *  clear what was typed, sign this device out if a session exists, and show
+ *  the public-content route. */
+function becomeIneligible(formId) {
+  eligibility.record('under-13');
+  if (formId) $(formId).reset();
+  if (client) logout(client, { stillSignedIn: () => hasStoredSession() });
+  showGuidance();
 }
 
 function showServiceState(kind, reason, onRetry) {
   showPanel('status', { keepStatus: true });
   $('status-title').textContent = {
-    disabled: 'Member accounts are paused',
+    disabled: 'Account service unavailable',
     unavailable: 'The account service is unavailable',
     error: 'We couldn’t finish signing you in',
     loading: 'Signing you in…',
@@ -107,6 +187,7 @@ function setup() {
   document.querySelectorAll('[data-signup-only]').forEach((el) => { el.hidden = !ACCOUNTS.signupEnabled; });
   document.querySelectorAll('[data-google]').forEach((el) => { el.hidden = !ACCOUNTS.googleEnabled; });
 
+  $('form-age').addEventListener('submit', onAge);
   $('form-login').addEventListener('submit', onLogin);
   $('form-register').addEventListener('submit', onRegister);
   $('form-complete').addEventListener('submit', onComplete);
@@ -129,8 +210,10 @@ function route(session) {
   routing ||= (async () => {
     try {
       showServiceState('loading', 'Checking your profile…');
-      const outcome = await routeSignedIn(client, session);
+      const outcome = await routeSignedIn(client, session, { eligibility: eligibility.read() });
       if (outcome.kind === 'profile') { location.assign('/profile.html'); return; }
+      if (outcome.kind === 'ineligible' || outcome.kind === 'held') { becomeIneligible(); return; }
+      if (outcome.kind === 'age-screen') { requireAge(() => showComplete(session, outcome)); return; }
       if (outcome.kind === 'error') {
         showServiceState('error', outcome.message, () => { routing = null; route(session); });
         return;
@@ -171,6 +254,7 @@ async function onLogin(e) {
 
 async function onRegister(e) {
   e.preventDefault();
+  if(!enrollmentTicket||Date.now()>=enrollmentExpires){requireAge(showRegister);return;}
   status.clear();
   showFieldErrors('reg', {});
   await withBusy($('btn-register'), 'Creating account…', async () => {
@@ -182,7 +266,11 @@ async function onRegister(e) {
         password: $('reg-password').value,
         confirm: $('reg-confirm').value,
         redirectTo: `${location.origin}/auth.html?mode=complete`,
+        eligibility: eligibility.read(),
+        enrollmentTicket,
       });
+      if (outcome.kind === 'ineligible') { becomeIneligible('form-register'); return; }
+      if (outcome.kind === 'age-screen') { requireAge(showRegister); return; }
       if (outcome.kind === 'invalid' || outcome.kind === 'error') { applyFieldErrors('reg', outcome); return; }
       if (outcome.kind === 'check-email') { showPanel('check-email'); return; }
       if (outcome.kind === 'profile') { location.assign('/profile.html'); return; }
@@ -200,7 +288,9 @@ async function onComplete(e) {
   await withBusy($('btn-complete'), 'Saving…', async () => {
     flow = 'completing';
     try {
-      const outcome = await completeProfile(client, readProfileForm('cp'));
+      const outcome = await completeProfile(client, readProfileForm('cp'), { eligibility: eligibility.read() });
+      if (outcome.kind === 'ineligible') { becomeIneligible('form-complete'); return; }
+      if (outcome.kind === 'age-screen') { requireAge(() => { showPanel('complete'); $('cp-name').focus(); }); return; }
       if (outcome.kind === 'profile') { status.show('Profile saved. Taking you to your profile…', 'success'); location.assign('/profile.html'); return; }
       if (outcome.kind === 'session-ended') { showPanel('login'); status.show(outcome.message, 'error'); return; }
       applyFieldErrors('cp', outcome);
@@ -272,7 +362,9 @@ async function onRecovery(e) {
 
 async function onGoogle() {
   status.clear();
-  const outcome = await startGoogle(client, `${location.origin}/auth.html?mode=complete`);
+  const outcome = await startGoogle(client, `${location.origin}/auth.html?mode=complete`, { eligibility: eligibility.read() });
+  if (outcome.kind === 'ineligible') { showGuidance(); return; }
+  if (outcome.kind === 'age-screen') { requireAge(onGoogle); return; }
   if (outcome.kind === 'error') status.show(outcome.message, 'error');
 }
 
@@ -281,6 +373,12 @@ async function main() {
   setup();
   const { mode, error: urlError } = parseAuthLocation(location.search, location.hash);
 
+  // A known under-13 result for this tab wins over every requested mode
+  // (?mode=login, forgot, recovery, complete, register, the header "Log in"
+  // link): show the public guidance before any form and WITHOUT starting
+  // the account client, so nothing can undo the result in this session.
+  if (authEntryPanel(eligibility.read(), mode) === 'age-guidance') { showGuidance(); return; }
+
   if (!accountsConfigured()) {
     showServiceState('disabled', ACCOUNTS.disabledReason);
     return;
@@ -288,6 +386,7 @@ async function main() {
 
   const initial = mode === 'register' && !ACCOUNTS.signupEnabled ? 'login' : mode;
   if (initial === 'complete') showServiceState('loading', 'Checking your sign-in…');
+  else if (initial === 'register') requireAge(showRegister);   // age screen before any account details
   else showPanel(initial);                       // requested mode visible immediately (#11)
 
   const service = await getAccountService();     // bounded: always resolves

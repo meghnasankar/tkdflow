@@ -1,0 +1,24 @@
+# Weekly event-calendar maintenance
+
+The owner requested a Sunday-evening update of current-year and next-year taekwondo events and authorized publication of verified event changes. The Codex automation `update-tkdflow-event-calendar` runs Sundays at 7 p.m. in the user's Eastern time zone. It continues in this chat; it is not a website-side scraper or a guarantee that private/unannounced events will be found.
+
+## Data contract
+
+`data/competitions.json` contains `lastReviewed`, `years`, a truthful coverage `note`, and `events`. Each listing records a stable id, name, year, dateStatus, start/end calendar dates or null for an officially announced date-TBA edition, venue/country/region, organization, style, level, format (`kind`), supported disciplines, major flag, source, eventUrl, sourceTitle and lastChecked. Registration deadlines remain null unless the organizer publishes an actual entry deadline; do not turn a discount date into a deadline.
+
+Never invent a future edition or dates from last year's pattern. Announced but undated entries belong in Dates TBA and never count down or match a specific month. Cancelled/postponed entries retain that state and are omitted from Upcoming. Keep previous editions archived. Do not silently resolve conflicting official dates: use the current organizer's event page where possible and record the discrepancy in notes.
+
+Major flags are for major championships/circuits, particularly ATU Nationals, AAU Nationals, USATKD Nationals, ATA nationals/worlds and international championships. Courses and camps are not major championships. Keep ITF organizations/circuits distinct. Keep separate para, poomsae, kyorugi or age-group events when their official entries are distinct.
+
+Known initial coverage is broad published-calendar coverage, not every local event worldwide. Sources include WT/para, ETU, ITF Vienna, ITF sport, ITF Union, Australian Taekwondo, USATKD, AAU, ATU, ATA, PATU, Taekwondo Canada, NCTA and USCDKA. Source evidence and endpoint details are in `docs/event-source-evidence-2026-11-16.md`. The initial source JSON was checked November 16, 2026: 440 listings in 74 countries with known locations (334 for 2026, 106 for 2027). Null/unknown countries stay unknown. Venue dates are not session schedules. `timezoneEstimated` identifies a regional fallback where an exact host timezone cannot be established; no event start-time countdown is displayed.
+
+## Weekly process
+
+1. Read local instructions. Inspect `main` and the worktree before editing. The user's main checkout may contain unrelated pending work; publish from a clean independent release checkout, preserving that work.
+2. Revisit official source calendars and event pages for the current and following year. Use the organizations' public calendar data endpoints when their pages load dynamically. Search for newly announced editions, revised venue/date information, cancellations and registration links. Follow the primary evidence rather than search snippets.
+3. Deduplicate by official event URL, dates, organization and discipline, checking likely title/country duplicates manually. Do not merge separate divisions merely because they share dates/venue. Retain all checked-source evidence; do not put credentials or private attendee information in the repository.
+4. Update listings, coverage totals and evidence notes. Preserve past records as an archive and roll the year filters forward when appropriate. Do not replace a verified date with a guess after a source outage; retain the prior verification date and describe the uncertainty.
+5. Run `node --test tests/events.test.mjs`, then `npm run check`. Inspect a representative desktop and phone preview: year, country, region, organization, major, discipline, format, TBA and month filters, link destinations, pagination and empty states. Check at least AAU, ATU and USATKD major-event records.
+6. Use the isolated `/Users/visakh/projects/tkdflow/.git/tkdflow-gh` profile only (Meghna). Commit the event changes, push a review branch, create a PR and attach it to the chat. Wait for CI and the hosting preview, then merge verified event changes. Do not change account/cloud settings or other product features as part of this routine.
+7. Verify production JSON matches the released data, the events page loads correctly, links use HTTPS and no temporary files are public. Synchronize only the released changes into the original checkout with before-hash checks and a backup.
+8. Report material additions, corrections, cancellations, major-event announcements and coverage gaps. If access, source conflicts or tests block publication, keep the last verified release live and report the concrete blocker.

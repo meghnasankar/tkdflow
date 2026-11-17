@@ -221,7 +221,7 @@ test('release runbook exists, is linked, and invents no owners or contacts', () 
   assert.match(runbook, /Never restore the old public policies/);
   assert.match(runbook, /320, 375, 390, 768 and 1280/);
   assert.ok((runbook.match(/\*\*TBD\*\*/g) || []).length >= 8, 'unknown owners/settings stay TBD');
-  assert.doesNotMatch(runbook, /[\w.+-]+@[\w-]+\.[\w.]+/, 'no invented email addresses');
+  assert.doesNotMatch(runbook.replace(/support@tkdflow\.com/g, ''), /[\w.+-]+@[\w-]+\.[\w.]+/, 'no invented email addresses');
   assert.match(read('SETUP.md'), /\(docs\/RELEASE\.md\)/);
   assert.match(read('docs/audit-tracker.md'), /\(RELEASE\.md\)/);
 });

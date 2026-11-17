@@ -31,8 +31,8 @@ export const ACCOUNTS = Object.freeze({
 
   /** Shown to visitors while accounts are switched off. */
   disabledReason:
-    'Member accounts are paused while the account service is restored and ' +
-    'privacy safeguards are reviewed. The forms library and lessons work without an account.',
+    'Sign-in is temporarily unavailable while TKDflow reconnects its account service. ' +
+    'All learning resources are available without an account.',
 
   /** Public Supabase project settings (Project Settings → API). */
   supabaseUrl: '',

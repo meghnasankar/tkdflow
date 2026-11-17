@@ -26,10 +26,12 @@ export function sessionStorageKey(cfg = ACCOUNTS) {
 
 /** Cheap check used by the navbar: is there a stored session at all?
  *  (The profile page validates it properly.) */
-export function hasStoredSession(cfg = ACCOUNTS, storage = globalThis.localStorage) {
+export function hasStoredSession(cfg = ACCOUNTS, storage) {
   const key = sessionStorageKey(cfg);
   if (!key) return false;
   try {
+    // The browser may throw from the localStorage getter itself.
+    if (storage === undefined) storage = globalThis.localStorage;
     return Boolean(storage?.getItem(key));
   } catch {
     return false;

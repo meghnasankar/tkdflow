@@ -1,6 +1,6 @@
-/* community.html — preview with labelled example post types only. */
+/* community.html — preview with labelled learning resources and discussion routes. */
 import { loadInto, showEmpty } from '../lib/data.js';
-import { h, replaceChildren } from '../lib/dom.js';
+import { h, replaceChildren, safeHref } from '../lib/dom.js';
 import { validateCommunity } from '../lib/validators.js';
 
 const $ = (id) => document.getElementById(id);
@@ -17,17 +17,17 @@ function render() {
   if (focusKey) document.querySelector(`[data-fk="${CSS.escape(focusKey)}"]`)?.focus();
 
   const shown = posts.filter((p) => active === 'all' || p.category === active);
-  $('community-summary').textContent = `${shown.length} example post type${shown.length === 1 ? '' : 's'}.`;
-  if (!shown.length) { showEmpty($('community-feed'), 'No examples in this category.'); return; }
+  $('community-summary').textContent = `${shown.length} resource${shown.length === 1 ? '' : 's'}.`;
+  if (!shown.length) { showEmpty($('community-feed'), 'No resources in this category.'); return; }
   replaceChildren($('community-feed'), ...shown.map((p) => h('article', { class: 'example-card' },
-    h('div', { class: 'example-meta' }, h('span', { class: 'sample-label' }, 'Example'), h('span', { class: 'badge badge-navy' }, p.kind)),
-    h('h3', {}, p.title),
+    h('div', { class: 'example-meta' }, h('span', { class: 'badge badge-navy' }, p.kind)),
+    h('h3', {}, h('a', {href:safeHref(p.url)}, p.title)),
     h('p', {}, p.body),
     h('div', { class: 'example-meta' }, ...p.tags.map((t) => h('span', { class: 'badge badge-muted' }, t))))));
 }
 
 loadInto($('community-feed'), '/data/community.json', {
-  title: 'The community preview could not be loaded.',
+  title: 'Community resources could not be loaded.',
   validate: validateCommunity,
   onData: (d) => { posts = d.posts; render(); },
 });

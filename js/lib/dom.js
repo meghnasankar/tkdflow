@@ -73,7 +73,7 @@ export const BADGE_CLASSES = ['badge-red', 'badge-gold', 'badge-navy', 'badge-gr
 export function safeHref(value) {
   if (typeof value !== 'string' || !value.trim()) return null;
   const v = value.trim();
-  if (/^[a-z0-9][a-z0-9-]*\.html(#[\w-]+)?$/i.test(v)) return v; // local page
+  if (/^[a-z0-9][a-z0-9-]*\.html(?:\?[^#\s]*)?(#[\w-]+)?$/i.test(v)) return v; // local page
   try {
     const url = new URL(v);
     return url.protocol === 'https:' ? url.href : null;

@@ -4,13 +4,13 @@
 <!-- layout:head -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Events — TKDflow</title>
-<meta name="description" content="Taekwondo competition listings on TKDflow, with past listings archived.">
+<title>Taekwondo events 2026–2027 — TKDflow</title>
+<meta name="description" content="Search official worldwide taekwondo events for 2026 and 2027 by year, country, organization, discipline and major championship.">
 <link rel="canonical" href="https://tkdflow.com/competitions.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="TKDflow">
-<meta property="og:title" content="Events — TKDflow">
-<meta property="og:description" content="Taekwondo competition listings on TKDflow, with past listings archived.">
+<meta property="og:title" content="Taekwondo events 2026–2027 — TKDflow">
+<meta property="og:description" content="Search official worldwide taekwondo events for 2026 and 2027 by year, country, organization, discipline and major championship.">
 <meta property="og:url" content="https://tkdflow.com/competitions.html">
 <meta property="og:image" content="https://tkdflow.com/assets/og-image.png">
 <meta property="og:image:type" content="image/png">
@@ -63,20 +63,22 @@
     <div class="container">
       <p class="section-label on-dark">Events</p>
       <h1>Taekwondo events</h1>
-      <p>Competition listings will only appear here with a link to the organiser’s official page and the date it was last checked. Always confirm dates, eligibility and registration with the organiser.</p>
+      <p>Explore 2026 and 2027 tournaments worldwide. Find major championships, compare organizations, and go straight to the official event page.</p>
     </div>
   </div>
 
   <div class="container">
     <div class="notice notice-info preview-notice" id="events-notice">
-      <p><strong>No verified upcoming events are listed yet.</strong> The older listings were added without an official source and their listed dates have passed, so they are kept below only as an unverified archive. Event submissions are not open yet.</p>
+      <p id="events-overview">Official event listings for 2026–2027.</p><details class="calendar-coverage"><summary>Sources and coverage</summary><p id="events-coverage"></p></details>
     </div>
 
+    <nav class="major-shortcuts" aria-label="Major national championships"><a href="/competitions.html?organization=USATKD&amp;major=1&amp;status=all">★ USATKD majors</a><a href="/competitions.html?organization=AAU&amp;major=1&amp;status=all">★ AAU majors</a><a href="/competitions.html?organization=ATU&amp;major=1&amp;status=all">★ ATU Nationals</a></nav>
     <section class="events-section" aria-labelledby="events-title">
       <h2 class="sr-only" id="events-title">Event listings</h2>
       <div class="tabs" role="group" aria-label="Show">
         <button type="button" class="tab-btn" data-status="upcoming" aria-pressed="true">Upcoming</button>
-        <button type="button" class="tab-btn" data-status="past" aria-pressed="false">Past (archive)</button>
+        <button type="button" class="tab-btn" data-status="past" aria-pressed="false">Past events</button>
+        <button type="button" class="tab-btn" data-status="announced" aria-pressed="false">Dates TBA</button>
         <button type="button" class="tab-btn" data-status="all" aria-pressed="false">All</button>
       </div>
 
@@ -85,11 +87,17 @@
           <label for="ev-q">Search</label>
           <div class="search-bar"><span aria-hidden="true">🔍</span><input type="search" id="ev-q" autocomplete="off" placeholder="Name, city or country"></div>
         </div>
-        <div class="filter-field"><label for="ev-style">Style</label><select id="ev-style" class="select-input"></select></div>
-        <div class="filter-field"><label for="ev-level">Level</label><select id="ev-level" class="select-input"></select></div>
+        <div class="filter-field"><label for="ev-year">Year</label><select id="ev-year" class="select-input"></select></div>
+
+        <div class="filter-field"><label for="ev-organization">Organization</label><select id="ev-organization" class="select-input"></select></div>
+
+
+
         <div class="filter-field"><label for="ev-country">Country</label><select id="ev-country" class="select-input"></select></div>
-        <div class="filter-field"><label for="ev-type">Event type</label><select id="ev-type" class="select-input"></select></div>
-        <div class="filter-field"><label for="ev-month">Month</label><input type="month" id="ev-month" class="select-input"></div>
+
+
+        <details class="event-advanced"><summary>More filters</summary><div class="advanced-grid"><div class="filter-field"><label for="ev-region">Region</label><select id="ev-region" class="select-input"></select></div><div class="filter-field"><label for="ev-kind">Event format</label><select id="ev-kind" class="select-input"></select></div><div class="filter-field"><label for="ev-style">Style</label><select id="ev-style" class="select-input"></select></div><div class="filter-field"><label for="ev-level">Level</label><select id="ev-level" class="select-input"></select></div><div class="filter-field"><label for="ev-type">Discipline</label><select id="ev-type" class="select-input"></select></div><div class="filter-field"><label for="ev-month">Month</label><input type="month" id="ev-month" class="select-input"></div></div></details>
+        <div class="filter-field"><label class="major-filter" for="ev-major"><input type="checkbox" id="ev-major"> Major championships only</label></div>
         <div class="filter-field"><button type="button" class="btn btn-secondary btn-sm" id="ev-this-month">This month</button></div>
         <div class="filter-field"><button type="reset" class="btn btn-secondary btn-sm" id="ev-clear">Clear filters</button></div>
       </form>
@@ -107,7 +115,7 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <p class="logo">TKDflow<span>.</span></p>
-        <p>A free taekwondo forms catalogue and training resource. Lesson content is awaiting review by a qualified instructor.</p>
+        <p>A free taekwondo learning resource created by Meghna Sankar from her training and research.</p>
       </div>
       <div class="footer-col">
         <h2>Learn</h2>
@@ -119,8 +127,8 @@
       <div class="footer-col">
         <h2>Community</h2>
         <ul>
-          <li><a href="/community.html">Community preview</a></li>
-          <li><a href="/forum.html">Forum preview</a></li>
+          <li><a href="/community.html">Community</a></li>
+          <li><a href="/forum.html">Forum</a></li>
           <li><a href="/competitions.html">Events</a></li>
         </ul>
       </div>

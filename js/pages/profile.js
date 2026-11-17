@@ -1,6 +1,11 @@
+import {bounded} from '../lib/account-ops.js';
 /* profile.html controller. All member text is rendered with textContent.
    A SessionGuard discards results that arrive for a user who is no longer
-   the signed-in user (sign-out or account switch in another tab). */
+   the signed-in user (sign-out or account switch in another tab).
+   Age policy (docs/account-age-policy.md): a tab with a known under-13 result
+   never starts the account client here, and a stored legacy profile with an
+   age under 13 is HELD — not shown, not editable, nothing written, converted
+   or deleted. */
 import { ACCOUNTS } from '../config.js';
 import { getAccountService, accountsConfigured, hasStoredSession } from '../lib/account-service.js';
 import { initials } from '../lib/profile-model.js';
@@ -10,6 +15,7 @@ import {
   populateBelts, populateSchools, wireNewSchool, readProfileForm, showFieldErrors, createStatus, withBusy,
 } from '../lib/profile-form.js';
 import { beltColor } from '../lib/belts.js';
+import { createEligibilityStore, INELIGIBLE } from '../lib/age-gate.js';
 import { h, replaceChildren } from '../lib/dom.js';
 
 const $ = (id) => document.getElementById(id);
@@ -20,6 +26,28 @@ let client = null;
 let original = null;   // last saved profile values
 let joinedAt = null;
 let email = '';
+const eligibility = createEligibilityStore();
+
+const publicLinks = () => [
+  h('a', { class: 'btn btn-primary', href: '/forms.html' }, 'Browse the forms library'),
+  h('a', { class: 'btn btn-secondary', href: '/taegeuk-1.html' }, 'Open the Taegeuk Il Jang lesson'),
+];
+
+const HELD_TITLE = 'This account is on hold';
+const HELD_TEXT =
+  'TKDflow individual accounts are for ages 13 and over. The age recorded on this profile is under 13, so the profile '
+  + 'can’t be viewed or edited here. Nothing has been deleted; the site owner will '
+  + 'review held accounts before member accounts reopen. The forms library and lessons work without signing in.';
+
+function showHeld() {
+  eligibility.record('under-13');
+  guard.switchTo(null);                         // invalidate pending profile/school responses
+  original = null;
+  email = '';
+  joinedAt = null;
+  replaceChildren($('edit-form'));               // drop any form fields from the page
+  showState(HELD_TITLE, HELD_TEXT, publicLinks());
+}
 
 function showState(title, text, actions = []) {
   $('profile-wrap').hidden = true;
@@ -80,6 +108,11 @@ async function load() {
   if (outcome.kind === 'signed-out') { location.assign('/auth.html'); return; }
   if (outcome.kind === 'error') { showState('Your profile could not be loaded', outcome.message, [retryButton('Try again', load)]); return; }
   if (outcome.kind === 'missing') { location.assign('/auth.html?mode=complete'); return; }
+  if (outcome.kind === 'held') {
+    showHeld();
+    await logout(client, { stillSignedIn: () => hasStoredSession() });   // local sign-out attempt only; the record is untouched
+    return;
+  }
   const p = outcome.profile;
   joinedAt = p.created_at || null;
   original = { full_name: p.full_name, username: p.username, age: p.age ?? null, belt_level: p.belt_level ?? null, school_name: p.school_name ?? null };
@@ -97,6 +130,11 @@ async function onSave(e) {
   await withBusy($('btn-save'), 'Saving…', async () => {
     const outcome = await saveProfile(client, guard, original, readProfileForm('p'));
     if (outcome.kind === 'stale') return;
+    if (outcome.kind === 'held') {
+      showHeld();
+      await logout(client, { stillSignedIn: () => hasStoredSession() });
+      return;
+    }
     if (outcome.kind === 'saved') {
       original = outcome.profile;
       renderProfile(original);
@@ -131,6 +169,12 @@ async function onLogout() {
 }
 
 async function main() {
+  // Known under-13 result in this tab: public routes only, before any profile
+  // form is shown or the account client starts.
+  if (eligibility.read() === INELIGIBLE) {
+    showState('You can use TKDflow without an account', 'Accounts aren’t available for you, but the forms library and lessons are free to use without an account or entering account details.', publicLinks());
+    return;
+  }
   if (!accountsConfigured()) {
     showState('Member accounts are paused', ACCOUNTS.disabledReason, [
       h('a', { class: 'btn btn-primary', href: '/forms.html' }, 'Browse the forms library'),
@@ -145,6 +189,12 @@ async function main() {
     return;
   }
   client = service.client;
+  $('connect-google').hidden=!ACCOUNTS.googleEnabled;
+  $('connect-google').addEventListener('click',async()=>{
+    $('connect-google').disabled=true;
+    const result=await bounded(()=>client.auth.linkIdentity({provider:'google',options:{redirectTo:`${location.origin}/profile.html`}}),{label:'Connecting Google'});
+    if(result.error){$('google-link-status').textContent='Google could not be connected. Please try again.';$('connect-google').disabled=false;}
+  });
   const { session, error } = await currentSession(client);
   if (error) { showState('We couldn’t check your sign-in', 'Please try again.', [retryButton('Try again', () => location.reload())]); return; }
   if (!session) { location.assign('/auth.html'); return; }

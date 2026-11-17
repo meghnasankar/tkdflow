@@ -9,11 +9,9 @@ export function validateForms(d) {
 }
 
 export function validateForum(d) {
-  if (!d || !Array.isArray(d.categories)) return 'expected { categories: [...] }';
-  for (const c of d.categories) {
-    if (typeof c?.id !== 'string' || typeof c.title !== 'string' || !Array.isArray(c.examples)) return `bad category ${c?.id}`;
-    if (c.examples.some((t) => typeof t !== 'string')) return `category ${c.id} has a non-text example`;
-  }
+  if (!d || !Array.isArray(d.categories) || !Array.isArray(d.topics)) return 'expected discussion categories and topics';
+  const ids=new Set(d.categories.map(c=>c.id));
+  for(const t of d.topics)if(!/^[a-f0-9-]{36}$/.test(t.id)||!ids.has(t.category)||typeof t.title!=='string'||typeof t.body!=='string')return 'invalid discussion guide';
   return null;
 }
 

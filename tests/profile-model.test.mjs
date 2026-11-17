@@ -77,3 +77,35 @@ test('pending profile from sign-up metadata', () => {
   assert.equal(pendingProfileFrom({ user_metadata: {} }), null);
   assert.equal(pendingProfileFrom({ user_metadata: { pending_profile: { username: 'BAD NAME' } } }).valid, false);
 });
+
+test('profile age: individual accounts are 13–99; under 13 is flagged, never accepted', () => {
+  const age = (v) => validateProfileInput({ ...good, age: v });
+  for (const v of ['13', '17', '18', '99', ' 13 ']) {
+    const r = age(v);
+    assert.deepEqual(r.errors, {}, v);
+    assert.equal(r.underMinimum, false);
+    assert.equal(r.values.age, Number(v));
+  }
+  for (const v of ['1', '5', '12', '012']) {
+    const r = age(v);
+    assert.match(r.errors.age, /13 and over/, v);
+    assert.equal(r.underMinimum, true, v);
+    assert.equal(r.values.age, null, 'an under-13 age is never passed on');
+  }
+  for (const v of ['0', '-12', '12.5', '1e1', 'abc', '100', '1000', '13a']) {
+    const r = age(v);
+    assert.ok(r.errors.age, v);
+    assert.equal(r.underMinimum, false, `${v} is malformed, not an under-13 signal`);
+    assert.doesNotMatch(r.errors.age, /13/, 'format errors do not reveal the threshold');
+  }
+  // blank stays optional — and is not evidence of eligibility (the age screen is)
+  assert.equal(age('').values.age, null);
+  assert.deepEqual(age('').errors, {});
+});
+
+test('pending sign-up data with an under-13 age is flagged', () => {
+  const user = (a) => ({ user_metadata: { pending_profile: { full_name: 'Min', username: 'min_ji', belt_level: 'Green Belt (7th Gup)', age: a } } });
+  assert.deepEqual([pendingProfileFrom(user(9)).valid, pendingProfileFrom(user(9)).underMinimum], [false, true]);
+  assert.deepEqual([pendingProfileFrom(user(13)).valid, pendingProfileFrom(user(13)).underMinimum], [true, false]);
+  assert.equal(pendingProfileFrom(user(null)).valid, true);
+});

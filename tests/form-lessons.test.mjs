@@ -19,7 +19,7 @@ test('all 23 catalogue forms have their own complete addressable lesson',()=>{
   assert.deepEqual([...new Set(m.POSES.flatMap(p=>p.official||[]))],f.sequence.map(e=>e.n));
   assert.match(html,new RegExp(`data-form-id="${f.id}"`));
   assert.match(html,/\/js\/pages\/form-lesson\.js/);
-  assert.match(html,/Awaiting review by a qualified instructor/);
+  assert.match(html,/Created by Meghna Sankar/);
   assert.equal(m.LESSON.review.status,'pending');assert.equal(m.LESSON.review.reviewer,null);
   for(const source of f.sources){assert.equal(new URL(source.url).protocol,'https:');assert.ok(source.title);assert.ok(html.includes(source.url.replaceAll('&','&amp;')));}
  }
