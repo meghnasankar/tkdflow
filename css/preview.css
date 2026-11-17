@@ -92,6 +92,15 @@
 .report-button { text-decoration:underline;color:var(--gray-600);font-size:.82rem;padding:8px 0;display:block; }
 .community-guidelines { padding:0 0 60px; }
 .form-status.error { color:var(--red-dark); }
+.discussion-actions,.discussion-section-head { display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:20px 0; }
+.discussion-section-head { justify-content:space-between; }
+.community-discussions { margin-top:28px; }
+.private-submissions { margin:28px 0; }
+.private-submissions,.discussion-form,#moderation { scroll-margin-top:90px; }
+.discussion-card,.topic-detail { overflow-wrap:anywhere;min-width:0; }
+.moderation-meta { font-size:.84rem;color:var(--gray-600); }
+.moderation-actions { display:flex;gap:12px;flex-wrap:wrap;margin-top:16px; }
+#moderation-queue { margin-top:16px; }
 
 .event-advanced { grid-column:1 / -1; }
 .event-advanced summary,.calendar-coverage summary { cursor:pointer; padding:8px 0;font-size:.88rem;font-weight:600; }

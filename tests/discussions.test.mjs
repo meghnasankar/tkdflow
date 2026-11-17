@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {PGlite} from '@electric-sql/pglite';
 import {safeHref} from '../js/lib/dom.js';
-import {discussionProblem,submitTopic,submitReply} from '../js/lib/discussions.js';
+import {discussionProblem,submitTopic,submitReply,discussionUrl,reviewSubmissions} from '../js/lib/discussions.js';
 import {enrollmentBand,readSmallJson,keyDictionary,validPublicApiKey} from '../supabase/functions/enroll/logic.js';
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const A='00000000-0000-4000-8000-00000000000a',B='00000000-0000-4000-8000-00000000000b',M='00000000-0000-4000-8000-00000000000d',E='00000000-0000-4000-8000-00000000000e';
@@ -82,6 +82,52 @@ test('the age endpoint validates numbers before enrollment and bounds request bo
  for(const age of ['18',18.5,0,-1,null,121])assert.equal(enrollmentBand(age),null);
  assert.deepEqual(await readSmallJson(new Request('https://example.test',{method:'POST',body:'{"age":18}'})),{age:18});
  await assert.rejects(()=>readSmallJson(new Request('https://example.test',{method:'POST',body:'x'.repeat(300)})),/too large/);
+});
+
+test('unpublished submission queries expose only the current author, including to moderator accounts',async()=>{
+ const own='10000000-0000-4000-8000-000000000001',other='10000000-0000-4000-8000-000000000002';
+ for(const [id,author,handle]of [[own,A,'adult'],[other,B,'teen']])await db.query("insert into public.discussion_topics(id,category,title,body,author_id,author_handle) values($1,'general','Unpublished test topic','A private pending submission used only for the permission test.',$2,$3)",[id,author,handle]);
+ const query="select id,title,body,status from public.discussion_topics where status <> 'published'";
+ const rows=(await user(A,tx=>tx.query(query))).rows;assert.ok(rows.some(x=>x.id===own));assert.ok(!rows.some(x=>x.id===other));
+ assert.equal((await anon(tx=>tx.query(query))).rows.length,0);
+ assert.equal((await user(M,tx=>tx.query(query))).rows.length,0,'ordinary author query does not turn into a moderator-wide inbox');
+ const parent=JSON.parse(read('data/forum.json')).topics[0].id;
+ for(const [id,author,handle]of [[own,A,'adult'],[other,B,'teen']])await db.query("insert into public.discussion_replies(id,topic_id,body,author_id,author_handle) values($1,$2,'A private pending reply used only for this test.',$3,$4)",[id,parent,author,handle]);
+ const replyQuery="select id,body,status from public.discussion_replies where status <> 'published'";
+ assert.deepEqual((await user(A,tx=>tx.query(replyQuery))).rows.map(r=>r.id),[own]);
+ assert.equal((await anon(tx=>tx.query(replyQuery))).rows.length,0);assert.equal((await user(M,tx=>tx.query(replyQuery))).rows.length,0);
+ await db.query('delete from public.discussion_replies where id in ($1,$2)',[own,other]);
+ await db.query('delete from public.discussion_topics where id in ($1,$2)',[own,other]);
+});
+
+test('forum sharing URLs preserve category, search text and selected topic without injecting parameters',()=>{
+ const url=discussionUrl({category:'training',query:'  block & turn?  ',topic:A});const params=new URL(url,'https://tkdflow.com').searchParams;
+ assert.equal(params.get('q'),'block & turn?');assert.equal(params.get('category'),'training');assert.equal(params.get('topic'),A);
+ assert.equal(discussionUrl(),'/forum.html');assert.equal(params.size,3);
+});
+
+test('an assigned teen moderator can review adult submissions without gaining public posting or private-profile access',async()=>{
+ const id='10000000-0000-4000-8000-000000000003';
+ await user(B,tx=>tx.query('update public.profiles set age=16 where id=$1',[B]));
+ await db.query('insert into private.community_moderators values($1)',[B]);
+ await db.query("insert into public.discussion_topics(id,category,title,body,author_id,author_handle) values($1,'general','An adult submission','A focused question awaiting a moderator decision.',$2,'adult')",[id,A]);
+ const access=(await user(B,tx=>tx.query('select public.discussion_access() as access'))).rows[0].access;
+ assert.deepEqual(access,{adult:false,moderator:true});
+ assert.ok((await user(B,tx=>tx.query('select public.discussion_queue() as queue'))).rows[0].queue.topics.some(t=>t.id===id));
+ await user(B,tx=>tx.query("select public.moderate_discussion('topic',$1,'published')",[id]));
+ assert.equal((await anon(tx=>tx.query('select id from public.discussion_topics where id=$1',[id]))).rows.length,1);
+ await assert.rejects(user(B,tx=>tx.query("select public.submit_discussion('A valid title','A moderator role must not override the teen posting rule.','general')")),/Adult enrollment/);
+ assert.equal((await user(B,tx=>tx.query('select id from public.profiles where id<>$1',[B]))).rows.length,0);
+ await db.query('delete from public.discussion_topics where id=$1',[id]);await db.query('delete from private.community_moderators where user_id=$1',[B]);
+});
+
+test('submission status requests use public columns and report partial failures instead of empty success',async()=>{
+ const calls=[];
+ const client={from(table){const request={table};calls.push(request);return {select(columns){request.columns=columns;return this;},neq(column,value){request.filter=[column,value];return this;},order(){return this;},limit(){return {data:table==='discussion_topics'?[{id:A,title:'A pending topic',status:'pending',created_at:'2026-11-17T10:00:00Z'}]:[],error:null};}};}};
+ const result=await reviewSubmissions(client);assert.equal(result.error,null);assert.equal(result.data[0].kind,'topic');
+ for(const c of calls){assert.doesNotMatch(c.columns,/author_id|email|age|full_name/);assert.deepEqual(c.filter,['status','published']);}
+ const bad={from(){return {select(){return this;},neq(){return this;},order(){return this;},limit(){return {error:new Error('offline')};}};}};
+ assert.equal((await reviewSubmissions(bad)).error,true);
 });
 
 // Account service is not activated; verify the local activation schema handles corrections conservatively.

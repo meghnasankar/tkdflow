@@ -59,10 +59,18 @@
 <main id="main" tabindex="-1">
  <div class="page-hero forum-hero"><div class="container"><p class="section-label on-dark">Learn together</p><h1>Taekwondo discussions</h1><p>Compare curricula, explore a form transition and ask clear questions. Start with a guide or join a conversation.</p></div></div>
  <div class="container"><p class="notice notice-info preview-notice" id="forum-service" role="status">Loading discussions…</p>
+ <nav class="discussion-actions" aria-label="Discussion actions">
+ <a id="start-topic-link" class="btn btn-primary" href="#topic-composer" hidden>Start a discussion</a>
+ <a id="my-submissions-link" class="btn btn-secondary" href="#my-submissions" hidden>Your submissions</a>
+ <a id="moderation-link" class="btn btn-secondary" href="#moderation" hidden>Moderation</a>
+ <a id="forum-sign-in" class="btn btn-secondary" href="/auth.html" hidden>Sign in to participate</a>
+ <button id="refresh-discussions" type="button" class="btn btn-secondary">Refresh discussions</button>
+ </nav>
  <div class="preview-layout"><aside aria-label="Forum categories"><h2 class="side-title">Categories</h2><div class="category-nav" id="category-nav" role="group" aria-label="Filter by category"></div></aside>
  <section aria-labelledby="topics-title"><h2 id="topics-title" class="sr-only">Discussion topics</h2><form class="toolbar" id="forum-search" role="search"><label for="forum-q">Search discussions</label><div class="search-bar"><span aria-hidden="true">🔍</span><input type="search" id="forum-q" autocomplete="off"></div></form>
  <p class="results-summary" id="forum-summary" aria-live="polite"></p><p id="discussion-message" role="status"></p>
  <section id="topic-detail" class="topic-detail" aria-label="Selected discussion" hidden></section><div id="forum-content"></div><section id="topic-composer" hidden aria-label="Start a discussion"></section>
+ <section id="my-submissions" class="private-submissions" aria-labelledby="my-submissions-title" hidden><h2 id="my-submissions-title">Your submissions</h2><p>Track your latest unpublished topics and replies, visible to you and the moderators reviewing them. Published contributions appear in their discussions.</p><button id="refresh-submissions" type="button" class="btn btn-secondary btn-sm">Refresh your submissions</button><div id="my-submissions-list" aria-live="polite"></div></section>
  <section id="moderation" hidden><h2>Moderation</h2><button id="load-moderation" type="button" class="btn btn-secondary">Open moderation queue</button><div id="moderation-queue"></div></section>
  </section></div>
  <section class="community-guidelines"><h2>Community guidelines</h2><p>Be respectful, keep questions specific, credit references and post only material you have permission to share. Do not post contact details, school schedules, spam or harmful content. Public submissions are moderated. Public reading is open to everyone; accounts aged 13–17 remain private and do not publish posts or messages.</p></section>
