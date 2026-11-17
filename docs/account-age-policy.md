@@ -8,6 +8,7 @@ Updated 2026-11-17. These are owner-approved product rules, not a claim of legal
 - Individual accounts are for ages 13 and over. A neutral age screen precedes account details. The server checks the answer and retains a private teen/adult eligibility band, not the screening age.
 - Ages 13–17 have private profiles and cannot publish discussions or send messages. Editable profile age cannot promote a teen to adult posting permission.
 - Adults aged 18 or over can submit discussions for moderation. Profiles remain private; approved text, username and date are public.
+- Forum moderation is a separately assigned staff permission. A teen moderator can review submissions without gaining public posting permission or access to other members' private profiles.
 - Under-13 individual accounts are unavailable. Parent-managed child profiles are a future feature; no child login, child schema or consent flow is advertised as available.
 - Optional profile age must be 13–99. It is separate from the enrollment answer and cannot grant adult rights.
 

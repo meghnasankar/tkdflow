@@ -14,3 +14,16 @@ export const submitReply=(client,id,body)=>bounded(()=>client.rpc('reply_discuss
 export const reportContent=(client,kind,id,reason)=>bounded(()=>client.rpc('report_discussion',{content_kind:kind,target_id:id,report_reason:reason.trim()}),{label:'Reporting content'});
 export const moderationQueue=client=>bounded(()=>client.rpc('discussion_queue'),{label:'Moderation queue'});
 export const moderateContent=(client,kind,id,decision)=>bounded(()=>client.rpc('moderate_discussion',{content_kind:kind,target_id:id,decision}),{label:'Moderating content'});
+
+// RLS exposes nonpublic rows only to their author; never select author UUIDs.
+export async function reviewSubmissions(client){
+ const [topics,replies]=await Promise.all([
+  bounded(()=>client.from('discussion_topics').select(TOPIC_COLUMNS).neq('status','published').order('created_at',{ascending:false}).limit(30),{label:'Your topics'}),
+  bounded(()=>client.from('discussion_replies').select(REPLY_COLUMNS).neq('status','published').order('created_at',{ascending:false}).limit(30),{label:'Your replies'}),
+ ]);
+ return topics.error||replies.error?{error:true,data:null}:{error:null,data:[...(topics.data||[]).map(t=>({...t,kind:'topic'})),...(replies.data||[]).map(t=>({...t,kind:'reply'}))].sort((a,b)=>b.created_at.localeCompare(a.created_at))};
+}
+export function discussionUrl({category='all',query='',topic=null}={}){
+ const params=new URLSearchParams();if(category!=='all')params.set('category',category);if(query.trim())params.set('q',query.trim());if(topic)params.set('topic',topic);
+ return '/forum.html'+(params.size?'?'+params:'');
+}
