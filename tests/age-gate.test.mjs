@@ -142,17 +142,15 @@ test('profile age inputs carry the 13–99 range everywhere', () => {
   }
 });
 
-test('accounts stay OFF with empty project values while the age-policy gates are open', () => {
-  // Deliberate release guard. Change it only together with docs/account-age-policy.md
-  // ("Remaining gates") once every gate there is cleared and approved.
-  assert.equal(ACCOUNTS.enabled, false);
-  assert.equal(ACCOUNTS.signupEnabled, false);
-  assert.equal(ACCOUNTS.googleEnabled, false);
-  assert.equal(ACCOUNTS.supabaseUrl, '');
-  assert.equal(ACCOUNTS.supabaseAnonKey, '');
-  assert.equal(accountsConfigured(), false);
+test('production activation retains the approved age model and public-only credentials', () => {
+  assert.equal(ACCOUNTS.enabled, true);
+  assert.equal(ACCOUNTS.signupEnabled, true);
+  assert.equal(ACCOUNTS.googleEnabled, true);
+  assert.equal(ACCOUNTS.supabaseUrl, 'https://ffkwwfwrqtwejyrnkxey.supabase.co');
+  assert.match(ACCOUNTS.supabaseAnonKey, /^sb_publishable_/);
+  assert.equal(accountsConfigured(), true);
   const policy = read('docs/account-age-policy.md');
-  assert.match(policy, /## Remaining gates/);
+  assert.match(policy, /## Production activation/);
   assert.match(policy, /not COPPA compliance/i);
   assert.match(policy, /https:\/\/www\.ftc\.gov\/business-guidance\/resources\/complying-coppa-frequently-asked-questions/);
 });

@@ -17,9 +17,10 @@ const never = () => new Promise(() => {});
 const okClient = () => ({ auth: {} });
 const elapsed = async (fn) => { const t = Date.now(); const r = await fn(); return [r, Date.now() - t]; };
 
-test('shipped config keeps accounts disabled with no project values', () => {
-  assert.equal(ACCOUNTS.enabled, false);
-  assert.equal(accountsConfigured(ACCOUNTS), false);
+test('shipped config connects to the reviewed production project', () => {
+  assert.equal(ACCOUNTS.enabled, true);
+  assert.equal(ACCOUNTS.supabaseUrl, 'https://ffkwwfwrqtwejyrnkxey.supabase.co');
+  assert.equal(accountsConfigured(ACCOUNTS), true);
 });
 
 test('disabled or incomplete config → disabled, never loads the SDK', async () => {

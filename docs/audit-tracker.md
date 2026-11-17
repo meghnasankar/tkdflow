@@ -199,3 +199,8 @@ Support forwarding update: `support@tkdflow.com` is **configured, awaiting a del
 Support forwarding delivery was confirmed by the owner. Staging confirmation, Google link/repeat login, password reset and password sign-in passed. Public accounts remain off. A bounded local release now includes first-party fonts/SDK, privacy/contact copy and a worldwide school picker with a private admin review queue. Cloud school migration and browser QA remain pending; see `docs/school-directory.md` and `docs/accounts-and-discussions-2026-11-16.md`.
 
 Staging school follow-up: 334 sourced schools installed; existing custom school queued, matched to the canonical listing and approved through the browser after explicit school-review-role approval. Production remains unchanged.
+
+
+## Production account activation — 2026-11-17
+
+The owner approved and requested publication. PR #13 merged and its school/privacy/assets release deployed. The production school migration preserved one profile and six legacy schools, installed 334 directory records and queued one private unlisted school. Production registration and member-initiated Google linking are enabled; anonymous sign-in remains off and email confirmation stays on. Google's external app is In production with basic identity scopes and the approved private support group contact. Six live backend/permission checks passed. This client release enables the reviewed original project; production owner email/Google smoke results and the confirmed school-reviewer role assignment will be recorded after the live flow. The personal support destination and private credentials remain out of source.

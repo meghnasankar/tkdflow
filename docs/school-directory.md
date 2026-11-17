@@ -52,3 +52,8 @@ Review exclusions, coverage and source links, run checks, then import deliberate
 ## Staging outcome — 2026-11-17
 
 The initial migration and all 334 school records are installed on tkdflow-staging. The existing private school value became one pending suggestion automatically. After the owner approved the narrower school-review update and the test account’s role, the profile displayed that private queue. The suggestion was matched to the independently sourced existing Young Moo school and approved. Reload showed the canonical selected school and an empty pending queue. This exercised duplicate matching and the private profile link without creating a duplicate public school. Source/country searches, saved selection preservation and unsaved custom-field preservation passed in the browser. Production school schema/data and reviewer access have not changed.
+
+
+## Production account activation — 2026-11-17
+
+The owner approved and requested publication. PR #13 merged and its school/privacy/assets release deployed. The production school migration preserved one profile and six legacy schools, installed 334 directory records and queued one private unlisted school. Production registration and member-initiated Google linking are enabled; anonymous sign-in remains off and email confirmation stays on. Google's external app is In production with basic identity scopes and the approved private support group contact. Six live backend/permission checks passed. This client release enables the reviewed original project; production owner email/Google smoke results and the confirmed school-reviewer role assignment will be recorded after the live flow. The personal support destination and private credentials remain out of source.
