@@ -3,6 +3,7 @@ import {DEFAULT_FILTERS,filterEvents,eventStatus,registrationState,createTicker,
 import {validateEvents} from '../lib/validators.js';
 import {loadInto,showEmpty} from '../lib/data.js';
 import {h,replaceChildren,safeHref} from '../lib/dom.js';
+import {canExportEvent,downloadEventCalendar} from '../lib/event-calendar.js';
 const $=id=>document.getElementById(id);
 const LABELS={style:{wt:'WT / Kukkiwon',itf:'ITF',ata:'ATA',open:'Open / all styles'},level:{local:'Local / regional',national:'National',international:'International',unspecified:'Level not specified'},type:{poomsae:'Poomsae',patterns:'Patterns / tul',sparring:'Sparring',para:'Para taekwondo',breaking:'Breaking','special-techniques':'Special techniques','power-test':'Power test'}};
 const STATUS={past:'Past',ongoing:'Happening now',upcoming:'Upcoming',announced:'Dates to be announced',cancelled:'Cancelled',postponed:'Postponed'};
@@ -29,6 +30,7 @@ function card(ev,now){
    ev.notes?h('p',{class:'event-notes'},ev.notes):null,
    h('div',{class:'event-footer'},h('span',{},`Checked ${fmt(ev.lastChecked)}`),
     h('div',{class:'event-links'},source&&source!==href?h('a',{href:source,target:'_blank',rel:'noopener noreferrer',class:'text-link'},'Calendar source'):null,
+     canExportEvent(ev)?h('button',{type:'button',class:'btn btn-secondary btn-sm','aria-label':`Add ${ev.name} to calendar`,title:'Download an all-day calendar entry. Saved copies do not update automatically.',on:{click:()=>downloadEventCalendar(ev)}},'Add to calendar'):null,
      href?h('a',{href,target:'_blank',rel:'noopener noreferrer',class:'btn btn-secondary btn-sm'},'Official event page ↗'):null)),
    registrationState(ev,now)==='registration-closed'?h('p',{class:'event-notes'},'The organizer’s published registration deadline has passed.'):null));
 }
