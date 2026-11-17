@@ -5,7 +5,7 @@ import {createHash} from 'node:crypto';
 import {PGlite} from '@electric-sql/pglite';
 import {safeHref} from '../js/lib/dom.js';
 import {discussionProblem,submitTopic,submitReply} from '../js/lib/discussions.js';
-import {enrollmentBand,readSmallJson} from '../supabase/functions/enroll/logic.js';
+import {enrollmentBand,readSmallJson,keyDictionary,validPublicApiKey} from '../supabase/functions/enroll/logic.js';
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const A='00000000-0000-4000-8000-00000000000a',B='00000000-0000-4000-8000-00000000000b',M='00000000-0000-4000-8000-00000000000d',E='00000000-0000-4000-8000-00000000000e';
 let db,topicId,replyId;
@@ -82,4 +82,24 @@ test('the age endpoint validates numbers before enrollment and bounds request bo
  for(const age of ['18',18.5,0,-1,null,121])assert.equal(enrollmentBand(age),null);
  assert.deepEqual(await readSmallJson(new Request('https://example.test',{method:'POST',body:'{"age":18}'})),{age:18});
  await assert.rejects(()=>readSmallJson(new Request('https://example.test',{method:'POST',body:'x'.repeat(300)})),/too large/);
+});
+
+// Account service is not activated; verify the local activation schema handles corrections conservatively.
+test('correcting an adult enrollment to a teen age hides content and cannot be bypassed by publication',async()=>{
+ await db.query("update public.discussion_topics set status='published' where id=$1",[topicId]);
+ await db.query("update public.discussion_replies set status='published' where id=$1",[replyId]);
+ await user(A,tx=>tx.query('update public.profiles set age=16 where id=$1',[A]));
+ assert.equal((await db.query('select age_band from private.account_eligibility where user_id=$1',[A])).rows[0].age_band,'teen');
+ assert.equal((await anon(tx=>tx.query('select id from public.discussion_topics where id=$1',[topicId]))).rows.length,0);
+ await assert.rejects(user(M,tx=>tx.query("select public.moderate_discussion('topic',$1,'published')",[topicId])),/Adult author/);
+ await user(A,tx=>tx.query('update public.profiles set age=20 where id=$1',[A]));
+ assert.equal((await db.query('select age_band from private.account_eligibility where user_id=$1',[A])).rows[0].age_band,'teen');
+});
+
+test('enrollment authorizes the configured public project key and fails closed on malformed settings',()=>{
+ const keys=keyDictionary('{"default":"sb_publishable_staging_test_only","bad":null}');
+ assert.equal(validPublicApiKey('sb_publishable_staging_test_only',keys),true);
+ for(const value of [null,'','sb_publishable_other_project','sb_secret_not_public','Bearer sb_publishable_staging_test_only'])assert.equal(validPublicApiKey(value,keys),false);
+ for(const raw of [undefined,null,'bad','[]','null','18'])assert.deepEqual(keyDictionary(raw),{});
+ assert.equal(validPublicApiKey('sb_publishable_staging_test_only',{}),false);
 });

@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 /* Local preview server that behaves like the Vercel deployment:
    applies the headers and redirects from vercel.json, serves 404.html for
-   unknown paths, and ENFORCES the Content-Security-Policy (the deployed
-   config ships it as Report-Only until verified on a preview deploy).
+   unknown paths, and ENFORCES the Content-Security-Policy by default.
+   --report-only sends the same policy as Content-Security-Policy-Report-Only
+   instead, whichever header name vercel.json uses, to simulate the
+   report-only baseline. Exactly one CSP header is ever sent.
 
    Path safety: the request path is decoded once, rejected if malformed,
    normalised, and the FINAL relative path is checked (no dot-segments such
@@ -20,8 +22,7 @@ const DEFAULT_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const TYPES = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
   '.mjs': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml',
-  '.ico': 'image/x-icon', '.png': 'image/png', '.txt': 'text/plain; charset=utf-8', '.xml': 'application/xml; charset=utf-8',
-  '.mp3': 'audio/mpeg', '.wav': 'audio/wav', '.webp': 'image/webp',
+  '.woff2': 'font/woff2', '.ico': 'image/x-icon', '.png': 'image/png', '.mp3': 'audio/mpeg', '.wav': 'audio/wav', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.txt': 'text/plain; charset=utf-8', '.xml': 'application/xml; charset=utf-8',
 };
 
 /** Development-only top-level entries, mirroring .vercelignore. */
@@ -79,15 +80,21 @@ export async function resolveRequest(root, rawPathname) {
   return { kind: 'ok', file: real, rel: c.rel };
 }
 
-export function headersFor(config, path, reportOnly) {
+export const CSP_ENFORCED = 'Content-Security-Policy';
+export const CSP_REPORT_ONLY = 'Content-Security-Policy-Report-Only';
+
+export function headersFor(config, path, reportOnly = false) {
   const out = {};
   for (const rule of config.headers || []) {
     // vercel.json sources used here are plain regex groups: "/(.*)", "/(a|b)".
     const re = new RegExp(`^${rule.source}$`);
     if (!re.test(path)) continue;
     for (const { key, value } of rule.headers) {
-      if (key === 'Content-Security-Policy-Report-Only' && !reportOnly) out['Content-Security-Policy'] = value;
-      else out[key] = value;
+      if (key === CSP_ENFORCED || key === CSP_REPORT_ONLY) {
+        delete out[CSP_ENFORCED];
+        delete out[CSP_REPORT_ONLY];
+        out[reportOnly ? CSP_REPORT_ONLY : CSP_ENFORCED] = value;
+      } else out[key] = value;
     }
   }
   return out;

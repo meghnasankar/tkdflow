@@ -54,8 +54,21 @@ export function validateProfileInput(raw) {
   }
   if (!school_name) school_name = null;
 
+  const schoolFields = {};
+  if (Object.hasOwn(raw, 'school_directory_id')) {
+    for (const key of ['school_directory_id','school_country','school_region','school_city','school_website']) schoolFields[key] = String(raw[key] ?? '').trim() || null;
+    if (!school_name) for (const key of Object.keys(schoolFields)) schoolFields[key] = null;
+    if (schoolFields.school_directory_id && schoolFields.school_directory_id.length > 100) errors.school_name = 'Choose a school from the directory.';
+    if (schoolFields.school_country && !/^[A-Z]{2}$/.test(schoolFields.school_country)) errors.school_country = 'Choose a country.';
+    if (schoolChoice === NEW_SCHOOL && !schoolFields.school_country) errors.school_country = 'Choose the school’s country.';
+    if (schoolChoice === NEW_SCHOOL && !schoolFields.school_city) errors.school_city = 'Enter the school’s city.';
+    for (const key of ['school_region','school_city']) if ((schoolFields[key] || '').length > 100) errors[key] = 'Use 100 characters or fewer.';
+    const website=schoolFields.school_website;
+    if (website && (website.length>500 || !/^https?:\/\/[^\s]+$/.test(website))) errors.school_website='Enter a complete http or https school website address, or leave it blank.';
+  }
+
   return {
-    values: { full_name, username, age: errors.age ? null : age, belt_level, school_name },
+    values: { full_name, username, age: errors.age ? null : age, belt_level, school_name, ...schoolFields },
     isNewSchool: schoolChoice === NEW_SCHOOL && Boolean(schoolNew),
     underMinimum,
     errors,
@@ -71,7 +84,7 @@ export function validatePasswordPair(password, confirm) {
 /** Only the fields whose values actually changed. */
 export function diffProfile(original, next) {
   const changes = {};
-  for (const key of ['full_name', 'username', 'age', 'belt_level', 'school_name']) {
+  for (const key of ['full_name', 'username', 'age', 'belt_level', 'school_name', 'school_directory_id', 'school_country', 'school_region', 'school_city', 'school_website']) {
     const a = original?.[key] ?? null;
     const b = next[key] ?? null;
     if (a !== b) changes[key] = b;
@@ -118,8 +131,8 @@ export function pendingProfileFrom(user) {
   const p = user?.user_metadata?.pending_profile;
   if (!p || typeof p !== 'object') return null;
   const { values, errors, underMinimum } = validateProfileInput({
-    full_name: p.full_name, username: p.username, age: p.age ?? '',
-    belt_level: p.belt_level, school_choice: p.school_name ? NEW_SCHOOL : '', school_new: p.school_name || '',
+    ...p, full_name: p.full_name, username: p.username, age: p.age ?? '',
+    belt_level: p.belt_level, school_choice: p.school_directory_id ? p.school_name : p.school_name ? NEW_SCHOOL : '', school_new: p.school_name || '',
   });
   if (Object.keys(errors).length) return { values, valid: false, underMinimum };
   return { values, valid: true, underMinimum: false };

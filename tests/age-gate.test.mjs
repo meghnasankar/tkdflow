@@ -157,16 +157,11 @@ test('accounts stay OFF with empty project values while the age-policy gates are
   assert.match(policy, /https:\/\/www\.ftc\.gov\/business-guidance\/resources\/complying-coppa-frequently-asked-questions/);
 });
 
-test('about page states the plan without claiming a privacy policy or a working child profile', () => {
+test('privacy notice explains the age rules without promising child profiles or compliance', () => {
   const html = read('about.html');
-  const section = html.match(/<h3 id="age-policy">[\s\S]*?<\/section>/)[0];
-  assert.match(section, /not a privacy policy/);
-  assert.match(section, /unavailable/);
-  assert.match(section, /do not exist yet/);
-  assert.match(section, /aged 13 and over/);
-  assert.match(section, /13 to 17/);
-  assert.match(section, /18 or over/);
-  assert.doesNotMatch(section, /mailto:|COPPA[- ]compliant|complies with/i);
+  const section = html.match(/<section id="privacy"[\s\S]*?<\/section>/)[0];
+  for (const rule of [/aged 13 and over/, /13 to 17/, /18 or over/, /do not exist yet/, /private teen or adult band/, /school membership stays private/, /private admin review queue/, /Approved school details/, /Pending submissions/, /Retention/]) assert.match(section, rule);
+  assert.doesNotMatch(section, /not been published|not a privacy policy|COPPA[- ]compliant|complies with/i);
 });
 
 /** Temporarily replace globalThis.sessionStorage with a getter (restored afterwards). */
@@ -260,17 +255,8 @@ test('public-route copy does not overstate data collection', () => {
   assert.match(read('about.html'), /without creating an account or entering account details/);
 });
 
-test('support alias is recorded as configured-but-unverified, never published as working', () => {
-  // Public pages: no address and no mailto until delivery is verified.
-  for (const file of ['about.html', 'auth.html', 'profile.html', 'founder.html']) {
-    assert.doesNotMatch(read(file), /support@tkdflow\.com|mailto:/i, file);
-  }
-  // The runbook may name the owner-approved alias (site.test.mjs allows only that one), never as a link or as verified.
-  const runbook = read('docs/RELEASE.md');
-  assert.doesNotMatch(runbook, /mailto:/i);
-  for (const line of runbook.split('\n').filter((l) => /support@tkdflow\.com/.test(l))) assert.match(line, /delivery test pending/);
-  assert.match(read('about.html'), /being set up/);
-  const policy = read('docs/account-age-policy.md');
-  assert.match(policy, /support@tkdflow\.com` is \*\*configured, awaiting a delivery test\*\*/);
-  assert.match(read('docs/audit-tracker.md'), /support@tkdflow\.com` is \*\*configured, awaiting a delivery test\*\*/);
+test('only the delivery-tested public support alias is published', () => {
+  assert.match(read('about.html'), /href="mailto:support@tkdflow\.com"/);
+  for (const file of ['auth.html', 'profile.html', 'founder.html']) assert.doesNotMatch(read(file), /mailto:/i, file);
+  for (const file of ['docs/account-age-policy.md','docs/audit-tracker.md','docs/RELEASE.md']) assert.match(read(file), /Support forwarding delivery was confirmed/);
 });

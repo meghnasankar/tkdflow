@@ -40,24 +40,17 @@ export async function bounded(factory, { ms = OP_TIMEOUT_MS, label = 'Request' }
   }
 }
 
-const PROFILE_COLUMNS = 'id, full_name, username, age, belt_level, school_name, created_at';
+const PROFILE_COLUMNS = 'id, full_name, username, age, belt_level, school_name, school_directory_id, school_country, school_region, school_city, school_website, created_at';
 
 export const fetchOwnProfile = (client, userId, ms) => bounded(
   () => client.from('profiles').select(PROFILE_COLUMNS).eq('id', userId).maybeSingle(),
   { ms, label: 'Profile lookup' });
 
-/** School names only (the only readable column). */
+/** Legacy school-name lookup, retained for migration compatibility. */
 export async function fetchSchoolNames(client, ms = 6000) {
   const { data, error } = await bounded(() => client.from('schools').select('name').order('name'), { ms, label: 'School list' });
   if (error) return { data: [], error };
   return { data: (data || []).map((r) => r?.name).filter((n) => typeof n === 'string'), error: null };
-}
-
-/** Add a school if it does not exist. A duplicate (23505) counts as success. */
-export async function ensureSchool(client, name, ms) {
-  if (!name) return { error: null };
-  const { error } = await bounded(() => client.from('schools').insert({ name }), { ms, label: 'Adding school' });
-  return { error: error && error.code !== '23505' ? error : null };
 }
 
 export async function usernameAvailable(client, username, ms = 6000) {
@@ -73,6 +66,7 @@ export async function upsertProfile(client, userId, values, ms) {
     age: values.age,
     belt_level: values.belt_level,
     school_name: values.school_name,
+    ...Object.fromEntries(['school_directory_id','school_country','school_region','school_city','school_website'].filter(key => Object.hasOwn(values,key)).map(key => [key,values[key]])),
   }, { onConflict: 'id' }), { ms, label: 'Saving profile' });
 }
 

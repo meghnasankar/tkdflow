@@ -23,9 +23,7 @@
 <meta name="theme-color" content="#0D1B2A">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Noto+Sans+KR:wght@400;700&amp;display=swap">
+<link rel="stylesheet" href="/css/fonts.css">
 <link rel="stylesheet" href="/styles.css">
 <script type="module" src="/js/site.js"></script>
 <!-- /layout:head -->
@@ -89,20 +87,40 @@
 
     <section id="privacy" aria-labelledby="privacy-h">
       <h2 id="privacy-h">Privacy &amp; your data</h2>
-      <p>Everyone can use the public lessons without creating an account or entering account details. Pages still load Google Fonts and the host may keep standard request logs.</p>
-      <h3 id="age-policy">Account ages and privacy</h3>
-      <p>When sign-in is restored, individual accounts are for people aged 13 and over. Accounts aged 13 to 17 remain private, with no public posting or messaging. A parent or guardian aged 18 or over would manage any future child profile; child profiles do not exist yet. Account creation is currently unavailable. These participation rules are not a privacy policy.</p>
-      <p>A privacy policy has <strong>not been published yet</strong>. While the account service is unavailable, the site currently has no working sign-up or profile forms. Pages load fonts from Google Fonts, and the hosting provider may keep standard request logs.</p>
-      <p>Before accounts reopen, TKDflow will publish a privacy policy that covers what is collected, who can see it, how long it is kept, how to correct or delete it, and how younger members are protected.</p>
+      <p>Last updated: 17 November 2026.</p>
+      <p>TKDflow is a learning project created by <a href="/founder.html">Meghna Sankar</a>. This notice explains how account information and discussions are handled.</p>
+      <h3>Learning without an account</h3>
+      <p>Everyone can use the public lessons without creating an account or entering account details. Fonts, animations, audio and site scripts load from TKDflow. No advertising or analytics tracker is installed by TKDflow. The hosting provider still receives normal connection information, such as an IP address, browser information and the requested page, to deliver and protect the site.</p>
+      <h3 id="age-policy">Age and account rules</h3>
+      <ul>
+        <li><strong>Individual accounts are for people aged 13 and over.</strong> The age screen appears before account details. Its exact answer is checked and discarded; a private teen or adult band is kept to apply the account rules.</li>
+        <li><strong>Members aged 13 to 17</strong> have private profiles and cannot publish posts or messages.</li>
+        <li><strong>Adults aged 18 or over</strong> with completed profiles can submit discussions for moderation. Their profiles remain private.</li>
+        <li><strong>Children under 13</strong> can use the public learning resources without an account. Parent-managed child profiles do not exist yet; there is no child account or parent-consent service.</li>
+      </ul>
+      <h3>Information you choose to provide</h3>
+      <p>Email registration uses an email address and password. A profile requires a name, username and belt level. Profile age and school are optional; if you provide them, they are saved with your profile. Passwords are handled by Supabase, the account service.</p>
+      <p>Your profile details are not shown to other members. Site administrators can access account information when needed for support and administration. Your school membership stays private. If you add a school that is not listed, its public business details are saved in a private admin review queue after your confirmed account has a profile. Approved school details join the shared directory under the Open Database License; your identity and membership are never included in that listing. Existing unlisted school names can also be queued for review.</p>
+      <p>Approved adult discussion posts and replies are public, including their text, username and posting date. They do not show the account email, full name, age or private profile. Pending submissions are available to their author and moderators; reports are available to moderators. Private messaging is not available.</p>
+      <h3>Optional Google sign-in</h3>
+      <p>Create and confirm an account by email first. You can then connect Google for sign-in. With your permission, Google shares your name, email address and profile picture with the account service. These details are used for sign-in and account setup. TKDflow does not request access to Gmail, Drive or Calendar, and does not receive your Google password.</p>
+      <h3>Services and browser storage</h3>
+      <p><a href="https://vercel.com/legal/privacy-notice">Vercel</a> hosts the site. <a href="https://supabase.com/privacy">Supabase</a> handles accounts and stores profile and discussion data. <a href="https://resend.com/legal/privacy-policy">Resend</a> sends confirmation and password-reset emails. <a href="https://policies.google.com/privacy">Google</a> handles optional Google sign-in and the support inbox. Namecheap forwards messages sent to the public support address. These services process the connection, account or delivery information needed for their role.</p>
+      <p>Your browser stores the sign-in session so you can stay signed in, and a tab-only eligibility result for the age screen. Signing out removes that device's local sign-in session; it does not delete the account.</p>
+      <h3>Retention, corrections and deletion</h3>
+      <p>Account and profile information is kept to operate your account while it exists. There is no automatic inactive-account deletion schedule. Service providers also keep operational, security or delivery logs under their service terms.</p>
+      <p>You can edit your private profile, or request a copy, correction or deletion of account information through <a href="#contact">the support address below</a>. Requests are handled individually after account ownership is checked. Approved discussions can remain public after an account is removed; include the links to any posts or replies you want removed in your request.</p>
+      <p>Please send an account request from its registered email address. Never send a password, confirmation link or reset link to support. Changes to this notice will be reflected in the date above.</p>
     </section>
 
     <section id="contact" aria-labelledby="contact-h">
       <h2 id="contact-h">Contact</h2>
-      <p>Our support address is being set up. We’ll publish it once mail delivery has been tested.</p>
+      <p>Email <a href="mailto:support@tkdflow.com">support@tkdflow.com</a> for content questions, account help, privacy requests or concerns about a discussion.</p>
     </section>
 
     <section id="credits" aria-labelledby="credits-h">
       <h2 id="credits-h">Credits &amp; licensing</h2>
+      <p>Inter and Noto Sans KR are served under the <a href="/assets/fonts/Inter-OFL.txt">Inter</a> and <a href="/assets/fonts/Noto-Sans-KR-OFL.txt">Noto Sans KR</a> Open Font Licenses. The account library uses the <a href="/vendor/supabase/LICENSE">Supabase JavaScript library license</a>.</p>
       <p>Licensing terms for the site’s code and content have not been published yet. Form names and descriptions refer to the curricula of World Taekwondo / Kukkiwon, the International Taekwon-Do Federation and the American Taekwondo Association. Any affiliation or endorsement will be stated here only once it has been confirmed.</p>
     </section>
   </div>

@@ -24,9 +24,7 @@
 <meta name="theme-color" content="#0D1B2A">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Noto+Sans+KR:wght@400;700&amp;display=swap">
+<link rel="stylesheet" href="/css/fonts.css">
 <link rel="stylesheet" href="/styles.css">
 <script type="module" src="/js/site.js"></script>
 <!-- /layout:head -->
@@ -146,7 +144,7 @@
         <!-- Register -->
         <section class="auth-panel" id="panel-register" aria-labelledby="register-title" hidden>
           <h2 class="panel-title sr-only" id="register-title">Create an account</h2>
-          <p class="panel-intro">Your profile is private: only you can see it. There are no public profiles, sharing or messaging.</p>
+          <p class="panel-intro">Your profile stays private. Adults can submit forum posts under their username for moderation. Private messaging is not available.</p>
           <form id="form-register" novalidate>
             <div class="form-row">
               <div class="form-group">
@@ -173,15 +171,17 @@
                 <p class="field-error" id="reg-age-error" hidden></p>
               </div>
             </div>
-            <div class="form-group">
-              <label for="reg-school">Taekwondo school <span class="optional">(optional)</span></label>
-              <select id="reg-school" aria-describedby="reg-school-error"></select>
-              <div class="new-school" id="reg-school-new-wrap" hidden>
-                <label for="reg-school-new">School or club name</label>
-                <input type="text" id="reg-school-new" maxlength="100">
-              </div>
-              <p class="field-error" id="reg-school-error" hidden></p>
-            </div>
+            <fieldset class="school-picker"><legend>Taekwondo school <span class="optional">(optional)</span></legend>
+ <label for="reg-school-search">Search school or location</label><input type="search" id="reg-school-search" placeholder="School name, city or country" autocomplete="off">
+ <div class="school-filters"><div><label for="reg-school-country">Country</label><select id="reg-school-country"><option value="">All countries</option></select></div><div><label for="reg-school-region">State or region</label><select id="reg-school-region"><option value="">All regions</option></select></div><div><label for="reg-school-city">City</label><select id="reg-school-city"><option value="">All cities</option></select></div></div>
+ <p class="field-help" id="reg-school-results" role="status">Loading school directory…</p>
+ <label for="reg-school">Choose your school</label><select id="reg-school" aria-describedby="reg-school-error reg-school-visibility"></select>
+ <p class="field-help" id="reg-school-visibility">Your membership stays private. A school you add is sent to the admin review queue; approved school details join the shared picker.</p>
+ <div class="new-school" id="reg-school-new-wrap" hidden><label for="reg-school-new">School or club name</label><input type="text" id="reg-school-new" maxlength="100" disabled>
+ <label for="reg-school-new-country">School country</label><select id="reg-school-new-country" aria-describedby="reg-school-new-country-error" disabled><option value="">Choose country</option></select><p class="field-error" id="reg-school-new-country-error" hidden></p>
+ <label for="reg-school-new-region">School state or region (optional)</label><input type="text" id="reg-school-new-region" maxlength="100" aria-describedby="reg-school-new-region-error" disabled><p class="field-error" id="reg-school-new-region-error" hidden></p><label for="reg-school-new-city">School city</label><input type="text" id="reg-school-new-city" maxlength="100" aria-describedby="reg-school-new-city-error" disabled><p class="field-error" id="reg-school-new-city-error" hidden></p><label for="reg-school-new-website">School website (optional)</label><input type="url" id="reg-school-new-website" maxlength="500" aria-describedby="reg-school-new-website-error" disabled><p class="field-error" id="reg-school-new-website-error" hidden></p>
+ <p class="field-help">Add public business details only. After your account is confirmed and profile saved, these details go to TKDFlow for review. Approved school details are published under ODbL; your name and membership are not included.</p></div>
+ <p class="field-error" id="reg-school-error" hidden></p><p class="field-help school-coverage" id="reg-school-coverage"></p></fieldset>
             <div class="form-group">
               <label for="reg-email">Email address</label>
               <input type="email" id="reg-email" required autocomplete="email" inputmode="email">
@@ -245,15 +245,17 @@
                 <p class="field-error" id="cp-age-error" hidden></p>
               </div>
             </div>
-            <div class="form-group">
-              <label for="cp-school">Taekwondo school <span class="optional">(optional)</span></label>
-              <select id="cp-school" aria-describedby="cp-school-error"></select>
-              <div class="new-school" id="cp-school-new-wrap" hidden>
-                <label for="cp-school-new">School or club name</label>
-                <input type="text" id="cp-school-new" maxlength="100">
-              </div>
-              <p class="field-error" id="cp-school-error" hidden></p>
-            </div>
+            <fieldset class="school-picker"><legend>Taekwondo school <span class="optional">(optional)</span></legend>
+ <label for="cp-school-search">Search school or location</label><input type="search" id="cp-school-search" placeholder="School name, city or country" autocomplete="off">
+ <div class="school-filters"><div><label for="cp-school-country">Country</label><select id="cp-school-country"><option value="">All countries</option></select></div><div><label for="cp-school-region">State or region</label><select id="cp-school-region"><option value="">All regions</option></select></div><div><label for="cp-school-city">City</label><select id="cp-school-city"><option value="">All cities</option></select></div></div>
+ <p class="field-help" id="cp-school-results" role="status">Loading school directory…</p>
+ <label for="cp-school">Choose your school</label><select id="cp-school" aria-describedby="cp-school-error cp-school-visibility"></select>
+ <p class="field-help" id="cp-school-visibility">Your membership stays private. A school you add is sent to the admin review queue; approved school details join the shared picker.</p>
+ <div class="new-school" id="cp-school-new-wrap" hidden><label for="cp-school-new">School or club name</label><input type="text" id="cp-school-new" maxlength="100" disabled>
+ <label for="cp-school-new-country">School country</label><select id="cp-school-new-country" aria-describedby="cp-school-new-country-error" disabled><option value="">Choose country</option></select><p class="field-error" id="cp-school-new-country-error" hidden></p>
+ <label for="cp-school-new-region">School state or region (optional)</label><input type="text" id="cp-school-new-region" maxlength="100" aria-describedby="cp-school-new-region-error" disabled><p class="field-error" id="cp-school-new-region-error" hidden></p><label for="cp-school-new-city">School city</label><input type="text" id="cp-school-new-city" maxlength="100" aria-describedby="cp-school-new-city-error" disabled><p class="field-error" id="cp-school-new-city-error" hidden></p><label for="cp-school-new-website">School website (optional)</label><input type="url" id="cp-school-new-website" maxlength="500" aria-describedby="cp-school-new-website-error" disabled><p class="field-error" id="cp-school-new-website-error" hidden></p>
+ <p class="field-help">Add public business details only. After your account is confirmed and profile saved, these details go to TKDFlow for review. Approved school details are published under ODbL; your name and membership are not included.</p></div>
+ <p class="field-error" id="cp-school-error" hidden></p><p class="field-help school-coverage" id="cp-school-coverage"></p></fieldset>
             <button type="submit" class="btn-auth" id="btn-complete">Save and continue</button>
           </form>
         </section>

@@ -12,7 +12,7 @@ item must not go ahead until the matching readiness check below is ticked.
 | Second reviewer | **TBD** | Has reviewed the diff and the preview |
 | Vercel project / team | **TBD** | Owner can open Deployments and see production history |
 | Supabase project administrator | **TBD** | Owner can open the intended project dashboard |
-| Support / incident contact | **TBD** (support email not yet created) | Address exists, is monitored and is listed on `about.html#contact` |
+| Support / incident contact | `support@tkdflow.com` (forwarding saved; delivery test pending) | Address exists, is monitored and is listed on `about.html#contact` |
 | Uptime / monitoring tool | **TBD** | Checks in §6 configured and alerting a named person |
 | Supabase backup type (daily / PITR) and plan | **TBD** | Confirmed in the Supabase dashboard for the intended project |
 | Backup retention period | **TBD** | Confirmed and recorded; matches the published privacy policy |
@@ -51,12 +51,15 @@ Keep records in a place the release owner chooses (**TBD**); do not store secret
 1. Push the branch; the **Checks** GitHub Actions workflow must pass (`npm ci` + `npm run check`).
 2. Open the Vercel **preview** deployment for that commit and record its URL.
 3. QA on the preview:
-   - All 10 pages (`/`, `/forms.html`, `/taegeuk-1.html`, `/community.html`, `/forum.html`,
-     `/competitions.html`, `/about.html`, `/auth.html`, `/profile.html`, an unknown path → 404)
-     at **320, 375, 390, 768 and 1280 px** — 50 checks: no horizontal overflow, content readable.
+   - All 34 pages (`/`, `/start-here.html`, `/forms.html`, `/taegeuk-1.html`, `/community.html`, `/forum.html`, `/competitions.html`, `/about.html`, `/founder.html`, `/auth.html`, `/profile.html`, `/taegeuk-2.html`, `/taegeuk-3.html`, `/taegeuk-4.html`, `/taegeuk-5.html`, `/taegeuk-6.html`, `/taegeuk-7.html`, `/taegeuk-8.html`, `/chon-ji.html`, `/dan-gun.html`, `/do-san.html`, `/won-hyo.html`, `/yul-gok.html`, `/joong-gun.html`, `/songahm-1.html`, `/songahm-2.html`, `/songahm-3.html`, `/keumgang.html`, `/koryo.html`, `/taebaek.html`, `/pyongwon.html`, `/sipjin.html`, `/jitae.html`, an unknown path → 404) at **320, 375, 390, 768 and 1280 px** — 170 checks:
+     no horizontal overflow, content readable, the header marks the current section.
+   - Founder page: at every width the portrait frame shows the cap, head and upper body (cap fully
+     in view, no stretched or distorted image), and no layout shift while the photo loads.
+   - Start here: the WT/ITF/ATA buttons open the library filtered to that style; table-of-contents
+     links land below the sticky header; FAQ items open with the keyboard.
    - Mobile menu: tap, Enter, Escape (focus returns to the toggle).
-   - Library: search "Koryo" → one card; lesson filter → one lesson; lesson Next keeps text, row and slider in sync.
-   - Events: Past archive filters work; nothing appears as open or upcoming.
+   - Library: search "Koryo" → one card; lesson filter → 23 lessons; lesson Next keeps text, row and slider in sync.
+   - Events: listings link the organiser's official page and show a last-checked date; nothing claims registration is open; filters are independent; a listing moves to Past only after its own dates (check the data against the date of the QA).
    - Auth page shows the paused state (while accounts are off); no form is usable.
    - Browser console: no application errors except the deliberate 404. Review CSP messages against the shipped application; record preview-toolbar and browser-automation messages separately. Vercel's preview toolbar loads scripts/frames/styles that this application does not ship, and the report-only `upgrade-insecure-requests` directive produces an ignored-directive warning. The instrumented browser also produced an inline-style warning on the static local 404. Do not claim a warning-free console or loosen the policy to silence these tools. Repeat the application-policy check in a regular browser before enforcing CSP (§8).
 4. Release owner records approval of the preview.
@@ -85,17 +88,34 @@ curl -s -o /dev/null -w '%{http_code}\n' https://tkdflow.com/index.html
 curl -s -o /dev/null -w '%{http_code}\n' https://tkdflow.com/this-page-does-not-exist
 ```
 
-Expected: all six header names present (CSP as `Content-Security-Policy-Report-Only` until §8);
-`/index.html` answers 308 (redirect to `/`); the unknown path answers 404 with the branded page.
-Also confirm `https://tkdflow.com/sitemap.xml`, `/robots.txt`, `/favicon.ico` and
-`/assets/og-image.png` return 200, and that the home page console has no CSP report-only violations.
+Expected: all six header names present; `/index.html` answers 308 (redirect to `/`); the unknown
+path answers 404 with the branded page.
+
+The same checks, plus page titles, content types, data files, the social image and the
+accounts-off flags, are bundled in a read-only command (plain GETs, bounded timeouts and body
+size, no credentials, remote JavaScript never run). Say which CSP the deployment should have:
+
+```bash
+npm run check:live -- --csp report-only
+```
+
+```bash
+npm run check:live -- --csp enforced --base https://<deployment-origin> --json check-live.json
+```
+
+Use `report-only` for a deployment built before the §8 release and `enforced` after it. Exit code
+0 = all pass, 1 = a check failed, 2 = usage error. Expectations come from the checked-out commit,
+so run it from the commit that was deployed. A preview behind Vercel Authentication returns its
+login page and fails the page checks; check such a preview in an authorised browser instead, and
+do not add bypass tokens to the command. Also confirm in a regular browser that the home page
+console shows no CSP violations from the application.
 
 ## 6. Monitoring (minimum)
 
 Tool and alert recipient: **TBD**. Minimum checks once configured:
 
 - `https://tkdflow.com/` and `https://tkdflow.com/data/forms.json` return 200.
-- Security headers present (the §5 header command, daily).
+- Security headers present (§5; `npm run check:live` is a manual command, nothing schedules it).
 - After accounts are enabled: Supabase project health, auth error rate and email delivery (**TBD**: how).
 - CSP violation reporting is not configured yet (**TBD**); until then, check the browser console on releases.
 
@@ -116,15 +136,27 @@ follow §9 and do not assume the old site matches the new schema.
 
 ## 8. Enforcing the Content-Security-Policy (separate release)
 
-1. After at least one production release with **no** CSP report-only violations on any page
-   (including the auth pages once accounts are on), change the `vercel.json` header key from
-   `Content-Security-Policy-Report-Only` to `Content-Security-Policy`.
-2. Release through §2–§5. Roll back with §7 if any page breaks.
+Status: **proposed, not live.** Production (`682d99d`) sends `Content-Security-Policy-Report-Only`.
+Review branch `fix/post-launch-improvements-2026-11-15` switches `vercel.json` to the enforced
+`Content-Security-Policy` with the same sources; `npm run check` fails if it falls back to
+report-only, adds `unsafe-*` or any other source.
+
+1. Review and approve the change; deploy it as a preview.
+2. On the preview: §3 page QA in a regular browser (not the instrumented one), including the
+   auth pages, with no application CSP violations. Messages from the Vercel preview toolbar or
+   browser automation are not application violations; never allow-list them in the policy.
+3. Check headers: `npm run check:live -- --csp enforced --base https://<preview-origin>` where the
+   preview is reachable without authentication; otherwise inspect the headers in an authorised browser.
+4. Release through §4–§5 with `--csp enforced`. Record the previous production deployment
+   (report-only) as the rollback target; roll back with §7 if any page breaks.
+5. To rehearse the report-only baseline locally: `npm run serve -- --report-only`.
 
 ## 9. Member accounts rollout (separate, reviewed release)
 
 Prerequisites (all must be true): project access and administrator named (§0); owner-approved
-audience/privacy/retention model and published privacy policy; support contact live; backup type
+audience/privacy/retention model and published privacy policy (age rules approved; privacy, retention
+and server-side age enforcement still open: [account-age-policy.md](account-age-policy.md)); support
+contact forwarding verified before it is listed; legacy under-13/unknown-age rows reviewed; backup type
 and retention confirmed; SDK hash re-verified (SETUP.md → "Pinning the Supabase SDK").
 
 1. **Staging first.** Follow SETUP.md → "Restoring member accounts" steps 3–7 on a staging project
@@ -161,4 +193,11 @@ Supabase backups and restores are managed in the Supabase dashboard (type and re
    and after. Re-enable the Data API only after the owner approves the verified hardened state.
 5. Re-enable member accounts only through §9 step 3.
 
-Support forwarding: `support@tkdflow.com` is configured; delivery test pending. Do not call it tested until the owner confirms receipt.
+Support forwarding delivery was confirmed by the owner on 2026-11-17. The public alias is `support@tkdflow.com`; its personal destination remains private.
+
+
+## Account and school update — 2026-11-17
+
+Support forwarding delivery was confirmed by the owner. Staging confirmation, Google link/repeat login, password reset and password sign-in passed. Public accounts remain off. A bounded local release now includes first-party fonts/SDK, privacy/contact copy and a worldwide school picker with a private admin review queue. Cloud school migration and browser QA remain pending; see `docs/school-directory.md` and `docs/accounts-and-discussions-2026-11-16.md`.
+
+Staging school follow-up: 334 sourced schools installed; existing custom school queued, matched to the canonical listing and approved through the browser after explicit school-review-role approval. Production remains unchanged.

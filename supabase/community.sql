@@ -66,10 +66,22 @@ end$$;
 create or replace function public.moderate_discussion(content_kind text,target_id uuid,decision text) returns void language plpgsql security definer set search_path='' as $$begin
  if not public.is_community_moderator() then raise exception 'Moderator only' using errcode='42501';end if;
  if decision not in ('published','rejected') then raise exception 'Invalid decision';end if;
+ if decision='published' and ((content_kind='topic' and not exists(select 1 from public.discussion_topics t where t.id=target_id and (t.editorial or exists(select 1 from private.account_eligibility e where e.user_id=t.author_id and e.age_band='adult')))) or (content_kind='reply' and not exists(select 1 from public.discussion_replies r join private.account_eligibility e on e.user_id=r.author_id where r.id=target_id and e.age_band='adult'))) then raise exception 'Adult author required' using errcode='42501';end if;
  if content_kind='topic' then update public.discussion_topics set status=decision where id=target_id;
  elsif content_kind='reply' then update public.discussion_replies set status=decision where id=target_id and (decision='rejected' or exists(select 1 from public.discussion_topics t where t.id=topic_id and t.status='published'));
  else raise exception 'Invalid content kind';end if;
 end$$;
 revoke all on function public.submit_discussion(text,text,text),public.reply_discussion(uuid,text),public.report_discussion(text,uuid,text),public.discussion_queue(),public.moderate_discussion(text,uuid,text) from public,anon;
 grant execute on function public.submit_discussion(text,text,text),public.reply_discussion(uuid,text),public.report_discussion(text,uuid,text),public.discussion_queue(),public.moderate_discussion(text,uuid,text) to authenticated;
+-- An explicit correction to a teen age reduces permissions; editable profile age can never increase them.
+create or replace function private.downgrade_teen_eligibility() returns trigger language plpgsql security definer set search_path='' as $$begin
+ if new.age between 13 and 17 then
+  update private.account_eligibility set age_band='teen' where user_id=new.id;
+  update public.discussion_topics set status='rejected' where author_id=new.id and not editorial and status in ('pending','published');
+  update public.discussion_replies set status='rejected' where author_id=new.id and status in ('pending','published');
+ end if;return new;
+end$$;
+revoke all on function private.downgrade_teen_eligibility() from public,anon,authenticated;
+drop trigger if exists downgrade_teen_eligibility on public.profiles;
+create trigger downgrade_teen_eligibility after insert or update of age on public.profiles for each row execute function private.downgrade_teen_eligibility();
 commit;

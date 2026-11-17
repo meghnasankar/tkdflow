@@ -6,13 +6,15 @@ import {bounded} from '../lib/account-ops.js';
    never starts the account client here, and a stored legacy profile with an
    age under 13 is HELD — not shown, not editable, nothing written, converted
    or deleted. */
+import { loadSchoolDirectory } from '../lib/school-directory.js';
+import { initSchoolReview, showSchoolSubmission } from '../lib/school-review.js';
 import { ACCOUNTS } from '../config.js';
 import { getAccountService, accountsConfigured, hasStoredSession } from '../lib/account-service.js';
 import { initials } from '../lib/profile-model.js';
-import { fetchSchoolNames, currentSession } from '../lib/account-ops.js';
+import { currentSession } from '../lib/account-ops.js';
 import { SessionGuard, loadOwnProfile, saveProfile, requestReset, logout } from '../lib/auth-flows.js';
 import {
-  populateBelts, populateSchools, wireNewSchool, readProfileForm, showFieldErrors, createStatus, withBusy,
+  populateBelts, schoolPicker, readProfileForm, showFieldErrors, createStatus, withBusy,
 } from '../lib/profile-form.js';
 import { beltColor } from '../lib/belts.js';
 import { createEligibilityStore, INELIGIBLE } from '../lib/age-gate.js';
@@ -51,6 +53,8 @@ function showHeld() {
 
 function showState(title, text, actions = []) {
   $('profile-wrap').hidden = true;
+  $('school-review').hidden = true;
+  $('school-review-list').replaceChildren();
   $('profile-state').hidden = false;
   $('state-title').textContent = title;
   $('state-text').textContent = text;
@@ -84,20 +88,17 @@ function fillForm(p) {
   $('p-username').value = p.username || '';
   $('p-age').value = p.age ?? '';
   populateBelts($('p-belt'), p.belt_level || '');
-  populateSchools($('p-school'), [], p.school_name || '');
-  $('p-school-new').value = '';
+  schoolPicker('p').setProfile(p);
   showFieldErrors('p', {});
 }
 
 async function loadSchools() {
-  const t = guard.token();
-  const { data, error } = await fetchSchoolNames(client);
-  if (!guard.isCurrent(t)) return;
-  // Re-populate around the CURRENT selection — never reset an edit in progress.
-  populateSchools($('p-school'), data, $('p-school').value, { unavailable: Boolean(error) });
-  const help = $('p-school-help');
-  help.hidden = !error;
-  help.textContent = error ? 'The school list could not load. Your current school is kept; you can still add a new one.' : '';
+  const token = guard.token();
+  const data = await loadSchoolDirectory(client);
+  if (!guard.isCurrent(token)) return;
+  schoolPicker('p').setData(data);
+  initSchoolReview(client,data,()=>guard.isCurrent(token));
+  showSchoolSubmission(client,()=>guard.isCurrent(token));
 }
 
 async function load() {
@@ -115,12 +116,35 @@ async function load() {
   }
   const p = outcome.profile;
   joinedAt = p.created_at || null;
-  original = { full_name: p.full_name, username: p.username, age: p.age ?? null, belt_level: p.belt_level ?? null, school_name: p.school_name ?? null };
+  original = { full_name: p.full_name, username: p.username, age: p.age ?? null, belt_level: p.belt_level ?? null, school_name: p.school_name ?? null, ...Object.fromEntries(['school_directory_id','school_country','school_region','school_city','school_website'].map(key=>[key,p[key]??null])) };
   renderProfile(original);
   fillForm(original);
   $('profile-state').hidden = true;
   $('profile-wrap').hidden = false;
   loadSchools();
+}
+
+// Show the provider actually linked to this account, rather than a second
+// connect prompt after a successful Google sign-in.
+let googleConnectionCheck = 0;
+async function updateGoogleConnection() {
+  const button = $('connect-google');
+  const status = $('google-link-status');
+  button.hidden = true;
+  if (!ACCOUNTS.googleEnabled) { status.textContent = ''; return; }
+  const token = guard.token();
+  const check = ++googleConnectionCheck;
+  status.textContent = 'Checking Google connection…';
+  const { data, error } = await bounded(() => client.auth.getUserIdentities(), { label: 'Google connection' });
+  if (!guard.isCurrent(token) || check !== googleConnectionCheck) return;
+  if (error) {
+    status.textContent = 'Your Google connection could not be checked. Reload this page to try again.';
+    return;
+  }
+  const connected = Array.isArray(data?.identities) && data.identities.some((identity) => identity?.provider === 'google');
+  button.hidden = connected;
+  button.disabled = false;
+  status.textContent = connected ? 'Google is connected. You can sign in with Google.' : '';
 }
 
 async function onSave(e) {
@@ -138,8 +162,9 @@ async function onSave(e) {
     if (outcome.kind === 'saved') {
       original = outcome.profile;
       renderProfile(original);
-      populateSchools($('p-school'), [...$('p-school').options].map((o) => o.value), original.school_name || '');
-      $('p-school-new').value = '';
+      schoolPicker('p').setProfile(original);
+      const token=guard.token();
+      showSchoolSubmission(client,()=>guard.isCurrent(token));
       msg.show('Profile updated.', 'success');
       return;
     }
@@ -189,7 +214,6 @@ async function main() {
     return;
   }
   client = service.client;
-  $('connect-google').hidden=!ACCOUNTS.googleEnabled;
   $('connect-google').addEventListener('click',async()=>{
     $('connect-google').disabled=true;
     const result=await bounded(()=>client.auth.linkIdentity({provider:'google',options:{redirectTo:`${location.origin}/profile.html`}}),{label:'Connecting Google'});
@@ -200,21 +224,24 @@ async function main() {
   if (!session) { location.assign('/auth.html'); return; }
   guard.switchTo(session.user.id);
   email = session.user.email || '';
+  updateGoogleConnection();
 
   client.auth.onAuthStateChange((event, next) => {
     setTimeout(() => {
       const nextId = next?.user?.id ?? null;
+      if (nextId === guard.userId && event === 'USER_UPDATED') { updateGoogleConnection(); return; }
       if (!guard.switchTo(nextId)) return;
       if (!nextId) {
         showState('You have been signed out', 'Sign in again to see your profile.', [h('a', { class: 'btn btn-primary', href: '/auth.html' }, 'Sign in')]);
         return;
       }
       email = next.user.email || '';
+      updateGoogleConnection();
       load();
     }, 0);
   });
 
-  wireNewSchool($('p-school'), $('p-school-new-wrap'), $('p-school-new'));
+  schoolPicker('p');
   $('edit-form').addEventListener('submit', onSave);
   $('btn-reset').addEventListener('click', onReset);
   $('btn-logout').addEventListener('click', onLogout);

@@ -4,7 +4,7 @@
    ones). No function in this module throws or waits without a deadline. */
 import { friendlyError } from './account-service.js';
 import {
-  bounded, fetchOwnProfile, ensureSchool, usernameAvailable, upsertProfile, updateProfile, currentSession,
+  bounded, fetchOwnProfile, usernameAvailable, upsertProfile, updateProfile, currentSession,
 } from './account-ops.js';
 import { validateProfileInput, validatePasswordPair, diffProfile, routeForProfileLookup, pendingProfileFrom } from './profile-model.js';
 import { mayCreateAccount, isUnderMinimumAge, isKnownUnderMinimumProfile } from './age-gate.js';
@@ -56,11 +56,8 @@ export async function signIn(client, { email, password }, opts = {}) {
   return { kind: 'signed-in', session: data.session };
 }
 
-async function provision(client, userId, values, isNewSchool, opts) {
-  if (isNewSchool && values.school_name) {
-    const school = await ensureSchool(client, values.school_name, opts.ms);
-    if (school.error) return { error: school.error, schoolError: true };
-  }
+async function provision(client, userId, values, opts) {
+  // Profile save atomically queues unlisted business details for private admin review.
   const { error } = await upsertProfile(client, userId, values, opts.ms);
   return { error };
 }
@@ -78,7 +75,7 @@ export async function routeSignedIn(client, session, opts = {}) {
   if (opts.eligibility === 'ineligible' || pending?.underMinimum) return INELIGIBLE;
   if (!mayCreateAccount(opts.eligibility)) return { ...AGE_SCREEN, values: pending?.values || null };
   if (pending?.valid) {
-    const r = await provision(client, session.user.id, pending.values, Boolean(pending.values.school_name), opts);
+    const r = await provision(client, session.user.id, pending.values, opts);
     if (!r.error) return { kind: 'profile' };
     return { kind: 'complete', values: pending.values, ...profileError(r) };
   }
@@ -87,14 +84,13 @@ export async function routeSignedIn(client, session, opts = {}) {
 
 function profileError(r) {
   if (r.error?.code === '23505') return { fieldErrors: { username: TAKEN }, message: TAKEN };
-  if (r.schoolError) return { message: 'Your new school could not be added to the shared list. Please try again, or choose “No school”.' };
   return { message: friendlyError(r.error, 'Your profile could not be saved. Please try again.') };
 }
 
 export async function register(client, { raw, email, password, confirm, redirectTo, eligibility, enrollmentTicket }, opts = {}) {
   const gate = ageGate(eligibility, raw?.age);
   if (gate) return gate;
-  const { values, errors, isNewSchool } = validateProfileInput(raw);
+  const { values, errors } = validateProfileInput(raw);
   if (Object.keys(errors).length) return { kind: 'invalid', fieldErrors: errors, message: 'Please fix the highlighted fields.' };
   if (!EMAIL_RE.test(email || '')) return { kind: 'invalid', field: 'email', message: 'Enter a valid email address.' };
   const pw = validatePasswordPair(password, confirm);
@@ -109,7 +105,7 @@ export async function register(client, { raw, email, password, confirm, redirect
   }), { ...opts, label: 'Sign-up' });
   if (error) return { kind: 'error', message: friendlyError(error, 'The account could not be created. Please try again.') };
   if (!data?.session) return { kind: 'check-email' };      // email confirmation required (or address already registered)
-  const r = await provision(client, data.user.id, values, isNewSchool, opts);
+  const r = await provision(client, data.user.id, values, opts);
   if (!r.error) return { kind: 'profile' };
   return { kind: 'complete', session: data.session, values, ...profileError(r) };   // account exists; retry on the completion form
 }
@@ -117,14 +113,14 @@ export async function register(client, { raw, email, password, confirm, redirect
 export async function completeProfile(client, raw, opts = {}) {
   const gate = ageGate(opts.eligibility, raw?.age);
   if (gate) return gate;
-  const { values, errors, isNewSchool } = validateProfileInput(raw);
+  const { values, errors } = validateProfileInput(raw);
   if (Object.keys(errors).length) return { kind: 'invalid', fieldErrors: errors, message: 'Please fix the highlighted fields.' };
   const { session, error } = await currentSession(client, opts.ms);
   if (error) return { kind: 'error', message: friendlyError(error) };
   if (!session) return { kind: 'session-ended', message: 'Your session has ended. Sign in again to finish your profile.' };
   const avail = await usernameAvailable(client, values.username, opts.ms);
   if (avail.available === false) return { kind: 'invalid', fieldErrors: { username: TAKEN }, message: TAKEN };
-  const r = await provision(client, session.user.id, values, isNewSchool, opts);
+  const r = await provision(client, session.user.id, values, opts);
   if (r.error) return { kind: 'error', ...profileError(r) };
   return { kind: 'profile' };
 }
@@ -174,7 +170,7 @@ export async function loadOwnProfile(client, guard, opts = {}) {
 export async function saveProfile(client, guard, original, raw, opts = {}) {
   if (isKnownUnderMinimumProfile(original) || isUnderMinimumAge(raw?.age)) return HELD;
   const t = guard.token();
-  const { values, errors, isNewSchool } = validateProfileInput(raw);
+  const { values, errors } = validateProfileInput(raw);
   if (Object.keys(errors).length) return { kind: 'invalid', fieldErrors: errors, message: 'Please fix the highlighted fields.' };
   const changes = diffProfile(original, values);
   if (!Object.keys(changes).length) return { kind: 'unchanged', message: 'No changes to save.' };
@@ -189,11 +185,6 @@ export async function saveProfile(client, guard, original, raw, opts = {}) {
     const avail = await usernameAvailable(client, changes.username, opts.ms);
     if (!guard.isCurrent(t)) return { kind: 'stale' };
     if (avail.available === false) return { kind: 'invalid', fieldErrors: { username: TAKEN }, message: TAKEN };
-  }
-  if (isNewSchool && 'school_name' in changes) {
-    const school = await ensureSchool(client, changes.school_name, opts.ms);
-    if (!guard.isCurrent(t)) return { kind: 'stale' };
-    if (school.error) return { kind: 'error', message: 'Your new school could not be added to the shared list, so nothing was saved. Please try again.' };
   }
   const result = await updateProfile(client, t.userId, changes, opts.ms);
   if (!guard.isCurrent(t)) return { kind: 'stale' };

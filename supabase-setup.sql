@@ -16,7 +16,7 @@
 --      only their own row; anonymous visitors cannot read profiles.
 --    • username availability is answered by username_available(), which
 --      returns only true/false.
---    • schools: anyone can read names; signed-in members can ADD a school
+--    • schools: anyone can read curated names; only administrators add schools
 --      (2–100 chars) but cannot rename or delete any school. Edits are
 --      reserved for the project owner (dashboard / service role).
 --    • the same validation the UI applies is enforced in the database:
@@ -221,12 +221,9 @@ create policy "profiles_update_own" on public.profiles
   using ((select auth.uid()) = id) with check ((select auth.uid()) = id);
 -- No DELETE policy: account deletion is an owner-run process (SETUP.md).
 
--- schools: public names, member additions only
+-- schools: public curated names; custom member entries stay in private profiles
 create policy "schools_select_all" on public.schools
   for select to anon, authenticated using (true);
-create policy "schools_insert_member" on public.schools
-  for insert to authenticated
-  with check (created_by = (select auth.uid()));  -- name rules: schools_name_length + unique index
 
 -- Table privileges (defence in depth on top of RLS)
 revoke all on public.profiles from anon;
@@ -237,8 +234,8 @@ grant select, insert, update on public.profiles to authenticated;
 -- private. Clients must select explicit columns: .select('name').
 revoke all on public.schools from anon, authenticated;
 grant select (name) on public.schools to anon, authenticated;
-grant insert (name) on public.schools to authenticated;
-grant usage on sequence public.schools_id_seq to authenticated;
+revoke insert (name) on public.schools from public, anon, authenticated;
+revoke all on sequence public.schools_id_seq from public, anon, authenticated;
 
 -- 5. Username availability (returns only a boolean) ────────────
 create or replace function public.username_available(candidate text)
