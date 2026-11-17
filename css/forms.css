@@ -9,8 +9,6 @@
 .org-tab[aria-pressed="true"] { color: white; border-bottom-color: var(--red-on-dark); }
 .org-tab .count { font-weight: 500; opacity: .8; }
 
-.review-notice { margin-top: 24px; }
-
 .forms-layout {
   display: grid; grid-template-columns: 250px minmax(0, 1fr);
   gap: 32px; align-items: start; padding: 28px 0 80px;

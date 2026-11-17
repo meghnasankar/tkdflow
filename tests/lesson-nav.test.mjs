@@ -407,10 +407,7 @@ describe('page wiring', () => {
     assert.equal(descs.size, COUNT, 'every pose has a distinct description');
   });
 
-  test('creator attribution and the jump link remain visible without an instructor-review warning', () => {
-    const notice = html.slice(html.indexOf('id="review-notice"'), html.indexOf('class="lesson-layout"'));
-    assert.match(notice, /Created by Meghna Sankar/);
-    assert.doesNotMatch(notice, /Not yet reviewed|review-questions/);
+  test('the jump link still targets the player directly', () => {
     assert.match(html, /href="#player"[^>]*>Jump to the player</);
     assert.match(html, /id="player"/);
   });

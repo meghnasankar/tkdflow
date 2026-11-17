@@ -3,9 +3,6 @@
 .kr-title { color: rgba(255,255,255,.7); font-size: 0.65em; font-weight: 700; }
 .hero-badge-row { display: flex; gap: 8px; flex-wrap: wrap; }
 
-.lesson-review { margin-top: 24px; }
-.lesson-review ul { margin: 6px 0 0 18px; list-style: disc; }
-.lesson-review li { margin: 2px 0; }
 .review-details { margin-top: 8px; }
 .review-details summary {
   cursor: pointer; font-weight: 700; display: inline-flex; align-items: center;
@@ -130,7 +127,7 @@
 .lesson-controls .speed-label { margin-left: 0; }
 .lesson-controls .speed-select { min-width: 70px; }
 .lesson-study { overflow: hidden; }
-.lesson-study header, .lesson-study footer, .lesson-study .page-hero, .lesson-study .lesson-review,
+.lesson-study header, .lesson-study footer, .lesson-study .page-hero,
 .lesson-study .before-begin, .lesson-study .move-panel, .lesson-study .info-section,
 .lesson-study .lesson-references, .lesson-study .skip-link { display: none; }
 .lesson-study .player-card { position: fixed; inset: 12px; width: calc(100% - 24px); height: min(640px, calc(100svh - 24px)); max-height: calc(100dvh - 24px); max-width: 920px; margin: auto; z-index: 1000; }
