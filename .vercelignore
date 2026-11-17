@@ -4,7 +4,7 @@ tests
 scripts
 layout
 docs
-supabase
+/supabase
 supabase-setup.sql
 package.json
 package-lock.json

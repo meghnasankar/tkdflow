@@ -1,6 +1,6 @@
-# Account age policy and restoration status
+# Account age policy and production status
 
-Updated 2026-11-17. These are the owner-approved product rules, not a claim of legal compliance. Public website accounts remain switched off in `js/config.js`; the isolated staging site is enabled for owner testing.
+Updated 2026-11-17. These are owner-approved product rules, not a claim of legal compliance.
 
 ## Approved rules
 
@@ -11,36 +11,34 @@ Updated 2026-11-17. These are the owner-approved product rules, not a claim of l
 - Under-13 individual accounts are unavailable. Parent-managed child profiles are a future feature; no child login, child schema or consent flow is advertised as available.
 - Optional profile age must be 13–99. It is separate from the enrollment answer and cannot grant adult rights.
 
-## Verified implementation
+## Production activation
 
-The original Supabase project was recovered under Meghna's ownership. Its preflight showed one auth account, one profile and six legacy schools, with zero under-13 or unknown-age profiles. No member row details were inspected. Tested profile isolation, enrollment hooks and moderated-discussion schemas are installed in production and staging. Production server signups remain off.
+The owner explicitly requested publication and approved the production school migration, screened registration and signed-in Google linking on 2026-11-17. The recovered original Supabase project belongs to Meghna. Its production before-user-created hook is configured and the school migration preserved one existing profile and six legacy schools, adding 334 sourced directory records and one private suggestion. No legacy record was deleted or made public.
 
-Email enrollment uses a short-lived, single-use server ticket and a Before User Created hook. Unscreened/under-13 requests and new Google-first registrations are denied. Existing confirmed email accounts can connect Google and then sign in with it. The browser gate also holds known under-13 profiles without changing or deleting their records.
+Production server signups and member-initiated Google linking are enabled; anonymous accounts remain off and email confirmation remains on. Six live backend checks passed: public school business records are readable, anonymous profiles and review queues are denied, wrong-origin and under-13 enrollment are rejected, and a screened adult receives a short-lived enrollment ticket. The server stores only the resulting eligibility band. New Google-first accounts remain denied: users confirm an email account, then connect Google for future sign-in.
 
-The owner completed staging email confirmation, Google connection and repeat Google login, sign-out, password reset and password sign-in. Aggregate counts were one confirmed account, one private profile and one Google identity. Resend sends account emails from the dedicated auth subdomain. Support forwarding delivery was confirmed by the owner on 2026-11-17. Only `support@tkdflow.com` may be published; never commit its destination inbox.
+Google's external app now displays In production with identity, email and basic profile access only. Its public support contact is the owner-approved TKDFlow Support Google Group; conversations and membership are owner-only while incoming support mail is open. Personal destination inboxes are not published in the site or repository.
 
-The current local release serves fonts and the pinned account SDK from first-party files. Hosting still receives ordinary request logs. The privacy notice in `about.html#privacy` explains account fields, public discussions, providers, retention and manual data requests. This notice and first-party asset change are not yet deployed.
+Staging confirmation, Google connection/repeat login, sign-out, recovery and password sign-in passed. Support forwarding delivery was confirmed by the owner on 2026-11-17. The production owner-account email and Google smoke test is the final live verification step after this client release. Never enter or read a new password, reset token or private provider key on the owner's behalf.
 
 ## Schools and privacy
 
-School selection is optional and is not public on a member profile. The prepared directory migration adds public business records and a separate private suggestion queue. Saving an unlisted school atomically queues it for admin review, including existing legacy private names. Approved business facts join the shared picker under ODbL; student identity, member IDs and associations stay private. Only an owner-assigned moderator can approve/reject. The school migration and initial 334-record directory are installed and browser-tested on staging. Meghna’s staging test account has explicitly approved school-only review access; production is unchanged.
+School selection is optional and member associations remain private. Saving an unlisted school queues business details privately for review. Approved business facts join the shared picker under ODbL; student identity and membership never enter that public listing. The initial 334-school directory is explicitly incomplete and provides per-record sources, country/region/city filters and a missing-school flow.
+
+School-only review access uses a private owner-managed role; it does not permit forum moderation or another member's profile reads. Staging review access was approved and tested. Production review access must be attached to the intended confirmed account, never guessed from a name or granted through client code. Forum moderator access is a separate role.
+
+The public privacy/contact notice and first-party fonts/pinned account library were published with PR #13. Hosting still receives ordinary request logs. No site analytics or advertising tracker is installed. The public contact is support@tkdflow.com; never publish its personal destination.
 
 ## Remaining gates
 
-- Staging school migration, picker and review approval passed. Prepare the same additive migration/data for the production release, preserving existing profiles and legacy names.
-- Publish the updated privacy/contact content and first-party assets in the bounded release; verify account pages, Korean text and animations under the enforced content policy.
-- Staging school-review access was explicitly approved and verified. Any production reviewer or forum moderator assignment still requires its verified account and role approval. No member can self-promote.
-- Complete Google production branding/support-contact readiness and the main-project email/Google smoke tests. Google is still in limited Testing; public accounts and manual linking remain off in the main project.
-- Enable production server registration, manual linking and website account switches only as part of a concrete approved release after those checks pass.
-
-Parent-managed child profiles are a separate future project requiring its own consent, relationship, permissions, retention and deletion design before any child data is collected. They are not a gate to the current 13+ individual account feature.
+The frontend must be live to complete the owner's production confirmation/sign-in/Google test. Record those results and the verified production school-reviewer assignment in the release log. If a live account flow fails, pause the affected switch while repairing it; do not weaken email confirmation, enrollment checks or row security. Parent-managed child profiles remain a separate future feature with their own consent, relationship, permissions, retention and deletion design.
 
 ## Data requests
 
-The public notice offers manual copy, correction and deletion through the verified support alias. Verify ownership through the registered account; never request passwords or reset links. Follow `docs/account-data-requests.md`. Do not delete records merely because they are old or because a browser reports an ineligible age.
+The public notice offers manual copy, correction and deletion through the verified support alias. Verify ownership through the registered account; never request passwords or reset links. Follow docs/account-data-requests.md. Do not delete records merely because they are old or because a browser reports an ineligible age.
 
 ## Age-screen limits
 
-The screen relies on a truthful answer and is not age verification. A new tab/browser or cleared storage shows it again. In a known-ineligible tab, no account client starts and only public-learning routes are shown. A UI gate is not a substitute for the server enrollment hook. The database profile constraint alone does not gate auth account creation.
+The screen relies on a truthful answer and is not age verification. A new tab/browser or cleared storage shows it again. In a known-ineligible tab, no account client starts and only public-learning routes are shown. The database profile constraint alone does not gate auth account creation; the deployed server hook does.
 
-A neutral screen and a written policy are **not COPPA compliance**. Applicability and any future child-profile design require an appropriate audience/privacy review. Primary reference: https://www.ftc.gov/business-guidance/resources/complying-coppa-frequently-asked-questions
+A neutral screen and a written policy are **not COPPA compliance**. Applicability and any future child-profile design require appropriate audience/privacy review. Primary reference: https://www.ftc.gov/business-guidance/resources/complying-coppa-frequently-asked-questions

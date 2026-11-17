@@ -89,3 +89,8 @@ The owner confirmed that password reset and password sign-in worked. The signed-
 The local continuation adds first-party fonts and account SDK assets, privacy/contact content and a database-backed school directory with a private suggestion review queue. These newer changes are not yet deployed. See `docs/school-directory.md`, `docs/local-assets.md` and `docs/account-data-requests.md`. Public accounts remain off and Google remains in limited Testing.
 
 Staging school follow-up: 334 sourced schools installed; existing custom school queued, matched to the canonical listing and approved through the browser after explicit school-review-role approval. Production remains unchanged.
+
+
+## Production account activation — 2026-11-17
+
+The owner approved and requested publication. PR #13 merged and its school/privacy/assets release deployed. The production school migration preserved one profile and six legacy schools, installed 334 directory records and queued one private unlisted school. Production registration and member-initiated Google linking are enabled; anonymous sign-in remains off and email confirmation stays on. Google's external app is In production with basic identity scopes and the approved private support group contact. Six live backend/permission checks passed. This client release enables the reviewed original project; production owner email/Google smoke results and the confirmed school-reviewer role assignment will be recorded after the live flow. The personal support destination and private credentials remain out of source.

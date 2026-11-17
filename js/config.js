@@ -7,17 +7,13 @@
    Security is what protects data). Never put a service-role key,
    database password or OAuth client secret in this file.
 
-   ACCOUNT SERVICE STATUS (2026-11-15)
-   The previous Supabase host failed DNS (NXDOMAIN) during the
-   audit, so member accounts are switched OFF here. Do not guess a
-   replacement project. To restore accounts, follow
-   "Restoring member accounts" in SETUP.md — in particular:
-     1. apply supabase-setup.sql to the intended project and run
-        the permission tests against staging,
-     2. confirm the privacy / audience (minimum age) model,
-     3. fill in supabaseUrl + supabaseAnonKey + sdk.integrity,
-     4. set enabled: true (and signupEnabled only when approved).
-   `npm test` refuses an enabled config that lacks these values.
+   ACCOUNT SERVICE STATUS (2026-11-17)
+   The original production project was recovered under Meghna's account.
+   Owner-approved registration is protected by the server enrollment hook,
+   email confirmation and private profile policies. Google is email-first:
+   confirm an account, connect Google, then use it for subsequent sign-in.
+   The school directory and private review queue are installed in production.
+   The owner approved production activation; see docs/account-age-policy.md.
    ═══════════════════════════════════════════════════════════════ */
 
 export const SITE = Object.freeze({
@@ -27,7 +23,7 @@ export const SITE = Object.freeze({
 
 export const ACCOUNTS = Object.freeze({
   /** Master switch. false = every account screen shows the paused state. */
-  enabled: false,
+  enabled: true,
 
   /** Shown to visitors while accounts are switched off. */
   disabledReason:
@@ -35,19 +31,16 @@ export const ACCOUNTS = Object.freeze({
     'All learning resources are available without an account.',
 
   /** Public Supabase project settings (Project Settings → API). */
-  supabaseUrl: '',
-  supabaseAnonKey: '',
+  supabaseUrl: "https://ffkwwfwrqtwejyrnkxey.supabase.co",
+  supabaseAnonKey: "sb_publishable_Q3OpTXWzo3EhvG86dWEQRA_oaN8QHyy",
 
-  /** New registrations — UI ONLY. This flag merely hides the sign-up form;
-   *  it cannot stop anyone calling the Supabase Auth API directly. Until the
-   *  owner approves the audience, privacy and retention model (tracker #2,
-   *  #30), the Supabase project itself must also block new users:
-   *  Authentication → Sign In / Providers → "Allow new users to sign up" OFF
-   *  (this also stops Google/OAuth from creating accounts). */
-  signupEnabled: false,
+  /** UI registration switch. The server independently requires a screened,
+   *  single-use enrollment ticket and confirmed email. Disable server signups
+   *  as well as this UI switch if account creation needs to be paused. */
+  signupEnabled: true,
 
   /** Google sign-in. Requires the provider and redirect URLs to be configured. */
-  googleEnabled: false,
+  googleEnabled: true,
 
   /** Exact SDK build. 2.119.0 was the npm `latest` release on 2026-11-15
    *  (published 2026-11-04). The integrity hash was computed from
