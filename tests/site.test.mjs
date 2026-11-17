@@ -238,18 +238,23 @@ function pngSize(buf) {
 }
 
 test('social preview image exists, is 1200×630 and is declared on every page', () => {
-  const png = readFileSync(join(ROOT, 'assets/og-image.png'));
+  const png = readFileSync(join(ROOT, 'assets/og-animation-v2.png'));
   assert.deepEqual(pngSize(png), { width: 1200, height: 630 });
   assert.ok(png.length < 1_000_000, 'keep the social card under 1 MB');
   const svg = read('assets/social-card.svg');
   assert.match(svg, /width="1200" height="630" viewBox="0 0 1200 630"/);
   assert.match(svg, /<title id="t">/);
+  const pose = svg.match(/data-source="assets\/forms\/taegeuk-4\.webp"[^>]+href="data:image\/webp;base64,([^"]+)"/);
+  assert.ok(pose, 'social card reuses the current animation thumbnail');
+  assert.ok(Buffer.from(pose[1], 'base64').equals(readFileSync(join(ROOT, 'assets/forms/taegeuk-4.webp'))));
+  assert.ok(png.equals(readFileSync(join(ROOT, 'assets/og-image.png'))), 'legacy image address also serves the updated character');
   for (const p of pages) {
-    assert.match(p.html, /<meta property="og:image" content="https:\/\/tkdflow\.com\/assets\/og-image\.png">/, p.file);
+    assert.match(p.html, /<meta property="og:image" content="https:\/\/tkdflow\.com\/assets\/og-animation-v2\.png">/, p.file);
     assert.match(p.html, /<meta property="og:image:width" content="1200">/, p.file);
     assert.match(p.html, /<meta property="og:image:height" content="630">/, p.file);
     assert.match(p.html, /<meta property="og:image:alt" content="[^"]{10,}">/, p.file);
     assert.match(p.html, /<meta name="twitter:card" content="summary_large_image">/, p.file);
+    assert.match(p.html, /<meta name="twitter:image" content="https:\/\/tkdflow\.com\/assets\/og-animation-v2\.png">/, p.file);
   }
 });
 
