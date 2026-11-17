@@ -103,7 +103,7 @@ test('unpublished submission queries expose only the current author, including t
 test('forum sharing URLs preserve category, search text and selected topic without injecting parameters',()=>{
  const url=discussionUrl({category:'training',query:'  block & turn?  ',topic:A});const params=new URL(url,'https://tkdflow.com').searchParams;
  assert.equal(params.get('q'),'block & turn?');assert.equal(params.get('category'),'training');assert.equal(params.get('topic'),A);
- assert.equal(discussionUrl(),'/forum.html');assert.equal(params.size,3);
+ assert.equal(discussionUrl(),'/community.html');assert.equal(params.size,3);
 });
 
 test('an assigned teen moderator can review adult submissions without gaining public posting or private-profile access',async()=>{

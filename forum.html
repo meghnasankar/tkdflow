@@ -4,14 +4,13 @@
 <!-- layout:head -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Taekwondo discussions — TKDflow</title>
-<meta name="description" content="Explore questions about forms, curricula, grading and competitions, with moderated member discussions.">
-<link rel="canonical" href="https://tkdflow.com/forum.html">
+<title>Community — TKDflow</title>
+<meta name="description" content="Discussions and learning resources are now together in the TKDflow community.">
+<meta name="robots" content="noindex">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="TKDflow">
-<meta property="og:title" content="Taekwondo discussions — TKDflow">
-<meta property="og:description" content="Explore questions about forms, curricula, grading and competitions, with moderated member discussions.">
-<meta property="og:url" content="https://tkdflow.com/forum.html">
+<meta property="og:title" content="Community — TKDflow">
+<meta property="og:description" content="Discussions and learning resources are now together in the TKDflow community.">
 <meta property="og:image" content="https://tkdflow.com/assets/og-animation-v2.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
@@ -28,9 +27,9 @@
 <script type="module" src="/js/site.js"></script>
 <!-- /layout:head -->
   <link rel="stylesheet" href="/css/preview.css">
-  <script type="module" src="/js/pages/forum.js"></script>
+  <script type="module" src="/js/pages/forum-redirect.js"></script>
 </head>
-<body data-page="forum">
+<body data-page="community">
 <!-- layout:header -->
 <a class="skip-link" href="#main">Skip to main content</a>
 <header class="navbar">
@@ -46,8 +45,7 @@
       <ul class="nav-links" id="site-nav">
         <li><a href="/" data-nav="home">Home</a></li>
         <li><a href="/forms.html" data-nav="forms">Forms Library</a></li>
-        <li><a href="/community.html" data-nav="community">Community</a></li>
-        <li><a href="/forum.html" data-nav="forum" class="active" aria-current="page">Forum</a></li>
+        <li><a href="/community.html" data-nav="community" class="active" aria-current="page">Community</a></li>
         <li><a href="/competitions.html" data-nav="events">Events</a></li>
         <li class="nav-account" id="nav-account"><a href="/auth.html" class="btn btn-secondary btn-sm nav-account-link">Account</a></li>
       </ul>
@@ -56,25 +54,7 @@
 </header>
 <!-- /layout:header -->
 
-<main id="main" tabindex="-1">
- <div class="page-hero forum-hero"><div class="container"><p class="section-label on-dark">Learn together</p><h1>Taekwondo discussions</h1><p>Compare curricula, explore a form transition and ask clear questions. Start with a guide or join a conversation.</p></div></div>
- <div class="container"><p class="notice notice-info preview-notice" id="forum-service" role="status">Loading discussions…</p>
- <nav class="discussion-actions" aria-label="Discussion actions">
- <a id="start-topic-link" class="btn btn-primary" href="#topic-composer" hidden>Start a discussion</a>
- <a id="my-submissions-link" class="btn btn-secondary" href="#my-submissions" hidden>Your submissions</a>
- <a id="moderation-link" class="btn btn-secondary" href="#moderation" hidden>Moderation</a>
- <a id="forum-sign-in" class="btn btn-secondary" href="/auth.html" hidden>Sign in to participate</a>
- <button id="refresh-discussions" type="button" class="btn btn-secondary">Refresh discussions</button>
- </nav>
- <div class="preview-layout"><aside aria-label="Forum categories"><h2 class="side-title">Categories</h2><div class="category-nav" id="category-nav" role="group" aria-label="Filter by category"></div></aside>
- <section aria-labelledby="topics-title"><h2 id="topics-title" class="sr-only">Discussion topics</h2><form class="toolbar" id="forum-search" role="search"><label for="forum-q">Search discussions</label><div class="search-bar"><span aria-hidden="true">🔍</span><input type="search" id="forum-q" autocomplete="off"></div></form>
- <p class="results-summary" id="forum-summary" aria-live="polite"></p><p id="discussion-message" role="status"></p>
- <section id="topic-detail" class="topic-detail" aria-label="Selected discussion" hidden></section><div id="forum-content"></div><section id="topic-composer" hidden aria-label="Start a discussion"></section>
- <section id="my-submissions" class="private-submissions" aria-labelledby="my-submissions-title" hidden><h2 id="my-submissions-title">Your submissions</h2><p>Track your latest unpublished topics and replies, visible to you and the moderators reviewing them. Published contributions appear in their discussions.</p><button id="refresh-submissions" type="button" class="btn btn-secondary btn-sm">Refresh your submissions</button><div id="my-submissions-list" aria-live="polite"></div></section>
- <section id="moderation" hidden><h2>Moderation</h2><button id="load-moderation" type="button" class="btn btn-secondary">Open moderation queue</button><div id="moderation-queue"></div></section>
- </section></div>
- <section class="community-guidelines"><h2>Community guidelines</h2><p>Be respectful, keep questions specific, credit references and post only material you have permission to share. Do not post contact details, school schedules, spam or harmful content. Public submissions are moderated. Public reading is open to everyone; accounts aged 13–17 remain private and do not publish posts or messages.</p></section>
- </div></main>
+<main id="main" tabindex="-1"><div class="container prose"><h1>Community has moved</h1><p>Discussions and learning resources are now together in one Community section.</p><p><a class="btn btn-primary" href="/community.html">Open Community</a></p></div></main>
 
 <!-- layout:footer -->
 <footer class="footer">
@@ -94,8 +74,8 @@
       <div class="footer-col">
         <h2>Community</h2>
         <ul>
-          <li><a href="/community.html">Community</a></li>
-          <li><a href="/forum.html">Forum</a></li>
+          <li><a href="/community.html">Discussions</a></li>
+          <li><a href="/community.html?view=resources">Learning resources</a></li>
           <li><a href="/competitions.html">Events</a></li>
         </ul>
       </div>
