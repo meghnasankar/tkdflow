@@ -25,6 +25,8 @@ body { background: var(--off-white); }
 .panel-title { font-size: 1.15rem; margin-bottom: 8px; }
 .panel-intro { margin-bottom: 18px; font-size: 0.92rem; }
 .panel-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.panel-subtitle { font-size: 1rem; margin: 24px 0 6px; }
+#panel-age-guidance > p + p { margin-top: 10px; }
 
 .btn-google {
   width: 100%; display: flex; align-items: center; justify-content: center;
@@ -46,16 +48,16 @@ body { background: var(--off-white); }
   color: var(--gray-600); margin-bottom: 6px;
 }
 .form-group .optional { font-weight: 500; color: var(--gray-400); }
-.form-group input, .form-group select {
+.form-group input, .form-group select, .school-picker input, .school-picker select {
   width: 100%; padding: 11px 14px; min-height: 46px;
   border: 2px solid var(--gray-200); border-radius: var(--radius-sm);
   font-size: 1rem; color: var(--gray-800); background: var(--off-white);
 }
-.form-group input:focus, .form-group select:focus {
+.form-group input:focus, .form-group select:focus, .school-picker input:focus, .school-picker select:focus {
   outline: none; border-color: var(--focus); background: white;
   box-shadow: 0 0 0 3px rgba(26,86,160,.18);
 }
-.form-group input[aria-invalid="true"], .form-group select[aria-invalid="true"] { border-color: #DC2626; }
+.form-group input[aria-invalid="true"], .form-group select[aria-invalid="true"], .school-picker input[aria-invalid="true"], .school-picker select[aria-invalid="true"] { border-color: #DC2626; }
 .form-group input[readonly] { background: var(--gray-100); color: var(--gray-600); }
 .form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .field-help { font-size: 0.8rem; color: var(--gray-400); margin-top: 4px; }
@@ -132,3 +134,17 @@ body { background: var(--off-white); }
   .form-row { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .auth-body { padding: 22px 18px; }
 }
+
+/* School filters use native controls and remain usable on small screens. */
+.school-picker{border:1px solid var(--gray-200);border-radius:12px;padding:16px;margin:0 0 22px;min-width:0}
+.school-picker legend{font-weight:700;padding:0 6px}
+.school-picker label{display:block;font-size:13px;font-weight:600;margin:12px 0 5px}
+.school-picker input,.school-picker select{width:100%;max-width:100%;min-width:0}
+.school-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.school-filters>div:first-child{grid-column:1/-1}
+.school-picker .field-help{font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+.school-coverage a{font-weight:600;text-decoration:underline}
+.school-review-card{border:1px solid var(--gray-200);border-radius:12px;padding:18px;margin-top:18px}
+.school-review-actions{display:flex;flex-wrap:wrap;gap:10px}
+#school-review{margin-bottom:24px}
+@media(max-width:520px){.school-filters{grid-template-columns:1fr}.school-picker{padding:12px}}

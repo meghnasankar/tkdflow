@@ -5,10 +5,11 @@
    Anything that can create an account (Create account, Continue with Google,
    finishing a new profile) goes through the age screen first; see
    lib/age-gate.js and docs/account-age-policy.md. */
+import { loadSchoolDirectory } from '../lib/school-directory.js';
 import { ACCOUNTS } from '../config.js';
 import { getAccountService, accountsConfigured, hasStoredSession } from '../lib/account-service.js';
 import { parseAuthLocation } from '../lib/profile-model.js';
-import { fetchSchoolNames, currentSession, bounded } from '../lib/account-ops.js';
+import { currentSession, bounded } from '../lib/account-ops.js';
 import {
   signIn, register, completeProfile, requestReset, updatePassword, routeSignedIn, startGoogle, logout,
 } from '../lib/auth-flows.js';
@@ -16,7 +17,7 @@ import {
   createEligibilityStore, classifyAge, authEntryPanel, AGE_SCREEN_RETRY, ELIGIBLE, INELIGIBLE,
 } from '../lib/age-gate.js';
 import {
-  populateBelts, populateSchools, wireNewSchool, readProfileForm, showFieldErrors, createStatus, withBusy,
+  populateBelts, schoolPicker, readProfileForm, showFieldErrors, createStatus, withBusy,
 } from '../lib/profile-form.js';
 
 const $ = (id) => document.getElementById(id);
@@ -38,8 +39,7 @@ const SUBMITS = ['btn-login', 'btn-register', 'btn-complete', 'btn-forgot', 'btn
 let client = null;
 let flow = null;          // non-null while a flow owns navigation (prevents auth-event races)
 let routing = null;
-let schoolNames = [];
-let schoolsFailed = false;
+
 const eligibility = createEligibilityStore();   // 'eligible' | 'ineligible' | null — never the age itself
 let enrollmentTicket=null, enrollmentExpires=0;
 let afterAge = null;                            // what to continue with once the screen is passed
@@ -170,9 +170,9 @@ function applyFieldErrors(prefix, outcome) {
 /* ── static wiring (no network) ── */
 function setup() {
   for (const prefix of ['reg', 'cp']) {
-    wireNewSchool($(`${prefix}-school`), $(`${prefix}-school-new-wrap`), $(`${prefix}-school-new`));
+    schoolPicker(prefix);
     populateBelts($(`${prefix}-belt`));
-    populateSchools($(`${prefix}-school`), [], '');
+
   }
   document.querySelectorAll('[data-goto]').forEach((b) => b.addEventListener('click', () => goto(b.dataset.goto)));
   document.querySelectorAll('.auth-tab').forEach((t) => t.addEventListener('click', () => goto(t.dataset.mode)));
@@ -198,11 +198,8 @@ function setup() {
 }
 
 async function loadSchools() {
-  const { data, error } = await fetchSchoolNames(client);
-  schoolNames = data;
-  schoolsFailed = Boolean(error);
-  // Re-populate around whatever is selected *now* (late completion keeps edits).
-  for (const prefix of ['reg', 'cp']) populateSchools($(`${prefix}-school`), schoolNames, $(`${prefix}-school`).value, { unavailable: schoolsFailed });
+  const data = await loadSchoolDirectory(client);
+  for (const prefix of ['reg','cp']) schoolPicker(prefix).setData(data);
 }
 
 /* ── signed-in routing ── */
@@ -234,7 +231,7 @@ function showComplete(session, outcome = {}) {
   $('cp-username').value = v.username || '';
   $('cp-age').value = v.age ?? '';
   populateBelts($('cp-belt'), v.belt_level || '');
-  populateSchools($('cp-school'), schoolNames, v.school_name || '', { unavailable: schoolsFailed });
+  schoolPicker('cp').setProfile(v);
   if (outcome.message) applyFieldErrors('cp', outcome);
   else $('cp-name').focus();
 }

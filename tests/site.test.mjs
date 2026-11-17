@@ -5,6 +5,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { join, extname } from 'node:path';
 import { manifest, renderPage, renderSitemap } from '../scripts/sync-layout.mjs';
 import { ACCOUNTS } from '../js/config.js';
@@ -12,6 +13,9 @@ import { validateForms, validateForum, validateCommunity, validateEvents } from 
 import { publicKeyProblem, findPrivilegedKeys } from '../js/lib/key-check.js';
 
 const ROOT = new URL('..', import.meta.url).pathname;
+// Public address domains need non-empty labels and an alphabetic TLD. Font
+// axis ranges such as wght@400..900 are URLs, not contact email addresses.
+const EMAIL_ADDRESS = /[\w.+-]+@(?:[\w-]+\.)+[a-z]{2,}\b/i;
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');
 const pages = manifest.pages.map((p) => ({ ...p, html: read(p.file) }));
 
@@ -122,6 +126,14 @@ test('content files pass their validators', () => {
   assert.equal(validateEvents(JSON.parse(read('data/competitions.json'))), null);
 });
 
+test('contact guard catches real email addresses without confusing font-axis URLs', () => {
+  for (const value of ['support@tkdflow.com', 'first.last+test@example.co.uk']) assert.match(value, EMAIL_ADDRESS);
+  for (const value of [
+    'https://fonts.googleapis.com/css2?family=Inter:wght@400..900&family=Noto+Sans+KR:wght@400..700',
+    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js',
+  ]) assert.doesNotMatch(value, EMAIL_ADDRESS);
+});
+
 test('no unsupported statistics or claims ship in pages or data', () => {
   const banned = [
     /501\(c\)\(3\)/i, /certified masters/i, /verified content/i, /open-source/i, /\b38k\b/i, /\b2k\+/i, /140\+/,
@@ -130,11 +142,14 @@ test('no unsupported statistics or claims ship in pages or data', () => {
   ];
   const files = [...pages.map((p) => [p.file, p.html]), ...walk('data', ['.json']).map((f) => [f, read(f)])];
   for (const [file, text] of files) for (const re of banned) assert.doesNotMatch(text, re, `${file} contains ${re}`);
-  for (const [file, text] of files) assert.doesNotMatch(text, /[\w.+-]+@[\w-]+\.[\w.]+/, `${file} contains an email address`);
+  for (const [file, text] of files) {
+    const guarded = file === 'about.html' ? text.replace(/support@tkdflow\.com/g, '') : text;
+    assert.doesNotMatch(guarded, EMAIL_ADDRESS, file + ' contains an unapproved email address');
+  }
 });
 
 test('account config is safe to ship', () => {
-  assert.match(ACCOUNTS.sdk.url, /@supabase\/supabase-js@\d+\.\d+\.\d+\//, 'SDK must be pinned to an exact version');
+  assert.match(ACCOUNTS.sdk.url, /^\/vendor\/supabase\/supabase-\d+\.\d+\.\d+\.js$/, 'local SDK must be pinned to an exact version');
   assert.match(ACCOUNTS.sdk.integrity, /^sha384-[A-Za-z0-9+/=]{64}$/, 'SDK needs an SRI hash');
   // Checked whether or not accounts are enabled.
   assert.equal(publicKeyProblem(ACCOUNTS.supabaseAnonKey), null, 'config key must be a public anon/publishable key');
@@ -150,12 +165,58 @@ test('deployment headers are configured and the CSP blocks inline code', () => {
   const all = cfg.headers.find((h) => h.source === '/(.*)').headers;
   const keys = Object.fromEntries(all.map((h) => [h.key, h.value]));
   for (const k of ['X-Content-Type-Options', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy']) assert.ok(keys[k], k);
-  const csp = keys['Content-Security-Policy'] || keys['Content-Security-Policy-Report-Only'];
+  const csp = keys['Content-Security-Policy'];
   assert.ok(csp, 'a CSP is defined');
   assert.doesNotMatch(csp, /unsafe-inline|unsafe-eval/);
   assert.match(csp, /frame-ancestors 'none'/);
-  assert.match(csp, /script-src 'self' https:\/\/cdn\.jsdelivr\.net/);
+  assert.match(csp, /script-src 'self';/);
   assert.ok(existsSync(join(ROOT, 'robots.txt')) && existsSync(join(ROOT, 'favicon.ico')) && existsSync(join(ROOT, '404.html')));
+});
+
+test('release guard: the deployment enforces a narrow CSP and never falls back to report-only', () => {
+  const cfg = JSON.parse(read('vercel.json'));
+  const keys = cfg.headers.flatMap((r) => r.headers.map((h) => h.key));
+  assert.ok(!keys.some((k) => /report-only/i.test(k)), 'no Report-Only CSP header anywhere in vercel.json');
+  const csp = cfg.headers.find((h) => h.source === '/(.*)').headers.filter((h) => h.key === 'Content-Security-Policy');
+  assert.equal(csp.length, 1, 'exactly one enforced CSP on every path');
+  const directives = Object.fromEntries(csp[0].value.split(';').map((d) => d.trim()).filter(Boolean)
+    .map((d) => { const [name, ...src] = d.split(/\s+/); return [name, src]; }));
+  assert.deepEqual(directives, {
+    'default-src': ["'self'"],
+    'script-src': ["'self'"],
+    'style-src': ["'self'"],
+    'font-src': ["'self'"],
+    'img-src': ["'self'", 'data:'],
+    'connect-src': ["'self'", 'https://*.supabase.co'],
+    'frame-ancestors': ["'none'"],
+    'base-uri': ["'self'"],
+    'form-action': ["'self'"],
+    'object-src': ["'none'"],
+    'upgrade-insecure-requests': [],
+  }, 'only these sources: no unsafe-*, no extra hosts (e.g. vercel.live), no wildcards beyond Supabase');
+  // Enforced style-src blocks style attributes; scripts may only use CSSOM (el.style.setProperty).
+  for (const f of walk('js', ['.js'])) assert.doesNotMatch(read(f), /setAttribute\(\s*['"]style['"]/, `${f} sets a style attribute`);
+  // The locally served SDK retains the reviewed package's exact bytes and SRI.
+  assert.match(ACCOUNTS.sdk.url, /^\/vendor\/supabase\/supabase-\d+\.\d+\.\d+\.js$/);
+  const sdkBytes = readFileSync(join(ROOT, ACCOUNTS.sdk.url.slice(1)));
+  assert.equal('sha384-' + createHash('sha384').update(sdkBytes).digest('base64'), ACCOUNTS.sdk.integrity);
+  assert.ok(existsSync(join(ROOT, 'vendor/supabase/LICENSE')), 'SDK license ships with the asset');
+});
+
+test('fonts load locally, preserve licensed files, and add no outside requests to public pages', () => {
+  const css = read('css/fonts.css');
+  const urls = [...css.matchAll(/url\(([^)]+)\)/g)].map((m) => m[1]);
+  assert.ok(urls.length > 0);
+  assert.doesNotMatch(css, /@import|https?:\/\//);
+  for (const url of urls) {
+    assert.match(url, /^\/assets\/fonts\/[a-z0-9-]+\.woff2$/);
+    assert.equal(readFileSync(join(ROOT, url.slice(1))).subarray(0, 4).toString(), 'wOF2', url);
+  }
+  for (const page of pages) {
+    assert.match(page.html, /href="\/css\/fonts\.css"/, page.file);
+    assert.doesNotMatch(page.html, /fonts\.googleapis\.com|fonts\.gstatic\.com/, page.file);
+  }
+  for (const license of ['Inter-OFL.txt', 'Noto-Sans-KR-OFL.txt']) assert.match(read('assets/fonts/' + license), /SIL OPEN FONT LICENSE/);
 });
 
 test('no privileged Supabase key appears in any shipped file', () => {
@@ -221,7 +282,9 @@ test('release runbook exists, is linked, and invents no owners or contacts', () 
   assert.match(runbook, /Never restore the old public policies/);
   assert.match(runbook, /320, 375, 390, 768 and 1280/);
   assert.ok((runbook.match(/\*\*TBD\*\*/g) || []).length >= 8, 'unknown owners/settings stay TBD');
-  assert.doesNotMatch(runbook.replace(/support@tkdflow\.com/g, ''), /[\w.+-]+@[\w-]+\.[\w.]+/, 'no invented email addresses');
+  const contacts = runbook.match(new RegExp(EMAIL_ADDRESS.source, 'gi')) || [];
+  assert.deepEqual([...new Set(contacts.map((address) => address.toLowerCase()))], ['support@tkdflow.com'],
+    'only the owner-approved public support alias; never a private destination inbox');
   assert.match(read('SETUP.md'), /\(docs\/RELEASE\.md\)/);
   assert.match(read('docs/audit-tracker.md'), /\(RELEASE\.md\)/);
 });

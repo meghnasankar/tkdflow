@@ -4,6 +4,9 @@
 import { BELT_LEVELS } from './belts.js';
 import { NEW_SCHOOL } from './profile-model.js';
 import { h } from './dom.js';
+import { createSchoolPicker } from './school-picker.js';
+const pickers = new Map();
+export function schoolPicker(prefix) { if (!pickers.has(prefix)) pickers.set(prefix,createSchoolPicker(prefix)); return pickers.get(prefix); }
 
 export function populateBelts(select, current = '') {
   select.replaceChildren(h('option', { value: '' }, 'Select belt…'));
@@ -66,10 +69,11 @@ export function readProfileForm(prefix) {
     belt_level: v('belt'),
     school_choice: v('school'),
     school_new: v('school-new'),
+    ...(pickers.has(prefix) ? pickers.get(prefix).read() : {}),
   };
 }
 
-const FIELD_IDS = { full_name: 'name', username: 'username', age: 'age', belt_level: 'belt', school_name: 'school' };
+const FIELD_IDS = { full_name: 'name', username: 'username', age: 'age', belt_level: 'belt', school_name: 'school', school_country: 'school-new-country', school_region: 'school-new-region', school_city: 'school-new-city', school_website: 'school-new-website' };
 
 /** Show per-field errors; returns the first invalid input (for focus). */
 export function showFieldErrors(prefix, errors) {

@@ -135,6 +135,8 @@ export function friendlyError(error, fallback = 'Something went wrong. Please tr
   if (error.code === 'timeout' || error.name === 'TimeoutError') {
     return 'The account service took too long to respond. Please try again.';
   }
+  if (/wait a day before suggesting another school/i.test(msg)) return 'Please wait a day before suggesting another school. Your previous school is still saved.';
+  if (/School unavailable/i.test(msg)) return 'That school is no longer available. Choose another school or add its details.';
   if (error.code === '23505') return 'That username is already taken. Try another.';
   if (error.code === '23514') return 'One of the values is not allowed. Check the highlighted fields.';
   if (error.code === '42501' || /permission denied|row-level security/i.test(msg)) {

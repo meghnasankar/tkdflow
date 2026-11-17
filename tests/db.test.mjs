@@ -25,7 +25,7 @@ const A = '00000000-0000-4000-8000-00000000000a';
 const B = '00000000-0000-4000-8000-00000000000b';
 const EXPECTED_POLICIES = [
   'profiles.profiles_insert_own', 'profiles.profiles_select_own', 'profiles.profiles_update_own',
-  'schools.schools_insert_member', 'schools.schools_select_all',
+  'schools.schools_select_all',
 ];
 
 const openDbs = [];
@@ -123,7 +123,6 @@ function privacyContract(getDb) {
 
   test('anonymous school-name lookup works; creator ids and timestamps stay private', async () => {
     const db = await getDb();
-    await asUser(db, A, async (tx) => { await tx.query(`insert into public.schools (name) values ('Lookup Dojang')`); });
     await db.exec(`insert into public.schools (name, created_by) values ('Lookup Dojang', '${A}') on conflict do nothing`);
     const names = await asAnon(db, async (tx) => (await tx.query('select name from public.schools order by name')).rows);
     assert.ok(names.some((r) => r.name === 'Lookup Dojang'));
@@ -132,26 +131,25 @@ function privacyContract(getDb) {
     await rejectsCode(asUser(db, B, (tx) => tx.query('select created_by, created_at from public.schools')), '42501');
   });
 
-  test('members can add a school but cannot rename, delete or spoof the creator', async () => {
+  test('members cannot publish school names; custom names remain private profile values', async () => {
     const db = await getDb();
+    await rejectsCode(asUser(db, A, (tx) => tx.query("insert into public.schools (name) values ('Private School Entry')")), '42501');
     await asUser(db, A, async (tx) => {
-      await tx.query(`insert into public.schools (name) values ('  Riverside Taekwondo  ')`);
+      await insertProfile(tx, A, { username: 'private_school', school_name: 'Private School Entry' });
+      assert.equal((await tx.query('select school_name from public.profiles')).rows[0].school_name, 'Private School Entry');
     });
-    await db.exec(`insert into public.schools (name, created_by) values ('Riverside Taekwondo', '${A}')`);
-    const { rows } = await db.query(`select name, created_by from public.schools where name like 'Riverside%'`);
-    assert.deepEqual(rows, [{ name: 'Riverside Taekwondo', created_by: A }]);
-    await rejectsCode(asUser(db, B, (tx) => tx.query(`update public.schools set name = 'Vandalised'`)), '42501');
-    await rejectsCode(asUser(db, B, (tx) => tx.query(`delete from public.schools`)), '42501');
-    await rejectsCode(asUser(db, B, (tx) => tx.query(`insert into public.schools (name, created_by) values ('Spoof', $1)`, [A])), '42501');
-    await rejectsCode(asAnon(db, (tx) => tx.query(`insert into public.schools (name) values ('Anon School')`)), '42501');
+    assert.equal((await asAnon(db, (tx) => tx.query("select name from public.schools where name='Private School Entry'"))).rows.length, 0);
+    await rejectsCode(asUser(db, B, (tx) => tx.query("update public.schools set name = 'Vandalised'")), '42501');
+    await rejectsCode(asUser(db, B, (tx) => tx.query('delete from public.schools')), '42501');
+    await rejectsCode(asAnon(db, (tx) => tx.query("insert into public.schools (name) values ('Anon School')")), '42501');
   });
 
   test('adding an existing school (any case/spacing) is a clean duplicate, not an update', async () => {
     const db = await getDb();
     await db.exec(`insert into public.schools (name) values ('Harbor TKD')`);
-    await rejectsCode(asUser(db, A, (tx) => tx.query(`insert into public.schools (name) values (' harbor tkd ')`)), '23505');
-    await rejectsCode(asUser(db, A, (tx) => tx.query(`insert into public.schools (name) values ('x')`)), '23514');
-    await rejectsCode(asUser(db, A, (tx) => tx.query(`insert into public.schools (name) values ($1)`, ['y'.repeat(101)])), '23514');
+    await rejectsCode(db.query(`insert into public.schools (name) values (' harbor tkd ')`), '23505');
+    await rejectsCode(db.query(`insert into public.schools (name) values ('x')`), '23514');
+    await rejectsCode(db.query(`insert into public.schools (name) values ($1)`, ['y'.repeat(101)]), '23514');
   });
 
   test('database enforces the same validation as the UI', async () => {

@@ -123,15 +123,12 @@ describe('registration', () => {
     assert.ok(r.fieldErrors.username);
     assert.equal(r.values.username, 'min_ji');
   });
-  test('new school: duplicate counts as success; other failure stops before saving', async () => {
-    const raw = { ...goodRaw, school_choice: NEW_SCHOOL, school_new: 'Riverside TKD' };
-    const dup = fakeClient({ 'schools.insert': () => fail({ code: '23505' }) });
-    assert.equal((await register(dup, input({ raw }))).kind, 'profile');
-    const broken = fakeClient({ 'schools.insert': () => fail({ code: '500', message: 'oops' }) });
-    const r = await register(broken, input({ raw }));
-    assert.equal(r.kind, 'complete');
-    assert.match(r.message, /school could not be added/);
-    assert.ok(!broken.calls.some(([n]) => n === 'profiles.upsert'));
+  test('custom school is saved only in the private profile, never the public directory', async () => {
+    const raw = { ...goodRaw, school_choice: NEW_SCHOOL, school_new: 'Private School Entry' };
+    const c = fakeClient({ 'schools.insert': () => fail({ code: '42501' }) });
+    assert.equal((await register(c, input({ raw }))).kind, 'profile');
+    assert.ok(!c.calls.some(([name]) => name === 'schools.insert'));
+    assert.equal(c.calls.find(([name]) => name === 'profiles.upsert')[1].school_name, 'Private School Entry');
   });
   test('hanging sign-up resolves to an error', async () => {
     const [r, ms] = await timed(() => register(fakeClient({ signUp: never }), input(), { ms: MS }));
@@ -336,7 +333,7 @@ describe('age policy gates (no account-creating call before an eligible age scre
     assert.deepEqual(young.calls, []);
     const c = fakeClient();
     assert.equal((await completeProfile(c, { ...raw, age: '13' }, { eligibility: 'eligible' })).kind, 'profile');
-    assert.deepEqual(touched(c), ['rpc', 'schools.insert', 'profiles.upsert']);
+    assert.deepEqual(touched(c), ['rpc', 'profiles.upsert']);
   });
 
   test('routing a signed-in user: existing members are not gated; new profiles are', async () => {

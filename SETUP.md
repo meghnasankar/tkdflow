@@ -39,6 +39,8 @@ Opens `http://127.0.0.1:8899/` (use `-- --port 8901` for another port).
 The preview server applies the `vercel.json` headers and **enforces** the
 Content-Security-Policy, serves `404.html` for unknown paths, refuses
 dot-files and development folders, and only binds to loopback.
+`npm run serve -- --report-only` sends the same policy as
+`Content-Security-Policy-Report-Only` instead, to rehearse a report-only deployment.
 Do not open pages as `file://` — modules and data loading need a server.
 
 ## Checks (run before every release)
@@ -57,6 +59,9 @@ database policies in an embedded Postgres (PGlite).
 
 After editing anything in `layout/`, run `npm run sync`.
 
+After a deployment, `npm run check:live -- --csp report-only|enforced [--base <origin>]`
+runs read-only HTTP checks against the live site (see docs/RELEASE.md §5).
+
 Manual checks still required (not automated here): keyboard-only pass and a
 screen-reader spot check on each page, phone widths 320/375/390/768, and the
 staging account checks below.
@@ -64,7 +69,7 @@ staging account checks below.
 ## Releases, rollback and recovery
 
 Follow [docs/RELEASE.md](docs/RELEASE.md): release record, local checks, preview QA
-(10 pages × 5 widths), first public release with accounts off and no database migration,
+(33 pages × 5 widths), first public release with accounts off and no database migration,
 post-deploy header/CSP checks, Vercel Instant Rollback, CSP enforcement, the separate
 accounts rollout, and database recovery that never restores the old public policies.
 
@@ -75,23 +80,18 @@ accounts rollout, and database recovery that never restores the old public polic
   rejects the known unsupported claims and any email address in pages/data.
 - Events need an `https` `source` and a `lastChecked` date before they show
   a registration link; status (upcoming / ongoing / past) is computed from
-  dates in the event's own time zone.
+  dates in the event's own time zone, so a listing archives itself after its
+  dates. Copy only what the organiser's page states: leave `eventTypes` empty
+  and `registrationDeadline` null without primary evidence (a discount date is
+  not a deadline). If the organiser's tier (e.g. ATA "Class A+") does not map
+  to local/national/international, use level `unspecified` and record the tier
+  as `organiserClass`.
 - Lessons record their review status in their data module
   (`js/lessons/*.js`); do not mark one reviewed without a named reviewer.
 
 ## Pinning the Supabase SDK
 
-`js/config.js` pins `@supabase/supabase-js@2.119.0` with an SRI hash computed
-from the npm tarball. Before enabling accounts, confirm the CDN serves the
-same bytes:
-
-```bash
-curl -sL https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js | openssl dgst -sha384 -binary | openssl base64 -A
-```
-
-The output must equal the part after `sha384-` in `sdk.integrity`. To
-upgrade, review the release notes, update both values, and re-run the checks
-and the staging account tests.
+`js/config.js` loads the local reviewed build at `/vendor/supabase/supabase-2.119.0.js` with an SRI hash computed from the official npm tarball. Tests verify the exact bytes and license. To upgrade, review official release notes, replace the vendored build and provenance, update the pin/hash, then rerun checks and staging account tests. Fonts are also first-party; see `docs/local-assets.md`.
 
 ## Restoring member accounts
 
@@ -101,18 +101,29 @@ and the staging account tests.
 The previous project host (`ffkwwfwrqtwejyrnkxey.supabase.co`) failed DNS
 during the 2026-11-15 audit. Do not guess a replacement. In order:
 
-1. **Owner decisions (blocking):** who may have accounts (minimum age and any
-   parent/guardian process), what is collected and why, retention, and who
-   handles correction/deletion requests. Publish the privacy policy and a
-   working support contact on `about.html` first.
+1. **Owner decisions (blocking):** the **audience/age rules are approved**
+   (individual accounts 13+; 13–17 private; under 13 only via a future
+   parent-managed child profile, not built). See
+   [docs/account-age-policy.md](docs/account-age-policy.md): the age screen,
+   flow gates and 13–99 profile age are prepared locally. Still blocking: what
+   is collected and why, retention, correction/deletion handling, audience and
+   third-party review, a published privacy policy, and a **verified** support
+   contact on `about.html`. `support@tkdflow.com` forwarding is saved at the
+   registrar but delivery is not yet tested, so do not list it or link it yet,
+   and never put the destination inbox in source or docs.
 2. **Project access:** identify (or create) the intended Supabase project and
    confirm who administers it.
 3. **Block server-side sign-ups until approval:** Authentication → Sign In /
    Providers → turn **off** "Allow new users to sign up". This also stops
-   Google/OAuth from creating new users. `signupEnabled` in `js/config.js` only
-   hides the form; it cannot stop direct API sign-ups.
+   Google/OAuth from creating new users. `signupEnabled` in `js/config.js` and
+   the age screen only change the UI; neither can stop direct API sign-ups,
+   and the SQL profile age rule does not gate `auth.users`. Opening sign-ups
+   needs a separate server-side age-enforcement design tested on staging
+   (docs/account-age-policy.md → "Remaining gates").
 4. **Preflight:** run `supabase/preflight.sql` (read-only) and keep the output.
-   Any unexpected policy, grant or view is a release blocker.
+   Any unexpected policy, grant or view is a release blocker. Under-13 or
+   unknown-age counts need the controlled owner review in
+   docs/account-age-policy.md → "Legacy records" before `VALIDATE`.
 5. **Staging first:** apply `supabase-setup.sql` to a staging project. It runs
    in one transaction and stops if it finds an unrecognised policy. Optional
    sample schools for staging only: `supabase/seed.example.sql`.
@@ -122,7 +133,11 @@ during the 2026-11-15 audit. Do not guess a replacement. In order:
    protection and rate limits/CAPTCHA as appropriate; Google provider with
    redirect `https://<ref>.supabase.co/auth/v1/callback`.
 7. **Staging tests:** with a staging config, verify end to end: email sign-up
-   (with the chosen confirmation setting), Google sign-in, profile completion,
+   (with the chosen confirmation setting), the age screen (12 → guidance with
+   no form, and no second try after reload, and `?mode=login`/`forgot`/`recovery`
+   also keep the guidance; 13 and 18 → sign-up), a legacy profile with age
+   under 13 held (not editable, signed out, record untouched), Google sign-in
+   (only after the screen), profile completion, an under-13 profile age refused,
    duplicate username, password reset (old password fails, new one works),
    expired reset link, logout, and that an anonymous request to
    `/rest/v1/profiles` and another member's row are both denied while
@@ -136,8 +151,16 @@ during the 2026-11-15 audit. Do not guess a replacement. In order:
 ## Deployment headers
 
 `vercel.json` sets `X-Content-Type-Options`, `X-Frame-Options`,
-`Referrer-Policy`, `Permissions-Policy`, `Cross-Origin-Opener-Policy` and a
-**Report-Only** CSP. After a Vercel preview deploy shows no CSP reports or
-broken pages (including auth once enabled), rename the key to
-`Content-Security-Policy` to enforce it, then confirm the headers on the live
-site.
+`Referrer-Policy`, `Permissions-Policy`, `Cross-Origin-Opener-Policy` and an
+**enforced** `Content-Security-Policy` (no `unsafe-inline`/`unsafe-eval`; only
+the site, Google Fonts, the pinned jsDelivr SDK and `*.supabase.co`).
+`tests/site.test.mjs` fails if the policy falls back to report-only or gains a
+source. Production still runs the earlier report-only policy until the
+enforcement release in docs/RELEASE.md §8 is approved and deployed.
+
+
+## Current account and school status — 2026-11-17
+
+Support forwarding delivery was confirmed by the owner. Staging email confirmation, password recovery/sign-in and Google connection/repeat login passed. The recovered original project belongs to Meghna; production signups and public website switches remain off. Read `docs/accounts-and-discussions-2026-11-16.md` for current observed state rather than treating earlier restoration steps as unresolved.
+
+The new school feature is additive: apply `supabase/school-directory.sql` after base setup and community, then `supabase/school-directory-seed.sql`. The directory exposes business facts only; private suggestions queue automatically from confirmed profile saves. Assign a verified school reviewer through the owner-controlled private.school_reviewers table to review schools in profile settings. Never grant this role from client code. See `docs/school-directory.md`.

@@ -57,7 +57,7 @@ export const ACCOUNTS = Object.freeze({
    *  signOut({ scope: 'local' }) clears the local session before the network
    *  request; default flowType is 'implicit'. */
   sdk: Object.freeze({
-    url: 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js',
+    url: '/vendor/supabase/supabase-2.119.0.js',
     integrity: 'sha384-uteMfOloLDGt042uDz+xHGF3ym63/WQ6rFq7murQRG8Ih7QrXGEGNtWd8688sb4O',
   }),
 
