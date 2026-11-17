@@ -9,3 +9,5 @@ Prepared 2026-11-17; publication pending.
 - Tests check local URLs, font existence/licenses and exact library SRI. Browser QA must cover Korean text, accounts and animation before the policy is released.
 
 Rollback: revert the bounded asset/head/config/policy commit as a unit. Keep provider settings and member data untouched. Do not replace a failed asset with an unpinned remote script.
+
+The November 17 live check caught an unanchored `supabase` deployment ignore rule matching the public `vendor/supabase` folder. The rule is now `/supabase`, keeping only the root backend folder excluded. The hosting-rule regression check proves private backend/test files stay excluded while the browser SDK and its license/provenance are included.
