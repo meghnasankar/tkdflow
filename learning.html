@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<!-- layout:head -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My learning — TKDflow</title>
+<meta name="description" content="Your private saved taekwondo forms and lesson study positions.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://tkdflow.com/learning.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TKDflow">
+<meta property="og:title" content="My learning — TKDflow">
+<meta property="og:description" content="Your private saved taekwondo forms and lesson study positions.">
+<meta property="og:url" content="https://tkdflow.com/learning.html">
+<meta property="og:image" content="https://tkdflow.com/assets/og-animation-v2.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="TKDflow: Learn the forms. Step by step. The full-body animated black-belt character performs a side kick.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://tkdflow.com/assets/og-animation-v2.png">
+<meta name="twitter:image:alt" content="TKDflow: Learn the forms. Step by step. The full-body animated black-belt character performs a side kick.">
+<meta name="theme-color" content="#0D1B2A">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="stylesheet" href="/css/fonts.css">
+<link rel="stylesheet" href="/styles.css">
+<script type="module" src="/js/site.js"></script>
+<!-- /layout:head -->
+<script type="module" src="/js/pages/learning.js"></script>
+</head><body data-page="forms">
+<!-- layout:header -->
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="navbar">
+  <div class="container">
+    <a href="/" class="navbar-logo" data-nav="home">
+      <span class="logo-icon" aria-hidden="true">道</span>
+      <span>TKDflow</span><span class="kr" lang="ko">태권도 플로우</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+      <span class="sr-only">Open menu</span><span class="nav-toggle-bars" aria-hidden="true"></span>
+    </button>
+    <nav class="site-nav" aria-label="Main">
+      <ul class="nav-links" id="site-nav">
+        <li><a href="/" data-nav="home">Home</a></li>
+        <li><a href="/forms.html" data-nav="forms" class="active" aria-current="page">Forms Library</a></li>
+        <li><a href="/community.html" data-nav="community">Community</a></li>
+        <li><a href="/competitions.html" data-nav="events">Events</a></li>
+        <li class="nav-account" id="nav-account"><a href="/auth.html" class="btn btn-secondary btn-sm nav-account-link">Account</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<!-- /layout:header -->
+<main id="main" tabindex="-1">
+ <div class="page-hero"><div class="container"><p class="section-label on-dark">Your study space</p><h1>My learning</h1><p>Keep the forms you want to study and pick up at your last pose.</p></div></div>
+ <div class="container learning-main">
+  <p id="learning-status" class="learning-storage-note" role="status">Loading your learning…</p>
+  <div class="learning-card-actions"><button id="learning-refresh" class="btn btn-secondary btn-sm" type="button">Refresh</button><button id="learning-retry" class="btn btn-secondary btn-sm" type="button" hidden>Retry</button><a class="text-link" href="/auth.html" id="learning-sign-in">Sign in for account saves</a></div>
+  <div id="learning-import" class="notice notice-info" hidden><p>Browser-only saves are separate from your account. You can add this browser’s saved forms and missing progress; existing account progress stays.</p><button id="learning-import-button" class="btn btn-secondary btn-sm" type="button">Add browser saves to my account</button></div>
+  <p id="learning-summary" class="results-summary" aria-live="polite"></p>
+  <div id="learning-tabs" class="learning-tabs" role="group" aria-label="Show learning"></div>
+  <p class="field-help">“Practised” is your own study mark. It is not a belt award or assessment of skill.</p>
+  <section aria-labelledby="learning-list-title"><h2 class="sr-only" id="learning-list-title">Your forms</h2><div id="learning-cards" class="learning-grid"></div></section>
+ </div>
+</main>
+<!-- layout:footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <p class="logo">TKDflow<span>.</span></p>
+        <p>A free taekwondo learning resource created by Meghna Sankar from her training and research.</p>
+      </div>
+      <div class="footer-col">
+        <h2>Learn</h2>
+        <ul>
+          <li><a href="/forms.html">Forms library</a></li>
+          <li><a href="/learning.html">Saved forms &amp; progress</a></li>
+          <li><a href="/taegeuk-1.html">Taegeuk Il Jang lesson</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>Community</h2>
+        <ul>
+          <li><a href="/community.html">Discussions</a></li>
+          <li><a href="/community.html?view=resources">Learning resources</a></li>
+          <li><a href="/competitions.html">Events</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>About</h2>
+        <ul>
+          <li><a href="/about.html">About &amp; project status</a></li>
+          <li><a href="/founder.html">Meet Meghna</a></li>
+          <li><a href="/about.html#privacy">Privacy</a></li>
+          <li><a href="/about.html#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-current-year>2026</span> TKDflow</span>
+      <span>Free to use · No ads</span>
+    </div>
+  </div>
+</footer>
+<!-- /layout:footer -->
+</body></html>

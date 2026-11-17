@@ -1,5 +1,5 @@
 /* Same-origin vector icons. Labels belong to their surrounding text/control. */
-const NAMES = new Set(['search','close','forms','belt','play','community','calendar','trophy','person','filter']);
+const NAMES = new Set(['search','close','forms','belt','play','community','calendar','trophy','person','filter','bookmark','check']);
 export function icon(name, className = '') {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('class', `icon ${className}`.trim());

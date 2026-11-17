@@ -1,3 +1,4 @@
+import {mountLessonLearning} from '../lib/learning-ui.js';
 import {LessonTimeline} from '../animation/lesson-timeline.js';
 import {createLessonView} from '../animation/lesson-view.js';
 import {officialLabel,poseDescription,poseUrl,poseLinkProblemText,handlePlayerKey,createPoseHistory,createLifecyclePause,copyText,copyStatusText} from '../lib/lesson-nav.js';
@@ -165,6 +166,7 @@ function init() {
   $('btn-copy-link').addEventListener('click', onCopyClick);
   render({ index:0,from:0,playing:false,cause:'init',time:0 });
   poseHistory.start(); // applies ?pose=N (paused) and listens for back/forward
+  mountLessonLearning({id:LESSON.id,title:LESSON.title||document.querySelector('h1').textContent,count:POSES.length,player});
   lifecycle.start();
   window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener?.('change',e=>{if(e.matches)player.pause();});
 }

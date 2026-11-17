@@ -5,6 +5,8 @@ import { loadJSON } from '../lib/data.js';
 import { destinationFor } from '../lib/catalog.js';
 import { filterEvents } from '../lib/events.js';
 import { validateForms, validateEvents } from '../lib/validators.js';
+import {getLearningService,learningMessage} from '../lib/learning-service.js';
+import {learningCard} from '../lib/learning-ui.js';
 import {icon} from '../lib/icons.js';
 import { h, replaceChildren } from '../lib/dom.js';
 
@@ -20,6 +22,8 @@ async function forms() {
     set('styles', new Set(data.map((f) => f.category)).size);
     set('lessons', data.filter((f) => f.lessonUrl).length);
     const picks = FEATURED.map((id) => data.find((f) => f.id === id)).filter(Boolean);
+    const learning=getLearningService();
+    learning.subscribe(state=>{const records=new Map(state.records.map(r=>[r.form_id,r]));const recent=data.filter(f=>records.get(f.id)?.last_pose!=null&&!records.get(f.id).practised).sort((a,b)=>(records.get(b.id).studied_at||'').localeCompare(records.get(a.id).studied_at||'')).slice(0,3);$('home-learning').hidden=!recent.length;$('home-learning-status').textContent=learningMessage(state);$('home-learning-cards').replaceChildren(...recent.map(f=>learningCard(f,records.get(f.id),state,learning)));});
     replaceChildren(list, ...picks.map((f) => h('li', {},
       h('a', { class: 'form-mini-card', href: destinationFor(f) },
         h('div', { class: 'form-mini-visual', 'aria-hidden': 'true' }, f.thumbnail ? h('img',{src:f.thumbnail.src,width:f.thumbnail.width,height:f.thumbnail.height,alt:'',loading:'lazy',decoding:'async'}) : icon('forms')),
@@ -48,7 +52,7 @@ async function events() {
 function cta() {
   if (!accountsConfigured() || !ACCOUNTS.signupEnabled) return;
   $('cta-title').textContent = 'Create a free account';
-  $('cta-text').textContent = 'Create and edit your member profile. Free, with no ads.';
+  $('cta-text').textContent = 'Save forms and resume lessons privately across devices. Free, with no ads.';
   replaceChildren($('cta-actions'),
     h('a', { href: '/auth.html?mode=register', class: 'btn btn-primary btn-lg' }, 'Create a free account'),
     h('a', { href: '/about.html', class: 'btn btn-lg btn-ghost-dark' }, 'About TKDflow'));
