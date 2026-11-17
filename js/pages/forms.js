@@ -3,6 +3,8 @@
 import {
   ORGS, LEVELS, SORTS, applyState, facetCounts, stateFromParams, stateToParams, isDefaultState, DEFAULT_STATE,
 } from '../lib/catalog.js';
+import {icon} from '../lib/icons.js';
+import {renderFilterChips} from '../lib/filter-chips.js';
 import { validateForms } from '../lib/validators.js';
 import { BELT_FAMILIES } from '../lib/belts.js';
 import { loadInto, showEmpty } from '../lib/data.js';
@@ -12,13 +14,16 @@ const $ = (id) => document.getElementById(id);
 let forms = [];
 let loaded = false;
 let state = stateFromParams(location.search);
+let searchTimer;
 
-function setState(patch, { replaceUrl = true } = {}) {
-  state = { ...state, ...patch };
-  if (replaceUrl) {
-    const params = stateToParams(state).toString();
-    history.replaceState(null, '', params ? `?${params}` : location.pathname);
-  }
+function setState(patch, { replaceUrl = false } = {}) {
+  clearTimeout(searchTimer);
+  state = { ...state, q: $('search').value, ...patch };
+  const params = stateToParams(state).toString();
+  const url = params ? `?${params}` : location.pathname;
+  if (location.pathname + location.search !== location.pathname + (params ? `?${params}` : '')) history[replaceUrl ? 'replaceState' : 'pushState'](null, '', url);
+  $('search').value = state.q;
+  $('sort').value = state.sort;
   render();
 }
 
@@ -30,7 +35,7 @@ function difficultyDots(level, label) {
 }
 
 function card(f) {
-  const tags = f.tags.map((t, i) => h('span', { class: `badge ${safeClass(f.tagStyles?.[i], BADGE_CLASSES, 'badge-navy')}` }, t));
+  const tags = f.tags.map((t, i) => h('span', { class: `badge ${safeClass(f.tagStyles?.[i], BADGE_CLASSES, 'badge-navy')}` }, t.startsWith('⬛') ? icon('belt') : null, t.replace(/^⬛\s*/,'')));
   const action = f.lessonUrl
     ? h('a', { class: 'btn btn-gold btn-sm', href: f.lessonUrl }, 'Open lesson', h('span', { class: 'sr-only' }, `: ${f.name}`))
     : h('span', { class: 'badge badge-muted' }, 'Lesson not available yet');
@@ -39,7 +44,7 @@ function card(f) {
       f.thumbnail
         ? h('img', { src: f.thumbnail.src, width: f.thumbnail.width, height: f.thumbnail.height,
           alt: f.thumbnail.alt, loading: 'lazy', decoding: 'async' })
-        : h('span', { 'aria-hidden': 'true', style: { background: safeGradient(f.bgGradient, '') || null } }, f.emoji || '')),
+        : icon('forms')),
     h('div', { class: 'form-card-body' },
       h('div', { class: 'form-tag-row' }, ...tags),
       h('h3', {}, f.name),
@@ -69,7 +74,7 @@ function radioGroup(container, name, options, current, counts, onChange) {
     return h('label', {}, input,
       o.color ? h('span', { class: 'swatch', style: { background: o.color }, 'aria-hidden': 'true' }) : null,
       h('span', { class: 'text' }, o.label),
-      h('span', { class: 'count' }, h('span', { class: 'sr-only' }, ', '), String(n), h('span', { class: 'sr-only' }, ' forms')));
+      h('span', { class: 'count' }, h('span', { class: 'sr-only' }, ', '), String(n), h('span', { class: 'sr-only' }, n === 1 ? ' form' : ' forms')));
   }));
 }
 
@@ -82,6 +87,13 @@ function renderFilters() {
   const active = ['org', 'belt', 'level'].filter((k) => state[k] !== 'all').length + (state.lesson ? 1 : 0) + (state.q.trim() ? 1 : 0);
   $('filter-count').textContent = active ? `(${active} active)` : '';
   $('clear-filters').hidden = isDefaultState({ ...state, sort: DEFAULT_STATE.sort });
+  const selections = [];
+  if (state.q.trim()) selections.push({key:'q',label:`Search: ${state.q.trim()}`});
+  if (state.org !== 'all') selections.push({key:'org',label:ORGS.find(o=>o.id===state.org).label});
+  if (state.belt !== 'all') selections.push({key:'belt',label:`Belt: ${BELT_FAMILIES.find(b=>b.id===state.belt).label}`});
+  if (state.level !== 'all') selections.push({key:'level',label:`Difficulty: ${LEVELS.find(l=>l.id===state.level).label}`});
+  if (state.lesson) selections.push({key:'lesson',label:'Step-by-step lessons'});
+  renderFilterChips($('forms-active-filters'),selections,key=>setState({[key]:DEFAULT_STATE[key]}),clearAll);
 }
 
 function renderResults() {
@@ -114,7 +126,7 @@ function renderResults() {
     const first = list[0];
     if (first.seriesHeader !== lastHeader) {
       nodes.push(h('div', { class: 'style-header', style: { background: safeGradient(first.seriesBg, '') || null } },
-        h('span', { 'aria-hidden': 'true' }, first.seriesIcon || ''),
+        icon('belt'),
         h('div', {}, h('h3', {}, first.seriesHeader), h('p', {}, first.seriesDesc))));
       lastHeader = first.seriesHeader;
     }
@@ -144,16 +156,19 @@ function setupControls() {
   $('sort').value = state.sort;
   $('sort').addEventListener('change', (e) => setState({ sort: e.target.value }));
   $('search').value = state.q;
-  let timer;
   $('search').addEventListener('input', (e) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => setState({ q: e.target.value }), 150);
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => setState({ q: e.target.value },{replaceUrl:true}), 150);
   });
-  $('search-form').addEventListener('submit', (e) => { e.preventDefault(); clearTimeout(timer); setState({ q: $('search').value }); });
+  $('search-form').addEventListener('submit', (e) => { e.preventDefault(); setState({ q: $('search').value }); });
   $('lesson-only').addEventListener('change', (e) => setState({ lesson: e.target.checked }));
   $('clear-filters').addEventListener('click', clearAll);
   // Filters start collapsed on small screens so results are reachable without a long scroll.
   if (window.matchMedia('(max-width: 860px)').matches) $('filters').open = false;
+  window.addEventListener('popstate',()=>{
+    clearTimeout(searchTimer); state=stateFromParams(location.search);
+    $('search').value=state.q; $('sort').value=state.sort; render();
+  });
 }
 
 setupControls();

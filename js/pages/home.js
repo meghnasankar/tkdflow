@@ -5,7 +5,8 @@ import { loadJSON } from '../lib/data.js';
 import { destinationFor } from '../lib/catalog.js';
 import { filterEvents } from '../lib/events.js';
 import { validateForms, validateEvents } from '../lib/validators.js';
-import { h, replaceChildren, safeGradient } from '../lib/dom.js';
+import {icon} from '../lib/icons.js';
+import { h, replaceChildren } from '../lib/dom.js';
 
 const FEATURED = ['taegeuk-1', 'taegeuk-4', 'koryo', 'keumgang', 'chon-ji', 'do-san', 'songahm-1', 'taebaek'];
 const $ = (id) => document.getElementById(id);
@@ -21,7 +22,7 @@ async function forms() {
     const picks = FEATURED.map((id) => data.find((f) => f.id === id)).filter(Boolean);
     replaceChildren(list, ...picks.map((f) => h('li', {},
       h('a', { class: 'form-mini-card', href: destinationFor(f) },
-        h('div', { class: 'form-mini-visual', style: { background: safeGradient(f.bgGradient, '') || null }, 'aria-hidden': 'true' }, f.emoji || ''),
+        h('div', { class: 'form-mini-visual', 'aria-hidden': 'true' }, f.thumbnail ? h('img',{src:f.thumbnail.src,width:f.thumbnail.width,height:f.thumbnail.height,alt:'',loading:'lazy',decoding:'async'}) : icon('forms')),
         h('div', { class: 'form-mini-body' },
           h('h3', {}, f.name),
           h('p', { class: 'sub' }, h('span', { lang: 'ko' }, f.koreanName), ` · ${f.organization} · ${f.difficultyLabel}`),
@@ -39,7 +40,7 @@ async function events() {
     if (upcoming.length) {
       $('events-state').textContent = 'Available';
       $('events-state').className = 'feature-state available';
-      $('events-teaser').textContent = `${upcoming.length} verified upcoming event${upcoming.length === 1 ? '' : 's'} listed, each with the organiser’s official page.`;
+      $('events-teaser').textContent = `${upcoming.length} upcoming or announced event${upcoming.length === 1 ? '' : 's'} listed, each with the organiser’s official page.`;
     }
   } catch { /* the static teaser text stays accurate */ }
 }

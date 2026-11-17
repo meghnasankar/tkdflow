@@ -87,6 +87,8 @@ export function showFieldErrors(prefix, errors) {
     msg.hidden = !text;
     if (text) {
       input.setAttribute('aria-invalid', 'true');
+      const details = input.closest?.('details');
+      if (details) details.open = true;
       first ||= input;
     } else {
       input.removeAttribute('aria-invalid');

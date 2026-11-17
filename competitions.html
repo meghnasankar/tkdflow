@@ -69,7 +69,7 @@
       <p id="events-overview">Official event listings for 2026–2027.</p><details class="calendar-coverage"><summary>Sources and coverage</summary><p id="events-coverage"></p></details>
     </div>
 
-    <nav class="major-shortcuts" aria-label="Major national championships"><a href="/competitions.html?organization=USATKD&amp;major=1&amp;status=all">★ USATKD majors</a><a href="/competitions.html?organization=AAU&amp;major=1&amp;status=all">★ AAU majors</a><a href="/competitions.html?organization=ATU&amp;major=1&amp;status=all">★ ATU Nationals</a></nav>
+    <nav class="major-shortcuts" aria-label="Major national championships"><a href="/competitions.html?organization=USATKD&amp;major=1&amp;status=all"><svg class="icon " aria-hidden="true" focusable="false"><use href="/assets/icons.svg#trophy"></use></svg> USATKD majors</a><a href="/competitions.html?organization=AAU&amp;major=1&amp;status=all"><svg class="icon " aria-hidden="true" focusable="false"><use href="/assets/icons.svg#trophy"></use></svg> AAU majors</a><a href="/competitions.html?organization=ATU&amp;major=1&amp;status=all"><svg class="icon " aria-hidden="true" focusable="false"><use href="/assets/icons.svg#trophy"></use></svg> ATU Nationals</a></nav>
     <section class="events-section" aria-labelledby="events-title">
       <h2 class="sr-only" id="events-title">Event listings</h2>
       <div class="tabs" role="group" aria-label="Show">
@@ -82,7 +82,7 @@
       <form class="event-filters" id="event-filters" role="search">
         <div class="filter-field">
           <label for="ev-q">Search</label>
-          <div class="search-bar"><span aria-hidden="true">🔍</span><input type="search" id="ev-q" autocomplete="off" placeholder="Name, city or country"></div>
+          <div class="search-bar"><svg class="icon " aria-hidden="true" focusable="false"><use href="/assets/icons.svg#search"></use></svg><input type="search" id="ev-q" autocomplete="off" placeholder="Event, city, country or discipline"></div>
         </div>
         <div class="filter-field"><label for="ev-year">Year</label><select id="ev-year" class="select-input"></select></div>
 
@@ -93,12 +93,13 @@
         <div class="filter-field"><label for="ev-country">Country</label><select id="ev-country" class="select-input"></select></div>
 
 
-        <details class="event-advanced"><summary>More filters</summary><div class="advanced-grid"><div class="filter-field"><label for="ev-region">Region</label><select id="ev-region" class="select-input"></select></div><div class="filter-field"><label for="ev-kind">Event format</label><select id="ev-kind" class="select-input"></select></div><div class="filter-field"><label for="ev-style">Style</label><select id="ev-style" class="select-input"></select></div><div class="filter-field"><label for="ev-level">Level</label><select id="ev-level" class="select-input"></select></div><div class="filter-field"><label for="ev-type">Discipline</label><select id="ev-type" class="select-input"></select></div><div class="filter-field"><label for="ev-month">Month</label><input type="month" id="ev-month" class="select-input"></div></div></details>
+        <details class="event-advanced"><summary>More filters <span id="event-filter-count"></span></summary><div class="advanced-grid"><div class="filter-field"><label for="ev-region">Region</label><select id="ev-region" class="select-input"></select></div><div class="filter-field"><label for="ev-kind">Event format</label><select id="ev-kind" class="select-input"></select></div><div class="filter-field"><label for="ev-style">Style</label><select id="ev-style" class="select-input"></select></div><div class="filter-field"><label for="ev-level">Level</label><select id="ev-level" class="select-input"></select></div><div class="filter-field"><label for="ev-type">Discipline</label><select id="ev-type" class="select-input"></select></div><div class="filter-field"><label for="ev-month">Month</label><input type="month" id="ev-month" class="select-input"></div></div></details>
         <div class="filter-field"><label class="major-filter" for="ev-major"><input type="checkbox" id="ev-major"> Major championships only</label></div>
         <div class="filter-field"><button type="button" class="btn btn-secondary btn-sm" id="ev-this-month">This month</button></div>
         <div class="filter-field"><button type="reset" class="btn btn-secondary btn-sm" id="ev-clear">Clear filters</button></div>
       </form>
 
+      <div class="active-filters" id="events-active-filters" role="group" aria-label="Active event filters" hidden></div>
       <p class="results-summary" id="events-summary" aria-live="polite"></p>
       <div id="events-list"></div>
       <p class="results-summary" id="events-reviewed"></p>

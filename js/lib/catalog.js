@@ -32,7 +32,8 @@ export function normalize(text) {
 }
 
 function haystack(form) {
-  return [form.id, form.name, form.koreanName, form.meaning, form.series, form.organization]
+  return [form.id, form.name, form.koreanName, form.meaning, form.series, form.organization,
+    form.beltLabel, `${form.belt} belt`, form.difficultyLabel, form.description, form.thumbnail?.alt, ...(form.tags || [])]
     .map(normalize).join('|');
 }
 
