@@ -270,6 +270,15 @@
       "sitemap": true,
       "title": "Jitae — 3D study lesson | TKDflow",
       "description": "Study Jitae with full-body 3D animation, spoken move instructions, slow playback and camera views."
+    },
+    {
+      "file": "learning.html",
+      "key": "forms",
+      "path": "/learning.html",
+      "sitemap": false,
+      "noindex": true,
+      "title": "My learning — TKDflow",
+      "description": "Your private saved taekwondo forms and lesson study positions."
     }
   ]
 }

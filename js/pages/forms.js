@@ -3,6 +3,8 @@
 import {
   ORGS, LEVELS, SORTS, applyState, facetCounts, stateFromParams, stateToParams, isDefaultState, DEFAULT_STATE,
 } from '../lib/catalog.js';
+import {getLearningService,learningMessage} from '../lib/learning-service.js';
+import {saveFormButton} from '../lib/learning-ui.js';
 import {icon} from '../lib/icons.js';
 import {renderFilterChips} from '../lib/filter-chips.js';
 import { validateForms } from '../lib/validators.js';
@@ -15,6 +17,8 @@ let forms = [];
 let loaded = false;
 let state = stateFromParams(location.search);
 let searchTimer;
+const learning=getLearningService();
+let learningState=learning.snapshot();
 
 function setState(patch, { replaceUrl = false } = {}) {
   clearTimeout(searchTimer);
@@ -52,7 +56,7 @@ function card(f) {
       difficultyDots(f.difficulty, f.difficultyLabel),
       h('p', { class: 'meta-line' }, `${f.moves} movements · ${f.beltLabel}`),
       h('p', { class: 'description' }, f.description)),
-    h('div', { class: 'form-card-footer' }, h('span', {}, f.organization), action));
+    h('div', { class: 'form-card-footer' }, h('span', {}, f.organization), saveFormButton(f,learning.get(f.id),learningState,learning), action));
 }
 
 function renderOrgTabs() {
@@ -172,6 +176,8 @@ function setupControls() {
 }
 
 setupControls();
+$('forms-learning-retry').addEventListener('click',()=>learning.retry());
+learning.subscribe(snapshot=>{learningState=snapshot;$('forms-learning-status').textContent=learningMessage(snapshot);$('forms-learning-retry').hidden=!snapshot.error;render();});
 loadInto($('forms-grid'), '/data/forms.json', {
   title: 'The forms library could not be loaded.',
   validate: validateForms,

@@ -475,3 +475,25 @@ p  { color: var(--gray-600); }
 .filter-clear { min-height: 40px; padding: 6px 10px; color: var(--red-dark); font-weight: 700; text-decoration: underline; }
 .feature-icon { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; background: var(--gray-100); color: var(--red-dark); margin-right: 8px; }
 .feature-icon .icon { width: 26px; height: 26px; }
+
+/* Personal learning surfaces: no public ranks or member activity feed. */
+.learning-main { padding-top:28px; padding-bottom:64px; }
+.learning-storage-note { color:var(--gray-600); font-size:.88rem; margin:10px 0; overflow-wrap:anywhere; }
+.learning-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; margin:20px 0; }
+.learning-card { border:1px solid var(--gray-200); border-radius:var(--radius); background:var(--white); overflow:hidden; min-width:0; }
+.learning-card > img { display:block; width:100%; height:auto; aspect-ratio:16/9; object-fit:contain; }
+.learning-card-body { padding:20px; }
+.learning-card h3 { font-size:1.1rem; margin:5px 0; }
+.learning-card-actions { display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin:12px 0; }
+.learning-tabs { display:flex; flex-wrap:wrap; gap:8px; margin:18px 0; }
+.learning-tabs [aria-pressed="true"] { background:var(--navy); color:var(--white); border-color:var(--navy); }
+.save-form { display:inline-flex; align-items:center; justify-content:center; gap:5px; }
+.save-form.is-saved .icon { fill:var(--red-light); }
+.form-card-footer { flex-wrap:wrap; gap:8px; }
+.reset-learning { font-size:.85rem; margin-top:6px; }
+.lesson-learning { padding:16px 20px; border:1px solid var(--gray-200); border-radius:var(--radius); margin-top:24px; background:var(--white); }
+.lesson-learning > p { margin:4px 0; }
+.lesson-study .lesson-learning { display:none; }
+#learning-import { margin-top:16px; }
+@media(max-width:900px){.learning-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:560px){.learning-grid{grid-template-columns:minmax(0,1fr);}.learning-card-body{padding:16px;}}
