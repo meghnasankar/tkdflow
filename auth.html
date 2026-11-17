@@ -143,7 +143,7 @@
         <!-- Register -->
         <section class="auth-panel" id="panel-register" aria-labelledby="register-title" hidden>
           <h2 class="panel-title sr-only" id="register-title">Create an account</h2>
-          <p class="panel-intro">Your profile stays private. Adults can submit forum posts under their username for moderation. Private messaging is not available.</p>
+          <p class="panel-intro">Your profile stays private. Adults can submit discussions under their username for moderation. Private messaging is not available.</p>
           <form id="form-register" novalidate>
             <div class="form-row">
               <div class="form-group">
@@ -164,12 +164,8 @@
                 <select id="reg-belt" required aria-describedby="reg-belt-error"></select>
                 <p class="field-error" id="reg-belt-error" hidden></p>
               </div>
-              <div class="form-group">
-                <label for="reg-age">Age <span class="optional">(optional, private)</span></label>
-                <input type="number" id="reg-age" min="13" max="99" inputmode="numeric" aria-describedby="reg-age-error">
-                <p class="field-error" id="reg-age-error" hidden></p>
-              </div>
             </div>
+            <details class="optional-school" id="reg-school-details"><summary>Add your taekwondo school <span class="optional">(optional)</span></summary>
             <fieldset class="school-picker"><legend>Taekwondo school <span class="optional">(optional)</span></legend>
  <label for="reg-school-search">Search school or location</label><input type="search" id="reg-school-search" placeholder="School name, city or country" autocomplete="off">
  <div class="school-filters"><div><label for="reg-school-country">Country</label><select id="reg-school-country"><option value="">All countries</option></select></div><div><label for="reg-school-region">State or region</label><select id="reg-school-region"><option value="">All regions</option></select></div><div><label for="reg-school-city">City</label><select id="reg-school-city"><option value="">All cities</option></select></div></div>
@@ -181,6 +177,7 @@
  <label for="reg-school-new-region">School state or region (optional)</label><input type="text" id="reg-school-new-region" maxlength="100" aria-describedby="reg-school-new-region-error" disabled><p class="field-error" id="reg-school-new-region-error" hidden></p><label for="reg-school-new-city">School city</label><input type="text" id="reg-school-new-city" maxlength="100" aria-describedby="reg-school-new-city-error" disabled><p class="field-error" id="reg-school-new-city-error" hidden></p><label for="reg-school-new-website">School website (optional)</label><input type="url" id="reg-school-new-website" maxlength="500" aria-describedby="reg-school-new-website-error" disabled><p class="field-error" id="reg-school-new-website-error" hidden></p>
  <p class="field-help">Add public business details only. After your account is confirmed and profile saved, these details go to TKDFlow for review. Approved school details are published under ODbL; your name and membership are not included.</p></div>
  <p class="field-error" id="reg-school-error" hidden></p><p class="field-help school-coverage" id="reg-school-coverage"></p></fieldset>
+            </details>
             <div class="form-group">
               <label for="reg-email">Email address</label>
               <input type="email" id="reg-email" required autocomplete="email" inputmode="email">
@@ -238,12 +235,8 @@
                 <select id="cp-belt" required aria-describedby="cp-belt-error"></select>
                 <p class="field-error" id="cp-belt-error" hidden></p>
               </div>
-              <div class="form-group">
-                <label for="cp-age">Age <span class="optional">(optional, private)</span></label>
-                <input type="number" id="cp-age" min="13" max="99" inputmode="numeric" aria-describedby="cp-age-error">
-                <p class="field-error" id="cp-age-error" hidden></p>
-              </div>
             </div>
+            <details class="optional-school" id="cp-school-details"><summary>Add your taekwondo school <span class="optional">(optional)</span></summary>
             <fieldset class="school-picker"><legend>Taekwondo school <span class="optional">(optional)</span></legend>
  <label for="cp-school-search">Search school or location</label><input type="search" id="cp-school-search" placeholder="School name, city or country" autocomplete="off">
  <div class="school-filters"><div><label for="cp-school-country">Country</label><select id="cp-school-country"><option value="">All countries</option></select></div><div><label for="cp-school-region">State or region</label><select id="cp-school-region"><option value="">All regions</option></select></div><div><label for="cp-school-city">City</label><select id="cp-school-city"><option value="">All cities</option></select></div></div>
@@ -255,6 +248,7 @@
  <label for="cp-school-new-region">School state or region (optional)</label><input type="text" id="cp-school-new-region" maxlength="100" aria-describedby="cp-school-new-region-error" disabled><p class="field-error" id="cp-school-new-region-error" hidden></p><label for="cp-school-new-city">School city</label><input type="text" id="cp-school-new-city" maxlength="100" aria-describedby="cp-school-new-city-error" disabled><p class="field-error" id="cp-school-new-city-error" hidden></p><label for="cp-school-new-website">School website (optional)</label><input type="url" id="cp-school-new-website" maxlength="500" aria-describedby="cp-school-new-website-error" disabled><p class="field-error" id="cp-school-new-website-error" hidden></p>
  <p class="field-help">Add public business details only. After your account is confirmed and profile saved, these details go to TKDFlow for review. Approved school details are published under ODbL; your name and membership are not included.</p></div>
  <p class="field-error" id="cp-school-error" hidden></p><p class="field-help school-coverage" id="cp-school-coverage"></p></fieldset>
+            </details>
             <button type="submit" class="btn-auth" id="btn-complete">Save and continue</button>
           </form>
         </section>

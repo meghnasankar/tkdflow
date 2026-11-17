@@ -34,7 +34,7 @@ const HERO = {
   forgot: ['Reset your password', 'We’ll email you a link'],
   recovery: ['Choose a new password', 'Secure your account'],
 };
-const SUBMITS = ['btn-login', 'btn-register', 'btn-complete', 'btn-forgot', 'btn-recovery'];
+const SUBMITS = ['btn-age', 'btn-login', 'btn-register', 'btn-complete', 'btn-forgot', 'btn-recovery'];
 
 let client = null;
 let flow = null;          // non-null while a flow owns navigation (prevents auth-event races)
@@ -60,6 +60,7 @@ function showPanel(name, { keepStatus = false } = {}) {
   tabs.querySelectorAll('.auth-tab').forEach((t) => t.setAttribute('aria-pressed', String(t.dataset.mode === name)));
   const [title, sub] = HERO[name] || HERO.status;
   $('hero-title').textContent = title;
+  document.title = `${title} — TKDflow`;
   $('hero-sub').textContent = sub;
   if (!keepStatus) status.clear();
   if (['login', 'register', 'forgot'].includes(name)) {
@@ -229,9 +230,9 @@ function showComplete(session, outcome = {}) {
   const v = outcome.values || {};
   $('cp-name').value = v.full_name || meta.full_name || meta.name || '';
   $('cp-username').value = v.username || '';
-  $('cp-age').value = v.age ?? '';
   populateBelts($('cp-belt'), v.belt_level || '');
   schoolPicker('cp').setProfile(v);
+  $('cp-school-details').open = Boolean(v.school_name);
   if (outcome.message) applyFieldErrors('cp', outcome);
   else $('cp-name').focus();
 }

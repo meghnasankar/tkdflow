@@ -81,3 +81,12 @@ test('an empty catalogue yields zero results and zero counts (no crash)', () => 
   assert.deepEqual(facetCounts([], S(), 'org'), { all: 0 });
   assert.deepEqual(facetCounts([], S(), 'belt'), { all: 0 });
 });
+
+
+test('search includes visible belt, difficulty and technique descriptions',()=>{
+ const yellow=applyState(forms,S({q:'yellow belt'}));
+ assert.ok(yellow.length>0);assert.ok(yellow.every(f=>f.belt==='yellow'));
+ assert.ok(applyState(forms,S({q:'intermediate'})).length>0);
+ assert.ok(applyState(forms,S({q:'scissor block'})).some(f=>f.id==='taegeuk-7'));
+ assert.deepEqual(names(applyState(forms,S({q:'belt yellow'}))),names(yellow));
+});

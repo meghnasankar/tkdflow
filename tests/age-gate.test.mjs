@@ -136,10 +136,10 @@ test('auth page: neutral age screen comes before any account details', () => {
   assert.doesNotMatch(js, /localStorage/, 'the screen result is per tab (sessionStorage), not persisted');
 });
 
-test('profile age inputs carry the 13–99 range everywhere', () => {
-  for (const [file, id] of [['auth.html', 'reg-age'], ['auth.html', 'cp-age'], ['profile.html', 'p-age']]) {
-    assert.match(read(file), new RegExp(`id="${id}" min="13" max="99"`), `${file} #${id}`);
-  }
+test('registration and completion never repeat the age question; existing profile age remains optional', () => {
+  assert.doesNotMatch(read('auth.html'), /id="(?:reg|cp)-age"/);
+  assert.equal((read('auth.html').match(/id="age-screen"/g) || []).length, 1);
+  assert.match(read('profile.html'), /id="p-age" min="13" max="99"/);
 });
 
 test('production activation retains the approved age model and public-only credentials', () => {

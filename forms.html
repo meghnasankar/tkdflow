@@ -69,7 +69,7 @@
     <div class="forms-layout">
       <aside class="filters-panel" aria-label="Filters">
         <details class="filters" id="filters" open>
-          <summary>Filters <span class="filter-count" id="filter-count"></span></summary>
+          <summary><svg class="icon " aria-hidden="true" focusable="false"><use href="/assets/icons.svg#filter"></use></svg> Filters <span class="filter-count" id="filter-count"></span></summary>
           <fieldset class="filter-group">
             <legend>Belt colour</legend>
             <div class="radio-list" id="belt-options"></div>
@@ -92,8 +92,8 @@
           <div class="search-field">
             <label for="search">Search forms</label>
             <div class="search-bar">
-              <span aria-hidden="true">🔍</span>
-              <input type="search" id="search" placeholder="Name, Korean name or meaning" autocomplete="off">
+              <svg class="icon " aria-hidden="true" focusable="false"><use href="/assets/icons.svg#search"></use></svg>
+              <input type="search" id="search" placeholder="Name, belt, technique or meaning" autocomplete="off">
             </div>
           </div>
           <div class="sort-field">
@@ -101,6 +101,7 @@
             <select id="sort" class="select-input"></select>
           </div>
         </form>
+        <div class="active-filters" id="forms-active-filters" role="group" aria-label="Active filters" hidden></div>
         <p class="results-summary" id="results-summary" aria-live="polite"></p>
         <div id="forms-grid"></div>
       </section>

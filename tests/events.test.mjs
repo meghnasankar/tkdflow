@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   zonedToUtc, eventStatus, registrationState, filterEvents, overlapsMonth, currentMonth, countdownParts, createTicker, eventRecordProblem,
-  needsTicking, isCalendarDate,
+  needsTicking, isCalendarDate, eventFacetCounts, eventStatuses, eventFiltersFromParams, eventFiltersToParams,
 } from '../js/lib/events.js';
 import { validateEvents } from '../js/lib/validators.js';
 
@@ -138,4 +138,38 @@ test('only real calendar dates are accepted everywhere', () => {
 
 test('ATA class tiers are kept separate from a national or international level',()=>{
  for(const e of data.events.filter(e=>e.organization==='ATA'&&e.organiserClass&&!/national|world|state|district/i.test(e.name)))assert.equal(e.level,'unspecified',e.id);
+});
+
+
+test('event search matches separate words, accents, country aliases and visible discipline labels',()=>{
+ const fixture=ev({name:'National Open',location:'São Paulo',country:'Brazil',countryCode:'BR',eventTypes:['patterns']});
+ assert.equal(filterEvents([fixture],{q:'Paulo Sao'},REVIEW_DATE).length,1);
+ assert.equal(filterEvents([fixture],{q:'tul'},REVIEW_DATE).length,1);
+ assert.equal(filterEvents([fixture],{q:'missing word'},REVIEW_DATE).length,0);
+ const usa=ev({countryCode:'US'});assert.equal(filterEvents([usa],{q:'USA'},REVIEW_DATE).length,1);
+ assert.equal(filterEvents([ev({country:'Australia',countryCode:'AU',location:'Sydney'})],{q:'US'},REVIEW_DATE).length,0);
+ assert.equal(filterEvents([ev({country:'United Kingdom',countryCode:'GB'})],{q:'UK'},REVIEW_DATE).length,1);
+});
+test('event facet counts keep every other filter and match the resulting event list',()=>{
+ const state={status:'all',country:'United States',year:'2026'},statuses=eventStatuses(data.events,REVIEW_DATE);
+ for(const facet of ['country','organization','year','type','style','region','level','kind','status']) {
+  const counts=eventFacetCounts(data.events,state,facet,REVIEW_DATE,statuses);
+  for(const [value,count]of Object.entries(counts)) {
+   if(value==='all'&&facet==='type')continue;
+   assert.equal(filterEvents(data.events,{...state,[facet]:value},REVIEW_DATE,statuses).length,count,`${facet}:${value}`);
+  }
+ }
+});
+test('event filters reject malformed URL values and round-trip valid selections',()=>{
+ const state=eventFiltersFromParams('?status=all&country=United+States&organization=AAU&year=2027&major=1&q=National',data.events);
+ assert.equal(state.country,'United States');assert.equal(state.status,'all');assert.equal(state.major,true);
+ assert.deepEqual(eventFiltersFromParams(eventFiltersToParams(state),data.events),state);
+ const invalid=eventFiltersFromParams('?month=2026-99&status=bogus&country=bogus&year=9999&major=false',data.events);
+ assert.equal(invalid.month,'');assert.equal(invalid.status,'upcoming');assert.equal(invalid.country,'all');assert.equal(invalid.year,'all');assert.equal(invalid.major,false);
+});
+test('facet years count a cross-year event in both years and exclude undated events from months',()=>{
+ const list=[ev({year:2026,start:'2026-12-30',end:'2027-01-02'}),ev({year:2027,start:null,end:null,dateStatus:'tba'})];
+ const counts=eventFacetCounts(list,{status:'all'},'year',REVIEW_DATE);
+ assert.equal(counts['2026'],1);assert.equal(counts['2027'],2);
+ assert.equal(filterEvents(list,{status:'all',month:'2027-01'},REVIEW_DATE).length,1);
 });

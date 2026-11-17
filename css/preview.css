@@ -119,3 +119,6 @@
 .major-shortcuts a { color:var(--navy);font-weight:700;font-size:.84rem;border:1px solid #d4b77b;border-radius:20px;padding:8px 14px;background:#fff8e7; }
 .calendar-coverage p { font-size:.84rem; }
 @media(max-width:600px){.advanced-grid{grid-template-columns:1fr;}.events-hero{padding-top:30px;padding-bottom:30px;}}
+
+.empty-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
+.major-shortcuts a { display:inline-flex; align-items:center; gap:6px; }

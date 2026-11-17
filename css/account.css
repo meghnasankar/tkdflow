@@ -148,3 +148,7 @@ body { background: var(--off-white); }
 .school-review-actions{display:flex;flex-wrap:wrap;gap:10px}
 #school-review{margin-bottom:24px}
 @media(max-width:520px){.school-filters{grid-template-columns:1fr}.school-picker{padding:12px}}
+
+.optional-school { margin: 8px 0 20px; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); padding: 12px; }
+.optional-school > summary { cursor: pointer; color: var(--navy); font-weight: 700; min-height: 28px; }
+.optional-school .school-picker { margin-top: 16px; margin-bottom: 0; }
