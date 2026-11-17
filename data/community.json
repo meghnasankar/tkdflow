@@ -1,46 +1,52 @@
 {
-  "status": "preview",
-  "note": "Example post types only. These are not real members, media or engagement; posting is not available yet.",
   "posts": [
     {
-      "id": "example-technique",
-      "category": "Poomsae",
-      "kind": "Technique breakdown",
-      "title": "Breaking down a transition in a black-belt poomsae",
-      "body": "A member could share a slow-motion clip and explain foot placement, hip rotation and chamber position for one tricky transition.",
-      "tags": ["Poomsae", "Technique"]
+      "id": "forms",
+      "category": "Forms & curriculum",
+      "kind": "Study guide",
+      "title": "Find a form and study its movement sequence",
+      "body": "Compare WT/Kukkiwon, ITF and ATA forms, then use the full-body animation, voice instructions and camera views.",
+      "url": "forms.html",
+      "tags": [
+        "23 forms",
+        "3D lessons"
+      ]
     },
     {
-      "id": "example-grading",
-      "category": "Poomsae",
-      "kind": "Grading preparation",
-      "title": "Walking through a colour-belt form before a grading",
-      "body": "A step-by-step walkthrough of stances, transitions and kihap positions, with questions for experienced members.",
-      "tags": ["Grading", "Colour belt"]
+      "id": "events",
+      "category": "Competitions",
+      "kind": "Events calendar",
+      "title": "Find your next taekwondo event",
+      "body": "Search official 2026–2027 listings, highlight major championships and follow the organizer’s event page.",
+      "url": "competitions.html",
+      "tags": [
+        "Worldwide",
+        "Official sources"
+      ]
     },
     {
-      "id": "example-progress",
-      "category": "Training",
-      "kind": "Progress update",
-      "title": "Comparing the same stance a year apart",
-      "body": "Two photos taken a year apart, discussing changes in stance depth and balance.",
-      "tags": ["Training", "Stances"]
+      "id": "founder",
+      "category": "About the project",
+      "kind": "Founder story",
+      "title": "Meet Meghna and the idea behind TKDflow",
+      "body": "Learn why a student who trained across different schools wanted a clearer, more open taekwondo learning resource.",
+      "url": "founder.html",
+      "tags": [
+        "Meghna Sankar",
+        "Our purpose"
+      ]
     },
     {
-      "id": "example-competition",
-      "category": "Competition",
-      "kind": "Competition highlight",
-      "title": "Sharing a competition performance with section notes",
-      "body": "A performance video with timestamps for each section and notes on preparation.",
-      "tags": ["Competition", "Poomsae"]
-    },
-    {
-      "id": "example-tip",
-      "category": "Technique Tips",
-      "kind": "Technique tip",
-      "title": "A drill for checking front-stance width",
-      "body": "A short written tip describing a simple drill and inviting feedback from instructors.",
-      "tags": ["Beginner tips", "Stances"]
+      "id": "questions",
+      "category": "Learning together",
+      "kind": "Discussion guide",
+      "title": "Ask one clear question at a time",
+      "body": "Use a specific form name, organization and pose link so others can understand the movement or curriculum you mean.",
+      "url": "forum.html?category=technique-qa",
+      "tags": [
+        "Questions",
+        "Respectful feedback"
+      ]
     }
   ]
 }

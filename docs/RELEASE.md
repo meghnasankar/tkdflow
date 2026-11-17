@@ -160,3 +160,5 @@ Supabase backups and restores are managed in the Supabase dashboard (type and re
 4. Record the restore point, who approved it, the isolation checks, and preflight output before
    and after. Re-enable the Data API only after the owner approves the verified hardened state.
 5. Re-enable member accounts only through §9 step 3.
+
+Support forwarding: `support@tkdflow.com` is configured; delivery test pending. Do not call it tested until the owner confirms receipt.

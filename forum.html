@@ -4,13 +4,13 @@
 <!-- layout:head -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Forum (preview) — TKDflow</title>
-<meta name="description" content="A preview of the planned TKDflow discussion forum, shown with example threads. Posting is not open yet.">
+<title>Taekwondo discussions — TKDflow</title>
+<meta name="description" content="Explore questions about forms, curricula, grading and competitions, with moderated member discussions.">
 <link rel="canonical" href="https://tkdflow.com/forum.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="TKDflow">
-<meta property="og:title" content="Forum (preview) — TKDflow">
-<meta property="og:description" content="A preview of the planned TKDflow discussion forum, shown with example threads. Posting is not open yet.">
+<meta property="og:title" content="Taekwondo discussions — TKDflow">
+<meta property="og:description" content="Explore questions about forms, curricula, grading and competitions, with moderated member discussions.">
 <meta property="og:url" content="https://tkdflow.com/forum.html">
 <meta property="og:image" content="https://tkdflow.com/assets/og-image.png">
 <meta property="og:image:type" content="image/png">
@@ -59,37 +59,16 @@
 <!-- /layout:header -->
 
 <main id="main" tabindex="-1">
-  <div class="page-hero forum-hero">
-    <div class="container">
-      <p class="section-label on-dark">Discussion forum · preview</p>
-      <h1>Forum preview</h1>
-      <p>This is how the TKDflow forum will be organised. It is not open yet: the topics below are examples, and there are no real threads, replies or members here.</p>
-    </div>
-  </div>
-
-  <div class="container">
-    <div class="notice notice-info preview-notice">
-      <p><strong>Posting is not available.</strong> Threads and replies need member accounts, moderation and a published community policy, which are not in place yet. See <a class="text-link" href="/about.html">project status</a>.</p>
-    </div>
-
-    <div class="preview-layout">
-      <aside aria-label="Forum categories">
-        <h2 class="side-title">Categories</h2>
-        <div class="category-nav" id="category-nav" role="group" aria-label="Filter by category"></div>
-      </aside>
-
-      <section aria-labelledby="topics-title">
-        <h2 class="sr-only" id="topics-title">Example topics</h2>
-        <form class="toolbar" id="forum-search" role="search">
-          <label for="forum-q">Search example topics</label>
-          <div class="search-bar"><span aria-hidden="true">🔍</span><input type="search" id="forum-q" autocomplete="off"></div>
-        </form>
-        <p class="results-summary" id="forum-summary" aria-live="polite"></p>
-        <div id="forum-content"></div>
-      </section>
-    </div>
-  </div>
-</main>
+ <div class="page-hero forum-hero"><div class="container"><p class="section-label on-dark">Learn together</p><h1>Taekwondo discussions</h1><p>Compare curricula, explore a form transition and ask clear questions. Start with a guide or join a conversation.</p></div></div>
+ <div class="container"><p class="notice notice-info preview-notice" id="forum-service" role="status">Loading discussions…</p>
+ <div class="preview-layout"><aside aria-label="Forum categories"><h2 class="side-title">Categories</h2><div class="category-nav" id="category-nav" role="group" aria-label="Filter by category"></div></aside>
+ <section aria-labelledby="topics-title"><h2 id="topics-title" class="sr-only">Discussion topics</h2><form class="toolbar" id="forum-search" role="search"><label for="forum-q">Search discussions</label><div class="search-bar"><span aria-hidden="true">🔍</span><input type="search" id="forum-q" autocomplete="off"></div></form>
+ <p class="results-summary" id="forum-summary" aria-live="polite"></p><p id="discussion-message" role="status"></p>
+ <section id="topic-detail" class="topic-detail" aria-label="Selected discussion" hidden></section><div id="forum-content"></div><section id="topic-composer" hidden aria-label="Start a discussion"></section>
+ <section id="moderation" hidden><h2>Moderation</h2><button id="load-moderation" type="button" class="btn btn-secondary">Open moderation queue</button><div id="moderation-queue"></div></section>
+ </section></div>
+ <section class="community-guidelines"><h2>Community guidelines</h2><p>Be respectful, keep questions specific, credit references and post only material you have permission to share. Do not post contact details, school schedules, spam or harmful content. Public submissions are moderated. Public reading is open to everyone; accounts aged 13–17 remain private and do not publish posts or messages.</p></section>
+ </div></main>
 
 <!-- layout:footer -->
 <footer class="footer">
@@ -97,7 +76,7 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <p class="logo">TKDflow<span>.</span></p>
-        <p>A free taekwondo forms catalogue and training resource. Lesson content is awaiting review by a qualified instructor.</p>
+        <p>A free taekwondo learning resource created by Meghna Sankar from her training and research.</p>
       </div>
       <div class="footer-col">
         <h2>Learn</h2>
@@ -109,8 +88,8 @@
       <div class="footer-col">
         <h2>Community</h2>
         <ul>
-          <li><a href="/community.html">Community preview</a></li>
-          <li><a href="/forum.html">Forum preview</a></li>
+          <li><a href="/community.html">Community</a></li>
+          <li><a href="/forum.html">Forum</a></li>
           <li><a href="/competitions.html">Events</a></li>
         </ul>
       </div>

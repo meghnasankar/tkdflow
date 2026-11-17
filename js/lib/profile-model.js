@@ -1,15 +1,23 @@
 /* Pure profile/auth logic shared by auth.html and profile.html.
    Mirrors the database constraints in supabase-setup.sql. */
 import { BELT_LEVELS } from './belts.js';
+import { AGE_POLICY } from './age-gate.js';
 
 export const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
-export const LIMITS = Object.freeze({ nameMax: 80, schoolMin: 2, schoolMax: 100, ageMin: 5, ageMax: 99, passwordMin: 8 });
+export const LIMITS = Object.freeze({ nameMax: 80, schoolMin: 2, schoolMax: 100, ageMin: AGE_POLICY.individualMin, ageMax: 99, passwordMin: 8 });
 export const NEW_SCHOOL = '__new__';
 
+export const AGE_UNDER_MINIMUM =
+  'TKDflow individual accounts are for ages 13 and over, so this age cannot be saved.';
+const AGE_FORMAT = 'Enter your age as a whole number up to 99, or leave it blank.';
+
 /**
- * Validate raw form values. Returns { values, errors } where errors maps a
- * field name to a sentence. `values` is normalised (trimmed, lowercased
- * username, numeric/null age, null for empty optional fields).
+ * Validate raw form values. Returns { values, errors, underMinimum } where
+ * errors maps a field name to a sentence. `values` is normalised (trimmed,
+ * lowercased username, numeric/null age, null for empty optional fields).
+ * `underMinimum` is true when a whole-number age below 13 was entered; such
+ * an age is never accepted. A blank (null) age is allowed but is NOT
+ * evidence of eligibility — that comes only from the age screen.
  */
 export function validateProfileInput(raw) {
   const errors = {};
@@ -26,10 +34,14 @@ export function validateProfileInput(raw) {
   if (!USERNAME_RE.test(username)) errors.username = 'Use 3–20 lowercase letters, numbers or underscores.';
 
   let age = null;
+  let underMinimum = false;
   if (ageText) {
-    age = Number(ageText);
-    if (!Number.isInteger(age) || age < LIMITS.ageMin || age > LIMITS.ageMax) {
-      errors.age = `Enter a whole number from ${LIMITS.ageMin} to ${LIMITS.ageMax}, or leave it blank.`;
+    age = /^[0-9]{1,3}$/.test(ageText) ? Number(ageText) : NaN;
+    if (Number.isInteger(age) && age >= 1 && age < LIMITS.ageMin) {
+      underMinimum = true;
+      errors.age = AGE_UNDER_MINIMUM;
+    } else if (!Number.isInteger(age) || age < LIMITS.ageMin || age > LIMITS.ageMax) {
+      errors.age = AGE_FORMAT;
     }
   }
 
@@ -45,6 +57,7 @@ export function validateProfileInput(raw) {
   return {
     values: { full_name, username, age: errors.age ? null : age, belt_level, school_name },
     isNewSchool: schoolChoice === NEW_SCHOOL && Boolean(schoolNew),
+    underMinimum,
     errors,
   };
 }
@@ -104,9 +117,10 @@ export function routeForProfileLookup({ data, error }) {
 export function pendingProfileFrom(user) {
   const p = user?.user_metadata?.pending_profile;
   if (!p || typeof p !== 'object') return null;
-  const { values, errors } = validateProfileInput({
+  const { values, errors, underMinimum } = validateProfileInput({
     full_name: p.full_name, username: p.username, age: p.age ?? '',
     belt_level: p.belt_level, school_choice: p.school_name ? NEW_SCHOOL : '', school_new: p.school_name || '',
   });
-  return Object.keys(errors).length ? { values, valid: false } : { values, valid: true };
+  if (Object.keys(errors).length) return { values, valid: false, underMinimum };
+  return { values, valid: true, underMinimum: false };
 }

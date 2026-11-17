@@ -88,7 +88,7 @@ describe('sign in', () => {
 });
 
 describe('registration', () => {
-  const input = (over = {}) => ({ raw: goodRaw, email: 'new@example.test', password: 'longenough1', confirm: 'longenough1', redirectTo: 'x', ...over });
+  const input = (over = {}) => ({ raw: goodRaw, email: 'new@example.test', password: 'longenough1', confirm: 'longenough1', redirectTo: 'x', eligibility: 'eligible', ...over });
 
   test('invalid fields and passwords never reach the service', async () => {
     const c = fakeClient();
@@ -149,15 +149,15 @@ describe('completion and routing', () => {
   });
   test('existing profile → profile page; missing → completion (provisioned from sign-up data when valid)', async () => {
     assert.equal((await routeSignedIn(fakeClient({ 'profiles.select': () => ok({ id: A }) }), session())).kind, 'profile');
-    assert.equal((await routeSignedIn(fakeClient(), session())).kind, 'complete');
+    assert.equal((await routeSignedIn(fakeClient(), session(), { eligibility: 'eligible' })).kind, 'complete');
     const pending = { pending_profile: { full_name: 'Min', username: 'min_ji', belt_level: 'Green Belt (7th Gup)' } };
     const c = fakeClient();
-    assert.equal((await routeSignedIn(c, session(A, pending))).kind, 'profile');
+    assert.equal((await routeSignedIn(c, session(A, pending), { eligibility: 'eligible' })).kind, 'profile');
     assert.ok(c.calls.some(([n]) => n === 'profiles.upsert'));
   });
   test('completeProfile handles an ended or hanging session', async () => {
-    assert.equal((await completeProfile(fakeClient({ getSession: async () => ok({ session: null }) }), goodRaw)).kind, 'session-ended');
-    const [r] = await timed(() => completeProfile(fakeClient({ getSession: never }), goodRaw, { ms: MS }));
+    assert.equal((await completeProfile(fakeClient({ getSession: async () => ok({ session: null }) }), goodRaw, { eligibility: 'eligible' })).kind, 'session-ended');
+    const [r] = await timed(() => completeProfile(fakeClient({ getSession: never }), goodRaw, { ms: MS, eligibility: 'eligible' }));
     assert.equal(r.kind, 'error');
   });
 });
@@ -268,7 +268,172 @@ describe('profile page data and user switches', () => {
   });
 
   test('Google start failure is reported', async () => {
-    assert.equal((await startGoogle(fakeClient({ oauth: async () => fail({ message: 'provider is not enabled' }) }), 'x')).kind, 'error');
+    assert.equal((await startGoogle(fakeClient({ oauth: async () => fail({ message: 'provider is not enabled' }) }), 'x', { eligibility: 'eligible' })).kind, 'error');
+  });
+});
+
+describe('age policy gates (no account-creating call before an eligible age screen)', () => {
+  const ACCOUNT_CALLS = ['signUp', 'rpc', 'schools.insert', 'profiles.upsert', 'profiles.update', 'oauth'];
+  const touched = (c) => c.calls.map(([n]) => n).filter((n) => ACCOUNT_CALLS.includes(n));
+  const reg = (over = {}) => ({ raw: { ...goodRaw, school_choice: NEW_SCHOOL, school_new: 'Riverside TKD' }, email: 'new@example.test', password: 'longenough1', confirm: 'longenough1', redirectTo: 'x', ...over });
+  const UNSCREENED = [undefined, null, '', 'unknown', 'ELIGIBLE', 'yes', true, 1, {}];
+
+  test('sign-up, username check and school write need an explicit eligible result', async () => {
+    for (const eligibility of UNSCREENED) {
+      const c = fakeClient();
+      assert.deepEqual(await register(c, reg({ eligibility })), { kind: 'age-screen' }, String(eligibility));
+      assert.deepEqual(c.calls, [], `no client call at all for eligibility=${String(eligibility)}`);
+    }
+    const blocked = fakeClient();
+    assert.deepEqual(await register(blocked, reg({ eligibility: 'ineligible' })), { kind: 'ineligible' });
+    assert.deepEqual(blocked.calls, []);
+  });
+
+  test('an under-13 profile age stops sign-up before any call; 13 and blank proceed', async () => {
+    for (const age of ['1', '12', ' 12 ', '012']) {
+      const c = fakeClient();
+      assert.deepEqual(await register(c, reg({ eligibility: 'eligible', raw: { ...goodRaw, age } })), { kind: 'ineligible' }, age);
+      assert.deepEqual(c.calls, []);
+    }
+    for (const age of ['13', '17', '18', '']) {
+      const c = fakeClient();
+      assert.equal((await register(c, reg({ eligibility: 'eligible', raw: { ...goodRaw, age } }))).kind, 'profile', age);
+      assert.ok(touched(c).includes('signUp'));
+    }
+    // malformed ages are ordinary field errors (never a call, never silently dropped)
+    for (const age of ['12.5', '-13', 'thirteen', '100', '0']) {
+      const c = fakeClient();
+      const r = await register(c, reg({ eligibility: 'eligible', raw: { ...goodRaw, age } }));
+      assert.equal(r.kind, 'invalid', age);
+      assert.ok(r.fieldErrors.age, age);
+      assert.deepEqual(c.calls, []);
+    }
+  });
+
+  test('Google cannot be used to create an account before the age screen', async () => {
+    for (const eligibility of UNSCREENED) {
+      const c = fakeClient();
+      assert.deepEqual(await startGoogle(c, 'x', { eligibility }), { kind: 'age-screen' });
+      assert.deepEqual(c.calls, []);
+    }
+    const blocked = fakeClient();
+    assert.deepEqual(await startGoogle(blocked, 'x', { eligibility: 'ineligible' }), { kind: 'ineligible' });
+    assert.deepEqual(blocked.calls, []);
+    const c = fakeClient();
+    assert.equal((await startGoogle(c, 'https://tkdflow.com/auth.html?mode=complete', { eligibility: 'eligible' })).kind, 'redirecting');
+    assert.deepEqual(touched(c), ['oauth']);
+  });
+
+  test('finishing a new profile (e.g. after Google) is gated the same way', async () => {
+    const raw = { ...goodRaw, school_choice: NEW_SCHOOL, school_new: 'Riverside TKD' };
+    for (const eligibility of UNSCREENED) {
+      const c = fakeClient();
+      assert.deepEqual(await completeProfile(c, raw, { eligibility }), { kind: 'age-screen' });
+      assert.deepEqual(c.calls, []);
+    }
+    const young = fakeClient();
+    assert.deepEqual(await completeProfile(young, { ...raw, age: '12' }, { eligibility: 'eligible' }), { kind: 'ineligible' });
+    assert.deepEqual(young.calls, []);
+    const c = fakeClient();
+    assert.equal((await completeProfile(c, { ...raw, age: '13' }, { eligibility: 'eligible' })).kind, 'profile');
+    assert.deepEqual(touched(c), ['rpc', 'schools.insert', 'profiles.upsert']);
+  });
+
+  test('routing a signed-in user: existing members are not gated; new profiles are', async () => {
+    // existing member → profile page whatever the session flag says (sign-in is not account creation)
+    for (const eligibility of [undefined, 'ineligible', 'eligible']) {
+      const c = fakeClient({ 'profiles.select': () => ok({ id: A }) });
+      assert.equal((await routeSignedIn(c, session(), { eligibility })).kind, 'profile');
+      assert.deepEqual(touched(c), []);
+    }
+    const pending = { pending_profile: { full_name: 'Min', username: 'min_ji', belt_level: 'Green Belt (7th Gup)', school_name: 'Riverside TKD' } };
+    const unscreened = fakeClient();
+    const r = await routeSignedIn(unscreened, session(A, pending));
+    assert.equal(r.kind, 'age-screen');
+    assert.equal(r.values.username, 'min_ji', 'values kept for the completion form after the screen');
+    assert.deepEqual(touched(unscreened), [], 'no profile or school written without the screen');
+    const blocked = fakeClient();
+    assert.equal((await routeSignedIn(blocked, session(A, pending), { eligibility: 'ineligible' })).kind, 'ineligible');
+    assert.deepEqual(touched(blocked), []);
+    const legacyChild = fakeClient();
+    const childMeta = { pending_profile: { ...pending.pending_profile, age: 9 } };
+    assert.equal((await routeSignedIn(legacyChild, session(A, childMeta), { eligibility: 'eligible' })).kind, 'ineligible');
+    assert.deepEqual(touched(legacyChild), []);
+  });
+
+  test('password sign-in, reset and logout are unchanged by the age screen', async () => {
+    const c = fakeClient();
+    assert.equal((await signIn(c, { email: 'a@b.co', password: 'x' })).kind, 'signed-in');
+    assert.equal((await requestReset(c, 'a@b.co', 'x')).kind, 'sent');
+    assert.equal((await updatePassword(c, 'longenough1', 'longenough1', { stillSignedIn: () => false })).kind, 'updated');
+    assert.equal((await logout(c, { stillSignedIn: () => false })).kind, 'signed-out');
+    assert.deepEqual(touched(c), []);
+  });
+
+  test('an existing member cannot save an under-13 age; 13 saves', async () => {
+    const original = { full_name: 'Min Ji', username: 'min_ji', age: null, belt_level: 'Blue Belt (5th Gup)', school_name: null };
+    const raw = (age) => ({ full_name: 'Min Ji', username: 'min_ji', age, belt_level: 'Blue Belt (5th Gup)', school_choice: '' });
+    const c = fakeClient();
+    const r = await saveProfile(c, new SessionGuard(A), original, raw('12'));
+    assert.deepEqual(r, { kind: 'held' }, 'a newly disclosed under-13 age holds the account before any call');
+    assert.deepEqual(c.calls, []);
+    const legacyClient = fakeClient();
+    const legacy = await saveProfile(legacyClient, new SessionGuard(A), { ...original, age: 9 }, raw('15'));
+    assert.deepEqual(legacy, { kind: 'held' }, 'a held legacy profile cannot be edited, even to a 13+ age');
+    assert.deepEqual(legacyClient.calls, []);
+    const okSave = await saveProfile(fakeClient(), new SessionGuard(A), original, raw('13'));
+    assert.deepEqual(okSave.changes, { age: 13 });
+  });
+});
+
+describe('known legacy under-13 profiles are held (no conversion, no deletion, no writes)', () => {
+  const WRITES = ['signUp', 'rpc', 'schools.insert', 'profiles.upsert', 'profiles.update', 'oauth', 'signOut'];
+  const writes = (c) => c.calls.map(([n]) => n).filter((n) => WRITES.includes(n));
+  const stored = (over) => ({ id: A, full_name: 'Legacy', username: 'legacy_one', belt_level: 'Blue Belt (5th Gup)', school_name: 'Old Dojang', ...over });
+
+  test('routeSignedIn: stored age under 13 → held, whatever the tab flag', async () => {
+    for (const age of [5, 9, 12]) {
+      for (const eligibility of [undefined, 'eligible', 'ineligible']) {
+        const c = fakeClient({ 'profiles.select': () => ok(stored({ age })) });
+        assert.deepEqual(await routeSignedIn(c, session(), { eligibility }), { kind: 'held' }, `age ${age}, ${eligibility}`);
+        assert.deepEqual(writes(c), []);
+      }
+    }
+  });
+
+  test('routeSignedIn: existing 13+ and blank-age members still reach their profile', async () => {
+    for (const age of [13, 17, 18, 64, null, undefined]) {
+      const c = fakeClient({ 'profiles.select': () => ok(stored({ age })) });
+      assert.equal((await routeSignedIn(c, session())).kind, 'profile', String(age));
+      assert.deepEqual(writes(c), []);
+    }
+  });
+
+  test('loadOwnProfile: a held profile is never returned to the edit form', async () => {
+    const held = await loadOwnProfile(fakeClient({ 'profiles.select': () => ok(stored({ age: 11 })) }), new SessionGuard(A));
+    assert.deepEqual(held, { kind: 'held' });
+    assert.ok(!('profile' in held));
+    const okLoad = await loadOwnProfile(fakeClient({ 'profiles.select': () => ok(stored({ age: 13 })) }), new SessionGuard(A));
+    assert.equal(okLoad.kind, 'ok');
+    assert.equal(okLoad.profile.age, 13);
+    const blank = await loadOwnProfile(fakeClient({ 'profiles.select': () => ok(stored({ age: null })) }), new SessionGuard(A));
+    assert.equal(blank.kind, 'ok', 'blank age is not held — it goes to the owner review, not an automatic decision');
+  });
+
+  test('saveProfile: no session check, username RPC, school insert or update for a held profile', async () => {
+    const c = fakeClient();
+    const raw = { full_name: 'Changed', username: 'new_name', age: '', belt_level: 'Blue Belt (5th Gup)', school_choice: NEW_SCHOOL, school_new: 'New Dojang' };
+    assert.deepEqual(await saveProfile(c, new SessionGuard(A), stored({ age: 12 }), raw), { kind: 'held' });
+    assert.deepEqual(c.calls, []);
+  });
+
+  test('stringified stored ages are held too; non-integer junk is left to the owner review', async () => {
+    const str = fakeClient({ 'profiles.select': () => ok(stored({ age: '9' })) });
+    assert.equal((await routeSignedIn(str, session())).kind, 'held');
+    for (const age of [9.5, NaN]) {
+      const c = fakeClient({ 'profiles.select': () => ok(stored({ age })) });
+      assert.equal((await routeSignedIn(c, session())).kind, 'profile', `${String(age)} is not a known under-13 age`);
+    }
   });
 });
 

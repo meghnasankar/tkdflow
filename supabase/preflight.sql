@@ -47,7 +47,7 @@ select relname, relrowsecurity, relforcerowsecurity
 select id, username from public.profiles where username !~ '^[a-z0-9_]{3,20}$';
 select lower(username) as username, count(*) from public.profiles group by 1 having count(*) > 1;
 select id from public.profiles where char_length(btrim(full_name)) not between 1 and 80;
-select id, age from public.profiles where age is not null and age not between 5 and 99;
+select id, age from public.profiles where age is not null and age not between 13 and 99;
 select id, belt_level from public.profiles where belt_level is null or belt_level <> all (array[
   'White Belt (10th Gup)', 'Yellow Belt (9th Gup)', 'Yellow Stripe (8th Gup)',
   'Green Belt (7th Gup)', 'Green Stripe (6th Gup)', 'Blue Belt (5th Gup)',
@@ -61,7 +61,18 @@ select id from public.profiles where avatar_url is not null and avatar_url !~ '^
 select lower(btrim(name)) as school, count(*) from public.schools group by 1 having count(*) > 1;
 select id, name from public.schools where char_length(btrim(name)) not between 2 and 100;
 
--- 6. Counts only (no personal data) for the release record
+-- 6. Counts only (no personal data) for the release record.
+--    profiles_under_13 rows need the controlled owner review in
+--    docs/account-age-policy.md ("Legacy records") — do not edit or delete
+--    them ad hoc. profiles_age_unknown (NULL age) is NOT proof of eligibility.
 select (select count(*) from public.profiles) as profiles,
        (select count(*) from public.profiles where age is not null and age < 13) as profiles_under_13,
+       (select count(*) from public.profiles where age is null) as profiles_age_unknown,
        (select count(*) from public.schools) as schools;
+
+-- 7. Which age rule is installed (expected after setup: profiles_age_individual only)
+select conname, convalidated, pg_get_constraintdef(oid) as definition
+  from pg_constraint
+ where conrelid = 'public.profiles'::regclass
+   and conname in ('profiles_age_check', 'profiles_age_range', 'profiles_age_individual')
+ order by 1;

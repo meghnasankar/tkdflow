@@ -41,7 +41,7 @@ function card(f) {
           alt: f.thumbnail.alt, loading: 'lazy', decoding: 'async' })
         : h('span', { 'aria-hidden': 'true', style: { background: safeGradient(f.bgGradient, '') || null } }, f.emoji || '')),
     h('div', { class: 'form-card-body' },
-      h('div', { class: 'form-tag-row' }, ...tags, f.review?.status === 'approved' ? null : h('span', { class: 'sample-label' }, 'Unreviewed')),
+      h('div', { class: 'form-tag-row' }, ...tags),
       h('h3', {}, f.name),
       h('p', { class: 'kr-name' }, h('span', { lang: 'ko' }, f.koreanName), f.meaning ? ` — ${f.meaning}` : ''),
       difficultyDots(f.difficulty, f.difficultyLabel),

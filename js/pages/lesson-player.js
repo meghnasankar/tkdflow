@@ -56,7 +56,7 @@ function render({index,playing,cause,time}) {
     const link=$('pose-link');link.href=poseUrl(window.location.origin,index,lessonPath);link.textContent=`Link to pose ${index+1}`;
     if(status.kind==='problem'&&MANUAL_CAUSES.has(cause))setStatus('');
     if((status.kind==='copy'||status.kind==='copy-failed')&&status.pose!==index)setStatus('');
-    $('move-counter').textContent=`Pose ${index+1} of ${POSES.length}${label?` · ${label} (draft numbering)`:''}${turn?` · ${turn.side==='left'?'↶':'↷'} Turn ${turn.side} ${turn.degrees}°`:''}`;
+    $('move-counter').textContent=`Pose ${index+1} of ${POSES.length}${label?` · ${label}`:''}${turn?` · ${turn.side==='left'?'↶':'↷'} Turn ${turn.side} ${turn.degrees}°`:''}`;
     $('move-name').textContent=pose.name+(pose.kihap?' — kihap':'');
     $('move-korean').textContent=pose.korean;$('move-desc').textContent=pose.desc;
     $('voice-instruction').textContent=narration?.cues[index]?.text||'';
@@ -143,7 +143,7 @@ async function onCopyClick() {
 
 function init() {
   buildList();
-  replaceChildren($('review-questions'), ...LESSON.review.openQuestions.map((q) => h('li', {}, q)));
+
   $('lesson-progress').max = String(DURATION);
   player.subscribe(render);
   $('btn-play').addEventListener('click',togglePlayback);

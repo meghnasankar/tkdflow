@@ -107,7 +107,7 @@
                   </div>
                   <div class="form-group">
                     <label for="p-age">Age <span class="optional">(optional, private)</span></label>
-                    <input type="number" id="p-age" min="5" max="99" inputmode="numeric" aria-describedby="p-age-error">
+                    <input type="number" id="p-age" min="13" max="99" inputmode="numeric" aria-describedby="p-age-error">
                     <p class="field-error" id="p-age-error" hidden></p>
                   </div>
                 </div>
@@ -152,6 +152,8 @@
                 <p>Send a password reset link to your account email.</p>
                 <button type="button" class="btn btn-secondary btn-sm btn-block" id="btn-reset">Send reset email</button>
                 <p id="reset-msg" class="form-status" hidden></p>
+                <button type="button" class="btn btn-secondary btn-sm btn-block" id="connect-google" hidden>Connect Google for sign-in</button>
+                <p id="google-link-status" role="status"></p>
                 <p>Deleting your account or downloading your data is not available online yet. See <a class="link-btn" href="/about.html#privacy">privacy &amp; data</a>.</p>
               </div>
             </section>
@@ -168,7 +170,7 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <p class="logo">TKDflow<span>.</span></p>
-        <p>A free taekwondo forms catalogue and training resource. Lesson content is awaiting review by a qualified instructor.</p>
+        <p>A free taekwondo learning resource created by Meghna Sankar from her training and research.</p>
       </div>
       <div class="footer-col">
         <h2>Learn</h2>
@@ -180,8 +182,8 @@
       <div class="footer-col">
         <h2>Community</h2>
         <ul>
-          <li><a href="/community.html">Community preview</a></li>
-          <li><a href="/forum.html">Forum preview</a></li>
+          <li><a href="/community.html">Community</a></li>
+          <li><a href="/forum.html">Forum</a></li>
           <li><a href="/competitions.html">Events</a></li>
         </ul>
       </div>

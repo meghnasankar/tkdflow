@@ -1,7 +1,8 @@
 -- ═══════════════════════════════════════════════════════════════
 --  TKDflow · Supabase database setup + hardening migration
---  Works on a fresh project AND on a project created with the
---  original (pre-2026-11-15) script. Safe to re-run.
+--  Works on a fresh project, on a project created with the original
+--  (pre-2026-11-15) script, AND on the earlier hardened version of this
+--  script (age 5..99). Safe to re-run.
 --
 --  BEFORE running on an existing project:
 --    1. Run supabase/preflight.sql (read-only) and review the output.
@@ -21,11 +22,23 @@
 --    • the same validation the UI applies is enforced in the database:
 --      lowercase username [a-z0-9_]{3,20} (case-insensitive unique),
 --      name 1–80 chars (required), belt required from the fixed list,
---      age 5–99 (optional),
+--      age 13–99 (optional; individual accounts are 13+, see
+--      docs/account-age-policy.md),
 --      school ≤ 100 chars, https-only avatar URL, server-set timestamps.
 --  New constraints are added NOT VALID so legacy rows do not block the
 --  migration; preflight.sql lists rows that should be corrected before
---  running the VALIDATE statements at the end of this file.
+--  running the VALIDATE statements at the end of this file. NOT VALID
+--  still applies to every NEW insert and update: a legacy row with an
+--  under-13 (or other invalid) age cannot be saved again until the owner
+--  reviews it (docs/account-age-policy.md → "Legacy records"). This script
+--  never converts or deletes such rows.
+--
+--  What this does NOT do: profile constraints run when a PROFILE row is
+--  written. They do not stop Supabase Auth creating an auth.users record
+--  (email sign-up or Google). Blocking sign-ups server-side needs the
+--  project setting "Allow new users to sign up" OFF, and any future age
+--  enforcement at sign-up needs its own server-side design tested on
+--  staging (SETUP.md → "Restoring member accounts").
 --
 --  The whole script runs in ONE transaction. It stops (and changes
 --  nothing) if it finds a policy on profiles/schools that it does not
@@ -82,10 +95,16 @@ create table if not exists public.profiles (
 -- 2. Validation constraints ────────────────────────────────────
 do $$
 begin
-  -- legacy inline check (age 5..100) is replaced by profiles_age_range (5..99, optional)
+  -- Age rule history: the original inline check (profiles_age_check, 5..100)
+  -- and the first hardened rule (profiles_age_range, 5..99) are both replaced
+  -- by profiles_age_individual (13..99, optional).
   if exists (select 1 from pg_constraint where conname = 'profiles_age_check'
              and conrelid = 'public.profiles'::regclass) then
     alter table public.profiles drop constraint profiles_age_check;
+  end if;
+  if exists (select 1 from pg_constraint where conname = 'profiles_age_range'
+             and conrelid = 'public.profiles'::regclass) then
+    alter table public.profiles drop constraint profiles_age_range;
   end if;
 
   if not exists (select 1 from pg_constraint where conname = 'profiles_username_format') then
@@ -96,9 +115,11 @@ begin
     alter table public.profiles add constraint profiles_full_name_length
       check (char_length(btrim(full_name)) between 1 and 80) not valid;
   end if;
-  if not exists (select 1 from pg_constraint where conname = 'profiles_age_range') then
-    alter table public.profiles add constraint profiles_age_range
-      check (age is null or age between 5 and 99) not valid;
+  if not exists (select 1 from pg_constraint where conname = 'profiles_age_individual') then
+    -- Keep in sync with AGE_POLICY / LIMITS in js/lib (checked by npm test).
+    -- A NULL age is allowed (optional field) and is NOT evidence of eligibility.
+    alter table public.profiles add constraint profiles_age_individual
+      check (age is null or age between 13 and 99) not valid;
   end if;
   if not exists (select 1 from pg_constraint where conname = 'profiles_belt_level_valid') then
     -- REQUIRED, from the fixed list — the UI requires it too.
@@ -238,7 +259,7 @@ commit;
 -- 6. After cleaning legacy rows (see preflight.sql), validate: ──
 --   alter table public.profiles validate constraint profiles_username_format;
 --   alter table public.profiles validate constraint profiles_full_name_length;
---   alter table public.profiles validate constraint profiles_age_range;
+--   alter table public.profiles validate constraint profiles_age_individual;
 --   alter table public.profiles validate constraint profiles_belt_level_valid;
 --   alter table public.profiles validate constraint profiles_school_name_length;
 --   alter table public.profiles validate constraint profiles_avatar_url_https;

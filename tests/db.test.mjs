@@ -1,7 +1,9 @@
 /* Permission and validation tests for supabase-setup.sql, run in an embedded
    Postgres (PGlite) with a minimal Supabase auth shim.
    Covers: fresh install, migration from the original (d05016a) policies,
-   re-run idempotence, unknown-policy blocking, and the privacy contract.
+   upgrade from the first hardened script (162a7aa, age 5..99) to the 13+
+   individual-account age rule, re-run idempotence, unknown-policy
+   blocking, and the privacy contract.
    These prove the SQL's behaviour; they do NOT prove what is deployed —
    that still requires supabase/preflight.sql on the real project. */
 import { test, describe, after } from 'node:test';
@@ -9,10 +11,13 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { PGlite } from '@electric-sql/pglite';
 import { BELT_LEVELS } from '../js/lib/belts.js';
+import { LIMITS } from '../js/lib/profile-model.js';
+import { AGE_POLICY } from '../js/lib/age-gate.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const SHIM = read('supabase/tests/auth-shim.sql');
 const LEGACY = read('supabase/tests/legacy-setup-d05016a.sql');
+const HARDENED = read('supabase/tests/hardened-setup-162a7aa.sql');
 const SETUP = read('supabase-setup.sql');
 const PREFLIGHT = read('supabase/preflight.sql');
 
@@ -26,13 +31,21 @@ const EXPECTED_POLICIES = [
 const openDbs = [];
 after(async () => { await Promise.all(openDbs.map((db) => db.close())); });
 
-async function newDb({ legacy = false } = {}) {
+async function newDb({ legacy = false, hardened = false } = {}) {
   const db = new PGlite();
   openDbs.push(db);
   await db.exec(SHIM);
   await db.exec(`insert into auth.users (id, email) values ('${A}', 'a@example.test'), ('${B}', 'b@example.test');`);
   if (legacy) await db.exec(LEGACY);
+  if (hardened) await db.exec(HARDENED);
   return db;
+}
+
+async function ageConstraints(db) {
+  const { rows } = await db.query(
+    `select conname, convalidated from pg_constraint
+      where conrelid = 'public.profiles'::regclass and conname like 'profiles_age%' order by 1`);
+  return rows;
 }
 
 /** Run `fn` as a client role inside a rolled-back transaction. */
@@ -93,7 +106,7 @@ function privacyContract(getDb) {
   test('members read only their own profile row', async () => {
     const db = await getDb();
     await seedProfile(db, A, { username: 'alpha_one' });
-    await seedProfile(db, B, { username: 'bravo_two', age: 9 });
+    await seedProfile(db, B, { username: 'bravo_two', age: 15 });
     const rows = await asUser(db, A, async (tx) => (await tx.query('select id, username, age from public.profiles')).rows);
     assert.deepEqual(rows.map((r) => r.id), [A]);
   });
@@ -151,6 +164,10 @@ function privacyContract(getDb) {
       [{ full_name: 'n'.repeat(81) }, '23514'],
       [{ age: 100 }, '23514'],
       [{ age: 4 }, '23514'],
+      [{ age: 5 }, '23514'],     // allowed by the first hardened script, not any more
+      [{ age: 12 }, '23514'],    // individual accounts are 13+
+      [{ age: 0 }, '23514'],
+      [{ age: -13 }, '23514'],
       [{ belt_level: 'Purple Belt' }, '23514'],
       [{ belt_level: '' }, '23514'],
       [{ school_name: 's'.repeat(101) }, '23514'],
@@ -163,8 +180,22 @@ function privacyContract(getDb) {
     // belt is required in the DB exactly as in the UI
     await rejectsCode(asUser(db, A, (tx) => tx.query(
       `insert into public.profiles (id, full_name, username) values ($1, 'No Belt', 'no_belt')`, [A])), '23514');
-    // valid, with optional age omitted
+    // valid, with optional age omitted (NULL is allowed, but it is not proof of eligibility)
     await asUser(db, A, (tx) => insertProfile(tx, A, { username: 'valid_name', age: null }));
+    for (const age of [13, 17, 18, 99]) await asUser(db, A, (tx) => insertProfile(tx, A, { username: `age_${age}`, age }));
+  });
+
+  test('an existing member cannot change their age to under 13', async () => {
+    const db = await getDb();
+    await seedProfile(db, A, { username: 'alpha_one', age: 13 });
+    await rejectsCode(asUser(db, A, (tx) => tx.query(`update public.profiles set age = 12 where id = $1`, [A])), '23514');
+    const kept = await asUser(db, A, async (tx) =>
+      (await tx.query(`update public.profiles set age = 18 where id = $1 returning age`, [A])).rows);
+    assert.deepEqual(kept, [{ age: 18 }]);
+  });
+
+  test('only the 13+ age rule is installed', async () => {
+    assert.deepEqual(await ageConstraints(await getDb()), [{ conname: 'profiles_age_individual', convalidated: false }]);
   });
 
   test('members CAN update their own profile (positive case)', async () => {
@@ -232,6 +263,81 @@ describe('fresh install', () => {
     await db.exec(SETUP);
     assert.equal((await db.query('select count(*)::int as n from public.schools')).rows[0].n, 0);
   });
+});
+
+describe('upgrade from the first hardened script (162a7aa, age 5..99)', () => {
+  privacyContract(async () => {
+    const db = await newDb({ hardened: true });
+    await db.exec(SETUP);
+    return db;
+  });
+
+  test('baseline: the earlier script accepted under-13 ages', async () => {
+    const db = await newDb({ hardened: true });
+    await asUser(db, A, (tx) => insertProfile(tx, A, { username: 'young_one', age: 9 }));
+    assert.deepEqual(await ageConstraints(db), [{ conname: 'profiles_age_range', convalidated: false }]);
+  });
+
+  test('legacy under-13 rows survive unchanged; new under-13 writes are refused; preflight reports them', async () => {
+    const db = await newDb({ hardened: true });
+    await seedProfile(db, A, { username: 'legacy_child', age: 9 });
+    await seedProfile(db, B, { username: 'legacy_blank', age: null });
+    await db.exec(SETUP);
+    await db.exec(SETUP); // re-run after the upgrade
+    assert.deepEqual(await policies(db), EXPECTED_POLICIES);
+    assert.deepEqual(await ageConstraints(db), [{ conname: 'profiles_age_individual', convalidated: false }]);
+
+    // never converted or deleted by the migration
+    const { rows } = await db.query('select username, age from public.profiles order by username');
+    assert.deepEqual(rows, [{ username: 'legacy_blank', age: null }, { username: 'legacy_child', age: 9 }]);
+
+    // NOT VALID still checks every new write: the legacy row cannot be re-saved with its under-13 age…
+    await rejectsCode(asUser(db, A, (tx) => tx.query(`update public.profiles set full_name = 'Edited' where id = $1`, [A])), '23514');
+    // …and a member with no age cannot add one under 13
+    await rejectsCode(asUser(db, B, (tx) => tx.query(`update public.profiles set age = 12 where id = $1`, [B])), '23514');
+    const ok13 = await asUser(db, B, async (tx) =>
+      (await tx.query(`update public.profiles set age = 13 where id = $1 returning age`, [B])).rows);
+    assert.deepEqual(ok13, [{ age: 13 }]);
+
+    const results = await db.exec(PREFLIGHT);
+    const all = results.flatMap((r) => r.rows);
+    assert.ok(all.some((r) => r.id === A && r.age === 9), 'preflight lists the under-13 legacy row');
+    const counts = all.find((r) => 'profiles_under_13' in r);
+    assert.equal(Number(counts.profiles_under_13), 1);
+    assert.equal(Number(counts.profiles_age_unknown), 1, 'NULL ages are counted, not treated as eligible');
+    assert.ok(all.some((r) => r.conname === 'profiles_age_individual' && /age >= 13\).*age <= 99/i.test(r.definition)));
+  });
+
+  test('VALIDATE succeeds only after the owner has reviewed under-13 rows', async () => {
+    const db = await newDb({ hardened: true });
+    await seedProfile(db, A, { username: 'legacy_child', age: 9 });
+    await db.exec(SETUP);
+    await assert.rejects(db.exec('alter table public.profiles validate constraint profiles_age_individual'), /profiles_age_individual/);
+    await db.exec(`update public.profiles set age = null where id = '${A}'`); // stands in for the documented owner review outcome
+    await db.exec('alter table public.profiles validate constraint profiles_age_individual');
+    assert.deepEqual(await ageConstraints(db), [{ conname: 'profiles_age_individual', convalidated: true }]);
+    await db.exec(SETUP); // re-run keeps the validated rule
+    assert.deepEqual(await ageConstraints(db), [{ conname: 'profiles_age_individual', convalidated: true }]);
+  });
+});
+
+test('profile constraints do not gate auth.users creation (server-side sign-up enforcement is separate)', async () => {
+  const db = await newDb();
+  await db.exec(SETUP);
+  // Supabase Auth creates auth.users rows itself; nothing in supabase-setup.sql runs on that insert.
+  await db.exec(`insert into auth.users (id, email) values ('00000000-0000-4000-8000-00000000000c', 'c@example.test')`);
+  const { rows } = await db.query(`select tgname from pg_trigger t join pg_class c on c.oid = t.tgrelid
+    join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'auth' and not t.tgisinternal`);
+  assert.deepEqual(rows, [], 'no auth.users trigger: the 13+ rule is NOT enforced at account creation by this SQL');
+  assert.match(SETUP, /do not stop Supabase Auth creating an auth\.users record/);
+});
+
+test('SQL age rule matches the JS policy (setup and preflight)', () => {
+  assert.equal(LIMITS.ageMin, AGE_POLICY.individualMin);
+  const rule = `age between ${LIMITS.ageMin} and ${LIMITS.ageMax}`;
+  assert.ok(SETUP.includes(`check (age is null or ${rule})`), 'setup constraint');
+  assert.ok(PREFLIGHT.includes(`age not between ${LIMITS.ageMin} and ${LIMITS.ageMax}`), 'preflight row check');
+  assert.doesNotMatch(SETUP, /between 5 and 99/);
 });
 
 describe('migration from the original d05016a policies', () => {

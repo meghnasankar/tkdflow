@@ -400,25 +400,19 @@ describe('page wiring', () => {
     POSES.forEach((pose, i) => {
       const d = poseDescription(pose, i, COUNT);
       assert.ok(d.startsWith(`3D character, pose ${i + 1} of ${COUNT}: ${pose.name}`), d);
-      if (pose.official) assert.match(d, /Movements? \d+.*draft numbering\.$/);
+      if (pose.official) assert.match(d, /Movements? \d+.*\.$/);
       else assert.doesNotMatch(d, /Movement/);
     });
     const descs = new Set(POSES.map((p, i) => poseDescription(p, i, COUNT)));
     assert.equal(descs.size, COUNT, 'every pose has a distinct description');
   });
 
-  test('warning stays visible; detailed questions start collapsed; jump link reaches the player', () => {
+  test('creator attribution and the jump link remain visible without an instructor-review warning', () => {
     const notice = html.slice(html.indexOf('id="review-notice"'), html.indexOf('class="lesson-layout"'));
-    assert.match(notice, /Not yet reviewed by a qualified instructor\./);
-    const details = notice.match(/<details\b[^>]*>/);
-    assert.ok(details, 'open questions are in a disclosure');
-    assert.doesNotMatch(details[0], /\sopen\b/, 'collapsed initially');
-    assert.ok(notice.indexOf('Not yet reviewed') < notice.indexOf('<details'), 'warning is outside the disclosure');
-    assert.match(notice, /<summary>[^<]+<\/summary>/);
-    assert.match(notice, /id="review-questions"/);
+    assert.match(notice, /Created by Meghna Sankar/);
+    assert.doesNotMatch(notice, /Not yet reviewed|review-questions/);
     assert.match(html, /href="#player"[^>]*>Jump to the player</);
     assert.match(html, /id="player"/);
-    assert.ok(html.indexOf('Jump to the player') < html.indexOf('id="review-notice"'), 'jump link sits with the introduction');
   });
 
   test('keyboard region is focusable, labelled and described by visible help', () => {

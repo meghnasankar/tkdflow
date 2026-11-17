@@ -95,6 +95,9 @@ and the staging account tests.
 
 ## Restoring member accounts
 
+**Current restoration work:** read [docs/accounts-and-discussions-2026-11-16.md](docs/accounts-and-discussions-2026-11-16.md) first. It records the verified ownership/access blocker and the staged enrollment, Google-linking and discussion schema required by the current client. Earlier steps below remain reference material; flags alone cannot restore the service.
+
+
 The previous project host (`ffkwwfwrqtwejyrnkxey.supabase.co`) failed DNS
 during the 2026-11-15 audit. Do not guess a replacement. In order:
 

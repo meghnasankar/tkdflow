@@ -42,7 +42,7 @@ export function renderAccountNav(cfg = ACCOUNTS) {
     replaceChildren(slot, h('a', {
       href: 'auth.html', class: 'btn btn-secondary btn-sm nav-account-link',
       'aria-current': page === 'auth' ? 'page' : null,
-    }, 'Accounts paused'));
+    }, 'Log in'));
     return;
   }
   if (hasStoredSession(cfg)) {

@@ -18,6 +18,7 @@ export function zonedToUtc(dateStr, timeStr, timeZone) {
 }
 
 export function eventWindow(ev) {
+  if (!ev.start || !ev.end) return { start: null, end: null };
   const start = zonedToUtc(ev.start, '00:00', ev.timezone);
   const endDay = new Date(Date.UTC(...ev.end.split('-').map((n, i) => (i === 1 ? Number(n) - 1 : Number(n)))));
   endDay.setUTCDate(endDay.getUTCDate() + 1);
@@ -26,6 +27,8 @@ export function eventWindow(ev) {
 }
 
 export function eventStatus(ev, now = new Date()) {
+  if (['cancelled', 'postponed'].includes(ev.status)) return ev.status;
+  if (!ev.start || !ev.end) return 'announced';
   const { start, end } = eventWindow(ev);
   if (now >= end) return 'past';
   if (now >= start) return 'ongoing';
@@ -47,7 +50,7 @@ export function registrationState(ev, now = new Date()) {
 /** True while any event can still change state (starts, ends or closes
  *  registration) — the page keeps its single timer running until then. */
 export function needsTicking(events, now = new Date()) {
-  return events.some((ev) => eventStatus(ev, now) !== 'past');
+  return events.some((ev) => ['upcoming', 'ongoing'].includes(eventStatus(ev, now)));
 }
 
 /** A real calendar date in YYYY-MM-DD form (rejects 2026-02-30, 2026-13-01). */
@@ -58,7 +61,7 @@ export function isCalendarDate(value) {
   return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
 }
 
-export const DEFAULT_FILTERS = Object.freeze({ status: 'upcoming', style: 'all', level: 'all', country: 'all', type: 'all', month: '', q: '' });
+export const DEFAULT_FILTERS = Object.freeze({ status: 'upcoming', style: 'all', level: 'all', country: 'all', type: 'all', month: '', q: '', year: 'all', region: 'all', organization: 'all', major: false, kind: 'all' });
 
 /** Every filter is independent; changing one never resets another. */
 export function filterEvents(events, filters, now = new Date()) {
@@ -66,19 +69,26 @@ export function filterEvents(events, filters, now = new Date()) {
   const q = f.q.trim().toLowerCase();
   return events.filter((ev) => {
     const status = eventStatus(ev, now);
-    if (f.status === 'upcoming' && status === 'past') return false;
+    if (f.status === 'upcoming' && !['upcoming', 'ongoing', 'announced'].includes(status)) return false;
+    if (f.status === 'announced' && status !== 'announced') return false;
+    if (f.year !== 'all' && !(ev.start ? ev.start.slice(0,4) <= String(f.year) && ev.end.slice(0,4) >= String(f.year) : String(ev.year) === String(f.year))) return false;
+    if (f.region !== 'all' && ev.region !== f.region) return false;
+    if (f.organization !== 'all' && ev.organization !== f.organization) return false;
+    if (f.major && !ev.major) return false;
+    if (f.kind !== 'all' && ev.kind !== f.kind) return false;
     if (f.status === 'past' && status !== 'past') return false;
     if (f.style !== 'all' && ev.style !== f.style) return false;
     if (f.level !== 'all' && ev.level !== f.level) return false;
     if (f.country !== 'all' && ev.country !== f.country) return false;
     if (f.type !== 'all' && !(ev.eventTypes || []).includes(f.type)) return false;
     if (f.month && !overlapsMonth(ev, f.month)) return false;
-    if (q && !`${ev.name} ${ev.location} ${ev.country}`.toLowerCase().includes(q)) return false;
+    if (q && !`${ev.name} ${ev.location} ${ev.country} ${ev.organization || ''}`.toLowerCase().includes(q)) return false;
     return true;
-  }).sort((a, b) => (f.status === 'past' ? b.start.localeCompare(a.start) : a.start.localeCompare(b.start)));
+  }).sort((a, b) => (f.status === 'past' ? (b.start || '').localeCompare(a.start || '') : (a.start || `${a.year}-99-99`).localeCompare(b.start || `${b.year}-99-99`)));
 }
 
 export function overlapsMonth(ev, month) {
+  if (!ev.start || !ev.end) return false;
   const first = `${month}-01`;
   const [y, m] = month.split('-').map(Number);
   const next = m === 12 ? `${y + 1}-01-01` : `${y}-${String(m + 1).padStart(2, '0')}-01`;
@@ -110,16 +120,18 @@ export function createTicker(onTick, { intervalMs = 30000, setIntervalImpl = set
 }
 
 export function eventRecordProblem(ev) {
-  for (const k of ['id', 'name', 'level', 'style', 'start', 'end', 'timezone', 'location', 'country']) {
+  for (const k of ['id', 'name', 'level', 'style', 'timezone', 'location', 'country']) {
     if (typeof ev[k] !== 'string' || !ev[k]) return `${ev.id || '?'}: "${k}" is required`;
   }
-  if (!isCalendarDate(ev.start) || !isCalendarDate(ev.end) || ev.end < ev.start) return `${ev.id}: start/end must be real dates (YYYY-MM-DD), end on or after start`;
+  const tba = ev.dateStatus === 'tba' && ev.start === null && ev.end === null && Number.isInteger(ev.year);
+  if (!tba && (!isCalendarDate(ev.start) || !isCalendarDate(ev.end) || ev.end < ev.start)) return `${ev.id}: start/end must be real dates (YYYY-MM-DD), end on or after start`;
   for (const k of ['registrationDeadline', 'lastChecked']) {
     if (ev[k] != null && !isCalendarDate(ev[k])) return `${ev.id}: "${k}" must be a real date (YYYY-MM-DD) or null`;
   }
-  if (ev.registrationDeadline && ev.registrationDeadline > ev.end) return `${ev.id}: registrationDeadline is after the event ends`;
+  if (ev.registrationDeadline && (!ev.end || ev.registrationDeadline > ev.end)) return `${ev.id}: registrationDeadline is after the event ends`;
   if (ev.eventTypes != null && !Array.isArray(ev.eventTypes)) return `${ev.id}: eventTypes must be a list`;
   try { new Intl.DateTimeFormat('en-US', { timeZone: ev.timezone }); } catch { return `${ev.id}: bad timezone`; }
+  if (ev.eventUrl != null && !/^https:\/\//.test(ev.eventUrl)) return `${ev.id}: eventUrl must be an https URL`;
   if (ev.source != null && !/^https:\/\//.test(ev.source)) return `${ev.id}: source must be an https URL`;
   if (ev.source && !ev.lastChecked) return `${ev.id}: a source needs a lastChecked date`;
   for (const banned of ['contact', 'entryFee', 'registrationLabel', 'registrationStatus']) {

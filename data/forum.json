@@ -1,85 +1,147 @@
 {
-  "status": "preview",
-  "note": "Example topics only. Threads, replies, people and activity figures are not real; posting is not available yet.",
   "categories": [
     {
       "id": "technique-qa",
-      "icon": "❓",
       "title": "Technique Q&A",
-      "description": "Ask anything about forms, kicks, stances, sparring",
-      "examples": [
-        "Why does my roundhouse kick lose power when I spin? My hip rotation feels off on Taegeuk 7",
-        "Difference between WT and ITF knife-hand block — are they actually the same technique?",
-        "Help! My back knee keeps bending inward on front stance — is this a flexibility issue or technique?",
-        "Axe kick chambering — should the leg be straight or bent on the way up?"
-      ]
+      "description": "Questions about stances, blocks and kicks.",
+      "icon": "❓"
     },
     {
       "id": "forms-discussion",
-      "icon": "📚",
-      "title": "Forms Discussion",
-      "description": "Deep dives into poomsae, patterns, and hyung",
-      "examples": [
-        "Koryo vs. Keumgang — which is harder and why? Let's settle this once and for all 😄",
-        "Resources for learning Chon-Ji as an adult beginner — all videos seem aimed at kids",
-        "Does the number of moves in Taegeuk Pal Jang differ between different Kukkiwon books?"
-      ]
+      "title": "Forms & curriculum",
+      "description": "Compare the forms and requirements taught at different schools.",
+      "icon": "📚"
     },
     {
       "id": "sparring",
-      "icon": "🥊",
-      "title": "Sparring & Combat",
-      "description": "Gyeorugi tactics",
-      "examples": []
+      "title": "Sparring",
+      "description": "Preparation, rules and competition experience.",
+      "icon": "🥋"
     },
     {
       "id": "training",
-      "icon": "🏋️",
-      "title": "Training & Fitness",
-      "description": "Conditioning, drills",
-      "examples": []
+      "title": "Training habits",
+      "description": "Practice plans, progress and learning resources.",
+      "icon": "🎯"
     },
     {
       "id": "competitions",
-      "icon": "🏆",
       "title": "Competitions",
-      "description": "Events & results",
-      "examples": []
+      "description": "Finding events and understanding their entry information.",
+      "icon": "🏆"
     },
     {
       "id": "grading-testing",
-      "icon": "🎓",
-      "title": "Grading & Testing",
-      "description": "Exam prep, requirements, and success stories",
-      "examples": [
-        "I passed my 1st Dan test today after 4 years!! Here's everything I did to prepare 🖤",
-        "What exactly do Kukkiwon examiners look for in Taegeuk 8? I keep getting vague feedback",
-        "Minimum time between Dan grades — does the Kukkiwon rule differ from USAT?"
-      ]
+      "title": "Belts & grading",
+      "description": "Understand your school’s progression and testing requirements.",
+      "icon": "🎓"
     },
     {
-      "id": "gear-equipment",
-      "icon": "🛡️",
-      "title": "Gear & Equipment",
-      "description": "Dobok, sparring gear, bags, and more",
-      "examples": [
-        "Best lightweight poomsae dobok for competition — Mooto vs. Adidas vs. WTF brand comparison",
-        "Do I need Olympic-style chest protector for local sparring tournaments or is the hard shell ok?"
-      ]
+      "id": "general",
+      "title": "Introductions & ideas",
+      "description": "Share what would make TKDflow more useful.",
+      "icon": "💬"
+    }
+  ],
+  "topics": [
+    {
+      "id": "e3575f0d-d099-5f5b-8b54-86240a223faa",
+      "category": "forms-discussion",
+      "title": "Why can the same belt have different forms at different schools?",
+      "body": "Start by comparing the curriculum your own school gives you with the form names in the library. A belt colour alone does not identify an identical curriculum across every school.\n\nIf you want to compare two versions, include the form name, organization and the part of the movement sequence you are asking about. Link to a public reference when available; avoid sharing private school documents without permission.",
+      "resourceUrl": "forms.html",
+      "author_handle": "TKDflow",
+      "editorial": true,
+      "status": "published",
+      "created_at": "2026-11-16T12:00:00Z"
     },
     {
-      "id": "schools",
-      "icon": "🏫",
-      "title": "Schools & Clubs",
-      "description": "Find a dojang",
-      "examples": []
+      "id": "8ed923a0-5c90-5103-a9a8-c8a069e58b4e",
+      "category": "forms-discussion",
+      "title": "How to study a difficult transition with TKDflow",
+      "body": "Open a lesson, pause at the transition, and use slow playback and the camera controls. The pose-link button lets you share the exact study pose in a question.\n\nDescribe which foot, hand or direction is confusing you. A focused question about one transition is easier to discuss than a request to judge an entire form.",
+      "resourceUrl": "taegeuk-1.html",
+      "author_handle": "TKDflow",
+      "editorial": true,
+      "status": "published",
+      "created_at": "2026-11-16T12:00:00Z"
     },
     {
-      "id": "off-topic",
-      "icon": "💬",
-      "title": "Off-Topic",
-      "description": "General chat",
-      "examples": []
+      "id": "f498178a-cd12-5c69-a816-fcf45a18bfb4",
+      "category": "technique-qa",
+      "title": "What information makes a technique question useful?",
+      "body": "Name the technique, the form and the side of the body involved. Describe what you were taught and what you are trying to understand.\n\nFor a movement in this library, add a pose link. Keep feedback specific and respectful, and distinguish an observation from a teaching convention that may vary by school.",
+      "resourceUrl": "forms.html",
+      "author_handle": "TKDflow",
+      "editorial": true,
+      "status": "published",
+      "created_at": "2026-11-16T12:00:00Z"
+    },
+    {
+      "id": "f66fc141-9688-5e3b-9474-ed94863ea5a7",
+      "category": "competitions",
+      "title": "Which tournament organization should I look at first?",
+      "body": "Start with the organization your school competes in. Use the events calendar’s organization, country, discipline and year filters to compare published events.\n\nOpen the organizer’s page for eligibility, divisions, entry requirements and current dates. An event listing is a starting point, not an entry confirmation.",
+      "resourceUrl": "competitions.html",
+      "author_handle": "TKDflow",
+      "editorial": true,
+      "status": "published",
+      "created_at": "2026-11-16T12:00:00Z"
+    },
+    {
+      "id": "e153fc54-e451-5ef4-af12-79c0efb33fc6",
+      "category": "competitions",
+      "title": "A checklist for reading an event information packet",
+      "body": "Look for the event dates and venue, organization, age and rank divisions, permitted disciplines, entry deadline and the organizer’s contact route.\n\nIf two official pages disagree, ask the organizer before entering or booking travel. You can discuss the public information here without sharing your registration, date of birth or travel itinerary.",
+      "resourceUrl": "competitions.html",
+      "author_handle": "TKDflow",
+      "editorial": true,
+      "status": "published",
+      "created_at": "2026-11-16T12:00:00Z"
+    },
+    {
+      "id": "8f6b82d2-c2cf-5414-a609-cc3fcd33a432",
+      "category": "grading-testing",
+      "title": "Build a study checklist from your own school’s curriculum",
+      "body": "Write down the forms, terminology and techniques your school expects for your next grading. Add the particular transitions or questions you want to revisit.\n\nUse the library as a reference while keeping your school’s requirements as the checklist for that grading. What part of your current curriculum would benefit from a clearer explanation?",
+      "resourceUrl": "forms.html",
+      "author_handle": "TKDflow",
+      "editorial": true,
+      "status": "published",
+      "created_at": "2026-11-16T12:00:00Z"
+    },
+    {
+      "id": "dfe87518-ec3e-5013-9b2a-ab7fb3a6713e",
+      "category": "training",
+      "title": "Plan a focused practice session",
+      "body": "Choose one small goal: remembering a sequence, understanding a turn, or comparing a particular stance from two camera views. Review it slowly, practise with attention, and write down one question for your next class.\n\nShare a learning habit that helps you remember forms. Keep suggestions appropriate to the experience of the person asking.",
+      "resourceUrl": "forms.html",
+      "author_handle": "TKDflow",
+      "editorial": true,
+      "status": "published",
+      "created_at": "2026-11-16T12:00:00Z"
+    },
+    {
+      "id": "cbc4188b-a7c0-5c0e-a9b4-fb5ae890c851",
+      "category": "sparring",
+      "title": "Keep rules discussions specific to the event",
+      "body": "When asking about a rule, name the organizer, event and rules edition if it is available. Different formats and divisions can use different requirements.\n\nLink the relevant official rule or event packet and quote only the small part needed for the question. Avoid presenting one tournament’s rule as universal.",
+      "resourceUrl": "competitions.html",
+      "author_handle": "TKDflow",
+      "editorial": true,
+      "status": "published",
+      "created_at": "2026-11-16T12:00:00Z"
+    },
+    {
+      "id": "366b4897-5623-5e1e-9ca6-f8755f441a1e",
+      "category": "general",
+      "title": "What would make taekwondo education clearer for you?",
+      "body": "TKDflow began with a question Meghna encountered across schools: how can students better understand forms, belt systems, curricula and competitions?\n\nTell us which topic or comparison would help you most. Concrete examples are useful: a form transition, a curriculum term, or an event requirement you found hard to interpret.",
+      "resourceUrl": "founder.html",
+      "author_handle": "TKDflow",
+      "editorial": true,
+      "status": "published",
+      "created_at": "2026-11-16T12:00:00Z"
     }
   ]
 }

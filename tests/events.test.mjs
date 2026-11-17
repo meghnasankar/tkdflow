@@ -12,18 +12,30 @@ const REVIEW_DATE = new Date('2026-11-15T12:00:00Z');
 const ev = (over) => ({ id: 'x', name: 'Test Open', level: 'local', style: 'wt', eventTypes: ['poomsae'], start: '2026-12-05', end: '2026-12-06',
   timezone: 'America/New_York', location: 'Boston, USA', country: 'United States', source: null, lastChecked: null, ...over });
 
-test('shipped listings are valid, unverified records with no hard-coded registration claims', () => {
+test('shipped listings have official sources, dates and no hard-coded registration claims', () => {
   for (const e of data.events) assert.equal(eventRecordProblem(e), null);
   assert.ok(data.lastReviewed);
 });
 
-test('on the review date every shipped event is past and none is open or upcoming', () => {
+test('published catalogue spans both requested years with official links and major national events', () => {
+  assert.ok(data.events.length >= 400);
+  assert.equal(new Set(data.events.map(e=>e.id)).size, data.events.length);
   for (const e of data.events) {
-    assert.equal(eventStatus(e, REVIEW_DATE), 'past', e.id);
-    assert.equal(registrationState(e, REVIEW_DATE), 'event-finished');
+    assert.ok([2026,2027].includes(e.year));assert.match(e.source,/^https:\/\//);assert.match(e.eventUrl,/^https:\/\//);assert.ok(isCalendarDate(e.lastChecked));
   }
-  assert.equal(filterEvents(data.events, { status: 'upcoming' }, REVIEW_DATE).length, 0);
-  assert.equal(filterEvents(data.events, { status: 'past' }, REVIEW_DATE).length, data.events.length);
+  for(const org of ['AAU','USATKD','ATU'])assert.ok(data.events.some(e=>e.organization===org&&e.major),org);
+  assert.ok(filterEvents(data.events,{status:'upcoming'},REVIEW_DATE).length>0);
+  assert.ok(filterEvents(data.events,{status:'past'},REVIEW_DATE).length>0);
+});
+
+test('unannounced dates stay undated and compose with year, organization, region and major filters',()=>{
+ const tba=ev({id:'tba',start:null,end:null,year:2027,dateStatus:'tba',organization:'AAU',region:'North America',major:true,source:'https://aausports.org/taekwondo/future-dates/',lastChecked:'2026-11-16'});
+ assert.equal(eventRecordProblem(tba),null);assert.equal(eventStatus(tba,REVIEW_DATE),'announced');assert.equal(overlapsMonth(tba,'2027-07'),false);
+ assert.deepEqual(filterEvents([tba],{year:'2027',organization:'AAU',region:'North America',major:true},REVIEW_DATE),[tba]);
+ assert.equal(filterEvents([tba],{year:'2026'},REVIEW_DATE).length,0);
+ assert.equal(filterEvents([tba],{month:'2027-07'},REVIEW_DATE).length,0);
+ assert.equal(needsTicking([tba],REVIEW_DATE),false);
+ const cancelled=ev({status:'cancelled'});assert.equal(filterEvents([cancelled],{},REVIEW_DATE).length,0);assert.equal(filterEvents([cancelled],{status:'all'},REVIEW_DATE).length,1);
 });
 
 test('time zones: an event ends at local midnight, not UTC midnight', () => {
@@ -106,7 +118,7 @@ test('the timer keeps running while only ongoing events remain, and stops once a
   assert.equal(needsTicking([e], new Date('2026-12-04T12:00:00Z')), true);   // upcoming
   assert.equal(needsTicking([e], new Date('2026-12-06T12:00:00Z')), true);   // ongoing only
   assert.equal(needsTicking([e], new Date('2026-12-08T12:00:00Z')), false);  // past
-  assert.equal(needsTicking(data.events, REVIEW_DATE), false);
+  assert.equal(needsTicking(data.events, REVIEW_DATE), true);
 });
 
 test('only real calendar dates are accepted everywhere', () => {

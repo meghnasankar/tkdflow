@@ -86,15 +86,44 @@
           </div>
         </section>
 
+        <!-- Age screen: shown before any account details or Google step.
+             Neutral free entry; no default; the answer itself is not stored. -->
+        <section class="auth-panel" id="panel-age" aria-labelledby="age-title" hidden>
+          <h2 class="panel-title" id="age-title">Before you continue</h2>
+          <form id="form-age" novalidate>
+            <div class="form-group">
+              <label for="age-screen">How old are you?</label>
+              <input type="text" id="age-screen" inputmode="numeric" autocomplete="off" maxlength="3" spellcheck="false" aria-describedby="age-screen-help age-screen-error">
+              <p class="field-help" id="age-screen-help">Age in years. Your answer is used only to choose the next step and is not saved; this browser tab just remembers which step comes next.</p>
+              <p class="field-error" id="age-screen-error" hidden></p>
+            </div>
+            <button type="submit" class="btn-auth" id="btn-age">Continue</button>
+          </form>
+          <p class="auth-switch">Already a member? <button type="button" class="link-btn" data-goto="login">Sign in with email</button></p>
+        </section>
+
+        <!-- Age screen result for ages under 13: public content and parent guidance only. -->
+        <section class="auth-panel" id="panel-age-guidance" aria-labelledby="age-guidance-title" hidden>
+          <h2 class="panel-title" id="age-guidance-title" tabindex="-1">You can use TKDflow without an account</h2>
+          <p>Accounts aren’t available for you, but the forms library and the Taegeuk Il Jang lesson are free to use without an account or entering account details.</p>
+          <p class="panel-actions">
+            <a class="btn btn-primary" href="/forms.html">Browse the forms library</a>
+            <a class="btn btn-secondary" href="/taegeuk-1.html">Open the Taegeuk Il Jang lesson</a>
+          </p>
+          <h3 class="panel-subtitle">For parents and guardians</h3>
+          <p>A child profile managed by a parent or guardian is planned but <strong>not available yet</strong>. It will open only after verified parental consent, server-side permissions, a deletion and retention process, and a legal and audience review are in place. Until then, please practise together using the public pages, and learn alongside a qualified instructor.</p>
+          <p><a href="/about.html#age-policy">How TKDflow plans to handle ages and accounts</a></p>
+        </section>
+
         <!-- Sign in -->
         <section class="auth-panel" id="panel-login" aria-labelledby="login-title" hidden>
           <h2 class="panel-title sr-only" id="login-title">Sign in</h2>
           <div class="oauth" data-google hidden>
             <button type="button" class="btn-google" data-action="google">
               <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.36-8.16 2.36-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-              Continue with Google
+              Sign in with Google
             </button>
-            <p class="auth-divider">or sign in with email</p>
+            <p class="field-help">New here? Create and confirm an account with email first, then connect Google from your profile.</p><p class="auth-divider">or sign in with email</p>
           </div>
           <form id="form-login" novalidate>
             <div class="form-group">
@@ -117,6 +146,7 @@
         <!-- Register -->
         <section class="auth-panel" id="panel-register" aria-labelledby="register-title" hidden>
           <h2 class="panel-title sr-only" id="register-title">Create an account</h2>
+          <p class="panel-intro">Your profile is private: only you can see it. There are no public profiles, sharing or messaging.</p>
           <form id="form-register" novalidate>
             <div class="form-row">
               <div class="form-group">
@@ -139,7 +169,7 @@
               </div>
               <div class="form-group">
                 <label for="reg-age">Age <span class="optional">(optional, private)</span></label>
-                <input type="number" id="reg-age" min="5" max="99" inputmode="numeric" aria-describedby="reg-age-error">
+                <input type="number" id="reg-age" min="13" max="99" inputmode="numeric" aria-describedby="reg-age-error">
                 <p class="field-error" id="reg-age-error" hidden></p>
               </div>
             </div>
@@ -211,7 +241,7 @@
               </div>
               <div class="form-group">
                 <label for="cp-age">Age <span class="optional">(optional, private)</span></label>
-                <input type="number" id="cp-age" min="5" max="99" inputmode="numeric" aria-describedby="cp-age-error">
+                <input type="number" id="cp-age" min="13" max="99" inputmode="numeric" aria-describedby="cp-age-error">
                 <p class="field-error" id="cp-age-error" hidden></p>
               </div>
             </div>
@@ -276,7 +306,7 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <p class="logo">TKDflow<span>.</span></p>
-        <p>A free taekwondo forms catalogue and training resource. Lesson content is awaiting review by a qualified instructor.</p>
+        <p>A free taekwondo learning resource created by Meghna Sankar from her training and research.</p>
       </div>
       <div class="footer-col">
         <h2>Learn</h2>
@@ -288,8 +318,8 @@
       <div class="footer-col">
         <h2>Community</h2>
         <ul>
-          <li><a href="/community.html">Community preview</a></li>
-          <li><a href="/forum.html">Forum preview</a></li>
+          <li><a href="/community.html">Community</a></li>
+          <li><a href="/forum.html">Forum</a></li>
           <li><a href="/competitions.html">Events</a></li>
         </ul>
       </div>
