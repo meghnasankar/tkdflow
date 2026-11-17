@@ -5,6 +5,10 @@ Status as of 2026-11-15. This records a **product decision** the site owner appr
 with COPPA or any other law. Member accounts, sign-up and Google sign-in remain **off**
 (`js/config.js`). This decision does **not** reopen them.
 
+## Current implementation note — 2026-11-16
+
+Server enrollment and moderated discussions are now prepared and tested locally; they have not been applied to a live Supabase project. See [accounts-and-discussions-2026-11-16.md](accounts-and-discussions-2026-11-16.md) for the current service-access blocker, server ticket/hook design and email-first Google-linking path. The older implementation/gate inventory below records the earlier stage and must not be read as proof of deployed settings.
+
 ## Approved rules
 
 | Who | Rule |
@@ -20,7 +24,7 @@ Neither an optional profile age left blank (`NULL`) nor an unscreened session is
 
 | Piece | Where | What it does |
 |---|---|---|
-| Neutral age screen | `auth.html` `#panel-age`, `js/lib/age-gate.js` | Shown before any name, email, password or school field, and before Google can start. It asks "How old are you?" with free entry: no checkbox, no preset or default, and no wording that hints at the threshold. The typed age is used only in memory, cleared straight away, and never stored or sent. |
+| Neutral age screen | `auth.html` `#panel-age`, `js/lib/age-gate.js` | Shown before any name, email, password or school field, and before Google can start. It asks "How old are you?" with free entry: no checkbox, no preset or default, and no wording that hints at the threshold. The typed age is cleared from the form straight away. In the prepared email-enrollment path it is checked by the account service and discarded; only the resulting teen/adult band is retained privately after account creation. Under-13 answers stay on the public route without calling enrollment. This path is not live until the replacement service is connected. |
 | Session flag | `sessionStorage['tkdflow.ageScreen.v1']` | Stores only `eligible` or `ineligible`, never the age and nothing identifying. Once `ineligible` is set it is never replaced in that session, so reloading the page or pressing back does not offer a second try. A malformed answer stores nothing, and the screen asks again for a whole number. |
 | Under-13 route | `auth.html` `#panel-age-guidance` | Links to the public lessons, plus guidance for a parent or guardian that child profiles are planned but not available. It shows no account form and asks for no account details; hosting and font requests still occur. |
 | Flow gates (fake-client tests) | `js/lib/auth-flows.js` | Each of these returns `age-screen` without touching the client unless the flag is exactly `eligible`: `register`, `startGoogle` (Google can create users), `completeProfile`, and the automatic profile write in `routeSignedIn`. That means no `signUp`, no `username_available` RPC, no school insert, no profile write and no OAuth redirect. A whole-number age under 13 typed into a profile form returns `ineligible` before any call; the page then records it, clears the form and signs that device out. |
