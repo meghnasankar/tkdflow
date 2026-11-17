@@ -4,7 +4,7 @@ import {validateEvents} from '../lib/validators.js';
 import {loadInto,showEmpty} from '../lib/data.js';
 import {h,replaceChildren,safeHref} from '../lib/dom.js';
 const $=id=>document.getElementById(id);
-const LABELS={style:{wt:'WT / Kukkiwon',itf:'ITF',ata:'ATA',open:'Open / all styles'},level:{local:'Local / regional',national:'National',international:'International',unspecified:'Organizer classification'},type:{poomsae:'Poomsae',patterns:'Patterns / tul',sparring:'Sparring',para:'Para taekwondo',breaking:'Breaking','special-techniques':'Special techniques','power-test':'Power test'}};
+const LABELS={style:{wt:'WT / Kukkiwon',itf:'ITF',ata:'ATA',open:'Open / all styles'},level:{local:'Local / regional',national:'National',international:'International',unspecified:'Level not specified'},type:{poomsae:'Poomsae',patterns:'Patterns / tul',sparring:'Sparring',para:'Para taekwondo',breaking:'Breaking','special-techniques':'Special techniques','power-test':'Power test'}};
 const STATUS={past:'Past',ongoing:'Happening now',upcoming:'Upcoming',announced:'Dates to be announced',cancelled:'Cancelled',postponed:'Postponed'};
 const params=new URLSearchParams(location.search);
 let filters={...DEFAULT_FILTERS};
@@ -22,7 +22,7 @@ function card(ev,now){
    h('div',{class:'example-meta'},h('span',{class:`badge ${status==='past'?'badge-muted':'badge-navy'}`},STATUS[status]),
     ev.major?h('span',{class:'badge badge-gold'},'★ Major event'):null,
     h('span',{class:'badge badge-muted'},ev.organization||LABELS.style[ev.style]),
-    h('span',{class:'badge badge-muted'},LABELS.level[ev.level]||ev.level)),
+    h('span',{class:'badge badge-muted'},ev.organiserClass||LABELS.level[ev.level]||ev.level)),
    h('h3',{},href?h('a',{href,target:'_blank',rel:'noopener noreferrer'},ev.name):ev.name),
    h('p',{class:'event-location'},h('span',{'aria-hidden':'true'},`${flag(ev.countryCode)} `),ev.location),
    h('dl',{class:'event-meta'},h('div',{},h('dt',{},'Dates'),h('dd',{},dates)),h('div',{},h('dt',{},'Events'),h('dd',{},(ev.eventTypes||[]).map(x=>LABELS.type[x]||x).join(' · ')||'See organizer'))),

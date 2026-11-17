@@ -135,3 +135,7 @@ test('only real calendar dates are accepted everywhere', () => {
   assert.match(validateEvents({ lastReviewed: '15/11/2026', events: [] }), /lastReviewed/);
   assert.equal(validateEvents({ lastReviewed: '2026-11-15', events: [] }), null);
 });
+
+test('ATA class tiers are kept separate from a national or international level',()=>{
+ for(const e of data.events.filter(e=>e.organization==='ATA'&&e.organiserClass&&!/national|world|state|district/i.test(e.name)))assert.equal(e.level,'unspecified',e.id);
+});

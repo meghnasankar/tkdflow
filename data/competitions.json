@@ -8579,7 +8579,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -8589,7 +8589,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "ata-henderson-nv-2026-11-19",
@@ -8606,7 +8607,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -8616,7 +8617,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "itfv-13820",
@@ -8661,7 +8663,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -8671,7 +8673,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "wt-2026-27035",
@@ -8879,7 +8882,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -8889,7 +8892,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-san-diego-ca-2026-11-21",
@@ -8906,7 +8910,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -8916,7 +8920,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-north-las-vegas-nv-2026-11-21",
@@ -8933,7 +8938,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -8943,7 +8948,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "ata-north-richland-hills-tx-2026-11-21",
@@ -8960,7 +8966,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -8970,7 +8976,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "ata-saline-mi-2026-11-21",
@@ -8987,7 +8994,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -8997,7 +9004,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "ata-santa-rosa-beach-fl-2026-11-21",
@@ -9014,7 +9022,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -9024,7 +9032,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "ata-tempe-az-2026-11-21",
@@ -9041,7 +9050,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -9051,7 +9060,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "itfv-13480",
@@ -9645,7 +9655,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "national",
+      "level": "unspecified",
       "kind": "Championship",
       "eventTypes": [],
       "major": true,
@@ -9655,7 +9665,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A+."
+      "notes": "ATA Class A+.",
+      "organiserClass": "Class A+"
     },
     {
       "id": "itfv-13781",
@@ -9703,7 +9714,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -9713,7 +9724,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "wt-2026-26638",
@@ -9911,7 +9923,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -9921,7 +9933,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-allen-tx-2026-12-12",
@@ -9938,7 +9951,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -9948,7 +9961,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "ata-darien-il-2026-12-12",
@@ -9965,7 +9979,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -9975,7 +9989,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "ata-des-peres-mo-2026-12-12",
@@ -9992,7 +10007,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10002,7 +10017,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "ata-raleigh-nc-2026-12-12",
@@ -10019,7 +10035,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10029,7 +10045,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "wt-2026-26028",
@@ -10173,7 +10190,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10183,7 +10200,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "itfv-13661",
@@ -10287,7 +10305,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10297,7 +10315,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-glendale-az-2027-01-09",
@@ -10314,7 +10333,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10324,7 +10343,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-franklin-tn-2027-01-09",
@@ -10341,7 +10361,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10351,7 +10371,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "taekwondo-canada-kukkiwon-itm-and-tpe-examiners-course-2027",
@@ -10422,7 +10443,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10432,7 +10453,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "itfv-13880",
@@ -10505,7 +10527,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10515,7 +10537,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-santa-rosa-ca-2027-01-23",
@@ -10532,7 +10555,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10542,7 +10565,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-san-diego-ca-2027-01-29",
@@ -10559,7 +10583,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10569,7 +10593,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "ata-everett-wa-2027-01-30",
@@ -10586,7 +10611,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10596,7 +10621,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-highland-in-2027-01-30",
@@ -10613,7 +10639,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10623,7 +10649,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "ata-lawrence-ks-2027-01-30",
@@ -10640,7 +10667,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10650,7 +10677,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "ata-valrico-fl-2027-01-30",
@@ -10667,7 +10695,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10677,7 +10705,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "ata-coraopolis-pa-2027-02-05",
@@ -10694,7 +10723,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10704,7 +10733,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "ata-orlando-fl-2027-02-12",
@@ -10721,7 +10751,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10731,7 +10761,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "wt-2027-26897",
@@ -10780,7 +10811,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10790,7 +10821,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "itfv-13640",
@@ -10835,7 +10867,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10845,7 +10877,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "ata-langley-bc-2027-02-20",
@@ -10862,7 +10895,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10872,7 +10905,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-saraland-al-2027-02-20",
@@ -10889,7 +10923,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10899,7 +10933,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "itfv-13001",
@@ -10977,7 +11012,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -10987,7 +11022,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "ata-lebanon-mo-2027-02-26",
@@ -11004,7 +11040,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11014,7 +11050,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-crown-point-in-2027-02-27",
@@ -11031,7 +11068,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11041,7 +11078,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-fort-wayne-in-2027-02-27",
@@ -11058,7 +11096,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11068,7 +11106,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "taekwondo-canada-taekwondo-canada-national-championships-2027",
@@ -11116,7 +11155,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11126,7 +11165,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "taekwondo-canada-canada-open-2027",
@@ -11201,7 +11241,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11211,7 +11251,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "itfv-12741",
@@ -11259,7 +11300,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11269,7 +11310,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "itfv-13143",
@@ -11327,7 +11369,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class AA."
+      "notes": "ATA Class AA.",
+      "organiserClass": "Class AA"
     },
     {
       "id": "usatkd-u-s-open-championships-2027",
@@ -11371,7 +11414,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11381,7 +11424,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "ata-south-bend-in-2027-03-27",
@@ -11398,7 +11442,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11408,7 +11452,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-highland-in-2027-03-27",
@@ -11425,7 +11470,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11435,7 +11480,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class C."
+      "notes": "ATA Class C.",
+      "organiserClass": "Class C"
     },
     {
       "id": "itfu-lanzarote-worlds-2027",
@@ -11482,7 +11528,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11492,7 +11538,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-minneapolis-mn-2027-04-02",
@@ -11509,7 +11556,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11519,7 +11566,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-henderson-nv-2027-04-03",
@@ -11536,7 +11584,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11546,7 +11594,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-chesterfield-mo-2027-04-09",
@@ -11563,7 +11612,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11573,7 +11622,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "ata-galveston-tx-2027-04-09",
@@ -11590,7 +11640,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11600,7 +11650,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "itfs-europeans-2027",
@@ -11648,7 +11699,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11658,7 +11709,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "ata-jonesboro-ar-2027-04-17",
@@ -11675,7 +11727,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11685,7 +11737,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-tempe-az-2027-04-17",
@@ -11702,7 +11755,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11712,7 +11765,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "wt-2027-26889",
@@ -11761,7 +11815,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11771,7 +11825,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "ata-canal-winchester-oh-2027-04-23",
@@ -11788,7 +11843,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11798,7 +11853,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "ata-raleigh-nc-2027-04-23",
@@ -11815,7 +11871,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11825,7 +11881,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "ata-roswell-ga-2027-04-23",
@@ -11842,7 +11899,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11852,7 +11909,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "ata-ata-euro-2027-04-23",
@@ -11869,7 +11927,7 @@
       "region": "Europe",
       "organization": "ATA",
       "style": "ata",
-      "level": "national",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": true,
@@ -11879,7 +11937,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A+."
+      "notes": "ATA Class A+.",
+      "organiserClass": "Class A+"
     },
     {
       "id": "ata-ponchatoula-la-2027-04-24",
@@ -11896,7 +11955,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -11906,7 +11965,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "usatkd-american-open-east-2027",
@@ -12257,7 +12317,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class AAA. 2027 date confirmed in official schedule; Worlds detail page identifies the year as 2027."
+      "notes": "ATA Class AAA. 2027 date confirmed in official schedule; Worlds detail page identifies the year as 2027.",
+      "organiserClass": "Class AAA"
     },
     {
       "id": "wt-2027-27416",
@@ -12308,7 +12369,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -12318,7 +12379,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "wt-2027-27417",
@@ -12465,7 +12527,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -12475,7 +12537,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-la-grange-il-2027-08-28",
@@ -12492,7 +12555,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -12502,7 +12565,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "usatkd-u-s-season-final-2027",
@@ -12546,7 +12610,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -12556,7 +12620,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "ata-evansville-in-2027-09-18",
@@ -12573,7 +12638,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -12583,7 +12648,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "ata-fort-wayne-in-2027-09-18",
@@ -12600,7 +12666,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -12610,7 +12676,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-eagan-mn-2027-09-25",
@@ -12627,7 +12694,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -12637,7 +12704,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-eugene-or-2027-10-01",
@@ -12654,7 +12722,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -12664,7 +12732,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "ata-fall-nationals-2027-10-06",
@@ -12691,7 +12760,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class AA."
+      "notes": "ATA Class AA.",
+      "organiserClass": "Class AA"
     },
     {
       "id": "ata-sandusky-oh-2027-10-15",
@@ -12708,7 +12778,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -12718,7 +12788,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "itfs-worlds-2027",
@@ -12831,7 +12902,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -12841,7 +12912,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A."
+      "notes": "ATA Class A.",
+      "organiserClass": "Class A"
     },
     {
       "id": "wt-2027-26891",
@@ -12890,7 +12962,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -12900,7 +12972,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-south-bend-in-2027-11-12",
@@ -12917,7 +12990,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -12927,7 +13000,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "ata-hammond-in-2027-11-20",
@@ -12944,7 +13018,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "local",
+      "level": "unspecified",
       "kind": "Tournament",
       "eventTypes": [],
       "major": false,
@@ -12954,7 +13028,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class B."
+      "notes": "ATA Class B.",
+      "organiserClass": "Class B"
     },
     {
       "id": "wt-2027-27422",
@@ -13068,7 +13143,7 @@
       "region": "North America",
       "organization": "ATA",
       "style": "ata",
-      "level": "national",
+      "level": "unspecified",
       "kind": "Championship",
       "eventTypes": [],
       "major": true,
@@ -13078,7 +13153,8 @@
       "sourceTitle": "ATA Schedule of Events",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "ATA Class A+."
+      "notes": "ATA Class A+.",
+      "organiserClass": "Class A+"
     },
     {
       "id": "wt-2027-26900",
