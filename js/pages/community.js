@@ -3,9 +3,12 @@ import { loadInto, showEmpty } from '../lib/data.js';
 import { h, replaceChildren, safeHref } from '../lib/dom.js';
 import { validateCommunity } from '../lib/validators.js';
 import {getAccountService} from '../lib/account-service.js';
-import {listTopics,discussionUrl} from '../lib/discussions.js';
+import {listDiscussionGuides,starterGuides,discussionUrl} from '../lib/discussions.js';
 
 const $ = (id) => document.getElementById(id);
+const resourceView=new URLSearchParams(location.search).get('view')==='resources';
+$('community-discussions-pane').hidden=resourceView;$('community-resources-pane').hidden=!resourceView;
+for(const link of document.querySelectorAll('[data-community-view]')){if((link.dataset.communityView==='resources')===resourceView)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');}
 let posts = [];
 let active = 'all';
 
@@ -28,24 +31,20 @@ function render() {
     h('div', { class: 'example-meta' }, ...p.tags.map((t) => h('span', { class: 'badge badge-muted' }, t))))));
 }
 
-loadInto($('community-feed'), '/data/community.json', {
+if(resourceView)loadInto($('community-feed'), '/data/community.json', {
   title: 'Community resources could not be loaded.',
   validate: validateCommunity,
   onData: (d) => { posts = d.posts; render(); },
 });
 
-let feedRequest=0;
-async function loadDiscussions(){
- const request=++feedRequest,button=$('community-refresh');button.disabled=true;
- try{
-  const service=await getAccountService();
-  const result=service.status==='ready'?await listTopics(service.client):{error:true};
-  if(request!==feedRequest)return;
-  const holder=$('community-discussions');
-  if(result.error){replaceChildren(holder,h('p',{class:'status-panel'},'Member discussions could not be loaded. You can still explore the discussion guides in the forum.'));return;}
-  const members=(result.data||[]).filter(t=>!t.editorial).slice(0,6);
-  replaceChildren(holder,...(members.length?members.map(t=>h('article',{class:'discussion-card'},h('h3',{},h('a',{href:discussionUrl({topic:t.id})},t.title)),h('p',{class:'topic-author'},`By @${t.author_handle}`),h('p',{},t.body.length>180?t.body.slice(0,180)+'…':t.body))):[h('div',{class:'status-panel'},h('h3',{},'Start the first conversation'),h('p',{},'No member discussions have been published yet. Explore the discussion guides for ideas, then bring a focused question to the forum.'),h('a',{class:'text-link',href:'/forum.html'},'Explore discussion guides →'))]));
- }catch{if(request===feedRequest)replaceChildren($('community-discussions'),h('p',{},'Member discussions could not be loaded. Try refreshing.'));}
- finally{if(request===feedRequest)button.disabled=false;}
+let guideRequest=0;
+async function loadGuides(){
+ const request=++guideRequest;
+ const service=await getAccountService(),result=service.status==='ready'?await listDiscussionGuides(service.client):{error:true};
+ if(request!==guideRequest)return;
+ const holder=$('community-guides');
+ if(result.error){replaceChildren(holder,h('p',{},'Discussion guides could not be loaded.'),h('button',{type:'button',class:'btn btn-secondary btn-sm',on:{click:loadGuides}},'Try again'));return;}
+ const choices=starterGuides(result.data||[]);
+ replaceChildren(holder,...(choices.length?choices.map(t=>h('article',{class:'discussion-card'},h('span',{class:'badge badge-muted'},'Discussion guide'),h('h3',{},h('a',{href:discussionUrl({topic:t.id})},t.title)),h('p',{},t.body.split('\n')[0]))):[h('p',{},'New discussion guides will appear here when available.')]));
 }
-$('community-refresh').addEventListener('click',loadDiscussions);loadDiscussions();
+if(resourceView)loadGuides();

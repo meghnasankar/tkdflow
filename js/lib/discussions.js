@@ -14,6 +14,29 @@ export const submitReply=(client,id,body)=>bounded(()=>client.rpc('reply_discuss
 export const reportContent=(client,kind,id,reason)=>bounded(()=>client.rpc('report_discussion',{content_kind:kind,target_id:id,report_reason:reason.trim()}),{label:'Reporting content'});
 export const moderationQueue=client=>bounded(()=>client.rpc('discussion_queue'),{label:'Moderation queue'});
 export const moderateContent=(client,kind,id,decision)=>bounded(()=>client.rpc('moderate_discussion',{content_kind:kind,target_id:id,decision}),{label:'Moderating content'});
+export const resolveReport=(client,id,decision)=>bounded(()=>client.rpc('resolve_discussion_report',{report_id:id,report_decision:decision}),{label:'Reviewing report'});
+export const listDiscussionGuides=client=>bounded(()=>client.from('discussion_topics').select(TOPIC_COLUMNS).eq('status','published').eq('editorial',true).order('created_at',{ascending:false}).limit(20),{label:'Discussion guides'});
+export function publishedTopic(client,id){
+ if(!/^[a-f\d]{8}(?:-[a-f\d]{4}){3}-[a-f\d]{12}$/i.test(id||''))return Promise.resolve({data:null,error:null});
+ return bounded(()=>client.from('discussion_topics').select(TOPIC_COLUMNS).eq('id',id).eq('status','published').maybeSingle(),{label:'Discussion'});
+}
+export function mergePublishedTopics(guides,rows){
+ const reference=new Map(guides.map(t=>[t.id,t]));
+ return rows.filter(t=>t.status==='published').map(t=>({...reference.get(t.id),...t}));
+}
+export function starterGuides(topics){
+ const selected=[];for(const category of ['forms-discussion','technique-qa','competitions']){const topic=topics.find(t=>t.editorial&&t.category===category);if(topic)selected.push(topic);}
+ return selected;
+}
+export async function copyDiscussionLink(origin,id,clipboard=globalThis.navigator?.clipboard){
+ if(!clipboard?.writeText)return false;
+ try{await clipboard.writeText(new URL(discussionUrl({topic:id}),origin).href);return true;}catch{return false;}
+}
+export function reportDecisionMessage(result){
+ if(result?.already_reviewed)return 'This report was already reviewed.';
+ if(result?.content_unavailable)return 'Report closed. The content is no longer available.';
+ return result?.resolution==='hidden'?'Content hidden and its open reports closed.':'Report closed. The content was kept as it was.';
+}
 
 // RLS exposes nonpublic rows only to their author; never select author UUIDs.
 export async function reviewSubmissions(client){
@@ -25,5 +48,5 @@ export async function reviewSubmissions(client){
 }
 export function discussionUrl({category='all',query='',topic=null}={}){
  const params=new URLSearchParams();if(category!=='all')params.set('category',category);if(query.trim())params.set('q',query.trim());if(topic)params.set('topic',topic);
- return '/forum.html'+(params.size?'?'+params:'');
+ return '/community.html'+(params.size?'?'+params:'');
 }

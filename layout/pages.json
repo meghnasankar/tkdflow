@@ -31,15 +31,17 @@
       "path": "/community.html",
       "sitemap": true,
       "title": "Community — TKDflow",
-      "description": "Explore taekwondo learning resources and discussion guides for forms, school curricula, training and competitions."
+      "description": "Ask questions, compare taekwondo curricula and explore learning resources in the TKDflow community."
     },
     {
       "file": "forum.html",
-      "key": "forum",
+      "key": "community",
       "path": "/forum.html",
-      "sitemap": true,
-      "title": "Taekwondo discussions — TKDflow",
-      "description": "Explore questions about forms, curricula, grading and competitions, with moderated member discussions."
+      "sitemap": false,
+      "title": "Community — TKDflow",
+      "description": "Discussions and learning resources are now together in the TKDflow community.",
+      "noindex": true,
+      "canonical": false
     },
     {
       "file": "competitions.html",
