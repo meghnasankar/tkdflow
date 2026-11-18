@@ -173,3 +173,31 @@ test('facet years count a cross-year event in both years and exclude undated eve
  assert.equal(counts['2026'],1);assert.equal(counts['2027'],2);
  assert.equal(filterEvents(list,{status:'all',month:'2027-01'},REVIEW_DATE).length,1);
 });
+
+test('the 2027 ATU National Championships is listed as announced with dates TBA, never as a confirmed date', async () => {
+  const { canExportEvent } = await import('../js/lib/event-calendar.js');
+  const atu = data.events.find((e) => e.id === 'atu-atu-national-championships-2027');
+  assert.ok(atu, 'listed');
+  assert.equal(eventRecordProblem(atu), null);
+  assert.deepEqual([atu.dateStatus, atu.start, atu.end, atu.year], ['tba', null, null, 2027]);
+  assert.equal(eventStatus(atu, REVIEW_DATE), 'announced');
+  assert.equal(canExportEvent(atu), false, 'no calendar download for unconfirmed dates');
+  assert.equal(new URL(atu.source).hostname, 'www.joinatu.com');
+  // The notes say why the dates are pending, naming both official dates that disagree.
+  assert.match(atu.notes, /pending confirmation/);
+  assert.match(atu.notes, /May 28–29, 2027/); assert.match(atu.notes, /May 27, 2027/);
+  assert.deepEqual(atu.eventTypes, [], 'no event types claimed from an ambiguous page');
+  const found = (f) => filterEvents(data.events, f, REVIEW_DATE).some((e) => e.id === atu.id);
+  assert.ok(found({ organization: 'ATU', year: '2027' }), 'in the default upcoming view for ATU 2027');
+  assert.ok(found({ status: 'announced', organization: 'ATU' }), 'under Dates TBA');
+  assert.ok(found({ q: 'duluth ATU' }), 'searchable by place and organizer');
+  assert.ok(found({ major: true, organization: 'ATU', year: '2027' }), 'flagged as a major championship');
+  assert.ok(!found({ month: '2027-05' }), 'not placed in a month it has not confirmed');
+});
+
+test('the 2026 ATU record keeps its dates and no longer says no 2027 edition was announced; the coverage note counts the listings', () => {
+  const atu2026 = data.events.find((e) => e.id === 'atu-atu-national-championships-2026');
+  assert.deepEqual([atu2026.start, atu2026.end], ['2026-05-22', '2026-05-23']);
+  assert.doesNotMatch(atu2026.notes, /No official 2027/);
+  assert.equal(Number(data.note.match(/^(\d+) listings/)[1]), data.events.length, 'the coverage note’s count matches the data');
+});
