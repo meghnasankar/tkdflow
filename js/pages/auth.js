@@ -7,7 +7,7 @@
    lib/age-gate.js and docs/account-age-policy.md. */
 import { loadSchoolDirectory } from '../lib/school-directory.js';
 import { ACCOUNTS } from '../config.js';
-import { getAccountService, accountsConfigured, hasStoredSession } from '../lib/account-service.js';
+import { getAccountService, accountsConfigured, hasStoredSession, storedSessionState } from '../lib/account-service.js';
 import { parseAuthLocation } from '../lib/profile-model.js';
 import { currentSession, bounded } from '../lib/account-ops.js';
 import {
@@ -345,7 +345,7 @@ async function onRecovery(e) {
   status.clear();
   await withBusy($('btn-recovery'), 'Updating…', async () => {
     const outcome = await updatePassword(client, $('new-password').value, $('new-confirm').value, {
-      stillSignedIn: () => hasStoredSession(),
+      stillSignedIn: () => storedSessionState() !== 'absent',
     });
     if (outcome.kind !== 'updated') { status.show(outcome.message, 'error'); $('new-password').focus(); return; }
     flow = null;
@@ -353,7 +353,7 @@ async function onRecovery(e) {
     showPanel('login');
     status.show(outcome.signedOut
       ? 'Password updated. Sign in with your new password.'
-      : 'Password updated, but this device could not be signed out automatically. Sign in with your new password.', 'success');
+      : 'Password updated, but we couldn’t confirm that you’re logged out in this browser. Sign in with your new password.', 'success');
     $('login-email').focus();
   });
 }

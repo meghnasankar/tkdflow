@@ -9,7 +9,7 @@ import {bounded} from '../lib/account-ops.js';
 import { loadSchoolDirectory } from '../lib/school-directory.js';
 import { initSchoolReview, showSchoolSubmission } from '../lib/school-review.js';
 import { ACCOUNTS } from '../config.js';
-import { getAccountService, accountsConfigured, hasStoredSession } from '../lib/account-service.js';
+import { getAccountService, accountsConfigured, storedSessionState, logoutVerdict } from '../lib/account-service.js';
 import { initials } from '../lib/profile-model.js';
 import { currentSession } from '../lib/account-ops.js';
 import { SessionGuard, loadOwnProfile, saveProfile, requestReset, logout } from '../lib/auth-flows.js';
@@ -62,6 +62,8 @@ function showState(title, text, actions = []) {
   replaceChildren($('hero-inner'), h('p', { text: title }));
 }
 
+const showPublic = () => showState('You can use TKDflow without an account', 'Accounts aren’t available for you, but the forms library and lessons are free to use without an account or entering account details.', publicLinks());
+
 const retryButton = (label, fn) => h('button', { type: 'button', class: 'btn btn-primary', on: { click: fn } }, label);
 
 function renderProfile(p) {
@@ -111,7 +113,7 @@ async function load() {
   if (outcome.kind === 'missing') { location.assign('/auth.html?mode=complete'); return; }
   if (outcome.kind === 'held') {
     showHeld();
-    await logout(client, { stillSignedIn: () => hasStoredSession() });   // local sign-out attempt only; the record is untouched
+    await logout(client, { stillSignedIn: () => storedSessionState() !== 'absent' });   // local sign-out attempt only; the record is untouched
     return;
   }
   const p = outcome.profile;
@@ -156,7 +158,7 @@ async function onSave(e) {
     if (outcome.kind === 'stale') return;
     if (outcome.kind === 'held') {
       showHeld();
-      await logout(client, { stillSignedIn: () => hasStoredSession() });
+      await logout(client, { stillSignedIn: () => storedSessionState() !== 'absent' });
       return;
     }
     if (outcome.kind === 'saved') {
@@ -184,22 +186,41 @@ async function onReset() {
   });
 }
 
+/** Log out of this device (the SDK's local sign-out only; nothing is removed by
+ *  hand). The home page loads only when the stored session is confirmed absent.
+ *  This attempt's answer is used only if this page's identity is unchanged, or
+ *  changed exactly once, to signed out (the expected effect of this sign-out).
+ *  After any other change (signed out then back in, another account) the auth
+ *  listener is in charge and this answer is dropped. That protects the page and
+ *  its redirect from a stale answer; it can't recall a sign-out request the SDK
+ *  has already started. An under-13 result recorded meanwhile shows the public
+ *  route instead. */
 async function onLogout() {
   msg.clear();
+  const start = guard.token();
   await withBusy($('btn-logout'), 'Logging out…', async () => {
-    const outcome = await logout(client, { stillSignedIn: () => hasStoredSession() });
-    if (outcome.kind !== 'signed-out') { msg.show(outcome.message, 'error'); return; }   // never redirect while a session remains
-    location.assign('/');
+    await logout(client, { stillSignedIn: () => storedSessionState() !== 'absent' });
+    const expected = guard.isCurrent(start) || (guard.userId === null && guard.generation === start.generation + 1);
+    if (!expected) return;
+    if (eligibility.read() === INELIGIBLE) { showPublic(); return; }
+    const verdict = logoutVerdict(storedSessionState());
+    if (verdict.verified) { location.assign('/'); return; }
+    msg.show(verdict.message, 'error');
   });
 }
+
+/** After this page's session ends: private fields are hidden at once, and the
+ *  text says only what the stored session confirms. */
+const SIGNED_OUT = {
+  absent: ['You have been signed out', 'Sign in again to see your profile.'],
+  present: ['You’re signed out on this page', 'This browser may still keep your sign-in. Reload this page to check.'],
+  unknown: ['You’re signed out on this page', 'Couldn’t confirm that you’re logged out in this browser. Reload this page to check.'],
+};
 
 async function main() {
   // Known under-13 result in this tab: public routes only, before any profile
   // form is shown or the account client starts.
-  if (eligibility.read() === INELIGIBLE) {
-    showState('You can use TKDflow without an account', 'Accounts aren’t available for you, but the forms library and lessons are free to use without an account or entering account details.', publicLinks());
-    return;
-  }
+  if (eligibility.read() === INELIGIBLE) { showPublic(); return; }
   if (!accountsConfigured()) {
     showState('Member accounts are paused', ACCOUNTS.disabledReason, [
       h('a', { class: 'btn btn-primary', href: '/forms.html' }, 'Browse the forms library'),
@@ -228,11 +249,14 @@ async function main() {
 
   client.auth.onAuthStateChange((event, next) => {
     setTimeout(() => {
+      // An under-13 result recorded in this tab meanwhile: the public route only, no account states.
+      if (eligibility.read() === INELIGIBLE) { guard.switchTo(null); showPublic(); return; }
       const nextId = next?.user?.id ?? null;
       if (nextId === guard.userId && event === 'USER_UPDATED') { updateGoogleConnection(); return; }
       if (!guard.switchTo(nextId)) return;
       if (!nextId) {
-        showState('You have been signed out', 'Sign in again to see your profile.', [h('a', { class: 'btn btn-primary', href: '/auth.html' }, 'Sign in')]);
+        const [title, text] = SIGNED_OUT[storedSessionState()];
+        showState(title, text, [h('a', { class: 'btn btn-primary', href: '/auth.html' }, 'Sign in')]);
         return;
       }
       email = next.user.email || '';

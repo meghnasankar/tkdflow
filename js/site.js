@@ -5,7 +5,7 @@
    Log out button; a page view never starts it, and a known under-13 tab never
    shows the button. */
 import { ACCOUNTS } from './config.js';
-import { accountsConfigured, hasStoredSession, sessionStorageKey } from './lib/account-service.js';
+import { accountsConfigured, hasStoredSession, sessionStorageKey, storedSessionState, logoutVerdict } from './lib/account-service.js';
 import { h, replaceChildren } from './lib/dom.js';
 import { sharedEligibilityStore, onEligibilityChange, INELIGIBLE } from './lib/age-gate.js';
 
@@ -104,14 +104,6 @@ function showLogoutBusy(busy) {
   logoutButton.textContent = busy ? BUSY_TEXT : LOGOUT_TEXT;
 }
 const sayLogout = (text) => { if (logoutStatus) logoutStatus.textContent = text; };
-/** Logout proof only (the navbar keeps the cheap hasStoredSession): 'present',
- *  'absent' or 'unknown' when storage can't be read. Reads; never writes. */
-function sessionState(cfg) {
-  const key = sessionStorageKey(cfg);
-  if (!key) return 'unknown';
-  try { const storage = globalThis.localStorage; if (!storage) return 'unknown'; return storage.getItem(key) ? 'present' : 'absent'; }
-  catch { return 'unknown'; }
-}
 function cancelLogout() { logoutAttempt += 1; logoutPending = false; showLogoutBusy(false); sayLogout(''); }
 const defaults = {
   service: () => import('./lib/account-service.js').then((m) => m.getAccountService()),
@@ -141,19 +133,19 @@ export async function headerLogout({ cfg = ACCOUNTS, deps = {} } = {}) {
       const logout = await d.logout();
       if (!current()) return 'stale';
       // Unreadable storage is not proof of absence: treat it as still signed in.
-      outcome = await logout(svc.client, { stillSignedIn: () => sessionState(cfg) !== 'absent', ms: d.ms });
+      outcome = await logout(svc.client, { stillSignedIn: () => storedSessionState(cfg) !== 'absent', ms: d.ms });
     }
   } catch { outcome = { kind: 'error' }; }
   if (!current()) return 'stale';
   logoutPending = false;
   // Signed out here, or already signed out (for example by another tab): verified absent.
-  const state = sessionState(cfg);
-  if (state === 'absent') { d.go('/'); return 'signed-out'; }
+  // The navbar keeps the cheap hasStoredSession; Log out needs the strict proof.
+  const state = storedSessionState(cfg), verdict = logoutVerdict(state, outcome.kind);
+  if (verdict.verified) { d.go('/'); return 'signed-out'; }
   showLogoutBusy(false);
-  if (state === 'unknown') { sayLogout('Couldn’t confirm that you’re logged out in this browser. Try again.'); return 'unconfirmed'; }
   // The account service keeps an unavailable result for this page, so only a reload can retry it.
-  sayLogout(outcome.kind === 'unavailable' ? 'Log out isn’t available right now. Reload this page and try again.' : 'Couldn’t log out. Try again.');
-  return outcome.kind === 'unavailable' ? 'unavailable' : 'error';
+  sayLogout(verdict.message);
+  return state === 'unknown' ? 'unconfirmed' : outcome.kind === 'unavailable' ? 'unavailable' : 'error';
 }
 
 /** Keep the header link current without the account client: another tab

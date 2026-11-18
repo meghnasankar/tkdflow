@@ -56,6 +56,7 @@ export class MiniNode extends Target{
  replaceChildren(...nodes){for(const child of [...this.childNodes])this._detach(child);this.append(...nodes);}
  remove(){this.parentNode?._detach(this);}
  before(...nodes){const parent=this.parentNode;if(!parent)return;for(const raw of nodes)parent.insertBefore(raw,this);}
+ after(...nodes){const parent=this.parentNode;if(!parent)return;const i=parent.childNodes.indexOf(this);parent.insertBefore(nodes[0],parent.childNodes[i+1]||null);for(let k=1;k<nodes.length;k++)nodes[k-1].after(nodes[k]);}
 }
 
 class MiniText extends MiniNode{
