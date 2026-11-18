@@ -13,13 +13,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Follow-up (Community initial focus): published.** PR 28 merged as `main` `9f5d5fd`, including the test-only CI timing fix `8835291`. Codex verified it live: source and header checks pass, the public heading keeps focus, and a teen moderator still has moderation but no public composer.
 - **Batch 5 (read and print companions): published.** PR 29 merged as `main` `e86803d`. Codex verified it live: 69/69 public files, headers and development 404s; the live index lists all 23; Koryo shows its 52 poses; print works; the header uses root-absolute profile links.
 - **Batch 6 (age-aware header): published.** PR 30 merged as `main` `dc05c83` (CI success). Codex verified 5/5 source files, headers and development 404s, and a normal member's UI live.
-- **Batch 7 (saved-learning keyboard focus):** on `improve/learning-focus-2026-11-18`, cut from `dc05c83`. Uncommitted, awaiting Codex review. Scope: item 29.
+- **Batch 7 (saved-learning keyboard focus): published.** PR 31 merged as `main` `57fd990`. Codex verified 6/6 public files, headers and development 404s, plus the live tabs in native Chrome.
+- **Batch 8 (opt-in search of spoken instructions):** on `improve/technique-cue-search-2026-11-18`, cut from `57fd990`. Uncommitted, awaiting Codex review and browser QA. Scope: item 20.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 7:** implemented locally, uncommitted, awaiting Codex review.
+- **Batch 8:** implemented locally, uncommitted, awaiting Codex review.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -47,7 +48,7 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 17 | Moderator assignment for a named helper | The 17 November note says it was waiting for account confirmation. Current state not re-checked. | — | Blocked (account owner) |
 | 18 | Engine-worded technique names are shown to learners | The finder and lesson pose lists show the animation's type wording. Examples: "small hinge", "large hinge", "grasp chamber", "wrist turn", "covered ready", "bending ready", "rock pushing", "tongmilgi". Learner-friendly names need a primary terminology source and would also change the lesson display. Do not invent them. | P2 content | Open; needs a source and Meghna's review |
 | 19 | Korean pose names exist for Taegeuk Il Jang only | The 22 data-driven lessons carry no Korean terms (0 of 688 actions), and Taegeuk Il Jang's mapping is marked draft in its data file. The finder states this coverage. | P3 content | Open; needs sourced terms |
-| 20 | Optional search of spoken instructions | Narration cues line up one-to-one with poses in all 23 lessons (about 47 KB). Searching them would help ("chamber", "knee") but is noisy by default. Candidate: an opt-in "also search spoken instructions". | P3 feature | Open |
+| 20 | Optional search of spoken instructions | Narration cues line up one-to-one with poses in all 23 lessons (about 47 KB). Searching them would help ("chamber", "knee") but is noisy by default. Candidate: an opt-in "also search spoken instructions". | P3 feature | Batch 8 |
 | 21 | Stance indexing in the technique finder | The finder indexes only the techniques named in pose labels, not stances. The 22 data-driven lessons record a `stance` per sequence entry (walking, back, horse, front, crane, rear-foot, low, closed, fixed, parallel, cross, wide-parallel, cat), but Taegeuk Il Jang has stance only in description text. Adding stances needs source-backed stance names per style and a Taegeuk Il Jang mapping. Do not derive them from description prose. | P3 feature | Open; needs sourced stance terms |
 | 22 | Community started the account service in a known under-13 tab | `forum.js` `connect()` and `community.js` `loadGuides()` called `getAccountService()` without checking this tab's age screen. That started the SDK client, which can restore a stored session (for example someone else's on a shared device) and offer reporting, submissions, posting or moderation. My learning, lesson help (page and widget), profile and sign-in already guarded this. | P1 privacy/policy | Published (PR 26) |
 | 23 | Header account link in a known under-13 tab | `site.js` shows "My profile" whenever a session is stored, including in an under-13 tab; the profile page then shows the public guidance. Harmless, but an owner/UX decision. Batch 3 deliberately leaves the header unchanged. | P3 UX | Published (PR 30) |
@@ -56,6 +57,7 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
+| 30 | Taebaek movement 14: the 180° right turn is shown as one stage | DTaF (physical p.58, printed p.52), root-verified: 14-1 is a closed stance facing Ma (back) and 14-2 faces Da2, so the turn is 90° then 90°. The site turns all 180° into pose 23 and none into pose 24; the final heading is the same. The school source gives a single 180°. A metadata-only split was modelled offline (pose 23 faces 180, pose 24 turns right 90°; narration timing still validates). Labels would need `cue.turn` updates, and pose 24's spoken text and audio don't mention the second turn. Details: `/private/tmp/tkdflow-taebaek14-followup.md`. | P3 content accuracy | Blocked (Meghna: source choice and any audio change) |
 | 29 | Saved-learning controls lose keyboard focus while saving | Reproduced by Codex in a real browser with the synthetic fixture (account mode, 3 s server). (1) Library: keyboard Unsave on Taegeuk Il Jang rebuilt the button natively `disabled`, focus became `<body>` and stayed there after confirmation. (2) My learning, Saved: Unsave on the middle card (Chon-Ji) removed the card and focus became `<body>`. (3) Lesson widget: Mark as practised, same as (1). All real backend traffic was 0. | P2 accessibility | Batch 7 |
 
 ## Batch 1 — learner foundations (published, PR 24)
@@ -556,3 +558,84 @@ The fixture `/private/tmp/tkdflow-learning-focus-fixture.mjs` (outside the repo,
 ### Limits
 - I used no browser after the fix. Codex should re-run the three reproductions, plus fail and Retry, in Chrome.
 - A natively disabled control that already had focus (not rebuilt) isn't modelled; the product no longer disables during pending.
+
+## Batch 8 — opt-in search of spoken instructions (item 20)
+
+### What changed
+- **Data:** `scripts/build-technique-index.mjs` also generates **`data/technique-cues.json`** (`{"version":1,"cues":{"<lesson>:<pose>": text}}`).
+  - It covers exactly the 702 indexed mid-form study poses (no opening ready or closing return), in lesson then pose order.
+  - Each text is the lesson's own `data/narration/<id>.json` cue, byte for byte. There's no new teaching text.
+  - Size: 60,256 bytes raw, about 6.2 KB gzipped.
+  - `--check` (so `npm run check`) fails if either `techniques.html` or the cue file is stale.
+- **Page (`techniques.html`, script-only controls):**
+  - a checkbox, "Also search spoken instructions", with the hint "Finds poses whose spoken instruction uses your words, even if the technique has another name.";
+  - a status line with "Try again";
+  - one new note under "About this index".
+  - The static index, the stats line and the no-JavaScript page are unchanged, and no cue text is in the HTML.
+- **URL:** `?cues=1` (only `1` is accepted). Ticking the box uses the finder controller, so it is one history entry, carries any pending typed words, and Back/Forward restores it. **Clear** resets the search and filters but keeps the option, because it is a search option, not a filter.
+- **Loading (`js/pages/techniques.js`):**
+  - The file is fetched only when the option is on, from the same origin (`/data/technique-cues.json`), through the existing `loadJSON`. The 8 s timeout and the shape check (`cuesProblem`) apply.
+  - The response is bounded by `maxLength` (200,000 characters). This is a new optional `loadJSON` parameter: a larger declared Content-Length is refused before download, and a longer body before parsing. Other callers are unchanged.
+  - There is one request at a time, and the data is cached once loaded.
+  - A reply only fills the cache. What is shown always follows the current state, so a reply that lands after Back, unticking or a filter change cannot bring cues back into a view that no longer asks for them.
+- **While loading, or after a failure,** results stay named techniques only, and both the status line and the polite live summary say so: "Named techniques only for now: spoken instructions are loading." / "Named techniques only: spoken instructions could not load."
+  - "Try again" makes one new request and re-renders at once, so the live summary switches to the loading wording together with the status line.
+  - If Try again was focused, focus moves to the status message. If the message itself goes (Back, unticked, loaded), focus moves to the checkbox, never to `<body>`.
+  - Ticking the box again after a failure also retries.
+- **Matching (`js/lib/technique-finder.js` `selectView`):**
+  - With the option off, or on without data, the output is identical to the named-technique search; this is tested over a 30-query corpus × 3 filters.
+  - With data, each search word may match the pose's name hay **or** its instruction, so "koryo chamber" works.
+  - Exact form names, style and form filters, row caps and group order are unchanged.
+  - A pose found only through its instruction shows **"Spoken instruction:"** and the exact text, built as DOM text nodes (no `innerHTML`).
+  - The summary adds "(N only in spoken instructions)", with counts deduplicated by (form, pose).
+  - No-match text: "No study poses match in technique names or spoken instructions."
+- When cue data arrives and groups reorder, a focused result link keeps focus.
+
+### Tests
+- `tests/technique-cues.test.mjs` (19), including **8 page-level tests**: the real `techniques.js` runs on the real generated `techniques.html` markup in the mini DOM (new test-only `tests/helpers/mini-html.mjs`), with a deferred fake fetch. They cover:
+  - no request by default;
+  - one same-origin request on opt-in, names-only wording while loading, and exact snippets afterwards;
+  - a late reply after Back or untick, then cached re-use;
+  - a filter chosen while loading;
+  - 500, network, wrong-shape and oversize failures with Try again focus, and the summary's loading wording during the retry;
+  - retrying Koryo "throat" (no named match): status and summary both say loading at retry start, focus is on the message, then 4 instruction-only poses;
+  - Back with Try again focused, and Clear keeping the option;
+  - focus kept across the reorder.
+- `tests/technique-finder.test.mjs`: state expectations gain `cues:false`. The old "no network" contract is now "only the opt-in, same-origin, bounded cue file; no storage or account; no `innerHTML`".
+- `tests/helpers/mini-dom.mjs`: anchors accept `href` assignment, which the page already does for the Library link.
+- **18 bounded mutants, all killed:**
+  - cues searched when off;
+  - endpoints included;
+  - altered or normalised cue text;
+  - a late reply re-applying cues;
+  - `innerHTML` snippets;
+  - no Retry or status focus handoff;
+  - no size bound;
+  - no shape check;
+  - Clear dropping the option;
+  - no names-only wording;
+  - loading without opt-in;
+  - a repeat request;
+  - an undeduplicated count;
+  - loose `cues=` parsing;
+  - Retry not re-rendering the summary;
+  - no focus keep on reorder.
+- `npm run check`: 612/612.
+
+### Review fix R1 (root browser QA)
+- **Found in real Chrome:** `?q=throat&form=koryo&cues=1`, a 500, then a 3 s delayed response and a keyboard Try again. Focus and the status line were correct, but `#tf-summary` kept "Named techniques only: spoken instructions could not load." until the reply arrived. The Retry handler started the load without re-rendering.
+- **Fix:** the Retry handler calls `apply()` after starting the load. This is the only product change; there's a page-level regression and a mutant for it.
+- **Already passed root's browser checks:**
+  - 0 requests by default;
+  - "chamber" 2 → 103 poses (101 found only through instructions);
+  - Back/untick with the cached data is safe;
+  - pending typed words carried into the choice;
+  - Koryo "throat" → the 4 correct poses.
+
+### Known limits
+- I used no browser. Codex should check the checkbox layout at 320, 390, 820 and 1280 px; real Back/Forward; a slow or blocked `/data/technique-cues.json` in DevTools; and screen-reader announcement of the summary.
+- There's no highlighting of matched words inside the instruction; the exact text is shown plain.
+- Matching is literal substring matching after the catalogue's `normalize()`, with no stemming ("pivot" finds nothing).
+- Spoken instructions describe stances and turns, so the option can find poses by those words, but the named index still does not index stances (item 21).
+- `kihap` is a pose flag, not cue text.
+- The cue file uses the browser's and Vercel's default caching for `/data` (no explicit Cache-Control rule), so freshness relies on default revalidation. Right after a deploy, a browser could pair a newer page with an older cached cue file, or the reverse. That file would still pass the shape check, but its instruction text or keys might not match the current lessons until it revalidates. There is no version check between the two.

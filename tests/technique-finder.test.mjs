@@ -112,14 +112,14 @@ test('style and form filters narrow honestly',()=>{
 
 test('URL state is validated, shareable and never carries pose numbers',()=>{
  const f=index.forms;
- assert.deepEqual(parseFinderState('?q=low%20block&style=itf&form=chon-ji',f),{q:'low block',style:'itf',form:'chon-ji'});
- assert.deepEqual(parseFinderState('?style=tkd&form=nope',f),{q:'',style:'',form:''},'unknown values are ignored');
- assert.deepEqual(parseFinderState('?style=itf&form=koryo',f),{q:'',style:'itf',form:''},'a form outside the style is dropped');
+ assert.deepEqual(parseFinderState('?q=low%20block&style=itf&form=chon-ji',f),{q:'low block',style:'itf',form:'chon-ji',cues:false});
+ assert.deepEqual(parseFinderState('?style=tkd&form=nope',f),{q:'',style:'',form:'',cues:false},'unknown values are ignored');
+ assert.deepEqual(parseFinderState('?style=itf&form=koryo',f),{q:'',style:'itf',form:'',cues:false},'a form outside the style is dropped');
  assert.equal(parseFinderState('?q='+'x'.repeat(200),f).q.length,MAX_QUERY);
- for(const s of [{q:'side kick',style:'wt',form:'koryo'},{q:'',style:'',form:''},{q:'아래막기',style:'',form:''}])
+ for(const s of [{q:'side kick',style:'wt',form:'koryo',cues:false},{q:'',style:'',form:'',cues:false},{q:'아래막기',style:'',form:'',cues:false}])
   assert.deepEqual(parseFinderState(finderQuery(s),f),s,'round trip');
- assert.equal(finderQuery({q:'  ',style:'',form:''}),'');
- assert.doesNotMatch(finderQuery({q:'x',style:'wt',form:'koryo'}),/pose/);
+ assert.equal(finderQuery({q:'  ',style:'',form:'',cues:false}),'');
+ assert.doesNotMatch(finderQuery({q:'x',style:'wt',form:'koryo',cues:false}),/pose/);
 });
 
 test('rendering is bounded: long lists are capped per form until “Show all”, and only so many groups open',()=>{
@@ -146,12 +146,16 @@ test('readable without JavaScript: every result is a plain link, controls appear
  assert.ok(Buffer.byteLength(html)<250000,'a single static page of modest size');
 });
 
-test('the finder needs no account, network, storage or new service',()=>{
+test('the finder needs no account, storage or new service; its only request is the opt-in same-origin cue file',()=>{
  for(const file of ['js/pages/techniques.js','js/lib/technique-finder.js']){
   const src=read(file);
-  assert.doesNotMatch(src,/fetch\(|localStorage|sessionStorage|account-service|createClient|supabase|XMLHttpRequest|sendBeacon/,file);
+  assert.doesNotMatch(src,/fetch\(|localStorage|sessionStorage|account-service|createClient|supabase|XMLHttpRequest|sendBeacon|innerHTML|https?:\/\//,file);
  }
- assert.deepEqual([...read('js/pages/techniques.js').matchAll(/from '([^']+)'/g)].map(m=>m[1]).sort(),['../lib/dom.js','../lib/technique-finder.js']);
+ assert.deepEqual([...read('js/pages/techniques.js').matchAll(/from '([^']+)'/g)].map(m=>m[1]).sort(),['../lib/data.js','../lib/dom.js','../lib/focus-keep.js','../lib/technique-finder.js']);
+ const page=read('js/pages/techniques.js');
+ assert.equal((page.match(/loadJSON\(/g)||[]).length,1,'one loader call');
+ assert.match(page,/loadJSON\(CUES_URL, \{ validate: cuesProblem, timeoutMs: \d+, maxLength: CUES_MAX_LENGTH \}\)/,'bounded and shape-checked');
+ assert.match(read('js/lib/technique-finder.js'),/export const CUES_URL = '\/data\/technique-cues\.json';/,'same origin, root-relative');
  assert.equal(JSON.parse(read('package.json')).dependencies,undefined,'no new runtime package');
 });
 
@@ -218,25 +222,25 @@ test('Back/Forward cancels a pending keystroke so a late timer cannot overwrite 
  w.back();                              // the visitor presses Back first
  assert.equal(w.pending(),0,'the pending keystroke was cancelled');
  w.flush();
- assert.deepEqual(c.state,{q:'low block',style:'',form:''});
+ assert.deepEqual(c.state,{q:'low block',style:'',form:'',cues:false});
  assert.equal(renders.at(-1).q,'low block');
  assert.equal(w.win.location.search,'?q=low+block','the restored entry was not rewritten');
 });
 
 test('a conflicting or invalid link is normalised without adding history',()=>{
  const {c,w}=controllerWith('?style=itf&form=koryo&extra=1');
- assert.deepEqual(c.state,{q:'',style:'itf',form:''});
+ assert.deepEqual(c.state,{q:'',style:'itf',form:'',cues:false});
  assert.deepEqual(w.log,[['replace','?style=itf']]);
- c.choose({form:'chon-ji'});
- assert.deepEqual(c.state,{q:'',style:'itf',form:'chon-ji'});
+ c.choose({form:'chon-ji',cues:false});
+ assert.deepEqual(c.state,{q:'',style:'itf',form:'chon-ji',cues:false});
  c.choose({style:'wt'});
- assert.deepEqual(c.state,{q:'',style:'wt',form:''},'changing style drops a form from another style');
- c.choose({q:'',style:'',form:''});
+ assert.deepEqual(c.state,{q:'',style:'wt',form:'',cues:false},'changing style drops a form from another style');
+ c.choose({q:'',style:'',form:'',cues:false});
  assert.equal(w.win.location.search,'');
 });
 
 test('choosing a style or form right after typing keeps the freshest typed words',()=>{
- for(const [choice,expected] of [[{style:'wt'},{q:'side kick',style:'wt',form:''}],[{form:'koryo'},{q:'side kick',style:'',form:'koryo'}]]){
+ for(const [choice,expected] of [[{style:'wt'},{q:'side kick',style:'wt',form:'',cues:false}],[{form:'koryo',cues:false},{q:'side kick',style:'',form:'koryo',cues:false}]]){
   const {c,w,renders}=controllerWith('');
   c.type('side');c.type('side kick');                  // still inside the debounce
   c.choose(choice);                                     // the select change arrives first
@@ -252,10 +256,10 @@ test('choosing a style or form right after typing keeps the freshest typed words
 test('Clear and submit win over pending text; Back discards pending text for later choices too',()=>{
  const cleared=controllerWith('?q=low+block&style=wt');
  cleared.c.type('front kick');
- cleared.c.choose({q:'',style:'',form:''});           // Clear while a keystroke is pending
- assert.deepEqual(cleared.c.state,{q:'',style:'',form:''});
+ cleared.c.choose({q:'',style:'',form:'',cues:false});           // Clear while a keystroke is pending
+ assert.deepEqual(cleared.c.state,{q:'',style:'',form:'',cues:false});
  cleared.w.flush();
- assert.deepEqual(cleared.c.state,{q:'',style:'',form:''},'the pending words do not come back');
+ assert.deepEqual(cleared.c.state,{q:'',style:'',form:'',cues:false},'the pending words do not come back');
  assert.equal(cleared.w.win.location.search,'');
 
  const submitted=controllerWith('');
@@ -269,7 +273,7 @@ test('Clear and submit win over pending text; Back discards pending text for lat
  back.w.back();                                         // Back while the words are pending
  assert.equal(back.c.pending,null);
  back.c.choose({style:'itf'});                          // a later choice must not resurrect them
- assert.deepEqual(back.c.state,{q:'low block',style:'itf',form:''});
+ assert.deepEqual(back.c.state,{q:'low block',style:'itf',form:'',cues:false});
 });
 
 test('the search box is rewritten only when the restored query really differs',()=>{

@@ -7,8 +7,13 @@
    real 1-based ?pose=N link. The first (ready) and last (return) poses of each
    lesson are not techniques and are left out; mid-form ready positions stay.
 
-   Usage: node scripts/build-technique-index.mjs           rewrite techniques.html
-          node scripts/build-technique-index.mjs --check   fail if it is stale */
+   It also writes data/technique-cues.json: for exactly those indexed poses,
+   each lesson's own spoken instruction (data/narration/<id>.json cue text),
+   copied verbatim. The page loads it only when a visitor opts in to "Also
+   search spoken instructions"; it is never embedded in the HTML.
+
+   Usage: node scripts/build-technique-index.mjs           rewrite both files
+          node scripts/build-technique-index.mjs --check   fail if either is stale */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createFormMotion } from '../js/animation/form-motion.js';
@@ -19,6 +24,7 @@ import { ORGS } from '../js/lib/catalog.js';
 const ROOT = new URL('..', import.meta.url);
 const read = (p) => readFileSync(new URL(p, ROOT), 'utf8');
 export const PAGE = 'techniques.html';
+export const CUES = 'data/technique-cues.json';
 const STYLE = { wt: 'WT / Kukkiwon', itf: 'ITF', ata: 'ATA' };
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -115,6 +121,29 @@ export function renderStats(index) {
   return `<p class="tf-stats">${s.poses} study poses from all ${index.lessons.length} lessons, in ${s.groups} technique groups.</p>`;
 }
 
+/** The indexed poses' own spoken instructions, keyed "<lesson id>:<1-based pose>"
+ *  in lesson then pose order. Text is copied byte for byte; nothing is added. */
+export function buildTechniqueCues(index = buildTechniqueIndex()) {
+  const order = new Map(index.forms.map((f, i) => [f.id, i]));
+  const keys = new Set();
+  for (const g of index.groups) for (const f of g.forms) for (const r of f.rows) keys.add(`${f.id}:${r.n}`);
+  const narration = new Map();
+  const cues = {};
+  for (const key of [...keys].sort((a, b) => {
+    const [fa, na] = a.split(':'), [fb, nb] = b.split(':');
+    return order.get(fa) - order.get(fb) || Number(na) - Number(nb);
+  })) {
+    const [id, n] = key.split(':');
+    if (!narration.has(id)) narration.set(id, JSON.parse(read(`data/narration/${id}.json`)));
+    const text = narration.get(id).cues?.[Number(n) - 1]?.text;
+    if (typeof text !== 'string' || !text.trim()) throw new Error(`${id} pose ${n} has no spoken instruction`);
+    cues[key] = text;
+  }
+  return { version: 1, cues };
+}
+
+export const renderCues = (index) => `${JSON.stringify(buildTechniqueCues(index), null, 1)}\n`;
+
 const BLOCKS = {
   'technique-stats': renderStats,
   'technique-styles': renderStyleOptions,
@@ -133,12 +162,17 @@ export function renderPage(html, index = buildTechniqueIndex()) {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const index = buildTechniqueIndex();
   const current = read(PAGE);
-  const next = renderPage(current);
+  const next = renderPage(current, index);
+  let currentCues = null;
+  try { currentCues = read(CUES); } catch { /* not built yet */ }
+  const nextCues = renderCues(index);
   if (process.argv.includes('--check')) {
-    if (current !== next) { console.error(`${PAGE} technique index is stale (run: npm run sync)`); process.exit(1); }
-  } else if (current !== next) {
-    writeFileSync(new URL(PAGE, ROOT), next);
-    console.log(`Updated: ${PAGE}`);
+    const stale = [current !== next && `${PAGE} technique index`, currentCues !== nextCues && CUES].filter(Boolean);
+    if (stale.length) { console.error(`${stale.join(' and ')} ${stale.length > 1 ? 'are' : 'is'} stale (run: npm run sync)`); process.exit(1); }
+  } else {
+    if (current !== next) { writeFileSync(new URL(PAGE, ROOT), next); console.log(`Updated: ${PAGE}`); }
+    if (currentCues !== nextCues) { writeFileSync(new URL(CUES, ROOT), nextCues); console.log(`Updated: ${CUES}`); }
   }
 }

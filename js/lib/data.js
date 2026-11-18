@@ -4,17 +4,19 @@ import { h, replaceChildren } from './dom.js';
 export class DataError extends Error {
   constructor(message, kind) {
     super(message);
-    this.kind = kind; // 'http' | 'timeout' | 'network' | 'parse' | 'shape'
+    this.kind = kind; // 'http' | 'timeout' | 'network' | 'size' | 'parse' | 'shape'
   }
 }
 
 /**
  * Fetch and validate a JSON file.
  * @param {string} url
- * @param {{validate?: (data:any)=>string|null, timeoutMs?: number, fetchImpl?: typeof fetch}} opts
+ * @param {{validate?: (data:any)=>string|null, timeoutMs?: number, maxLength?: number, fetchImpl?: typeof fetch}} opts
  *   validate returns null when valid, or a description of the problem.
+ *   maxLength (optional) bounds the response: a larger declared Content-Length
+ *   is refused before the body is read, and a longer body before parsing.
  */
-export async function loadJSON(url, { validate, timeoutMs = 10000, fetchImpl = globalThis.fetch } = {}) {
+export async function loadJSON(url, { validate, timeoutMs = 10000, maxLength, fetchImpl = globalThis.fetch } = {}) {
   const controller = new AbortController();
   let timer;
   // One deadline covers the whole exchange: headers AND body download/parse.
@@ -36,6 +38,11 @@ export async function loadJSON(url, { validate, timeoutMs = 10000, fetchImpl = g
       throw new DataError('The network request failed.', 'network');
     }
     if (!res.ok) throw new DataError(`The server responded with ${res.status}.`, 'http');
+    const tooLarge = () => new DataError('The data file is larger than expected.', 'size');
+    if (maxLength && Number(res.headers?.get?.('content-length')) > maxLength) {
+      try { controller.abort(); } catch { /* already finished */ }
+      throw tooLarge();
+    }
     let text;
     try {
       text = await res.text();
@@ -43,6 +50,7 @@ export async function loadJSON(url, { validate, timeoutMs = 10000, fetchImpl = g
       if (err?.name === 'AbortError') throw new DataError('The request timed out.', 'timeout');
       throw new DataError('The data download was interrupted.', 'network');
     }
+    if (maxLength && text.length > maxLength) throw tooLarge();
     try {
       return JSON.parse(text);
     } catch {
