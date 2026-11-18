@@ -14,13 +14,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 5 (read and print companions): published.** PR 29 merged as `main` `e86803d`. Codex verified it live: 69/69 public files, headers and development 404s; the live index lists all 23; Koryo shows its 52 poses; print works; the header uses root-absolute profile links.
 - **Batch 6 (age-aware header): published.** PR 30 merged as `main` `dc05c83` (CI success). Codex verified 5/5 source files, headers and development 404s, and a normal member's UI live.
 - **Batch 7 (saved-learning keyboard focus): published.** PR 31 merged as `main` `57fd990`. Codex verified 6/6 public files, headers and development 404s, plus the live tabs in native Chrome.
-- **Batch 8 (opt-in search of spoken instructions):** on `improve/technique-cue-search-2026-11-18`, cut from `57fd990`. Uncommitted, awaiting Codex review and browser QA. Scope: item 20.
+- **Batch 8 (opt-in search of spoken instructions): published.** PR 32 merged as `main` `16260de`. Codex verified it live: 7/7 public files, security headers and development 404s; Koryo "throat" shows the 4 exact instructions; no account SDK loads.
+- **Batch 9 (full spoken instruction in Study view):** on `improve/study-caption-readability-2026-11-18`, cut from `16260de`. Uncommitted, awaiting Codex browser geometry and zoom review. Scope: item 31.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 8:** implemented locally, uncommitted, awaiting Codex review.
+- **Batch 9:** implemented locally, uncommitted, awaiting Codex review.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -48,7 +49,7 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 17 | Moderator assignment for a named helper | The 17 November note says it was waiting for account confirmation. Current state not re-checked. | — | Blocked (account owner) |
 | 18 | Engine-worded technique names are shown to learners | The finder and lesson pose lists show the animation's type wording. Examples: "small hinge", "large hinge", "grasp chamber", "wrist turn", "covered ready", "bending ready", "rock pushing", "tongmilgi". Learner-friendly names need a primary terminology source and would also change the lesson display. Do not invent them. | P2 content | Open; needs a source and Meghna's review |
 | 19 | Korean pose names exist for Taegeuk Il Jang only | The 22 data-driven lessons carry no Korean terms (0 of 688 actions), and Taegeuk Il Jang's mapping is marked draft in its data file. The finder states this coverage. | P3 content | Open; needs sourced terms |
-| 20 | Optional search of spoken instructions | Narration cues line up one-to-one with poses in all 23 lessons (about 47 KB). Searching them would help ("chamber", "knee") but is noisy by default. Candidate: an opt-in "also search spoken instructions". | P3 feature | Batch 8 |
+| 20 | Optional search of spoken instructions | Narration cues line up one-to-one with poses in all 23 lessons (about 47 KB). Searching them would help ("chamber", "knee") but is noisy by default. Candidate: an opt-in "also search spoken instructions". | P3 feature | Published (PR 32) |
 | 21 | Stance indexing in the technique finder | The finder indexes only the techniques named in pose labels, not stances. The 22 data-driven lessons record a `stance` per sequence entry (walking, back, horse, front, crane, rear-foot, low, closed, fixed, parallel, cross, wide-parallel, cat), but Taegeuk Il Jang has stance only in description text. Adding stances needs source-backed stance names per style and a Taegeuk Il Jang mapping. Do not derive them from description prose. | P3 feature | Open; needs sourced stance terms |
 | 22 | Community started the account service in a known under-13 tab | `forum.js` `connect()` and `community.js` `loadGuides()` called `getAccountService()` without checking this tab's age screen. That started the SDK client, which can restore a stored session (for example someone else's on a shared device) and offer reporting, submissions, posting or moderation. My learning, lesson help (page and widget), profile and sign-in already guarded this. | P1 privacy/policy | Published (PR 26) |
 | 23 | Header account link in a known under-13 tab | `site.js` shows "My profile" whenever a session is stored, including in an under-13 tab; the profile page then shows the public guidance. Harmless, but an owner/UX decision. Batch 3 deliberately leaves the header unchanged. | P3 UX | Published (PR 30) |
@@ -57,6 +58,7 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
+| 31 | Study view cut off long spoken instructions | Reproduced by Codex in real Chrome at 320×700, Study view, Taebaek pose 10: the 130-character instruction needs 3 lines but was clamped to 2 (`clientHeight` 31 vs `scrollHeight` 47). Short landscape clamped to 1 line. The full text was only in the DOM for screen readers. | P2 readability | Batch 9 |
 | 30 | Taebaek movement 14: the 180° right turn is shown as one stage | DTaF (physical p.58, printed p.52), root-verified: 14-1 is a closed stance facing Ma (back) and 14-2 faces Da2, so the turn is 90° then 90°. The site turns all 180° into pose 23 and none into pose 24; the final heading is the same. The school source gives a single 180°. A metadata-only split was modelled offline (pose 23 faces 180, pose 24 turns right 90°; narration timing still validates). Labels would need `cue.turn` updates, and pose 24's spoken text and audio don't mention the second turn. Details: `/private/tmp/tkdflow-taebaek14-followup.md`. | P3 content accuracy | Blocked (Meghna: source choice and any audio change) |
 | 29 | Saved-learning controls lose keyboard focus while saving | Reproduced by Codex in a real browser with the synthetic fixture (account mode, 3 s server). (1) Library: keyboard Unsave on Taegeuk Il Jang rebuilt the button natively `disabled`, focus became `<body>` and stayed there after confirmation. (2) My learning, Saved: Unsave on the middle card (Chon-Ji) removed the card and focus became `<body>`. (3) Lesson widget: Mark as practised, same as (1). All real backend traffic was 0. | P2 accessibility | Batch 7 |
 
@@ -632,10 +634,59 @@ The fixture `/private/tmp/tkdflow-learning-focus-fixture.mjs` (outside the repo,
   - pending typed words carried into the choice;
   - Koryo "throat" → the 4 correct poses.
 
+### Browser QA (Codex, real Chrome, synthetic local fixture)
+Codex used `/private/tmp/tkdflow-technique-cues-fixture.mjs` (outside the repo, which chooses the cue response: normal, 3 s delay, 500, malformed). After the R1 fix:
+- 0 requests by default.
+- "chamber": 2 → 103 poses, 101 of them found only through instructions. Koryo "throat" shows 4 exact instructions.
+- Pending typed words carry into the choice.
+- **Failure and retry:** after a 500, keyboard Try again moves focus to the status message, and the status line and summary both say loading.
+- **Back and Forward:** Back before the delayed reply stays names-only; Forward uses the cached data.
+- 320, 390, 820 and 1280 px: no overflow. 0 backend requests.
+- **Live after PR 32:** 7/7 public files, security headers and development 404s match; the live Koryo "throat" search shows its 4 exact instructions; no account SDK loads.
+
 ### Known limits
-- I used no browser. Codex should check the checkbox layout at 320, 390, 820 and 1280 px; real Back/Forward; a slow or blocked `/data/technique-cues.json` in DevTools; and screen-reader announcement of the summary.
+- The summary's announcement was not tested with a real screen reader. It uses the existing polite live region.
 - There's no highlighting of matched words inside the instruction; the exact text is shown plain.
 - Matching is literal substring matching after the catalogue's `normalize()`, with no stemming ("pivot" finds nothing).
 - Spoken instructions describe stances and turns, so the option can find poses by those words, but the named index still does not index stances (item 21).
 - `kihap` is a pose flag, not cue text.
 - The cue file uses the browser's and Vercel's default caching for `/data` (no explicit Cache-Control rule), so freshness relies on default revalidation. Right after a deploy, a browser could pair a newer page with an older cached cue file, or the reverse. That file would still pass the shape check, but its instruction text or keys might not match the current lessons until it revalidates. There is no version check between the two.
+
+## Batch 9 — full spoken instruction in Study view (item 31)
+
+### Change (`css/lesson.css` only)
+- **Clamps removed:** the Study view clamps on `.voice-caption` are gone, both the 2-line portrait clamp and the 1-line short-landscape clamp (`min-width:560px and max-height:560px`). The whole instruction always shows, and the flexible canvas row gives up the extra lines. The existing ResizeObserver in `lesson-view.js` re-fits the camera, so the full body stays framed, slightly smaller on poses with longer instructions.
+- **Empty captions:** with the Study `display` override gone, the existing `.voice-caption:empty { display: none; }` applies in Study view too, so a lesson without narration doesn't keep an empty caption margin.
+- **Large-text safety valve:**
+  - the canvas row keeps a minimum, `minmax(min(140px, 25svh), 1fr)`, which is 80 px on a 320 px-high screen and 140 px on 568 px and taller;
+  - `.lesson-study .player-card` is `overflow: hidden auto`, so it scrolls vertically only if the content can't fit (very large text). Before this change, the card's `overflow: hidden` would have clipped the bottom controls.
+  - The new row rule follows the old one inside the same declaration block, so a browser without `svh` keeps the previous `minmax(0,1fr)` row.
+- **Unchanged:** no new button, dialog or JavaScript; no reserved line heights; no content length limit. Narration text, audio, animation, avatar and the non-Study layout are untouched.
+
+### Checks
+- `npm run check`: 612/612. `git diff --check`: clean.
+- This small, reversible CSS fix was implemented without CSS-mirroring tests or mutants. It is covered by the existing 612 checks plus Codex's independent browser review (below).
+
+### Browser review (Codex, real Chrome, synthetic data only)
+Measured on Taebaek pose 10, the longest instruction (130 characters). Before the change, at 320×700 the caption was 31 px high (`scrollHeight` 47) and the canvas 269 px.
+
+| Viewport | Caption (`clientHeight`/`scrollHeight`) | Canvas | Card scroll |
+|---|---|---|---|
+| 320×700 | 47 / 47 (full) | 253 | none |
+| 320×568 | full | 185 | none |
+| 390×844 | full | 253 | none |
+| 568×320 | full | 80 (at the `25svh` minimum) | none |
+| 740×360 | full | 100 | none |
+| 820×1180, 1280×800 | full | 354 | none |
+
+- **All normal sizes:** full caption, no card scroll, all controls visible, no horizontal overflow.
+- **Native Chrome page zoom at 200%** (zoom badge confirmed):
+  - 1280×800 physical (640×400 CSS): full caption 31 px, canvas 140, all controls visible, no scroll;
+  - extreme 320×700 physical (160×350 CSS): full caption 109 px and canvas 88. The card scrolls (511 px of content in 332), and keyboard focus on Speed scrolls it into view. No horizontal overflow.
+- **Escape, re-entry and rendering:** after resetting to 100%, Escape exits Study view and focuses the Study view button, and re-entry works. The connected rig's whole body was visually confirmed. No errors and 0 real backend requests.
+
+### Known limits
+- This was not a real screen-reader test or a text-only zoom test; the 200% checks above are page zoom.
+- The canvas height varies a little more between poses (1, 2 or 3 caption lines), and the avatar is re-framed, as it already was between 1- and 2-line poses. No line-height reserve was added.
+- At 568×320 the canvas is at its minimum (80 px) with the longest instruction. A longer future instruction, or larger text, there would make the card scroll rather than shrink the canvas further.
+- There is no fixed content-length limit. Longer future instructions take more lines; the canvas gives up space down to its minimum (`min(140px, 25svh)`), and beyond that the card scrolls.
