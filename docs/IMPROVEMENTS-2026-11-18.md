@@ -21,13 +21,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 12 (homepage Explore by learner task): published.** PR 36 merged as `main` `4412fcf`.
 - **Batch 13 (library search ranking and belt note): published.** PR 37 merged as `main` `aab06f8`. Codex verified it live: 5/5 files, headers and development 404s; Won-Hyo is first for “Won”.
 - **Batch 14 (Community pages of 50): published.** PR 38 merged as `main` `102ebdc`. Codex verified it live: 7/7 public files, headers and development 404s; 9 topics shown; real anonymous API reads (new topics 9, after the cursor 8, replies 0), with no errors and no writes.
-- **Batch 15 (Replay move):** on `improve/replay-move-2026-11-18`, cut from `102ebdc`. Uncommitted, awaiting Codex review. Scope: item 35.
+- **Batch 15 (Replay move): published.** PR 39 merged as `main` `fda0dc9`. Codex verified it live: 29/29 files, 6 headers and development 404s; in native Chrome the Replay button and pose were healthy, with 0 errors.
+- **Batch 16 (read-only live checker, deploy exclusions and current docs):** on `improve/live-release-checks-2026-11-18`, cut from `fda0dc9`. Uncommitted, awaiting Codex review. Scope: item 36. No SQL change.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 15:** implemented locally, uncommitted, awaiting Codex review.
+- **Batch 16:** implemented locally, uncommitted, awaiting Codex review.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -64,7 +65,8 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
-| 35 | No way to watch one move again | Codex's plan audit: Play after choosing a pose already rewound to that move's start in some cases, but then played on to the end of the form. There was no "play this move once and stop". | P2 learning | Batch 15 |
+| 36 | Release docs named a live checker that didn't exist, and production served `/.gitattributes` | SETUP.md and docs/RELEASE.md told the owner to run `npm run check:live`, but there was no such script. Codex's read-only live audit found `/.gitattributes` answering 200 (whitespace rules only, no credentials), while other dot-files returned 404. SETUP.md and RELEASE.md §8 still described the earlier accounts-off, report-only state as current. | P2 maintenance | Batch 16 |
+| 35 | No way to watch one move again | Codex's plan audit: Play after choosing a pose already rewound to that move's start in some cases, but then played on to the end of the form. There was no "play this move once and stop". | P2 learning | Published (PR 39) |
 | 34 | The homepage Explore cards hid the newer tools | Three of the six cards led to the forms library (the library, one lesson and the library filtered to lessons). Find a technique, the read and print companions, My school’s forms, the lesson answers and the first-tournament guide were reachable from the homepage only through the footer. Five of the six chips restated the section label. | P3 discoverability | Published (PR 36) |
 | 33 | Every lesson page builds the avatar's garments in one long main-thread task | Codex's controlled foreground Chrome probe, same module: Taegeuk Il Jang rig construction 1411 ms (jacket 957, trousers 445); Sipjin 5234 ms (jacket 3649, trousers 1576), page visible throughout. The page can't respond to input during that task. Diagnostic only, not a device benchmark. | P2 performance | Published (PR 35) |
 | 32 | No place to keep a school’s own order of forms | Schools use different belt names and orders, and the library’s belt filter is only a colour family. Learners had no private way to write down their own school’s list of levels and forms and print it. | P2 feature | Published (PR 34) |
@@ -1139,3 +1141,53 @@ Fixture on port 8994 with the real home and learning modules:
   - **Errors:** 0 console errors on the ordinary page.
 - **Not tested:** Safari or iOS, a real screen reader, and how well the spoken audio lines up with the motion by ear.
 - The existing implicit rewind on Play (after choosing a pose with narration on) is kept, as decided. Replay move is the explicit, bounded alternative.
+
+## Batch 16 — read-only live checker, deploy exclusions and current docs (item 36)
+
+### Change
+- **`scripts/check-live.mjs` and `npm run check:live`:** read-only GET requests, with no cookies, credentials or account calls. It checks:
+  - **Bytes:** every sitemap page, script and stylesheet, plus any named public files, against this checkout by SHA-256.
+  - **Global headers:** the `vercel.json` headers, exactly, on the home page, `/styles.css`, `/favicon.svg` and `/favicon.ico`. Each sample must answer 200; a 404 or redirect carrying the same headers fails.
+  - **Favicon headers:** the favicon-specific `Cache-Control`.
+  - **`--csp`:** `--csp report-only` expects the report-only header instead and requires the enforcing one to be absent.
+  - **Redirects:** each `vercel.json` redirect's status and destination.
+  - **Private paths:** 404 for every `.vercelignore` entry (a real file inside each folder), `vercel.json` and every dot-file.
+- **Input safety:** these are refused as usage errors (exit 2) before any request is made or any file hashed:
+  - for `--base`: credentials, a path, query or fragment, plain http other than localhost, and protocol-relative values;
+  - for named files: URLs, `//`, absolute paths, `..`, backslashes, `%`, `?` or `#`, dot-files, development paths, non-public file types, symlinks anywhere in the path, files outside the checkout and files over 25 MB;
+  - more than 100 named files.
+- **Resource bounds:**
+  - a live body is read only up to the local file's size and abandoned beyond it;
+  - header, redirect and private-path responses aren't read;
+  - 8 requests at a time, 15 s each.
+- **Options:** the ones docs/RELEASE.md already documents (`--base`, `--csp`, `--json`), with `--origin` as another name for `--base`.
+- **`.vercelignore`:** adds `.gitattributes`, which production served, and `.gitignore`, explicit now although Vercel already skips it.
+- **`SETUP.md`:**
+  - the top describes the current source flags (`enabled`, `signupEnabled` and `googleEnabled` all true) and says production is verified with the checker;
+  - the additive `supabase/*.sql` files are listed;
+  - the generated-file drift checks are described;
+  - "36 pages" becomes every page in `layout/pages.json`;
+  - the lesson review-status location is corrected;
+  - the CSP description matches `vercel.json`;
+  - "Current restoration work" and "Restoring member accounts" are labelled historical reference; the headings are kept because RELEASE.md links to them. The dated owner sections are unchanged.
+- **`docs/RELEASE.md` §8:** current state first (enforced in source, verified live with `npm run check:live -- --csp enforced`), then the 2026-11-15 report-only situation and switch procedure, labelled as history. No dashboard state is claimed.
+
+### Tests (`tests/live-check.test.mjs`, 11)
+- **Deploy exclusions:** every root dot-entry is in `.vercelignore` (this catches `.gitattributes`).
+- **A matching deployment:** against the real preview server, every check passes, using GET only.
+- **Tampering is reported:** changed bytes, a missing header, a wrong redirect status and a served dot-file each fail, and nothing else does.
+- **Large responses and favicons:** an endless response is cut off early as larger; a wrong favicon `Cache-Control` fails; favicons get both the global and their own headers.
+- **`--base`:** origin validation covers credentials, a path, query or fragment, plain http, other schemes and protocol-relative values.
+- **Named files:** permitted public files are accepted; URLs, traversal, backslash and encoded traversal, dot-files and development paths are refused.
+- **Symlinks:** a symlinked file or folder, including one leading outside the checkout, is refused, and nothing is fetched for a refused input. The test uses two new unique temporary directories and never touches any other file.
+- **Non-200 samples:** a header sample answering 404 with the expected headers fails both its status and its headers, while the 200 samples still pass.
+- **Command line:**
+  - the CLI exits 0 against a matching deployment and 2 for each usage error;
+  - the documented options parse;
+  - an enforcing deployment fails a report-only expectation.
+- **Docs:** every `npm run` script named in SETUP.md and docs/RELEASE.md exists.
+
+### Known limits
+- **First production run:** the checker hasn't run against production yet. Root runs `npm run check:live` from the deployed commit.
+- **Named files under 25 MB:** a larger file is refused locally rather than compared.
+- **Not corrected in this batch:** the comments in `supabase/preflight.sql` about the schools policy, and `supabase-setup.sql:222`, which points to a SETUP section that doesn't exist. These are SQL files, left for a later batch. The full SETUP rewrite plan is in `/private/tmp/tkdflow-setup-doc-plan.md`.

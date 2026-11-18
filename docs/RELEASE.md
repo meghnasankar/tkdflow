@@ -136,10 +136,17 @@ follow §9 and do not assume the old site matches the new schema.
 
 ## 8. Enforcing the Content-Security-Policy (separate release)
 
-Status: **proposed, not live.** Production (`682d99d`) sends `Content-Security-Policy-Report-Only`.
-Review branch `fix/post-launch-improvements-2026-11-15` switches `vercel.json` to the enforced
-`Content-Security-Policy` with the same sources; `npm run check` fails if it falls back to
-report-only, adds `unsafe-*` or any other source.
+**Current state (18 November 2026):** `vercel.json` in source sends the **enforced**
+`Content-Security-Policy`: `'self'` for scripts, styles, fonts and images (plus `data:` images),
+connections to `'self'` and `https://*.supabase.co`, and `frame-ancestors 'none'`. `npm run check`
+fails if it falls back to report-only, adds `unsafe-*` or any other source. What production sends is
+verified, not assumed: `npm run check:live -- --csp enforced`, from the deployed commit, compares
+every live security header with this source.
+
+**History (2026-11-15):** when this section was written, production (`682d99d`) sent
+`Content-Security-Policy-Report-Only`, and the enforced policy was on the review branch
+`fix/post-launch-improvements-2026-11-15`. The steps below are the procedure that was used for that
+switch. Keep them for any future change to the policy.
 
 1. Review and approve the change; deploy it as a preview.
 2. On the preview: §3 page QA in a regular browser (not the instrumented one), including the
@@ -148,7 +155,7 @@ report-only, adds `unsafe-*` or any other source.
 3. Check headers: `npm run check:live -- --csp enforced --base https://<preview-origin>` where the
    preview is reachable without authentication; otherwise inspect the headers in an authorised browser.
 4. Release through §4–§5 with `--csp enforced`. Record the previous production deployment
-   (report-only) as the rollback target; roll back with §7 if any page breaks.
+   as the rollback target; roll back with §7 if any page breaks.
 5. To rehearse the report-only baseline locally: `npm run serve -- --report-only`.
 
 ## 9. Member accounts rollout (separate, reviewed release)
