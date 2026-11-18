@@ -1,6 +1,6 @@
 import {mountLessonLearning} from '../lib/learning-ui.js';
 import {mountLessonHelp} from '../lib/lesson-help-ui.js';
-import {LessonTimeline} from '../animation/lesson-timeline.js';
+import {LessonTimeline,replayWindow} from '../animation/lesson-timeline.js';
 import {createLessonView} from '../animation/lesson-view.js';
 import {officialLabel,poseDescription,poseUrl,poseLinkProblemText,handlePlayerKey,createPoseHistory,createLifecyclePause,copyText,copyStatusText} from '../lib/lesson-nav.js';
 import {h,replaceChildren} from '../lib/dom.js';
@@ -44,9 +44,10 @@ const MANUAL_CAUSES = new Set(['next', 'prev', 'first', 'last', 'select', 'play'
 /* ── one render function for every state change ── */
 let previousIndex=-1,previousPlaying=null;
 function render({index,playing,cause,time}) {
-  if(cause==='play')lastNow=0;
+  if(cause==='play'||cause==='move-replay')lastNow=0;   // a (re)started replay never uses an old frame's delta
   if(['select','next','prev','first','last','link'].includes(cause))replaySelection=true;
-  else if(['play','seek','frame'].includes(cause))replaySelection=false;
+  else if(['play','seek','frame','move-replay','move-ended'].includes(cause))replaySelection=false;
+  replayStatus(cause,index);
   voice.update({time,playing,rate:player.rate});effects.update({time,playing,rate:player.rate});
   const pose=POSES[index],label=officialLabel(pose),turn=narration?.cues[index]?.turn||turnFact(MOTION.referencePlans?.[index]),changed=index!==previousIndex;
   canvas.setAttribute('aria-label',poseDescription(pose,index,POSES.length));
@@ -101,8 +102,16 @@ const poseHistory = createPoseHistory({
   },
 });
 const lifecycle = createLifecyclePause({ doc: document, win: window, player, onHide: settleCanvas });
+/* Replay move: the current move once, on the same clock as voice and effects, then pause on its pose. */
+function replayMove(){player.playMove(player.index,replayWindow(MOTION,player.index,{cues:narration?.cues||[],effects:narration?.effects||[]}));}
+function replayStatus(cause,index){
+  const el=$('replay-status');if(!el)return;
+  if(cause==='move-replay')el.textContent=`Replaying pose ${index+1}: ${POSES[index].name}.`;
+  else if(cause==='move-ended')el.textContent=`Paused on pose ${index+1}: ${POSES[index].name}.`;
+  else if(MANUAL_CAUSES.has(cause))el.textContent='';
+}
 function togglePlayback(){if(!player.playing&&replaySelection&&indexForReplay())player.seek(MOTION.CHAPTERS[player.index].start,'replay-move');player.toggle();}
-const keyboardPlayer={prev:()=>player.prev(),next:()=>player.next(),first:()=>player.first(),last:()=>player.last(),toggle:togglePlayback};
+const keyboardPlayer={prev:()=>player.prev(),next:()=>player.next(),first:()=>player.first(),last:()=>player.last(),toggle:togglePlayback,replay:replayMove};
 
 function onRegionKey(e) {
   const native=['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)||e.target?.isContentEditable;
@@ -149,6 +158,7 @@ function init() {
   $('lesson-progress').max = String(DURATION);
   player.subscribe(render);
   $('btn-play').addEventListener('click',togglePlayback);
+  $('btn-replay-move')?.addEventListener('click',replayMove);
   $('btn-next').addEventListener('click', () => player.next());
   $('btn-prev').addEventListener('click', () => player.prev());
   $('btn-first').addEventListener('click', () => player.first());

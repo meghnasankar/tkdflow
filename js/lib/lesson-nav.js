@@ -121,6 +121,8 @@ export function playerKeyAction(e, region) {
     case 'Home': return 'first';
     case 'End': return 'last';
     case 'k': return 'toggle';
+    case 'r':
+    case 'R': return 'replay';
     case ' ':
     case 'Spacebar':
       return t === region ? 'toggle' : null; // Space on a button/link activates it natively
@@ -133,7 +135,7 @@ export function handlePlayerKey(e, region, player) {
   const action = playerKeyAction(e, region);
   if (!action) return false;
   e.preventDefault();
-  if (action !== 'toggle' || !e.repeat) player[action]();
+  if (!['toggle', 'replay'].includes(action) || !e.repeat) player[action]?.();
   return true;
 }
 

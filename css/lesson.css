@@ -39,6 +39,7 @@
 }
 .lesson-ctrl:hover { background: var(--gray-100); }
 .lesson-ctrl:disabled { opacity: .45; cursor: not-allowed; }
+.lesson-ctrl.lesson-replay { width: auto; padding: 0 12px; gap: 6px; font-size: .82rem; font-weight: 600; }
 .lesson-play { width: 52px; height: 52px; border-radius: 50%; background: var(--red); border-color: var(--red); color: white; font-size: 1.1rem; }
 .lesson-play:hover { background: var(--red-dark); }
 .speed-label { display: inline-flex; align-items: center; gap: 6px; font-size: .82rem; font-weight: 600; color: var(--gray-600); margin-left: 4px; }
@@ -140,7 +141,7 @@
 .lesson-study .lesson-render-label { display: none; }
 .lesson-study .lesson-actions { width: 100%; justify-content: space-between; }
 .lesson-study .canvas-wrap { min-height: 0; height: 100%; aspect-ratio: auto; }
-.lesson-study .move-info { min-height: 0; padding: 7px 12px; }
+.lesson-study .move-info { min-height: auto; padding: 7px 12px; }   /* content-sized: the grid never squeezes the caption box below its text */
 .lesson-study .move-name { font-size: .9rem; }
 .lesson-study .move-counter { font-size: .65rem; }
 /* The whole spoken instruction is shown (no clamp); the canvas row absorbs it. */
@@ -151,7 +152,9 @@
 @media(max-width:760px){ .lesson-layout { grid-template-columns: minmax(0,1fr); grid-template-areas: "player" "list" "info"; } }
 @media(max-width:400px){
  .lesson-study .player-card { inset: 8px; width: calc(100% - 16px); height: min(620px, calc(100svh - 16px)); max-height: calc(100dvh - 16px); }
- .lesson-study .lesson-controls { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 4px; }
+ .lesson-study .lesson-controls { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 4px; }
+ .lesson-study .replay-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+ .lesson-study .speed-label { grid-column: span 2; margin-left: 0; }   /* 8 buttons + Speed over 2 cells = two rows of 5 */
  .lesson-study .lesson-ctrl { width: 100%; height: 40px; }
  .lesson-study .lesson-play { width: 100%; height: 40px; }
  .lesson-study .speed-label { font-size: .7rem; gap: 2px; }
@@ -163,7 +166,14 @@
  .lesson-study .lesson-view-switch button { min-height: 36px; }
  .lesson-study .lesson-study-toggle, .lesson-study .lesson-voice-toggle { min-height: 36px; padding: 5px 8px; }
  .lesson-study .move-info { padding: 4px 10px; }
- .lesson-study .lesson-controls { padding-bottom: 5px; }
+ /* A lower canvas minimum (64 px at 320 px high) so the full caption and the controls fit the card. */
+ .lesson-study .player-region { grid-template-rows: auto minmax(64px,1fr) auto auto auto; grid-template-rows: auto minmax(min(140px, 20svh), 1fr) auto auto auto; }
+ /* One compact row: 8 buttons (Play and Replay icon-only) + Speed over 2 cells. */
+ .lesson-study .lesson-controls { display: grid; grid-template-columns: repeat(10,minmax(0,1fr)); gap: 4px; padding: 4px 10px 5px; }
+ .lesson-study .lesson-ctrl, .lesson-study .lesson-play { width: 100%; height: 36px; padding: 0; }
+ .lesson-study #play-label, .lesson-study .replay-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+ .lesson-study .speed-label { grid-column: span 2; margin-left: 0; font-size: .7rem; gap: 2px; }
+ .lesson-study .speed-select { min-width: 0; width: 100%; padding: 4px; }
 }
 
 .lesson-view-note { color: var(--gray-600); font-size: .7rem; line-height: 1.4; }

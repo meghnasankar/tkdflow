@@ -116,6 +116,7 @@
           <button type="button" class="lesson-ctrl" id="btn-last" aria-label="Last pose"><span aria-hidden="true">⏭</span></button>
           <button type="button" class="lesson-ctrl" id="frame-prev" aria-label="Previous frame" title="Previous frame"><span aria-hidden="true">−</span></button>
           <button type="button" class="lesson-ctrl" id="frame-next" aria-label="Next frame" title="Next frame"><span aria-hidden="true">+</span></button>
+          <button type="button" class="lesson-ctrl lesson-replay" id="btn-replay-move"><span aria-hidden="true">↺</span><span class="replay-label">Replay move</span></button>
           <label class="speed-label" for="speed">Speed
             <select class="speed-select" id="speed">
               <option value="0.25">0.25×</option>
@@ -125,12 +126,13 @@
           </label>
         </div>
 
-        <p class="player-keys" id="player-keys">Keys (with the player selected): <kbd>←</kbd> <kbd>→</kbd> step one frame (Shift for a pose), <kbd>Home</kbd> <kbd>End</kbd> first/last pose, <kbd>Space</kbd> or <kbd>K</kbd> play/pause.</p>
+        <p class="player-keys" id="player-keys">Keys (with the player selected): <kbd>←</kbd> <kbd>→</kbd> step one frame (Shift for a pose), <kbd>Home</kbd> <kbd>End</kbd> first/last pose, <kbd>Space</kbd> or <kbd>K</kbd> play/pause, <kbd>R</kbd> replay the current move once.</p>
         </div>
 
         <audio id="lesson-effects" preload="auto" aria-hidden="true"></audio>
         <audio id="lesson-audio" preload="auto" aria-hidden="true"></audio>
         <span class="sr-only" id="voice-status" role="status"></span>
+        <span class="sr-only" id="replay-status" role="status"></span>
         <div class="pose-share">
           <p class="pose-share-note">Pose numbers count the animation’s poses, not the form’s movements.</p>
           <div class="pose-share-actions">

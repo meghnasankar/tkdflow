@@ -20,13 +20,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 11 (faster avatar garment construction): published.** PR 35 merged as `main` `0d0a340`. Codex verified it live: 2/2 public files, headers and development 404s; Sipjin ready in native Chrome with 0 errors.
 - **Batch 12 (homepage Explore by learner task): published.** PR 36 merged as `main` `4412fcf`.
 - **Batch 13 (library search ranking and belt note): published.** PR 37 merged as `main` `aab06f8`. Codex verified it live: 5/5 files, headers and development 404s; Won-Hyo is first for “Won”.
-- **Batch 14 (Community pages of 50):** on `improve/community-pagination-2026-11-18`, cut from `aab06f8`. Passed Codex's browser review; uncommitted, ready for root's release. Scope: the pagination part of item 12. No schema, grant or cloud change.
+- **Batch 14 (Community pages of 50): published.** PR 38 merged as `main` `102ebdc`. Codex verified it live: 7/7 public files, headers and development 404s; 9 topics shown; real anonymous API reads (new topics 9, after the cursor 8, replies 0), with no errors and no writes.
+- **Batch 15 (Replay move):** on `improve/replay-move-2026-11-18`, cut from `102ebdc`. Uncommitted, awaiting Codex review. Scope: item 35.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 14:** implemented locally and browser-reviewed by Codex, uncommitted, awaiting release.
+- **Batch 15:** implemented locally, uncommitted, awaiting Codex review.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -46,7 +47,7 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 9 | Library belt filter vs school differences | Belt facets are colour buckets across styles. The hub now says labels are typical, not rules; the library has no such note. Consider one line beside the belt facet. | P3 content | Published (PR 37) |
 | 10 | Lesson content items marked unresolved | `unresolved` notes with `reviewStatus: pending` in do-san, joong-gun, koryo, pyongwon, sipjin, songahm-3, taebaek and yul-gok. Motion or sequence changes need primary-reference confidence and must keep the approved avatar look. | P2 content accuracy | Open; needs owner/Meghna for any instructor input |
 | 11 | Search ranking for partial words | Partial multi-word searches ("Il Jang") still match broadly and are sorted by curriculum, not relevance. Acceptable now that exact names win. | P3 | Published (PR 37) |
-| 12 | Community author controls, notifications, pagination | From the 17 November usability review. Needs SQL and RLS work, a staging apply and owner release approval.  Pagination needs no schema change and is batch 14; author controls and notifications still need SQL, RLS and an owner staging apply. | P2 feature | Pagination: Batch 14; the rest Open (backend) |
+| 12 | Community author controls, notifications, pagination | From the 17 November usability review. Needs SQL and RLS work, a staging apply and owner release approval.  Pagination needs no schema change and is batch 14; author controls and notifications still need SQL, RLS and an owner staging apply. | P2 feature | Pagination published (PR 38); the rest Open (backend) |
 | 13 | School directory coverage and picker compactness | 334 sourced records, explicitly incomplete. | P3 | Open |
 | 14 | Performance and accessibility pass on live pages | No current measurements in the repo. Needs live Lighthouse or axe runs. | P2 | Verify (Codex browser) |
 | 15 | Old "Start here" draft in the original checkout | Unmerged and out of scope. The new hub was written from current `main` and official sources, not imported. The owner can discard or compare it. | P3 | Owner decision |
@@ -63,6 +64,7 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
+| 35 | No way to watch one move again | Codex's plan audit: Play after choosing a pose already rewound to that move's start in some cases, but then played on to the end of the form. There was no "play this move once and stop". | P2 learning | Batch 15 |
 | 34 | The homepage Explore cards hid the newer tools | Three of the six cards led to the forms library (the library, one lesson and the library filtered to lessons). Find a technique, the read and print companions, My school’s forms, the lesson answers and the first-tournament guide were reachable from the homepage only through the footer. Five of the six chips restated the section label. | P3 discoverability | Published (PR 36) |
 | 33 | Every lesson page builds the avatar's garments in one long main-thread task | Codex's controlled foreground Chrome probe, same module: Taegeuk Il Jang rig construction 1411 ms (jacket 957, trousers 445); Sipjin 5234 ms (jacket 3649, trousers 1576), page visible throughout. The page can't respond to input during that task. Diagnostic only, not a device benchmark. | P2 performance | Published (PR 35) |
 | 32 | No place to keep a school’s own order of forms | Schools use different belt names and orders, and the library’s belt filter is only a colour family. Learners had no private way to write down their own school’s list of levels and forms and print it. | P2 feature | Published (PR 34) |
@@ -1075,3 +1077,65 @@ Fixture on port 8994 with the real home and learning modules:
 - A topic published between two page loads, newer than the first page, appears only after Refresh. One hidden meanwhile disappears from the list on Refresh.
 - No real screen-reader or Safari test. The native repeated-keypress-while-busy check wasn't completed; the unit guards cover it.
 - Author controls (edit or withdraw) and notifications remain open. They need SQL, RLS and an owner staging apply.
+
+## Batch 15 — Replay move (item 35)
+
+### Change (`js/animation/lesson-timeline.js`, `js/pages/lesson-player.js`, `js/lib/lesson-nav.js`, `css/lesson.css`, all 23 lesson pages, `start-here.html`)
+- **Replay move:** a button in the playback controls, and the R key while the player is selected. It plays the current move once, from the move's start through its pose and a short hold, then pauses on that pose.
+- **One clock:** the replay runs on the lesson's single clock (`LessonTimeline.playMove`), so voice and effects follow it exactly as in normal play. Assets, motion and the avatar are unchanged.
+- **Where it stops** (`replayWindow`, chosen by the product decision):
+  - **Silent hold:** capped at 1 s after the pose, but it never cuts that move's own speech or effect.
+  - **Ready pose:** keeps its whole hold, because its spoken instruction is there.
+  - **Last pose:** plays to the end of the form.
+  - **Next move:** the stop is always before the next move starts, so the lesson stays on the replayed pose.
+- **Pause and navigation:** Pause keeps the stop, and resuming still stops on the pose. Speed changes keep it. Seeking, choosing a pose, Previous/Next/First/Last and frame steps clear it.
+- **Normal Play is unchanged,** including the existing rewind to a chosen move's start.
+- **Keys:** a held R doesn't restart the replay; R with a modifier or in a text field does nothing.
+- **Announcements:** a separate screen-reader-only status (`#replay-status`) says "Replaying pose N: name." and "Paused on pose N: name." It never uses the voice error status.
+- **Hints:** all 23 key hints and the Start here tools section name R and the button.
+- **Phone Study view (≤400 px):** the controls grid has 5 columns, with Speed spanning 2 cells. The 8 buttons plus Speed make exactly two rows. The Replay button's text label is visually hidden there but stays its accessible name.
+- **Short landscape Study view** (at least 560 px wide and at most 560 px high, e.g. 568×320 and 740×360): one compact row of 10 columns, with Play and Replay icon-only and Speed spanning 2. Outside Study view the controls are unchanged.
+- **Review fixes (root browser QA, Taebaek `?pose=10`, the longest caption):**
+  - at 320×700 the Speed select was only 16.68 px wide and its value unreadable;
+  - at 568×320 the wrapped controls (111 px high) overlapped the caption by 25 px, and the card's `scrollHeight` didn't reveal it.
+
+  Both are fixed by the grids above. A replay that is restarted now also resets the frame delta, as Play does, so it never uses an old frame's elapsed time.
+  - after those fixes, at 568×320 `.move-info` measured `clientHeight` 70 against `scrollHeight` 74: the caption text ended at y=225.09, past the box's edge at 222. It was still readable, because the progress track sits lower.
+
+  Study view's `.move-info` now uses `min-height: auto` instead of `0`. It still drops the normal 132 px minimum, but the grid can't size the box below its own text. The caption text and size are unchanged.
+  - with the full caption (78 px) at 568×320, the 80 px canvas minimum pushed the controls' bottom to y=315.09, 7.1 px past the card's 308 (the card's `clientHeight` was 294 against a `scrollHeight` of 302). Codex saw everything fit at 320×568, 740×360 and 1280×800.
+
+  In short-landscape Study view only, the canvas row's minimum is now `min(140px, 20svh)`: 64 px at 320 px high, 72 px at 360 px. Other sizes keep `min(140px, 25svh)`.
+
+### Tests (`tests/replay-move.test.mjs`, 7)
+- **Clock-driven, no timers:**
+  - the replay starts at the move's start, stops exactly once on the replayed pose, and Play then continues normally;
+  - Pause and speed changes keep the stop; seek, select, frame step and next clear it;
+  - normal Play runs to the end.
+- **All 23 real lessons with their narration and effects,** for every pose:
+  - the start is correct and the stop is on the pose and before the next move;
+  - speech and effects are never cut, and at least 1 s of hold is kept when available;
+  - silent holds are capped, which happens in practice;
+  - the ready pose's whole hold, and the last pose to the end.
+- **Keys:** R inside the player only, no modifiers or fields, and repeats ignored.
+- **Markup:** the button in all 23 pages' playback controls, the R hint, a separate status, and Start here.
+- **Phone Study view:** a 5-column grid, 9 controls in two rows, and the label visually hidden rather than removed.
+- **Spot-checked mutants:** Pause cancelling the stop, no 1 s cap, a shorter cap, and a held R restarting were each caught.
+
+### Browser QA (Codex, native Chrome, local)
+- **Replay:**
+  - **Speeds:** normal speed ends exactly on the pose (Taegeuk Il Jang pose 6 at 30.684 s), with voice and effects paused. Pause and resume, then 0.5× and 0.25×, end on the same pose.
+  - **After a replay:** Play continues to the next move.
+  - **Long silent hold:** Jitae's is capped.
+  - **Ready and last pose:** the ready pose stops at 2.458 s and the last at 104.639 s.
+- **Keys and navigation:** R in a text field, or outside the player, is ignored; R inside the player starts a replay. A frame step cancels the stop.
+- **Audio:** with both tracks muted the replay still works. Missing narration works, and failed audio keeps the voice error status.
+- **Layout:** all six viewport layouts have a readable Speed value and no control overflow. The remaining caption-box overflow at 568×320 is fixed above.
+
+### Known limits
+- **Browser review:** Codex reviewed this in native desktop Chrome and with phone-size emulation.
+  - **Final layout:** at 568×320, canvas 71.9 px, full caption 78/78, card 294/294, controls ending at 307 within 308. At 320×700 the caption and card fit, Speed 0.25× is readable, and there's no horizontal overflow.
+  - **Study view:** Escape exits it and returns focus to the Study view button.
+  - **Errors:** 0 console errors on the ordinary page.
+- **Not tested:** Safari or iOS, a real screen reader, and how well the spoken audio lines up with the motion by ear.
+- The existing implicit rewind on Play (after choosing a pose with narration on) is kept, as decided. Replay move is the explicit, bounded alternative.
