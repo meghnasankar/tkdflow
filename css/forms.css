@@ -66,3 +66,4 @@
   .forms-grid { grid-template-columns: minmax(0, 1fr); }
   .org-tab { padding: 10px 12px; }
 }
+.page-hero .hero-jump { display: flex; flex-wrap: wrap; gap: 8px; }

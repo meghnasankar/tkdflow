@@ -3,6 +3,10 @@
     "id": "taegeuk-1",
     "name": "Taegeuk Il Jang",
     "koreanName": "태극 1장",
+    "aliases": [
+      "Taeguk 1",
+      "Taeguk Il Jang"
+    ],
     "meaning": "Heaven & Light",
     "organization": "WT",
     "category": "wt",
@@ -43,6 +47,12 @@
     "id": "taegeuk-2",
     "name": "Taegeuk Yi Jang",
     "koreanName": "태극 2장",
+    "aliases": [
+      "Taegeuk I Jang",
+      "Taegeuk Ee Jang",
+      "Taeguk 2",
+      "Taeguk Yi Jang"
+    ],
     "meaning": "Lake & Joy",
     "organization": "WT",
     "category": "wt",
@@ -83,6 +93,10 @@
     "id": "taegeuk-3",
     "name": "Taegeuk Sam Jang",
     "koreanName": "태극 3장",
+    "aliases": [
+      "Taeguk 3",
+      "Taeguk Sam Jang"
+    ],
     "meaning": "Fire & Sun",
     "organization": "WT",
     "category": "wt",
@@ -123,6 +137,10 @@
     "id": "taegeuk-4",
     "name": "Taegeuk Sa Jang",
     "koreanName": "태극 4장",
+    "aliases": [
+      "Taeguk 4",
+      "Taeguk Sa Jang"
+    ],
     "meaning": "Thunder & Dignity",
     "organization": "WT",
     "category": "wt",
@@ -163,6 +181,10 @@
     "id": "taegeuk-5",
     "name": "Taegeuk Oh Jang",
     "koreanName": "태극 5장",
+    "aliases": [
+      "Taeguk 5",
+      "Taeguk Oh Jang"
+    ],
     "meaning": "Wind & Gentleness",
     "organization": "WT",
     "category": "wt",
@@ -203,6 +225,10 @@
     "id": "taegeuk-6",
     "name": "Taegeuk Yuk Jang",
     "koreanName": "태극 6장",
+    "aliases": [
+      "Taeguk 6",
+      "Taeguk Yuk Jang"
+    ],
     "meaning": "Water & Softness",
     "organization": "WT",
     "category": "wt",
@@ -243,6 +269,10 @@
     "id": "taegeuk-7",
     "name": "Taegeuk Chil Jang",
     "koreanName": "태극 7장",
+    "aliases": [
+      "Taeguk 7",
+      "Taeguk Chil Jang"
+    ],
     "meaning": "Mountain & Stillness",
     "organization": "WT",
     "category": "wt",
@@ -283,6 +313,10 @@
     "id": "taegeuk-8",
     "name": "Taegeuk Pal Jang",
     "koreanName": "태극 8장",
+    "aliases": [
+      "Taeguk 8",
+      "Taeguk Pal Jang"
+    ],
     "meaning": "Earth & Infinity",
     "organization": "WT",
     "category": "wt",
@@ -323,6 +357,10 @@
     "id": "koryo",
     "name": "Koryo",
     "koreanName": "고려",
+    "aliases": [
+      "Koryeo",
+      "Goryeo"
+    ],
     "meaning": "The Goryeo Kingdom",
     "organization": "WT",
     "category": "wt",
@@ -363,6 +401,9 @@
     "id": "keumgang",
     "name": "Keumgang",
     "koreanName": "금강",
+    "aliases": [
+      "Geumgang"
+    ],
     "meaning": "Diamond Mountain",
     "organization": "WT",
     "category": "wt",
@@ -443,6 +484,9 @@
     "id": "pyongwon",
     "name": "Pyongwon",
     "koreanName": "평원",
+    "aliases": [
+      "Pyeongwon"
+    ],
     "meaning": "A Vast Plain",
     "organization": "WT",
     "category": "wt",
@@ -483,6 +527,9 @@
     "id": "sipjin",
     "name": "Sipjin",
     "koreanName": "십진",
+    "aliases": [
+      "Shipjin"
+    ],
     "meaning": "Ten Perfections",
     "organization": "WT",
     "category": "wt",
@@ -563,6 +610,9 @@
     "id": "chon-ji",
     "name": "Chon-Ji",
     "koreanName": "천지",
+    "aliases": [
+      "Cheon-Ji"
+    ],
     "meaning": "Heaven & Earth",
     "organization": "ITF",
     "category": "itf",
@@ -763,6 +813,9 @@
     "id": "joong-gun",
     "name": "Joong-Gun",
     "koreanName": "중근",
+    "aliases": [
+      "Jung-Geun"
+    ],
     "meaning": "Ahn Joong-Gun",
     "organization": "ITF",
     "category": "itf",
