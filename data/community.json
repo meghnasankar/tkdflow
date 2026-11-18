@@ -49,6 +49,18 @@
       ]
     },
     {
+      "id": "school-forms",
+      "category": "Forms & curriculum",
+      "kind": "Personal organizer",
+      "title": "Write down your school’s forms",
+      "body": "List your school’s own belt or level names in your order with the forms for each, then print it. Saved only in your browser; no account needed.",
+      "url": "school-forms.html",
+      "tags": [
+        "Private",
+        "Printable"
+      ]
+    },
+    {
       "id": "events",
       "category": "Competitions",
       "kind": "Events calendar",
