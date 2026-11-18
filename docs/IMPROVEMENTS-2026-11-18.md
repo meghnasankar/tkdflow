@@ -3,13 +3,14 @@
 This file tracks the extended improvement session that started from `main` at `d5ad883` (homepage member banner, PR 23).
 
 - **Batch 1 (learner foundations): published.** PR 24 merged as `main` `62d5ac5`. Codex verified it live: all 47 public files match source, security headers match, development paths return 404, the live Start here page has its 10 sections, and "Koryeo" finds Koryo. All 480 checks and the browser review passed: 9 widths, the 769–900 px header without wrapping, and native cross-tab sign-in, sign-out and token refresh with focus kept.
-- **Batch 2 (technique finder):** on `improve/technique-finder-2026-11-18`, cut from `62d5ac5`. Uncommitted, awaiting Codex review.
+- **Batch 2 (technique finder): published.** PR 25 merged as `main` `fde815c`. Codex verified it live: 47/47 public files byte-match, headers match, development paths return 404, the live finder works, and all 503 checks passed.
+- **Batch 3 (public Community reading):** on `improve/community-public-reading-2026-11-18`, cut from `fde815c`. Uncommitted, awaiting Codex review.
 
- Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
+Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 2:** implemented locally, uncommitted, awaiting Codex review.
+- **Batch 3:** implemented locally, uncommitted, awaiting Codex review.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -23,7 +24,7 @@ This file tracks the extended improvement session that started from `main` at `d
 | 3 | Header account link went stale after another tab signed in or out, and after a Back/Forward restore | `js/site.js` called `renderAccountNav()` once per load, while the homepage banner subscribes to live state. A cross-tab sign-out could show the guest banner beside "My profile". Codex's review added: re-rendering with an unchanged state must keep the focused link. | P1 usability | Published (PR 24); native cross-tab check passed |
 | 4 | No beginner orientation | `main` has no Start here page. Style differences, pose vs count and performer's left/right were explained only inside individual lessons. | P1 content | Published (PR 24) |
 | 5 | Header labels wrap on narrow desktops (769–900 px) | Codex browser measurement, signed out at 769 px: no horizontal overflow, and the header fits 69 px high. But "Forms Library" wraps (62 px link height), and Log in / Join free become two-line buttons 52.6 px tall. Normal at 900 px. Fix: for 769–900 px only, hide the decorative Korean logotype, trim nav and account-button padding, and keep labels on one line. Mobile menu and other breakpoints unchanged. "Start here" stays out of the top nav. | P2 layout | Published (PR 24); no wrapping at 769–900 px |
-| 6 | Technique and term finder across lesson poses | Library search works at form level only; "low block" correctly returns 5 forms. The 22 data-driven lessons hold 89 structured action types (`data/lessons/*.json` `sequence[].actions[].type`) plus stances and turns, and lessons accept `?pose=N`. A static index could link straight to every pose using a technique, with style filters. Enhancement, not a defect. | P2 feature | Batch 2 (`/techniques.html`) |
+| 6 | Technique and term finder across lesson poses | Library search works at form level only; "low block" correctly returns 5 forms. The 22 data-driven lessons hold 89 structured action types (`data/lessons/*.json` `sequence[].actions[].type`) plus stances and turns, and lessons accept `?pose=N`. A static index could link straight to every pose using a technique, with style filters. Enhancement, not a defect. | P2 feature | Published (PR 25, `/techniques.html`) |
 | 7 | Lessons do not link to the shared explanation of poses and directions | Each lesson says "Views are fixed to the starting stance…" but offers no further help. A small "How to read this lesson" link to `/start-here.html#sh-reading` would serve all 23 lessons. | P2 content | Open |
 | 8 | The lesson keyboard hint says "Home End first/last" | `taegeuk-1.html` `#player-keys` does not say whether these mean pose or time. Check `lesson-player.js` behaviour, then make the hint specific. | P3 accessibility | Open |
 | 9 | Library belt filter vs school differences | Belt facets are colour buckets across styles. The hub now says labels are typical, not rules; the library has no such note. Consider one line beside the belt facet. | P3 content | Open |
@@ -39,6 +40,9 @@ This file tracks the extended improvement session that started from `main` at `d
 | 19 | Korean pose names exist for Taegeuk Il Jang only | The 22 data-driven lessons carry no Korean terms (0 of 688 actions), and Taegeuk Il Jang's mapping is marked draft in its data file. The finder states this coverage. | P3 content | Open; needs sourced terms |
 | 20 | Optional search of spoken instructions | Narration cues line up one-to-one with poses in all 23 lessons (about 47 KB). Searching them would help ("chamber", "knee") but is noisy by default. Candidate: an opt-in "also search spoken instructions". | P3 feature | Open |
 | 21 | Stance indexing in the technique finder | The finder indexes only the techniques named in pose labels, not stances. The 22 data-driven lessons record a `stance` per sequence entry (walking, back, horse, front, crane, rear-foot, low, closed, fixed, parallel, cross, wide-parallel, cat), but Taegeuk Il Jang has stance only in description text. Adding stances needs source-backed stance names per style and a Taegeuk Il Jang mapping. Do not derive them from description prose. | P3 feature | Open; needs sourced stance terms |
+| 22 | Community started the account service in a known under-13 tab | `forum.js` `connect()` and `community.js` `loadGuides()` called `getAccountService()` without checking this tab's age screen. That started the SDK client, which can restore a stored session (for example someone else's on a shared device) and offer reporting, submissions, posting or moderation. My learning, lesson help (page and widget), profile and sign-in already guarded this. | P1 privacy/policy | Batch 3 |
+| 23 | Header account link in a known under-13 tab | `site.js` shows "My profile" whenever a session is stored, including in an under-13 tab; the profile page then shows the public guidance. Harmless, but an owner/UX decision. Batch 3 deliberately leaves the header unchanged. | P3 UX | Open (owner decision) |
+| 24 | Signed-out eligible visitors start the account service to read Community | Needed today to notice a sign-in. A lazier start (read publicly, start the client on a session-key `storage` event) changes sign-in timing and needs its own review. | P3 | Open |
 
 ## Batch 1 — learner foundations (published, PR 24)
 
@@ -174,3 +178,84 @@ Mutation checks confirmed failures without each of these: carrying pending text 
 - I used no browser. Layout at 320 px and above, focus after "Show all", and real Back/Forward need Codex QA.
 - The page script itself is exercised through the shared controller and the pure view function; its DOM wiring (reordering groups, show/hide, the "Show all" button) is not unit-tested.
 - Technique wording and Korean coverage are inherited from lesson data (items 18 and 19).
+
+## Batch 3 — public Community reading for known under-13 tabs
+
+### Finding
+See item 22. Anonymous readers already have exactly the needed access in `supabase/community.sql`:
+- column grants on `discussion_topics(id,category,title,body,author_handle,editorial,status,created_at)`;
+- column grants on `discussion_replies(id,topic_id,body,author_handle,status,created_at)`;
+- RLS that shows anonymous readers only published topics, and only published replies of published topics.
+
+A live public-only GET (`apikey` and `accept` headers only, no session or cookies) returned 200 for topics and guides. **No SQL, RLS, role, key or package change.**
+
+### Change
+- **`js/lib/public-read.js`** (new): the bounded, stateless transport extracted from `public-faq.js`. It sends only `apikey`, `accept` and (with a body) `content-type`, with `credentials:'omit'`, `cache:'no-store'` and `referrerPolicy:'no-referrer'`.
+  - `public-faq.js` keeps its signature and behaviour; its existing tests pass unchanged.
+- **`js/lib/public-discussions.js`** (new): published topics, editorial guides, one topic and replies.
+  - URLs are built with `URLSearchParams` and name exactly the granted columns.
+  - Each row is reduced to that allowlist and checked against the table's constraints: published, UUIDs, category list, title and body lengths, handle, boolean `editorial`, date.
+  - Topic ids are validated before any request and lowercased (uppercase deep links work; malformed ids send nothing).
+  - Absent topics (pending, hidden or deleted) return `data:null`; failures return errors.
+- **`js/lib/community-connection.js`** (new): decides public or account mode before any network call.
+  - **A known under-13 tab** (`INELIGIBLE` in this tab's age screen) never calls the account service. There is no session, no posting access, no sign-in listener and no member control.
+  - **Account mode** keeps the existing order: service, session, access when signed in, feed, then a selected topic.
+  - **Age screen rechecked:** after every account wait, a superseded request stops, and a tab whose age screen now says under 13 switches to public reading.
+  - **Back/Forward cache:** a persisted `pageshow` after the age screen recorded under 13:
+    - invalidates late account work (the `SessionGuard` generation);
+    - unsubscribes the sign-in listener, whose callback is also ignored if the SDK still calls it;
+    - stops the **existing** client's automatic token refresh once (`stopAutoRefresh`, best effort and contained);
+    - clears private controls and data, and re-reads publicly.
+
+    It never creates a client to stop it, never signs out and never touches stored credentials or other tabs. A client that arrives after the tab turned public is quieted without reading its session.
+  - **Loading:** owned by the connection. Every start (refresh, sign-in callback, back/forward restore) sets it, and only the newest request clears it, so the refresh button always ends enabled.
+- **`forum.js`** renders the connection state.
+  - Member controls (report, composer, submissions, moderation, sign-in prompt) come from `communityControls()`, which returns none in public mode.
+  - Public mode shows "Reading is open to everyone." and a neutral service line.
+  - Topic links are lowercased on load and on Back/Forward.
+- **`community.js`** reads discussion guides publicly for every visitor. The resources view never starts the account service.
+- **Unchanged:** the global header (item 23), and adult, teen and moderator flows.
+
+### Tests
+`tests/community-public.test.mjs` has 24 tests:
+- requests match the SQL grants and categories;
+- headers, credentials and cache options;
+- allowlist reduction and row checks;
+- UUID validation and lowercasing (including uppercase deep links);
+- absent, failing, malformed and timed-out responses;
+- the public-answers transport;
+- an under-13 tab: no account, auth or listener calls;
+- the adult, teen, guest and moderator account path;
+- back/forward restore and a pending account connection abandoned;
+- the age screen changing during each account wait;
+- refresh races, failures keeping the guides, selected and absent topics, hidden guides not reinserted;
+- the loading lifecycle across refresh, sign-in callbacks (pending and idle) and restore, plus the page's single button writer;
+- auto-refresh stopped once for a prior client and for a late client, never for ordinary refreshes, with failures contained;
+- a teen moderator (moderator, not adult): queue and reports available, no public composer, and nothing in an under-13 tab;
+- page wiring;
+- every module that starts the account service checks the age screen first.
+
+Mutation checks confirmed a failure without each guard. Two survivors are equivalent:
+- reply topic comparison: `publicReplies` already lowercases;
+- the stop-once set: a tab cannot return to account mode after an under-13 result.
+
+### QA fixture (outside the repo)
+`/private/tmp/tkdflow-community-public-fixture.mjs` serves the real pages and replaces `account-service.js` and `public-read.js` with clearly labelled fakes, so no request reaches Supabase.
+- **Shows:** account-service starts, auto-refresh stops, sign-outs and public requests.
+- **Scenarios:**
+  - under 13 with a planted fake adult/moderator session;
+  - under 13 without a session;
+  - eligible adult, teen, adult moderator, teen moderator (16) and signed-out visitors; moderators see one synthetic pending topic and one open report;
+  - slow, failing and malformed feeds, and a slow account service;
+  - live sign-in and sign-out;
+  - uppercase, hidden and malformed deep links;
+  - the resources view;
+  - a real Back test ("record under 13 on another page, then press Back"); a browser may reload instead of restoring from the cache, which still tests the first-load guard;
+  - "Simulate cached return: under 13 (no reload)", which records under 13 and dispatches `pageshow` with `persisted:true` on the existing page, so the clearing of private controls and the stop/unsubscribe of the old client can be observed. It is labelled as a simulation.
+
+Run it with `node /private/tmp/tkdflow-community-public-fixture.mjs --port 8931`.
+
+### Known limits
+- I used no browser. Real back/forward-cache behaviour, the layout and focus need Codex QA with the fixture.
+- The age screen is per tab (sessionStorage). A new tab is unscreened, as documented in `account-age-policy.md`.
+- **Withdrawing an editorial guide** needs two steps. A successful live feed already excludes hidden or rejected rows, but if the live read fails the page falls back to the guides bundled in `data/forum.json`, which stay publicly readable. So withdrawing a guide also means removing it from that file.
