@@ -229,7 +229,7 @@ test('the Community pages use the connection and public reader; guides never sta
  assert.ok(forum.includes('createCommunityConnection({eligibility:createEligibilityStore()'),'the page passes this tab’s age screen');
  assert.ok(forum.includes("window.addEventListener('pageshow',e=>connection.pageShown(e));"),'a back/forward restore is handed to the connection');
  assert.doesNotMatch(forum,/getAccountService\(/,'the page never starts the service itself');
- for(const control of ["controls().report)panel.append","canReport?h('button'","controls().composer)panel.append","!show.composer","!show.moderation","!show.submissions","!show.signIn"])
+ for(const control of ["const live=mode==='public'||Boolean(client),canReport=controls().report","canReport?h('button',{type:'button',class:'report-button','data-fk':'detail:report'","canReport?h('button',{type:'button',class:'report-button','data-fk':`reply:","controls().composer?(draft||composer({reply:true,topic}))","!show.composer","!show.moderation","!show.submissions","!show.signIn"])
   assert.ok(forum.includes(control),`member control gated: ${control}`);
  assert.ok(forum.includes("mode==='public'?'Reading is open to everyone.'"),'no sign-in prompt in public mode');
 });
@@ -400,7 +400,7 @@ test('a teen moderator (moderator, not adult) keeps the review queue and reports
  assert.ok(forum.includes('if(!client||!access.moderator)return;'),'the queue (topics, replies and reports) needs moderator access only');
  assert.ok(forum.includes("$('moderation').hidden=!show.moderation;")&&forum.includes("$('moderation-link').hidden=!show.moderation;"));
  assert.ok(forum.includes("$('topic-composer').hidden=!show.composer;")&&forum.includes("$('start-topic-link').hidden=!show.composer;"),'new-topic composer follows adult access');
- assert.ok(forum.includes('if(controls().composer)panel.append(draft||composer({reply:true,topic}));'),'reply composer follows adult access');
+ assert.ok(forum.includes('controls().composer?(draft||composer({reply:true,topic}))'),'reply composer follows adult access');
  const restored=harness({sessionUser:'teen-moderator',accessData:{adult:false,moderator:true}});await restored.connection.connect();
  restored.elig.value=INELIGIBLE;await restored.connection.pageShown({persisted:true});
  assert.deepEqual(communityControls(restored.last()),{composer:false,moderation:false,report:false,submissions:false,signIn:false},'an under-13 tab gets none of it, even with this session stored');

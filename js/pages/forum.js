@@ -12,6 +12,7 @@ import {createEligibilityStore} from '../lib/age-gate.js';
 import {listTopics,listReplies,discussionAccess,discussionProblem,submitTopic,submitReply,reportContent,moderationQueue,moderateContent,reviewSubmissions,discussionUrl,publishedTopic,copyDiscussionLink,resolveReport,reportDecisionMessage} from '../lib/discussions.js';
 import {publicTopics,publicTopic,publicReplies,canonicalUuid} from '../lib/public-discussions.js';
 import {createCommunityConnection,communityControls,NOTICES} from '../lib/community-connection.js';
+import {keepFocus,findKey,focusTarget} from '../lib/focus-keep.js';
 const $=id=>document.getElementById(id),params=new URLSearchParams(location.search);
 /* Topic links may carry an upper-case UUID; the database returns lower case. */
 const topicParam=v=>canonicalUuid(v)||v;
@@ -23,7 +24,19 @@ const categoryName=id=>doc.categories.find(c=>c.id===id)?.title||id;
 function message(text,error=false){$('discussion-message').textContent=text;$('discussion-message').className=error?'form-status error':'form-status';}
 function writeUrl(){history.replaceState(null,'',discussionUrl({category:active,query,topic:selected}));}
 function selectCategory(id){active=id;selected=null;writeUrl();render();}
-function openTopic(id){selected=id;writeUrl();render();$('topic-detail').scrollIntoView({block:'start',behavior:'smooth'});}
+/* Explicit navigation moves focus; deep links, Back/Forward and background
+   refreshes never do (they only keep focus that a re-render would drop). */
+let origin=null;
+function openTopic(id,part='link'){
+ origin={id,part};selected=id;writeUrl();render();
+ const heading=$('topic-detail-title');
+ if(heading&&!$('topic-detail').hidden)focusTarget(heading,{scroll:true,scrollTarget:$('topic-detail')});
+}
+function closeTopic(){
+ const closed=selected,key=origin?.id===closed?`topic:${closed}:${origin.part}`:`topic:${closed}:link`;
+ origin=null;selected=null;writeUrl();render();
+ focusTarget(findKey($('forum-content'),key)||$('forum-summary'),{scroll:true});
+}
 function report(kind,id){
  if(document.getElementById(`report-${id}`)){document.getElementById(`report-${id}`).focus();return;}
  const form=h('form',{class:'discussion-form',on:{submit:async e=>{e.preventDefault();const reason=form.querySelector('textarea').value.trim();if(reason.length<5||reason.length>500)return;const button=form.querySelector('button');button.disabled=true;const token=guard.token(),r=await reportContent(client,kind,id,reason);if(!guard.isCurrent(token))return;message(r.error?'The report could not be sent. Try again.':'Report received for moderator review.',!!r.error);if(!r.error)form.remove();else button.disabled=false;}}},h('label',{for:`report-${id}`},'What should a moderator check?'),h('textarea',{id:`report-${id}`,required:true,minLength:5,maxLength:500,rows:3}),h('button',{type:'submit',class:'btn btn-secondary btn-sm'},'Send report'));
@@ -39,29 +52,42 @@ function composer({reply=false,topic=null}={}){
   form.reset();message('Submitted for moderation. Your username will appear with the text after a moderator approves it.');loadSubmissions();
  }}},h('h3',{},reply?'Write a reply':'Start a discussion'));
  if(!reply){form.append(h('label',{for:'topic-title'},'Title'),h('input',{id:'topic-title',name:'title',type:'text',minLength:8,maxLength:160,required:true}),h('label',{for:'topic-category'},'Category'),h('select',{id:'topic-category',required:true},...doc.categories.map(c=>h('option',{value:c.id},c.title))));}
- const id=reply?'reply-body':'topic-body';form.append(h('label',{for:id},reply?'Reply':'Question or discussion'),h('textarea',{id,rows:6,minLength:reply?10:20,maxLength:reply?4000:8000,required:true}),h('label',{class:'discussion-consent'},h('input',{type:'checkbox',required:true}),'I want my username and this text to be public after moderation.'),h('p',{class:'field-help'},'Use respectful language and credit your sources. Leave out contact details, school schedules and other private information.'),h('button',{type:'submit',class:'btn btn-primary'},'Submit for review'));return form;
+ const id=reply?'reply-body':'topic-body';form.append(h('label',{for:id},reply?'Reply':'Question or discussion'),h('textarea',{id,'data-fk':reply?'detail:reply':'composer:body',rows:6,minLength:reply?10:20,maxLength:reply?4000:8000,required:true}),h('label',{class:'discussion-consent'},h('input',{type:'checkbox',required:true}),'I want my username and this text to be public after moderation.'),h('p',{class:'field-help'},'Use respectful language and credit your sources. Leave out contact details, school schedules and other private information.'),h('button',{type:'submit',class:'btn btn-primary'},'Submit for review'));return form;
 }
 async function detail(topic,{preserveDraft=false}={}){
  const request=++detailRequest,token=guard.token(),panel=$('topic-detail');
- const draft=preserveDraft&&panel.dataset.topicId===topic.id?panel.querySelector('#reply-body')?.closest('form'):null;panel.dataset.topicId=topic.id;panel.hidden=false;replaceChildren(panel,h('button',{type:'button',class:'btn btn-secondary btn-sm',on:{click:()=>{selected=null;writeUrl();render();}}},'← All topics'),h('p',{class:'section-label'},categoryName(topic.category)),h('h2',{},topic.title),h('p',{class:'topic-author'},topic.editorial?'TKDflow discussion guide':`By @${topic.author_handle}`),...paragraph(topic.body));
- const shareStatus=h('p',{class:'discussion-share-status',role:'status'});panel.append(h('button',{type:'button',class:'btn btn-secondary btn-sm',on:{click:async()=>{const ok=await copyDiscussionLink(location.origin,topic.id);if(guard.isCurrent(token)&&selected===topic.id)shareStatus.textContent=ok?'Discussion link copied.':'Copy this discussion’s address from your browser to share it.';}}},'Copy discussion link'),shareStatus);
- if(topic.resourceUrl)panel.append(h('a',{href:safeHref(topic.resourceUrl),class:'text-link'},'Open the related resource →'));
- if(controls().report)panel.append(h('button',{type:'button',class:'report-button',on:{click:()=>report('topic',topic.id)}},'Report this topic'));
- panel.append(h('h3',{},'Replies'));const holder=h('div',{'aria-live':'polite'});panel.append(holder);
- if(mode==='public'||client){const canReport=controls().report,r=await connection.replies(topic.id);if(selected!==topic.id||request!==detailRequest||!guard.isCurrent(token))return;
-  if(r.error)replaceChildren(holder,h('p',{},'Replies could not be loaded. Refresh to try again.'));
-  else if(!r.data?.length)replaceChildren(holder,h('p',{},'No published replies yet.'));
-  else replaceChildren(holder,...r.data.map(reply=>h('article',{class:'discussion-reply'},h('p',{class:'topic-author'},`@${reply.author_handle}`),...paragraph(reply.body),canReport?h('button',{type:'button',class:'report-button',on:{click:()=>report('reply',reply.id)}},'Report reply'):null)));
- }else replaceChildren(holder,h('p',{},'Member replies will appear here when the account service is connected.'));
- if(controls().composer)panel.append(draft||composer({reply:true,topic}));else panel.append(h('p',{class:'discussion-access'},mode==='public'?'Reading is open to everyone.':session?'Reading is open to everyone. Public posting is available only to adult accounts with a completed profile.':h('a',{href:'/auth.html',class:'text-link'},'Sign in to join the discussion')));
+ const draft=preserveDraft&&panel.dataset.topicId===topic.id?panel.querySelector('#reply-body')?.closest('form'):null;panel.dataset.topicId=topic.id;panel.hidden=false;
+ const live=mode==='public'||Boolean(client),canReport=controls().report;
+ const holder=h('div',{'aria-live':'polite'},h('p',{},live?'Loading replies…':'Member replies will appear here when the account service is connected.'));
+ const shareStatus=h('p',{class:'discussion-share-status',role:'status'});
+ // Everything except the replies is built synchronously, including a preserved
+ // reply draft, so focus and its caret are restored before any await.
+ keepFocus(panel,()=>{
+  replaceChildren(panel,h('button',{type:'button',class:'btn btn-secondary btn-sm','data-fk':'detail:back',on:{click:closeTopic}},'← All topics'),h('p',{class:'section-label'},categoryName(topic.category)),h('h2',{id:'topic-detail-title','data-fk':'detail:title'},topic.title),h('p',{class:'topic-author'},topic.editorial?'TKDflow discussion guide':`By @${topic.author_handle}`),...paragraph(topic.body),
+   h('button',{type:'button',class:'btn btn-secondary btn-sm','data-fk':'detail:copy',on:{click:async()=>{const ok=await copyDiscussionLink(location.origin,topic.id);if(guard.isCurrent(token)&&selected===topic.id)shareStatus.textContent=ok?'Discussion link copied.':'Copy this discussion’s address from your browser to share it.';}}},'Copy discussion link'),shareStatus,
+   topic.resourceUrl?h('a',{href:safeHref(topic.resourceUrl),class:'text-link','data-fk':'detail:resource'},'Open the related resource →'):null,
+   canReport?h('button',{type:'button',class:'report-button','data-fk':'detail:report',on:{click:()=>report('topic',topic.id)}},'Report this topic'):null,
+   h('h3',{},'Replies'),holder,
+   controls().composer?(draft||composer({reply:true,topic})):h('p',{class:'discussion-access'},mode==='public'?'Reading is open to everyone.':session?'Reading is open to everyone. Public posting is available only to adult accounts with a completed profile.':h('a',{href:'/auth.html',class:'text-link'},'Sign in to join the discussion')));
+  panel.setAttribute('aria-labelledby','topic-detail-title');
+ },{fallback:()=>$('topic-detail-title')});   // a focused control that is rebuilt later (e.g. a reply's Report) lands on the heading
+ if(!live)return;
+ const r=await connection.replies(topic.id);if(selected!==topic.id||request!==detailRequest||!guard.isCurrent(token))return;
+ // Only the replies area changes after the await; focus elsewhere is untouched.
+ if(r.error)replaceChildren(holder,h('p',{},'Replies could not be loaded. Refresh to try again.'));
+ else if(!r.data?.length)replaceChildren(holder,h('p',{},'No published replies yet.'));
+ else replaceChildren(holder,...r.data.map(reply=>h('article',{class:'discussion-reply'},h('p',{class:'topic-author'},`@${reply.author_handle}`),...paragraph(reply.body),canReport?h('button',{type:'button',class:'report-button','data-fk':`reply:${reply.id}:report`,on:{click:()=>report('reply',reply.id)}},'Report reply'):null)));
 }
 function render({preserveDraft=false}={}){if(!doc)return;if(!doc.categories.some(c=>c.id===active))active='all';
- replaceChildren($('category-nav'),h('button',{type:'button',class:'category-btn','aria-pressed':String(active==='all'),on:{click:()=>selectCategory('all')}},'All categories'),...doc.categories.map(c=>h('button',{type:'button',class:'category-btn','aria-pressed':String(active===c.id),on:{click:()=>selectCategory(c.id)}},c.title)));
+ keepFocus($('category-nav'),()=>replaceChildren($('category-nav'),h('button',{type:'button',class:'category-btn','data-fk':'cat:all','aria-pressed':String(active==='all'),on:{click:()=>selectCategory('all')}},'All categories'),...doc.categories.map(c=>h('button',{type:'button',class:'category-btn','data-fk':`cat:${c.id}`,'aria-pressed':String(active===c.id),on:{click:()=>selectCategory(c.id)}},c.title))));
  const q=query.trim().toLowerCase(),shown=topics.filter(t=>(active==='all'||t.category===active)&&(!q||`${t.title} ${t.body}`.toLowerCase().includes(q)));
  $('forum-summary').textContent=`${shown.length} topic${shown.length===1?'':'s'}${query?` matching “${query.trim()}”`:''}.`;
- replaceChildren($('forum-content'),...shown.map(t=>h('article',{class:'discussion-card'},h('div',{class:'example-meta'},h('span',{class:'badge badge-navy'},categoryName(t.category)),h('span',{class:'badge badge-muted'},t.editorial?'Discussion guide':'Member topic')),h('h3',{},h('a',{href:discussionUrl({category:active,query,topic:t.id}),on:{click:e=>{e.preventDefault();openTopic(t.id);}}},t.title)),h('p',{},t.body.split('\n')[0]),h('button',{type:'button',class:'btn btn-secondary btn-sm',on:{click:()=>openTopic(t.id)}},'Read discussion →'))));
- if(!shown.length)replaceChildren($('forum-content'),h('p',{class:'status-panel'},'No topics match. Try another category or search.'));
- const topic=topics.find(t=>t.id===selected);$('topic-detail').hidden=!topic;if(topic){const key=topic.id+':'+guard.generation+':'+mode+':'+Boolean(client)+':'+access.adult;if(key!==detailKey){detailKey=key;detail(topic,{preserveDraft});}}else{detailKey=null;detailRequest++;if(selected){$('topic-detail').hidden=false;replaceChildren($('topic-detail'),h('p',{},feedState==='loading'?'Loading this discussion…':topicLoadError===selected||feedState==='unavailable'?'This discussion could not be loaded. Use Refresh discussions to try again.':'This discussion is unavailable or has not been published.'),h('a',{href:discussionUrl(),class:'text-link'},'Browse all discussions'));}}
+ // A focused topic that is no longer listed falls back to the results summary.
+ keepFocus($('forum-content'),()=>{
+  if(!shown.length)replaceChildren($('forum-content'),h('p',{class:'status-panel'},'No topics match. Try another category or search.'));
+  else replaceChildren($('forum-content'),...shown.map(t=>h('article',{class:'discussion-card'},h('div',{class:'example-meta'},h('span',{class:'badge badge-navy'},categoryName(t.category)),h('span',{class:'badge badge-muted'},t.editorial?'Discussion guide':'Member topic')),h('h3',{},h('a',{href:discussionUrl({category:active,query,topic:t.id}),'data-fk':`topic:${t.id}:link`,on:{click:e=>{e.preventDefault();openTopic(t.id,'link');}}},t.title)),h('p',{},t.body.split('\n')[0]),h('button',{type:'button',class:'btn btn-secondary btn-sm','data-fk':`topic:${t.id}:read`,on:{click:()=>openTopic(t.id,'read')}},'Read discussion →'))));
+ },{fallback:()=>$('forum-summary')});
+ const topic=topics.find(t=>t.id===selected);$('topic-detail').hidden=!topic;if(topic){const key=topic.id+':'+guard.generation+':'+mode+':'+Boolean(client)+':'+access.adult;if(key!==detailKey){detailKey=key;detail(topic,{preserveDraft});}}else{detailKey=null;detailRequest++;if(selected){$('topic-detail').hidden=false;$('topic-detail').removeAttribute('aria-labelledby');keepFocus($('topic-detail'),()=>replaceChildren($('topic-detail'),h('p',{},feedState==='loading'?'Loading this discussion…':topicLoadError===selected||feedState==='unavailable'?'This discussion could not be loaded. Use Refresh discussions to try again.':'This discussion is unavailable or has not been published.'),h('a',{href:discussionUrl(),class:'text-link','data-fk':'detail:browse'},'Browse all discussions')),{fallback:()=>$('forum-summary')});}}
  const show=controls();
  $('topic-composer').hidden=!show.composer;if(show.composer&&!$('topic-composer').children.length)$('topic-composer').append(composer());
  $('moderation').hidden=!show.moderation;
