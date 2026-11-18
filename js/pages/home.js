@@ -8,6 +8,7 @@ import { validateForms, validateEvents } from '../lib/validators.js';
 import {getLearningService,learningMessage} from '../lib/learning-service.js';
 import {learningCard} from '../lib/learning-ui.js';
 import {icon} from '../lib/icons.js';
+import {createCtaRenderer} from '../lib/home-cta.js';
 import { h, replaceChildren } from '../lib/dom.js';
 
 const FEATURED = ['taegeuk-1', 'taegeuk-4', 'koryo', 'keumgang', 'chon-ji', 'do-san', 'songahm-1', 'taebaek'];
@@ -49,13 +50,15 @@ async function events() {
   } catch { /* the static teaser text stays accurate */ }
 }
 
+/* Closing banner follows the shared learning service, which already tracks
+   sign-in, sign-out, token expiry, other tabs and the age screen through the
+   one account client. Loading shows the neutral library banner immediately. */
 function cta() {
-  if (!accountsConfigured() || !ACCOUNTS.signupEnabled) return;
-  $('cta-title').textContent = 'Create a free account';
-  $('cta-text').textContent = 'Save forms and resume lessons privately across devices. Free, with no ads.';
-  replaceChildren($('cta-actions'),
-    h('a', { href: '/auth.html?mode=register', class: 'btn btn-primary btn-lg' }, 'Create a free account'),
-    h('a', { href: '/about.html', class: 'btn btn-lg btn-ghost-dark' }, 'About TKDflow'));
+  getLearningService().subscribe(createCtaRenderer((next) => {
+    $('cta-title').textContent = next.title;
+    $('cta-text').textContent = next.text;
+    replaceChildren($('cta-actions'), ...next.actions.map((a) => h('a', { href: a.href, class: `btn btn-lg ${a.primary ? 'btn-primary' : 'btn-ghost-dark'}` }, a.label)));
+  }, () => ({ configured: accountsConfigured(), signupEnabled: ACCOUNTS.signupEnabled })));
 }
 
 forms();

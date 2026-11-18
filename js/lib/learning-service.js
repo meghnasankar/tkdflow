@@ -3,28 +3,32 @@ import {bounded,currentSession} from './account-ops.js';
 import {getAccountService,initAccountService,hasStoredSession} from './account-service.js';
 import {createEligibilityStore,INELIGIBLE} from './age-gate.js';
 import {FORM_IDS,GUEST_KEY,learningRecord,validPatch,mergePatch,applyLearningPatch,createBrowserLearningStore} from './learning-model.js';
+/** The server refused because the signed-in account has not confirmed its email or completed its profile. */
+export function setupNeeded(error){return error?.code==='42501'&&/Confirm your email|complete your profile/i.test(String(error?.message||''));}
 export class LearningState {
  constructor({browserStore=createBrowserLearningStore(),now=()=>new Date().toISOString(),ms=8000}={}) {
   this.browserStore=browserStore;this.now=now;this.ms=ms;this.mode='loading';this.owner=null;this.client=null;
-  this.records=new Map();this.pending=new Map();this.listeners=new Set();this.generation=0;this.worker=null;this.error='';this.allowAccount=true;
+  this.records=new Map();this.pending=new Map();this.listeners=new Set();this.generation=0;this.worker=null;this.error='';this.allowAccount=true;this.reason=null;
  }
- snapshot(){return {generation:this.generation,allowAccount:this.allowAccount,mode:this.mode,records:[...this.records.values()].map(row=>({...row})),pending:this.pending.size+(this.worker?1:0),error:this.error,persistent:this.browserStore.persistent};}
+ /* signedIn/accountReady/reason describe account state for page CTAs without any personal details.
+    reason: 'setup' (signed in, email or profile not complete), 'error' (could not load), 'session' (sign-in could not be checked). */
+ snapshot(){return {generation:this.generation,allowAccount:this.allowAccount,mode:this.mode,signedIn:Boolean(this.owner),accountReady:Boolean(this.client),reason:this.reason,records:[...this.records.values()].map(row=>({...row})),pending:this.pending.size+(this.worker?1:0),error:this.error,persistent:this.browserStore.persistent};}
  subscribe(fn){this.listeners.add(fn);fn(this.snapshot());return()=>this.listeners.delete(fn);}
  emit(){const state=this.snapshot();for(const fn of this.listeners)fn(state);}
  get(id){const row=this.records.get(id);return row?{...row}:null;}
  async connect(client,owner) {
-  const generation=++this.generation;this.client=client;this.owner=owner;this.pending.clear();this.worker=null;this.records.clear();this.error='';
+  const generation=++this.generation;this.client=client;this.owner=owner;this.pending.clear();this.worker=null;this.records.clear();this.error='';this.reason=null;
   this.mode='loading';this.emit();
   if(!owner){for(const row of this.browserStore.read())this.records.set(row.form_id,row);this.mode='browser';this.emit();return;}
   const result=await bounded(()=>client.rpc('my_learning',{account_id:owner}),{ms:this.ms,label:'Learning list'});
   if(generation!==this.generation)return;
   if(result.error||result.data?.version!==1||!Array.isArray(result.data.records)){
-   this.mode='unavailable';this.error='Your saved learning could not load. Please retry, or finish your profile if setup is incomplete.';this.emit();return;
+   this.mode='unavailable';this.reason=setupNeeded(result.error)?'setup':'error';this.error='Your saved learning could not load. Please retry, or finish your profile if setup is incomplete.';this.emit();return;
   }
   for(const raw of result.data.records){const row=learningRecord(raw);if(row)this.records.set(row.form_id,row);}
   this.mode='account';this.emit();
  }
- unavailable(){++this.generation;this.owner=null;this.records.clear();this.pending.clear();this.worker=null;this.mode='unavailable';this.error='Your sign-in could not be checked. Retry to load your saved learning.';this.emit();}
+ unavailable(){++this.generation;this.owner=null;this.reason='session';this.records.clear();this.pending.clear();this.worker=null;this.mode='unavailable';this.error='Your sign-in could not be checked. Retry to load your saved learning.';this.emit();}
  update(id,patch) {
   const clean=validPatch(patch);
   if(!FORM_IDS.includes(id)||!clean||!['browser','account'].includes(this.mode))return false;
