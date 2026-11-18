@@ -23,13 +23,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 14 (Community pages of 50): published.** PR 38 merged as `main` `102ebdc`. Codex verified it live: 7/7 public files, headers and development 404s; 9 topics shown; real anonymous API reads (new topics 9, after the cursor 8, replies 0), with no errors and no writes.
 - **Batch 15 (Replay move): published.** PR 39 merged as `main` `fda0dc9`. Codex verified it live: 29/29 files, 6 headers and development 404s; in native Chrome the Replay button and pose were healthy, with 0 errors.
 - **Batch 16 (read-only live checker, deploy exclusions and current docs): published.** PR 40 merged as `main` `1bff3c5`. In production, `npm run check:live` passed 194/194, including a 404 for `/.gitattributes`.
-- **Batch 17 (Community search by every word):** on `improve/community-search-2026-11-18`, cut from `1bff3c5`. Passed Codex's browser review; uncommitted, ready for root's release. Scope: item 37.
+- **Batch 17 (Community search by every word): published.** PR 41 merged as `main` `1a5d72c`. In production, live checks passed 194/194, and Codex's native query checks passed.
+- **Batch 18 (Clear confirmation and other tabs):** on `fix/planner-clear-conflict-2026-11-18`, cut from `1a5d72c`. Passed Codex's two-tab browser review; uncommitted, ready for root's release. Scope: item 38.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 17:** implemented locally and browser-reviewed by Codex, uncommitted, awaiting release.
+- **Batch 18:** implemented locally and browser-reviewed by Codex, uncommitted, awaiting release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -66,7 +67,9 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
-| 37 | Community search needed exact phrases | `js/pages/forum.js` filtered with one lower-cased substring of title plus body, so word order, hyphens, spacing and accents changed the results, unlike the library search. | P3 usability | Batch 17 |
+| 39 | After one failed save the planner never retries in that visit, and the notice misdescribes reload | Code path: a throwing `setItem` (for example a full origin quota) sets `state = 'unavailable'` (`js/lib/school-planner.js:287`), so every later `save()`/`replace()` returns memory-only. The notice says the list lasts only until reload, but a reload shows the last saved, older list. Low likelihood (a valid list is at most about 105 KB). | P3 | Open (backlog only) |
+| 38 | A stale Clear confirmation could delete another tab's newer school list | Reproduced in the final focused audit with the real planner page in the test DOM. Tab A opened "Clear all 2 levels, 0 forms?"; tab B saved a third level; tab A silently adopted it ("Updated with changes made in another tab.") with the confirmation and its old count still open. Yes then saved an empty list ("List cleared."). | P2 data safety | Batch 18 |
+| 37 | Community search needed exact phrases | `js/pages/forum.js` filtered with one lower-cased substring of title plus body, so word order, hyphens, spacing and accents changed the results, unlike the library search. | P3 usability | Published (PR 41) |
 | 36 | Release docs named a live checker that didn't exist, and production served `/.gitattributes` | SETUP.md and docs/RELEASE.md told the owner to run `npm run check:live`, but there was no such script. Codex's read-only live audit found `/.gitattributes` answering 200 (whitespace rules only, no credentials), while other dot-files returned 404. SETUP.md and RELEASE.md §8 still described the earlier accounts-off, report-only state as current. | P2 maintenance | Published (PR 40) |
 | 35 | No way to watch one move again | Codex's plan audit: Play after choosing a pose already rewound to that move's start in some cases, but then played on to the end of the form. There was no "play this move once and stop". | P2 learning | Published (PR 39) |
 | 34 | The homepage Explore cards hid the newer tools | Three of the six cards led to the forms library (the library, one lesson and the library filtered to lessons). Find a technique, the read and print companions, My school’s forms, the lesson answers and the first-tournament guide were reachable from the homepage only through the footer. Five of the six chips restated the section label. | P3 discoverability | Published (PR 36) |
@@ -1238,4 +1241,46 @@ With the previous substring search, both tests fail. The full suite passes 673/6
   - **Slow page:** typing "discussion learning" during a 2-second page kept focus in search at 100.
   - **Failed last page:** it kept 100 topics and the query. After the fixture recovered, Retry reached 130 unique topics, with the query preserved.
   - **Layout and errors:** no overflow at 320 px, and 0 errors on the ordinary path.
+- **Not tested:** a real screen reader and Safari.
+
+## Batch 18 — Clear confirmation and other tabs (item 38)
+
+### Change (`js/pages/school-planner.js`)
+- **Counts as editing:** `editing()` now also counts an open Clear confirmation. Another tab's save then shows the existing conflict notice instead of being adopted silently under it.
+- **The confirmation closes when the list changes:** a new `dismissClear()` closes an open Clear confirmation whenever this tab's list changes:
+  - every in-tab change through `commit()` (add, rename, move, remove, Undo, import);
+  - **Load the other version**;
+  - **Keep this tab's version**;
+  - adopting another tab's save.
+
+  A later Yes can therefore only clear the version whose count the visitor just saw. Focus moves to the Clear button only if it was inside the confirmation.
+- **Root review fix:** with only the `editing()` change, Load the other version adopted the 3 levels but left the "Clear all 2 levels" confirmation open. Because the tab then knew the new saved value, that stale Yes could save an empty list. The dismissal closes this path.
+- **Yes:** it now closes the confirmation before clearing, so focus still lands in the add-level field.
+- **A Yes that arrives anyway:** if a stale Yes is pressed while the conflict is unresolved, `store.save()` returns a conflict ("List cleared. Not saved yet: choose which version to keep above."), and the other tab's list stays saved.
+- **Not added:** automatic recovery, deletion or any new flow. No storage or quota change (item 39 stays backlog).
+
+### Tests (`tests/school-planner.test.mjs`, +3 page tests on the real page and store)
+- **Clear open for 2 levels, another tab saves a third:**
+  - the conflict is shown and the confirmation is unchanged;
+  - a stale Yes leaves White, Yellow and Black saved, with the "Not saved yet" status;
+  - Load the other version shows all three.
+- **After Load the other version:**
+  - the old confirmation is closed and 3 levels are saved;
+  - a fresh Clear says "Clear all 3 levels"; Cancel keeps all 3, and Yes clears.
+- **In this tab:** an Add, and then a rename, each close an open confirmation, and a reopened one counts 3.
+- **Old code:**
+  - with no fix, the first test fails;
+  - with only the `editing()` line, the second and third fail ("the confirmation for the old 2 levels is closed", "an add closes the confirmation").
+- **Full suite:** 687/687.
+
+### Known limits
+- **Notice wording:** the conflict notice's existing sentence ("What you are typing is kept; choose which version to keep.") is reused unchanged, although here the visitor may have been confirming rather than typing.
+- **Keep this tab's version:** after a stale Yes, choosing it still replaces the other version, as for any conflict; it's an explicit choice offered by the notice.
+- **Browser review** (Codex: native Chrome, two real tabs on an isolated local port, synthetic QA levels only):
+  - **Old code:** the bug reproduced. A's "Clear 2" confirmation stayed open after B's 3 levels were adopted, with no conflict.
+  - **Fixed, stale Yes:** with A's confirmation for 3 open and B adding a 4th, A shows the conflict and still 3 levels. A stale Yes gives the "Not saved yet" warning, and B, reloaded, still has 4 stored.
+  - **Fixed, Load other:** Load the other version gave a fresh 4. Then, with Clear open for 4 and B adding a 5th, Load the other version closed the confirmation, showed 5 and focused the list heading. A fresh Clear counted 5; Cancel kept 5 and focused Clear.
+  - **Same tab:** an Add (6) closed an open confirmation; so did a rename.
+  - **Normal Clear:** a fresh Clear for 6 saved 0, which persisted after B reloaded, and focus went to the add field.
+  - **Errors:** 0 console errors.
 - **Not tested:** a real screen reader and Safari.
