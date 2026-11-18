@@ -29,7 +29,7 @@ const NO_ACCESS=Object.freeze({adult:false,moderator:false});
 const NO_MORE=Object.freeze({hasMore:false,cursor:null,status:'idle'});
 
 export function createCommunityConnection({eligibility,account,publicReader,staticTopics=[],selected=()=>null,onState=()=>{},guard=new SessionGuard(),schedule=fn=>setTimeout(fn,0)}){
- let request=0,subscription=null,client=null,session=null,access=NO_ACCESS;
+ let request=0,subscription=null,client=null,session=null,access=NO_ACCESS,serviceFailed=false;
  const state={mode:null,feedState:'loading',topics:staticTopics,topicLoadError:null,notice:'loading',loading:false,more:NO_MORE};
  let feedRows=null,extras=[];
  // `loaded` counts every distinct topic shown (feed pages plus a deep-linked one); the cursor stays the feed's own.
@@ -94,7 +94,9 @@ export function createCommunityConnection({eligibility,account,publicReader,stat
   // After every wait: stop if superseded; switch to public reading if this
   // tab's age screen now says under 13 (a page restored by Back).
   const halt=()=>!current()||ineligible(),switchOrStop=()=>current()&&ineligible()?connect():undefined;
-  const svc=await account.getService();
+  // After an unavailable start-up, the next start (Refresh) retries it once.
+  const svc=await (serviceFailed&&account.retryService?account.retryService():account.getService());
+  serviceFailed=svc?.status==='unavailable';
   if(halt()){
    // The service finished after this tab turned public: quiet the client it
    // created instead of using it (no session read, no listener).
@@ -181,6 +183,6 @@ export const NOTICES=Object.freeze({
  'public-unavailable':'Discussion guides are available. Published member discussions could not be reached; refresh to try again.',
  'account-ready':'Read freely. Adult members can submit topics and replies for moderation; younger accounts stay private.',
  'account-feed-unavailable':'Discussion guides are available. Member discussions could not be reached; refresh to try again.',
- 'service-unavailable':'Discussion guides are available. Member discussions could not be connected; try refreshing.',
+ 'service-unavailable':'Discussion guides are available. Member discussions could not be connected. Use Refresh discussions to try again.',
  'session-error':'We could not check your sign-in. Refresh to try again; discussion guides remain available.',
 });

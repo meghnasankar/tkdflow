@@ -15,7 +15,8 @@ export const accountsConfigured=()=>true;export const sessionStorageKey=()=>'tes
 export const hasStoredSession=()=>Boolean(globalThis.__testAccount?.session);export const withTimeout=p=>p;
 export const friendlyError=(e,f='Test error')=>f;
 export function getAccountService(){return globalThis.__testAccount?.service()??Promise.resolve({status:'unavailable',reason:'Test'});}
-export const initAccountService=getAccountService;`;
+export const initAccountService=getAccountService;
+export const retryAccountService=()=>(globalThis.__testAccount?.retry??getAccountService)();`;
 register('data:text/javascript,'+encodeURIComponent(`export async function resolve(specifier,context,next){
  if(/(^|\\/)account-service\\.js$/.test(specifier))return {url:'data:text/javascript,'+encodeURIComponent(${JSON.stringify(FAKE_ACCOUNT)}),shortCircuit:true};
  return next(specifier,context);}`));
@@ -28,7 +29,7 @@ const reply=(id,topicId)=>({id,topic_id:topicId,body:'Synthetic reply body text.
 const deferred=()=>{let resolve;const promise=new Promise(r=>{resolve=r;});return {promise,resolve};};
 let run=0;
 
-async function community({search='',mode='public',reducedMotion=false,serviceGate=null,topics=[topic(T1,'First synthetic topic title'),topic(T2,'Second synthetic topic title')]}={}){
+async function community({search='',mode='public',reducedMotion=false,serviceGate=null,firstService='ready',topics=[topic(T1,'First synthetic topic title'),topic(T2,'Second synthetic topic title')]}={}){
  const state={topics,replies:[reply(R1,T1)],replyGate:null,pageGate:null,pending:[],user:'adult-1',authListeners:[]};
  // Answers the client's real query: equality filters, the keyset or=(…), order and limit.
  const cmp=(a,b)=>a<b?-1:a>b?1:0;
@@ -53,7 +54,7 @@ async function community({search='',mode='public',reducedMotion=false,serviceGat
   el('section',{id:'moderation',hidden:''},el('button',{type:'button',id:'load-moderation'}),el('div',{id:'moderation-queue'}))));
  if(mode==='account'){
   const query=table=>{const filters=[];const run=async()=>{
-   if(filters.some(f=>f[0]==='neq'))return {data:table==='discussion_replies'?state.pending:[],error:null};
+   if(filters.some(f=>f[0]==='neq'))return {data:table==='discussion_replies'?state.pending:(state.pendingTopics||[]),error:null};
    if(table==='discussion_replies'&&state.replyGate)await state.replyGate.promise;
    const list=table==='discussion_topics'?state.topics:state.replies;
    const rows=list.filter(r=>filters.every(([,k,v])=>String(r[k])===String(v)));
@@ -61,7 +62,10 @@ async function community({search='',mode='public',reducedMotion=false,serviceGat
    const q={select:()=>q,order:()=>q,limit:()=>q,or:()=>q,eq:(k,v)=>{filters.push(['eq',k,v]);return q;},neq:(k,v)=>{filters.push(['neq',k,v]);return q;},maybeSingle:()=>run().then(r=>({data:r.data[0]||null,error:null})),then:(a,b)=>run().then(a,b)};return q;};
   const client={auth:{getSession:async()=>({data:{session:state.user?{user:{id:state.user}}:null},error:null}),onAuthStateChange:fn=>{state.authListeners.push(fn);return {data:{subscription:{unsubscribe(){}}}};},stopAutoRefresh:async()=>{}},
    from:query,rpc:async name=>name==='discussion_access'?{data:{adult:true,moderator:false},error:null}:{data:null,error:{message:'test'}}};
-  globalThis.__testAccount={session:true,service:async()=>{if(serviceGate)await serviceGate.promise;return {status:'ready',client};}};
+  // firstService:'unavailable' makes the first start fail; retries (Refresh) then succeed.
+  const calls={service:0,retry:0};state.calls=calls;
+  globalThis.__testAccount={session:true,service:async()=>{calls.service++;if(serviceGate)await serviceGate.promise;return firstService==='unavailable'?{status:'unavailable',reason:'test'}:{status:'ready',client};},
+   retry:async()=>{calls.retry++;return {status:'ready',client};}};
  }else globalThis.__testAccount=null;
  await import(`../js/pages/forum.js?run=${++run}`);
  await settle(40);
@@ -367,4 +371,33 @@ test('a search in the URL is applied with the same rules, and categories still f
   env.key(env.$('category-nav'),'cat:forms-discussion').click();
   assert.deepEqual(titles(env),[TRANSITION]);
  }finally{await done(env);}
+});
+
+/* ── Refresh recovery and the submissions limit (item 46) ─────────── */
+test('Refresh discussions recovers after the account service was unavailable, and never restarts a healthy one',async()=>{
+ let env=await community({mode:'account',firstService:'unavailable'});
+ try{
+  assert.match(env.$('forum-service').textContent,/Use Refresh discussions to try again/);
+  assert.equal(env.state.calls.service,1);
+  await env.refresh();
+  assert.equal(env.state.calls.retry,1,'the explicit Refresh retries the start-up');
+  assert.doesNotMatch(env.$('forum-service').textContent,/could not be connected/);
+  assert.ok(env.$('forum-content').querySelectorAll('article').length>0,'the member feed loads');
+ }finally{await done(env);}
+ env=await community({mode:'account'});
+ try{await env.refresh();assert.equal(env.state.calls.retry,0,'a healthy service is reused');}finally{await done(env);}
+});
+
+test('Your submissions says which list shows only its 30 most recent items, and only that one',async()=>{
+ const mk=(n,kind)=>Array.from({length:n},(_,i)=>kind==='reply'?{...reply(`cccccccc-0000-4000-8000-${String(i).padStart(12,'0')}`,T1),status:'pending',created_at:`2026-11-1${i%9}T10:00:00Z`}:{...topic(`dddddddd-0000-4000-8000-${String(i).padStart(12,'0')}`,`Pending synthetic topic ${i}`),status:'pending'});
+ for(const [topics,replies,expect] of [[31,2,'Showing your 30 most recent unpublished topics.'],[2,31,'Showing your 30 most recent unpublished replies.'],[31,31,'Showing your 30 most recent unpublished topics and your 30 most recent unpublished replies.'],[30,30,null]]){
+  const env=await community({mode:'account',topics:[topic(T1,'First synthetic topic title')]});
+  try{
+   env.state.pendingTopics=mk(topics,'topic');env.state.pending=mk(replies,'reply');
+   env.$('refresh-submissions').click();await settle(40);
+   const note=env.$('my-submissions-list').querySelectorAll('p').find(p=>p.classList?.contains('submissions-limit'));
+   assert.equal(note?.textContent??null,expect,`${topics} topics, ${replies} replies`);
+   assert.equal(env.$('my-submissions-list').querySelectorAll('article').length,Math.min(topics,30)+Math.min(replies,30));
+  }finally{await done(env);}
+ }
 });

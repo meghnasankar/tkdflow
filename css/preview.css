@@ -130,3 +130,4 @@
 #resources-search .search-bar { min-height: 44px; }
 .resources-clear { margin-top: 8px; }
 #resources-q { min-height: 44px; }
+.submissions-limit { margin: 0 0 10px; font-size: .9rem; color: var(--gray-600); }

@@ -32,13 +32,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 23 (search and shareable filters for learning resources): published.** PR 47 merged as `main` `ac23656`. Codex verified it live: main CI passed, the 5 changed public files match, the live query "print read" shows 1 result, the search input is 44 px, the discussion guides are below the resources, and there were 0 errors.
 - **Batch 24 (2027 ATU National Championships, dates TBA): published.** PR 48 merged as `main` `5d65fec`. Codex verified it in production: main CI passed, the 2 changed source files match, and the live ATU card shows dates TBA with no calendar export and 0 errors.
 - **Batch 25 (first-tournament checklist recovers from failed saves): published.** PR 49 merged as `main` `44f573a`. Codex verified it in production: main CI passed, hosting is healthy, the 3 changed source files match, and security headers and private-path 404s pass.
-- **Batch 31 (Log out is reported only when it's proven):** on `fix/profile-signout-proof-2026-11-18`, cut from `44f573a`. Passed Codex's browser review; ready for root's release. Scope: item 52.
+- **Batch 31 (Log out is reported only when it's proven): published.** PR 50 merged as `main` `d634ce8`. Codex verified it in production: main CI passed, the 5 changed source files match, security headers and private-path 404s pass, and the live signed-in header shows Log out with 0 errors.
+- **Batch 26 (Community Refresh recovery and an honest submissions limit):** on `fix/community-connection-retry-2026-11-18`, cut from `d634ce8`. Passed Codex's browser review; ready for root's release. Scope: items 46 and 47.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 31:** implemented locally and browser-reviewed by Codex, awaiting release.
+- **Batch 26:** implemented locally and browser-reviewed by Codex, awaiting release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -75,7 +76,9 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
-| 52 | Profile Log out could report a sign-out it hadn't proved | `js/pages/profile.js` passed `stillSignedIn: () => hasStoredSession()`, which returns false when storage can't be read, so `logout()` treated unreadable storage as a verified sign-out and the page redirected home. Its auth listener said "You have been signed out" on any null session, even with a stored copy still present. Password recovery used the same weak proof for "signed out". Codex reproduced both profile cases in native Chrome with the synthetic fixture (`/private/tmp/tkdflow-profile-logout-fixture.mjs`). No live account was affected. | P2 accuracy | Batch 31 |
+| 52 | Profile Log out could report a sign-out it hadn't proved | `js/pages/profile.js` passed `stillSignedIn: () => hasStoredSession()`, which returns false when storage can't be read, so `logout()` treated unreadable storage as a verified sign-out and the page redirected home. Its auth listener said "You have been signed out" on any null session, even with a stored copy still present. Password recovery used the same weak proof for "signed out". Codex reproduced both profile cases in native Chrome with the synthetic fixture (`/private/tmp/tkdflow-profile-logout-fixture.mjs`). No live account was affected. | P2 accuracy | Published (PR 50) |
+| 47 | "Your submissions" quietly stopped at 30 topics and 30 replies | `reviewSubmissions` used `.limit(30)` on each list with no indication that more existed. | P3 honesty | Batch 26 |
+| 46 | Community Refresh couldn't recover from an unavailable account service | `getAccountService()` kept the first start-up result for the page, including `unavailable`, so **Refresh discussions** (and its "try refreshing" notice) could never succeed without reloading. | P3 reliability | Batch 26 |
 | 45 | The first-tournament checklist stopped saving after one failed write, and another tab could replace unsaved ticks | `js/lib/tournament-guide.js` `set()` made any write error a permanent `unavailable` state; the notice said ticks would be lost on leaving, although a reload shows the last saved ticks; `first-tournament.js` rebuilt the store on every `storage` event; and each save wrote the whole in-memory object, so a stale tab could erase another tab's other views. | P2 data safety | Published (PR 49) |
 | 44 | The 2027 ATU National Championships wasn't listed, and the 2026 note said no 2027 announcement existed | Codex rechecked the official sources on 18 November (evidence: root's `atu-announcement-source.json`). `https://www.joinatu.com/` announces the 2027 National Championships at the Gas South Convention Center, Duluth, Georgia. Its main announcement says May 28–29, 2027, but its countdown says May 27, 2027, and the linked `/event-schedule` still shows 2026 (May 22–23). | P3 content | Published (PR 48) |
 | 43 | Community learning resources had no search, and the category couldn't be shared | The resources view (`community.html?view=resources`) kept its category in a page variable, so it wasn't in the address, wasn't shareable and wasn't restored by Back. It also had no search, unlike the discussions pane. | P3 usability | Published (PR 47) |
@@ -1757,3 +1760,50 @@ With the previous substring search, both tests fail. The full suite passes 673/6
   - 0 console errors.
   - Codex independently ran `tests/profile-logout.test.mjs` and `tests/header-logout.test.mjs`, which passed 25/25, including the generation cases.
 - **Not tested:** a physical phone, Safari and a screen reader.
+
+## Batch 26 — Community Refresh recovery and an honest submissions limit (items 46, 47)
+
+### Change
+- **`js/lib/account-service.js`:** the shared start-up now comes from a small `createServiceCache(start)`.
+  - `getAccountService()` is unchanged in behaviour.
+  - The new `retryAccountService()` restarts **only** an attempt that has finished as `unavailable`. An attempt in progress, a ready client or switched-off accounts are returned unchanged, so a healthy client is never created twice, and simultaneous retries share one attempt.
+- **Community** (`js/lib/community-connection.js`, `js/pages/forum.js`): after an unavailable start-up, the next start (**Refresh discussions**) uses the retry. The notice now says "…could not be connected. Use Refresh discussions to try again." Under-13 public reading still never calls either.
+- **Your submissions** (`js/lib/discussions.js`, `js/pages/forum.js`): each list requests 31 and shows at most 30.
+  - A line appears only for the list actually cut short: "Showing your 30 most recent unpublished topics.", "…replies.", or both.
+  - Newest-first order and the reply parent links are unchanged.
+- **Not changed:** the database.
+
+### Tests
+- **New `tests/account-retry.test.mjs` (2):**
+  - an unavailable result is retried once, the retry is shared and becomes the cached result;
+  - ready, disabled and in-progress attempts are never restarted.
+- **`tests/community-focus.test.mjs` (+2, real `forum.js`):**
+  - an unavailable start-up, then Refresh, retries once and loads the member feed; a healthy service is reused;
+  - submissions with 31+2, 2+31, 31+31 and 30+30 items: the right line, or none, and the right number of cards.
+- **Test fakes:** the two test-only account-service fakes now export `retryAccountService`.
+- **Spot mutants:**
+  - **Caught (three):** retry restarting a ready client; Refresh never retrying; both lists claimed when one is cut.
+  - **Equivalent (one):** a guard against a stale attempt's result, which can't happen because only settled attempts are replaced. It's kept as defence.
+- **Full suite on this branch:** 754/754 (`npm run check`).
+- **Rebase note:** batch 23's committed `css/preview.css` had gained lines after `.forum-more`, so this branch's copy of the patch appends the same `.submissions-limit` rule after them; nothing else changed. It applied unchanged on top of batch 31.
+
+### Known limits
+- **Browser review** (Codex, native Chrome, synthetic fake-service fixture on port 9015; JSON and a screenshot in Codex's batch-26 notes):
+  - **Refresh recovery:**
+    - The start-up is unavailable: attempt 1.
+    - Making the fake service healthy doesn't retry by itself.
+    - Refresh makes attempt 2, which recovers the feed and the private controls.
+    - A later Refresh stays at 2 attempts, because the healthy client is reused.
+  - **Submissions limit:**
+    - 31 topics and 2 replies give 32 cards and the topics-only notice.
+    - 2 topics and 31 replies give 32 cards and the replies-only notice.
+    - 31 and 31 give 60 cards and the notice for both.
+    - 30 and 30 give 60 cards and no notice.
+  - **Phone width:** no overflow at 390 px.
+  - **Under 13:**
+    - a simulated cached return hides the private controls;
+    - a reload in a known under-13 tab makes zero account-service attempts.
+  - 0 app errors.
+  - Codex independently ran `tests/account-retry.test.mjs` and `tests/community-focus.test.mjs`, which passed 25/25.
+- **Not tested:** a physical phone, Safari and a screen reader.
+- **Not wired to the retry yet:** the header Log out and the learning service.

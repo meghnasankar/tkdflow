@@ -8,7 +8,7 @@
 import { ACCOUNTS } from '../config.js';
 import { publicKeyProblem } from './key-check.js';
 
-let pending = null;
+
 
 export function accountsConfigured(cfg = ACCOUNTS) {
   return Boolean(cfg.enabled && cfg.supabaseUrl && cfg.supabaseAnonKey);
@@ -153,10 +153,26 @@ export async function initAccountService(cfg = ACCOUNTS, deps = {}) {
   }
 }
 
-export function getAccountService() {
-  if (!pending) pending = initAccountService();
-  return pending;
+/** One shared start-up attempt per page. `get()` returns it (starting it once).
+ *  `retry()` is an explicit "try again": only an attempt that has finished as
+ *  unavailable is started once more (and shared again). An attempt still in
+ *  progress, a ready client or switched-off accounts are returned unchanged, so a
+ *  healthy client is never created twice and simultaneous retries share one attempt. */
+export function createServiceCache(start) {
+  let pending = null, settled = null;
+  const get = () => {
+    if (!pending) {
+      const attempt = start();
+      pending = attempt;
+      attempt.then((result) => { if (pending === attempt) settled = result; });
+    }
+    return pending;
+  };
+  return { get, retry() { if (settled?.status === 'unavailable') { pending = null; settled = null; } return get(); } };
 }
+const shared = createServiceCache(() => initAccountService());
+export function getAccountService() { return shared.get(); }
+export function retryAccountService() { return shared.retry(); }
 
 /** Turn a Supabase/PostgREST error into a safe, user-facing sentence. */
 export function friendlyError(error, fallback = 'Something went wrong. Please try again.') {

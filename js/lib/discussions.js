@@ -77,12 +77,18 @@ export function reportDecisionMessage(result){
 }
 
 // RLS exposes nonpublic rows only to their author; never select author UUIDs.
+/** The member's most recent unpublished topics and replies, up to 30 of each.
+ *  One extra row is requested per list to tell whether that list was cut short. */
+export const SUBMISSIONS_SHOWN=30;
 export async function reviewSubmissions(client){
  const [topics,replies]=await Promise.all([
-  bounded(()=>client.from('discussion_topics').select(TOPIC_COLUMNS).neq('status','published').order('created_at',{ascending:false}).limit(30),{label:'Your topics'}),
-  bounded(()=>client.from('discussion_replies').select(REPLY_COLUMNS).neq('status','published').order('created_at',{ascending:false}).limit(30),{label:'Your replies'}),
+  bounded(()=>client.from('discussion_topics').select(TOPIC_COLUMNS).neq('status','published').order('created_at',{ascending:false}).limit(SUBMISSIONS_SHOWN+1),{label:'Your topics'}),
+  bounded(()=>client.from('discussion_replies').select(REPLY_COLUMNS).neq('status','published').order('created_at',{ascending:false}).limit(SUBMISSIONS_SHOWN+1),{label:'Your replies'}),
  ]);
- return topics.error||replies.error?{error:true,data:null}:{error:null,data:[...(topics.data||[]).map(t=>({...t,kind:'topic'})),...(replies.data||[]).map(t=>({...t,kind:'reply'}))].sort((a,b)=>b.created_at.localeCompare(a.created_at))};
+ if(topics.error||replies.error)return {error:true,data:null,moreTopics:false,moreReplies:false};
+ const t=topics.data||[],r=replies.data||[];
+ return {error:null,moreTopics:t.length>SUBMISSIONS_SHOWN,moreReplies:r.length>SUBMISSIONS_SHOWN,
+  data:[...t.slice(0,SUBMISSIONS_SHOWN).map(x=>({...x,kind:'topic'})),...r.slice(0,SUBMISSIONS_SHOWN).map(x=>({...x,kind:'reply'}))].sort((a,b)=>b.created_at.localeCompare(a.created_at))};
 }
 export function discussionUrl({category='all',query='',topic=null}={}){
  const params=new URLSearchParams();if(category!=='all')params.set('category',category);if(query.trim())params.set('q',query.trim());if(topic)params.set('topic',topic);
