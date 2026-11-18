@@ -17,13 +17,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 8 (opt-in search of spoken instructions): published.** PR 32 merged as `main` `16260de`. Codex verified it live: 7/7 public files, security headers and development 404s; Koryo "throat" shows the 4 exact instructions; no account SDK loads.
 - **Batch 9 (full spoken instruction in Study view): published.** PR 33 merged as `main` `d77f81b`. Codex verified it live: 2/2 public files, headers and development 404s; real Chrome at 320×700 shows the caption at 47/47 and a 253 px canvas with the full body, controls visible without scrolling, and no errors.
 - **Batch 10 (My school’s forms, a private organizer): published.** PR 34 merged as `main` `665c3ff`. Codex verified it live: 72/72 public files, all headers and development 404s.
-- **Batch 11 (faster avatar garment construction):** on `improve/avatar-startup-2026-11-18`, cut from `665c3ff`. Passed Codex's browser timing and visual review; uncommitted, ready for root's release. Scope: item 33.
+- **Batch 11 (faster avatar garment construction): published.** PR 35 merged as `main` `0d0a340`. Codex verified it live: 2/2 public files, headers and development 404s; Sipjin ready in native Chrome with 0 errors.
+- **Batch 12 (homepage Explore by learner task):** on `improve/home-tool-discovery-2026-11-18`, cut from `0d0a340`. Passed Codex's browser review in real Chrome; uncommitted, ready for root's release. Scope: item 34.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 11:** implemented locally and browser-reviewed by Codex, uncommitted, awaiting release.
+- **Batch 12:** implemented locally and browser-reviewed by Codex, uncommitted, awaiting release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -60,11 +61,12 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
-| 33 | Every lesson page builds the avatar's garments in one long main-thread task | Codex's controlled foreground Chrome probe, same module: Taegeuk Il Jang rig construction 1411 ms (jacket 957, trousers 445); Sipjin 5234 ms (jacket 3649, trousers 1576), page visible throughout. The page can't respond to input during that task. Diagnostic only, not a device benchmark. | P2 performance | Batch 11 |
+| 34 | The homepage Explore cards hid the newer tools | Three of the six cards led to the forms library (the library, one lesson and the library filtered to lessons). Find a technique, the read and print companions, My school’s forms, the lesson answers and the first-tournament guide were reachable from the homepage only through the footer. Five of the six chips restated the section label. | P3 discoverability | Batch 12 |
+| 33 | Every lesson page builds the avatar's garments in one long main-thread task | Codex's controlled foreground Chrome probe, same module: Taegeuk Il Jang rig construction 1411 ms (jacket 957, trousers 445); Sipjin 5234 ms (jacket 3649, trousers 1576), page visible throughout. The page can't respond to input during that task. Diagnostic only, not a device benchmark. | P2 performance | Published (PR 35) |
 | 32 | No place to keep a school’s own order of forms | Schools use different belt names and orders, and the library’s belt filter is only a colour family. Learners had no private way to write down their own school’s list of levels and forms and print it. | P2 feature | Published (PR 34) |
 | 31 | Study view cut off long spoken instructions | Reproduced by Codex in real Chrome at 320×700, Study view, Taebaek pose 10: the 130-character instruction needs 3 lines but was clamped to 2 (`clientHeight` 31 vs `scrollHeight` 47). Short landscape clamped to 1 line. The full text was only in the DOM for screen readers. | P2 readability | Published (PR 33) |
 | 30 | Taebaek movement 14: the 180° right turn is shown as one stage | DTaF (physical p.58, printed p.52), root-verified: 14-1 is a closed stance facing Ma (back) and 14-2 faces Da2, so the turn is 90° then 90°. The site turns all 180° into pose 23 and none into pose 24; the final heading is the same. The school source gives a single 180°. A metadata-only split was modelled offline (pose 23 faces 180, pose 24 turns right 90°; narration timing still validates). Labels would need `cue.turn` updates, and pose 24's spoken text and audio don't mention the second turn. Details: `/private/tmp/tkdflow-taebaek14-followup.md`. | P3 content accuracy | Blocked (Meghna: source choice and any audio change) |
-| 29 | Saved-learning controls lose keyboard focus while saving | Reproduced by Codex in a real browser with the synthetic fixture (account mode, 3 s server). (1) Library: keyboard Unsave on Taegeuk Il Jang rebuilt the button natively `disabled`, focus became `<body>` and stayed there after confirmation. (2) My learning, Saved: Unsave on the middle card (Chon-Ji) removed the card and focus became `<body>`. (3) Lesson widget: Mark as practised, same as (1). All real backend traffic was 0. | P2 accessibility | Batch 7 |
+| 29 | Saved-learning controls lose keyboard focus while saving | Reproduced by Codex in a real browser with the synthetic fixture (account mode, 3 s server). (1) Library: keyboard Unsave on Taegeuk Il Jang rebuilt the button natively `disabled`, focus became `<body>` and stayed there after confirmation. (2) My learning, Saved: Unsave on the middle card (Chon-Ji) removed the card and focus became `<body>`. (3) Lesson widget: Mark as practised, same as (1). All real backend traffic was 0. | P2 accessibility | Published (PR 31) |
 
 ## Batch 1 — learner foundations (published, PR 24)
 
@@ -884,3 +886,49 @@ Output is identical: all five attributes match byte for byte in Node.
 - Construction still runs once per page, as one main-thread task, only shorter. A module Worker (option B in `/private/tmp/tkdflow-garment-performance-plan.md`) is the next step if Codex still measures a noticeable task.
 - Byte-identical means identical to what the same engine computed before. Engines may already differ from each other in the last bit of `Math.atan2` and `Math.hypot`; this change doesn't alter that.
 - The same garment code took about 3.8 times longer on Sipjin than on Taegeuk Il Jang in Codex's baseline. The cause wasn't investigated (other work on the page or garbage collection are possibilities), so the gain on each page has to be measured, not assumed.
+
+## Batch 12 — homepage Explore by learner task (item 34)
+
+### Change (`index.html` Explore section, `assets/icons.svg`, `js/lib/icons.js`, `css/home.css`)
+The six cards are now six distinct tasks, each with one sentence and one or two links:
+
+| Card | Links |
+|---|---|
+| Study a form | Open the forms library |
+| Find a technique | Find a technique |
+| Read or print a form | Read and print companions |
+| Plan your study | Open my learning · My school’s forms |
+| Community | Visit the community · Lesson questions & answers |
+| Events | View events · Your first tournament |
+
+- **Sentences:** each restates the target page's own description; there are no fixed counts.
+- **Removed:** the separate Taegeuk Il Jang and "All 23 lessons" cards, which still have their routes from the hero, Featured forms and the library. Also removed are the five generic chips.
+- **Events card:** keeps `#events-state` and `#events-teaser` with the same elements, classes and static text, so `home.js` is unchanged.
+- **Icon:** one new sprite icon, `page` (a sheet with a folded corner), for the read and print card. The other cards use existing icons.
+- **CSS:** two rules for a wrapping row of links.
+- **Unchanged:** the hero, stats, styles strip, Continue learning, Featured forms, founder teaser and member banner.
+
+### Tests (existing `tests/site.test.mjs`)
+- **Explore section:**
+  - six cards, each with a sprite icon;
+  - no destination offered twice;
+  - links to the library, finder, companions, My learning, My school’s forms, Community, lesson answers, events and the first-tournament guide;
+  - `#events-state` and `#events-teaser` exist once, stay on the Events card, and are still updated by `home.js`.
+- **Icon references:** the existing local-link test now also requires every `assets/icons.svg#…` reference on a page to exist in the sprite.
+- **Not pinned:** headings and sentences, so copy can change without editing tests. No mutants were run for this reversible copy and layout change. I checked by hand that renaming the `page` symbol, or repeating a destination, makes the tests fail.
+
+### Browser QA (Codex, real Chrome, local fixtures with a synthetic account only)
+Fixture on port 8994 with the real home and learning modules:
+- **Layout:** 320, 390, 820 and 1280 px, with 0 horizontal overflow. Six cards in 3×2 on desktop and one column on phones. Links are at least 30.5 px high (53 px where wrapped at 820).
+- **Icons:** all six render cleanly, including the new `page` icon at 26 px.
+- **Keyboard:** the Tab order of the 9 links matches the visual order. Enter on Find a technique, Read and print companions and My school’s forms reached the right heading and URL.
+- **Member and visitor:** a synthetic member sees Continue learning (Taegeuk Il Jang pose 5) and the Keep learning banner. After signing out, the banner offers Create a free account and Continue learning is hidden.
+- **Events:**
+  - Normal runtime text: 164 upcoming or announced events.
+  - With a forced 503 (fixture on port 8995): the static "Worldwide" text and the events and tournament links stay.
+- **Errors:** 0 on the ordinary path; the only error was the expected 503 on the failure fixture.
+- **Diff review:** Codex confirmed only the Explore copy, 2 CSS rules, one SVG symbol and its registry entry, the test guard and docs changed. Hero, stats, Featured forms, founder teaser and member banner logic are unchanged.
+
+### Known limits
+- No real screen-reader test; link names and the Tab order were checked in Chrome only.
+- Tested with a synthetic account and fixture data only, not live member data.
