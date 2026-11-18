@@ -176,5 +176,15 @@ export function installDom({url='https://tkdflow.com/',reducedMotion=false,sessi
  };
 }
 
-/** Let pending promises and zero-delay work settle. */
-export async function settle(rounds=20){for(let i=0;i<rounds;i++)await new Promise(r=>setImmediate(r));}
+/** Let pending promises, immediates AND zero-delay timers settle.
+ *  Each round waits for a timer turn as well as an immediate: page code that
+ *  schedules work with setTimeout(fn,0) (e.g. a reconnect after a sign-in
+ *  change) was queued earlier, so it always runs before our own timer, however
+ *  coarse or slow the machine's timers are. Waiting on immediates alone made
+ *  results depend on timer speed (a CI-only failure). */
+export async function settle(rounds=20){
+ for(let i=0;i<rounds;i++){
+  await new Promise(r=>setTimeout(r,0));
+  await new Promise(r=>setImmediate(r));
+ }
+}

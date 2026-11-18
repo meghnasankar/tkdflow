@@ -62,7 +62,9 @@ async function community({search='',mode='public',reducedMotion=false,serviceGat
  const $=id=>doc.getElementById(id),key=(root,k)=>root.querySelectorAll('[data-fk]').find(n=>n.dataset.fk===k);
  return {...env,state,$,key,refresh:async()=>{$('refresh-discussions').click();await settle(40);}};
 }
-const done=env=>{env.restore();globalThis.__testAccount=null;};
+/* Drain the page's scheduled work BEFORE restoring globals, so a late timer
+   from this test's page can never run against the next test's document. */
+const done=async env=>{await settle(10);env.restore();globalThis.__testAccount=null;};
 /* Identity checks: never let assert format whole (cyclic) DOM trees. */
 const is=(a,b,msg='not the expected element')=>assert.ok(a===b,`${msg} (got ${a?.dataset?.fk||a?.id||a?.tagName||a})`);
 const isnt=(a,b,msg='unexpectedly the same element')=>assert.ok(a!==b,msg);
@@ -80,7 +82,7 @@ test('opening a topic focuses its heading and scrolls the panel, honouring reduc
    assert.equal(env.$('topic-detail').getAttribute('aria-labelledby'),'topic-detail-title');
    const scroll=env.doc.scrolls.at(-1);
    is(scroll.element,env.$('topic-detail'));assert.equal(scroll.options.behavior,reducedMotion?'auto':'smooth');
-  }finally{done(env);}
+  }finally{await done(env);}
  }
 });
 
@@ -92,7 +94,7 @@ test('All topics returns focus to the link or button that opened the discussion'
    env.key(env.$('topic-detail'),'detail:back').click();
    assert.equal(fk(env.doc.activeElement),`topic:${T2}:${part}`);
    assert.ok(env.$('forum-content').contains(env.doc.activeElement));
-  }finally{done(env);}
+  }finally{await done(env);}
  }
 });
 
@@ -102,7 +104,7 @@ test('choosing a category keeps focus on the category button after the list is r
   const button=env.key(env.$('category-nav'),'cat:technique-qa');button.focus();button.click();
   assert.equal(fk(env.doc.activeElement),'cat:technique-qa');
   assert.equal(env.doc.activeElement.getAttribute('aria-pressed'),'true');
- }finally{done(env);}
+ }finally{await done(env);}
 });
 
 test('a background refresh keeps focus on a listed topic and never moves focus from elsewhere',async()=>{
@@ -115,7 +117,7 @@ test('a background refresh keeps focus on a listed topic and never moves focus f
   await env.refresh();
   is(env.doc.activeElement,search);
   assert.equal(env.doc.scrolls.length,0,'no scrolling');
- }finally{done(env);}
+ }finally{await done(env);}
 });
 
 test('a focused topic removed by a refresh hands focus to the results summary',async()=>{
@@ -125,7 +127,7 @@ test('a focused topic removed by a refresh hands focus to the results summary',a
   env.state.topics=env.state.topics.filter(t=>t.id!==T2);
   await env.refresh();
   is(env.doc.activeElement,env.$('forum-summary'));
- }finally{done(env);}
+ }finally{await done(env);}
 });
 
 test('a deep link opens the discussion without moving focus or scrolling',async()=>{
@@ -135,7 +137,7 @@ test('a deep link opens the discussion without moving focus or scrolling',async(
   assert.ok(env.$('topic-detail-title'));
   is(env.doc.activeElement,env.doc.body);
   assert.equal(env.doc.scrolls.length,0);
- }finally{done(env);}
+ }finally{await done(env);}
 });
 
 test('the focused discussion heading survives a background refresh that rebuilds the panel',async()=>{
@@ -147,7 +149,7 @@ test('the focused discussion heading survives a background refresh that rebuilds
   const after=env.$('topic-detail-title');
   isnt(after,before,'the panel was rebuilt');
   is(env.doc.activeElement,after,'focus is on the rebuilt heading');
- }finally{done(env);}
+ }finally{await done(env);}
 });
 
 test('a reply’s Report button that is rebuilt hands focus to the heading at once, and replies loading later never take it back',async()=>{
@@ -163,7 +165,7 @@ test('a reply’s Report button that is rebuilt hands focus to the heading at on
   env.state.replyGate.resolve();await settle(40);
   assert.ok(env.key(env.$('topic-detail'),`reply:${R1}:report`),'replies are back');
   is(env.doc.activeElement,search,'the replies arriving later do not move focus');
- }finally{done(env);}
+ }finally{await done(env);}
 });
 
 test('a reply draft keeps its text, focus and caret through a refresh, restored before replies load',async()=>{
@@ -181,7 +183,7 @@ test('a reply draft keeps its text, focus and caret through a refresh, restored 
   env.state.replyGate.resolve();await settle(40);
   is(env.doc.activeElement,env.$('forum-q'),'no delayed jump back to the draft');
   assert.equal(box.value,'Partial reply text');
- }finally{done(env);}
+ }finally{await done(env);}
 });
 
 test('Community points to public lesson answers and private 13+ lesson help without offering posting',()=>{
@@ -203,7 +205,7 @@ test('an unkeyed control inside the preserved draft (its consent checkbox) keeps
   consent.focus();
   await env.refresh();
   is(env.doc.activeElement,consent,'the same re-attached checkbox has focus');
- }finally{done(env);}
+ }finally{await done(env);}
 });
 
 /* ── a signed-in visitor opens a public guide before their session arrives ── */
@@ -223,7 +225,7 @@ test('opening a guide while the account service is still starting keeps focus on
   is(env.doc.activeElement,heading,'focus is on the (rebuilt) heading after the session arrives');
   assert.ok(env.$('reply-body'),'the signed-in adult now sees the reply form');
   assert.ok(env.$('reply-body')!==env.doc.activeElement,'focus was not moved into a private control');
- }finally{done(env);}
+ }finally{await done(env);}
 });
 
 test('if the visitor moves to search while the session is starting, its arrival does not pull focus back',async()=>{
@@ -234,7 +236,7 @@ test('if the visitor moves to search while the session is starting, its arrival 
   const search=env.$('forum-q');search.focus();
   gate.resolve();await settle(60);
   is(env.doc.activeElement,search);
- }finally{done(env);}
+ }finally{await done(env);}
 });
 
 test('a change to a different account removes the previous reply draft and does not restore focus into private controls',async()=>{
@@ -252,7 +254,7 @@ test('a change to a different account removes the previous reply draft and does 
   assert.ok(!env.$('topic-detail').contains(box),'the old draft is gone');
   assert.ok(env.doc.activeElement!==fresh,'focus is not placed into the new account’s form');
   assert.equal(env.$('topic-detail-title').textContent,'First synthetic topic title','the public discussion remains open');
- }finally{done(env);}
+ }finally{await done(env);}
 });
 
 test('other public reading controls (All topics) also keep focus when the first session arrives',async()=>{
@@ -265,5 +267,5 @@ test('other public reading controls (All topics) also keep focus when the first 
   const now=env.key(env.$('topic-detail'),'detail:back');
   assert.ok(now&&now!==back,'the panel was rebuilt');
   is(env.doc.activeElement,now,'focus is on the rebuilt All topics button');
- }finally{done(env);}
+ }finally{await done(env);}
 });

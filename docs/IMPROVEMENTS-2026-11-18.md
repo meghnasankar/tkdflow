@@ -366,3 +366,23 @@ Mutation checks: removing the restore fails 3 tests, and carrying private keys f
 
 ### Fixture
 `/private/tmp/tkdflow-navigation-fixture.mjs` gains "Toggle slow account start (3 s)": choose an eligible adult, toggle it on, open a guide before the session arrives, and watch the focus readout.
+
+### CI follow-up (PR 28): harness timing, not a product race
+- **Symptom:** PR 28's push CI passed, but its pull-request CI failed 2 of 553 tests in `tests/community-focus.test.mjs`:
+  - "a change to a different account removes the previous reply draft…": the reply form was `null`;
+  - "other public reading controls (All topics)…": the guide link was missing.
+
+  Both passed locally.
+- **Root cause:** `settle()` in `tests/helpers/mini-dom.mjs` waited only for `setImmediate` rounds. The page reconnects after a sign-in change with `setTimeout(connect, 0)`, so on a runner with slower or coarser timers the reconnect had not run when the first test checked. Its late timer then fired during the next test and redrew that test's document, which removed the guide link. The product behaviour is correct: private state clears first, then the page reconnects.
+- **Reproduced deterministically:** running the file with zero-delay timers held for at least 5 ms reproduced exactly the same two failures.
+- **Fix (tests only):**
+  - each `settle()` round now waits for a timer turn as well as an immediate, so earlier zero-delay page timers always run first;
+  - teardown in both page harnesses awaits `settle()` before restoring globals, so no late timer can reach the next test.
+
+  The account-isolation assertions are unchanged.
+- **Coverage:** `tests/harness-timing.test.mjs`:
+  - `settle()` drains an earlier zero-delay timer with timers slowed to 15 ms;
+  - the Events and Community page harnesses run in a child process with timers slowed to 5 ms, and must report 0 failures and exit with status 0.
+
+  Both tests fail with the old immediate-only `settle()`.
+- **Validation:** two full `npm run check` runs passed 555/555. The page harnesses also pass with timers slowed to 5 ms and 15 ms, and `git diff --check` is clean.
