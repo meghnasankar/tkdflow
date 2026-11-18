@@ -16,6 +16,9 @@ class FakeElement extends FakeNode {
  replaceChildren(...nodes){this.children=[...nodes];}
  get textContent(){return this.children.map(c=>c.textContent).join('');}
  set textContent(v){this.children=[new FakeText(v)];}
+ contains(n){return n===this||this.children.some(c=>c.contains?.(n));}
+ querySelector(sel){return sel==='a'?this.children.find(c=>c.tagName==='A')||null:null;}
+ focus(){globalThis.document.activeElement=this;}
 }
 const slot=new FakeElement('li');
 const store=new Map();

@@ -11,13 +11,14 @@ This file tracks the extended improvement session that started from `main` at `d
   - no errors, and all 527 checks passed.
 - **Batch 4 (keyboard and focus continuity): published.** PR 27 merged as `main` `d0fc54e`. Codex verified it live: 6/6 files match, headers and development 404s are correct, and Show more focuses the 25th event.
 - **Follow-up (Community initial focus): published.** PR 28 merged as `main` `9f5d5fd`, including the test-only CI timing fix `8835291`. Codex verified it live: source and header checks pass, the public heading keeps focus, and a teen moderator still has moderation but no public composer.
-- **Batch 5 (read and print companions):** on `improve/printable-companions-2026-11-18`, cut from `9f5d5fd`. Uncommitted, awaiting Codex review. Scope: items 27, 7 and 8.
+- **Batch 5 (read and print companions): published.** PR 29 merged as `main` `e86803d`. Codex verified it live: 69/69 public files, headers and development 404s; the live index lists all 23; Koryo shows its 52 poses; print works; the header uses root-absolute profile links.
+- **Batch 6 (age-aware header):** on `improve/age-aware-navigation-2026-11-18`, cut from `e86803d`. Uncommitted, awaiting Codex review. Scope: item 23.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 5:** implemented locally, uncommitted, awaiting Codex review.
+- **Batch 6:** implemented locally, uncommitted, awaiting Codex review.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -32,8 +33,8 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 4 | No beginner orientation | `main` has no Start here page. Style differences, pose vs count and performer's left/right were explained only inside individual lessons. | P1 content | Published (PR 24) |
 | 5 | Header labels wrap on narrow desktops (769–900 px) | Codex browser measurement, signed out at 769 px: no horizontal overflow, and the header fits 69 px high. But "Forms Library" wraps (62 px link height), and Log in / Join free become two-line buttons 52.6 px tall. Normal at 900 px. Fix: for 769–900 px only, hide the decorative Korean logotype, trim nav and account-button padding, and keep labels on one line. Mobile menu and other breakpoints unchanged. "Start here" stays out of the top nav. | P2 layout | Published (PR 24); no wrapping at 769–900 px |
 | 6 | Technique and term finder across lesson poses | Library search works at form level only; "low block" correctly returns 5 forms. The 22 data-driven lessons hold 89 structured action types (`data/lessons/*.json` `sequence[].actions[].type`) plus stances and turns, and lessons accept `?pose=N`. A static index could link straight to every pose using a technique, with style filters. Enhancement, not a defect. | P2 feature | Published (PR 25, `/techniques.html`) |
-| 7 | Lessons do not link to the shared explanation of poses and directions | Each lesson says "Views are fixed to the starting stance…" but offers no further help. A small "How to read this lesson" link to `/start-here.html#sh-reading` would serve all 23 lessons. | P2 content | Batch 5 |
-| 8 | The lesson keyboard hint says "Home End first/last" | `taegeuk-1.html` `#player-keys` does not say whether these mean pose or time. Check `lesson-player.js` behaviour, then make the hint specific. | P3 accessibility | Batch 5 (confirmed: Home and End select the first and last pose) |
+| 7 | Lessons do not link to the shared explanation of poses and directions | Each lesson says "Views are fixed to the starting stance…" but offers no further help. A small "How to read this lesson" link to `/start-here.html#sh-reading` would serve all 23 lessons. | P2 content | Published (PR 29) |
+| 8 | The lesson keyboard hint says "Home End first/last" | `taegeuk-1.html` `#player-keys` does not say whether these mean pose or time. Check `lesson-player.js` behaviour, then make the hint specific. | P3 accessibility | Published (PR 29; confirmed: Home and End select the first and last pose) |
 | 9 | Library belt filter vs school differences | Belt facets are colour buckets across styles. The hub now says labels are typical, not rules; the library has no such note. Consider one line beside the belt facet. | P3 content | Open |
 | 10 | Lesson content items marked unresolved | `unresolved` notes with `reviewStatus: pending` in do-san, joong-gun, koryo, pyongwon, sipjin, songahm-3, taebaek and yul-gok. Motion or sequence changes need primary-reference confidence and must keep the approved avatar look. | P2 content accuracy | Open; needs owner/Meghna for any instructor input |
 | 11 | Search ranking for partial words | Partial multi-word searches ("Il Jang") still match broadly and are sorted by curriculum, not relevance. Acceptable now that exact names win. | P3 | Open |
@@ -48,11 +49,11 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 20 | Optional search of spoken instructions | Narration cues line up one-to-one with poses in all 23 lessons (about 47 KB). Searching them would help ("chamber", "knee") but is noisy by default. Candidate: an opt-in "also search spoken instructions". | P3 feature | Open |
 | 21 | Stance indexing in the technique finder | The finder indexes only the techniques named in pose labels, not stances. The 22 data-driven lessons record a `stance` per sequence entry (walking, back, horse, front, crane, rear-foot, low, closed, fixed, parallel, cross, wide-parallel, cat), but Taegeuk Il Jang has stance only in description text. Adding stances needs source-backed stance names per style and a Taegeuk Il Jang mapping. Do not derive them from description prose. | P3 feature | Open; needs sourced stance terms |
 | 22 | Community started the account service in a known under-13 tab | `forum.js` `connect()` and `community.js` `loadGuides()` called `getAccountService()` without checking this tab's age screen. That started the SDK client, which can restore a stored session (for example someone else's on a shared device) and offer reporting, submissions, posting or moderation. My learning, lesson help (page and widget), profile and sign-in already guarded this. | P1 privacy/policy | Published (PR 26) |
-| 23 | Header account link in a known under-13 tab | `site.js` shows "My profile" whenever a session is stored, including in an under-13 tab; the profile page then shows the public guidance. Harmless, but an owner/UX decision. Batch 3 deliberately leaves the header unchanged. | P3 UX | Open (owner decision) |
+| 23 | Header account link in a known under-13 tab | `site.js` shows "My profile" whenever a session is stored, including in an under-13 tab; the profile page then shows the public guidance. Harmless, but an owner/UX decision. Batch 3 deliberately leaves the header unchanged. | P3 UX | Batch 6 |
 | 24 | Signed-out eligible visitors start the account service to read Community | Needed today to notice a sign-in. A lazier start (read publicly, start the client on a session-key `storage` event) changes sign-in timing and needs its own review. | P3 | Open |
 | 25 | Events: Show more and background renders lose keyboard focus | Reproduced live by Codex after batch 2: with 24 of 164 events shown, Show more rendered 48 cards but focus became `<body>`, and the next Tab reached the first existing card, not the first new one. In code, `render()` rebuilt every card and every select's options on filter changes, the one-minute ticker, tab visibility and Back/Forward. A focused card control or an open select could be replaced by the timer; that case was not reproduced live. | P2 accessibility | Published (PR 27) |
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
-| 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Batch 5 |
+| 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
 
 ## Batch 1 — learner foundations (published, PR 24)
@@ -442,3 +443,56 @@ Mutation checks (pages regenerated with each defect; 25 s cap) are all caught: a
 - **Companion pose and index lists** carry `role="list"`, because `list-style: none` can drop list semantics in some browser and screen-reader combinations. Numbering stays in the visible "Pose N" text.
 - **Print:** Kihap prints black.
 - **Mutants:** relative links (fail 5–6), no list role (fail 1) and red Kihap in print (fail 1) are all caught.
+
+## Batch 6 — age-aware header (item 23)
+
+### Change
+- **`js/lib/age-gate.js`:**
+  - `sharedEligibilityStore()` gives one store per page, wrapping the unchanged `createEligibilityStore()`;
+  - `onEligibilityChange(fn)` notifies only when the result in effect changes.
+  - Every reader on a page then sees a result that could only be kept in memory (session storage blocked). There is no reset or test hook.
+- **Age writers** record into the shared store. A review of every `.record(` call in `js/` found two pages; no code writes the age key directly.
+  - `js/pages/auth.js`: the age screen and an under-13 age typed into a profile form;
+  - `js/pages/profile.js` `showHeld()`: an account held for a recorded under-13 profile age. This one was missed in the first pass.
+
+  Their behaviour, including the existing sign-out and hold, is unchanged. Pure readers (Community, lesson help, My learning) still create their own store; they only read at load and never record.
+- **`js/site.js`:**
+  - **New first rule:** when this tab's age screen says under 13, the header shows one neutral link, "About accounts" → `/start-here.html#sh-community`. It is root-absolute and takes precedence over a stored session, accounts off and signup off. The stored session is not read in that case.
+  - **Unchanged:**
+    - the unchanged-state check;
+    - root-absolute links for eligible and unscreened tabs;
+    - cross-tab `storage` and back/forward `pageshow` refresh.
+  - **Same-page answers:** an answer recorded on the same page updates the header immediately through the change signal.
+  - **Focus** moves to the new link only if it was on a header account link that was replaced.
+- **No account library, sign-out, credential or storage writes, age-policy or backend change.**
+
+### Tests
+- `tests/age-nav.test.mjs` (7) runs each scenario in its own fresh Node process (`tests/helpers/age-nav-scenario.mjs`), so the shared store's state can't leak between cases. Covered:
+  - an under-13 tab with a stored session (About only; the session is read 0 times);
+  - accounts or signup off;
+  - a same-page answer, where focus moves only from a replaced link and stays elsewhere otherwise;
+  - the result is sticky;
+  - unrelated session changes and back/forward restores keep the same node and focus;
+  - blocked session storage, both a throwing getter and a throwing `setItem`: the header follows the shared store, and a separate store reads `null`;
+  - eligible and unscreened links;
+  - structural checks: `auth.js` uses the shared store, the header is read-only, and the age check comes before any session read;
+  - **every age writer** shares the header's store: a source scan finds every `.record(` caller in `js/` (currently `auth.js` and `profile.js`), and each must use `sharedEligibilityStore()` and create no private store;
+  - fresh processes (normal and blocked storage) record through `age-gate.js` exactly as a `js/pages/` writer resolves it, and confirm the same module and an immediate header switch.
+- `tests/site-nav.test.mjs`: the fake element gains `contains` and `querySelector` for the focus rule; its 9 tests still pass.
+- **Mutants caught:** ignoring age, reading the session first, no same-page listener, no dedupe, a relative About link, always moving focus, a private store in `auth.js`, a private store in the header, and a private store in `profile.js` (the review finding).
+
+### QA fixture (outside the repo)
+`/private/tmp/tkdflow-age-nav-fixture.mjs` serves the real pages on any path, including `/companions/…`. It uses a fake account module with no client or network. Its toolbar can:
+- plant or remove a fake stored session;
+- block session storage before `site.js` runs;
+- record under 13 through the shared store (the same module the age screen uses);
+- record through a separate store as a control;
+- clear the tab's result.
+
+It also shows a live readout of the header, the store, storage and focus.
+
+Run it with `node /private/tmp/tkdflow-age-nav-fixture.mjs --port 8951`.
+
+### Limits
+- I used no browser. With the fake account module, the real `auth.html` age form and the profile hold can't reach the account service, so the same-page path is exercised through the shared store both of them use.
+- With storage blocked, a new page load can't remember the answer. That's the age policy's existing per-tab, client-side limit.
