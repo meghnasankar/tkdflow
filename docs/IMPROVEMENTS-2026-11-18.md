@@ -31,13 +31,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 22 (compare two forms): published.** PR 46 merged as `main` `aed2905`. Codex verified it live: main CI passed, the 10 changed public files match, and the live Forms → Compare link works with Taegeuk Il Jang and Chon-Ji cards and no errors.
 - **Batch 23 (search and shareable filters for learning resources): published.** PR 47 merged as `main` `ac23656`. Codex verified it live: main CI passed, the 5 changed public files match, the live query "print read" shows 1 result, the search input is 44 px, the discussion guides are below the resources, and there were 0 errors.
 - **Batch 24 (2027 ATU National Championships, dates TBA): published.** PR 48 merged as `main` `5d65fec`. Codex verified it in production: main CI passed, the 2 changed source files match, and the live ATU card shows dates TBA with no calendar export and 0 errors.
-- **Batch 25 (first-tournament checklist recovers from failed saves):** on `fix/tournament-save-recovery-2026-11-18`, cut from `5d65fec`. Passed Codex's browser review; ready for root's release. Scope: item 45.
+- **Batch 25 (first-tournament checklist recovers from failed saves): published.** PR 49 merged as `main` `44f573a`. Codex verified it in production: main CI passed, hosting is healthy, the 3 changed source files match, and security headers and private-path 404s pass.
+- **Batch 31 (Log out is reported only when it's proven):** on `fix/profile-signout-proof-2026-11-18`, cut from `44f573a`. Passed Codex's browser review; ready for root's release. Scope: item 52.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 25:** implemented locally and browser-reviewed by Codex, awaiting release.
+- **Batch 31:** implemented locally and browser-reviewed by Codex, awaiting release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -74,7 +75,8 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
-| 45 | The first-tournament checklist stopped saving after one failed write, and another tab could replace unsaved ticks | `js/lib/tournament-guide.js` `set()` made any write error a permanent `unavailable` state; the notice said ticks would be lost on leaving, although a reload shows the last saved ticks; `first-tournament.js` rebuilt the store on every `storage` event; and each save wrote the whole in-memory object, so a stale tab could erase another tab's other views. | P2 data safety | Batch 25 |
+| 52 | Profile Log out could report a sign-out it hadn't proved | `js/pages/profile.js` passed `stillSignedIn: () => hasStoredSession()`, which returns false when storage can't be read, so `logout()` treated unreadable storage as a verified sign-out and the page redirected home. Its auth listener said "You have been signed out" on any null session, even with a stored copy still present. Password recovery used the same weak proof for "signed out". Codex reproduced both profile cases in native Chrome with the synthetic fixture (`/private/tmp/tkdflow-profile-logout-fixture.mjs`). No live account was affected. | P2 accuracy | Batch 31 |
+| 45 | The first-tournament checklist stopped saving after one failed write, and another tab could replace unsaved ticks | `js/lib/tournament-guide.js` `set()` made any write error a permanent `unavailable` state; the notice said ticks would be lost on leaving, although a reload shows the last saved ticks; `first-tournament.js` rebuilt the store on every `storage` event; and each save wrote the whole in-memory object, so a stale tab could erase another tab's other views. | P2 data safety | Published (PR 49) |
 | 44 | The 2027 ATU National Championships wasn't listed, and the 2026 note said no 2027 announcement existed | Codex rechecked the official sources on 18 November (evidence: root's `atu-announcement-source.json`). `https://www.joinatu.com/` announces the 2027 National Championships at the Gas South Convention Center, Duluth, Georgia. Its main announcement says May 28–29, 2027, but its countdown says May 27, 2027, and the linked `/event-schedule` still shows 2026 (May 22–23). | P3 content | Published (PR 48) |
 | 43 | Community learning resources had no search, and the category couldn't be shared | The resources view (`community.html?view=resources`) kept its category in a page variable, so it wasn't in the address, wasn't shareable and wasn't restored by Back. It also had no search, unlike the discussions pane. | P3 usability | Published (PR 47) |
 | 42 | No way to look at two forms side by side | The library shows one card per form; choosing between two meant switching pages. All the facts already exist: `data/forms.json` and each lesson's study poses and reference count, which the companions state. | P3 feature | Published (PR 46) |
@@ -1671,4 +1673,87 @@ With the previous substring search, both tests fail. The full suite passes 673/6
   - **The same view in two tabs:** the latest save updates the other tab.
   - 0 app errors in both tabs.
   - Codex independently ran `tests/first-tournament.test.mjs`, which passed 20/20.
+- **Not tested:** a physical phone, Safari and a screen reader.
+
+## Batch 31 — Log out is reported only when it's proven (item 52)
+
+### Change
+- **One strict, SDK-free proof** (`js/lib/account-service.js`):
+  - `storedSessionState()` returns `present`, `absent`, or `unknown` when the stored session can't be read (no key, no storage, a throwing getter). It only reads.
+  - `logoutVerdict(state, kind)` counts a Log out as done only on `absent`.
+  - `LOGOUT_MESSAGES` holds the shared wording:
+    - "Couldn’t confirm that you’re logged out in this browser. Try again."
+    - "Log out isn’t available right now. Reload this page and try again."
+    - "Couldn’t log out. Try again."
+  - The navbar's cheap `hasStoredSession()` is unchanged.
+- **Header** (`js/site.js`): it now uses the shared helper and verdict instead of its private copy. Its behaviour and messages are unchanged; batch 21's tests pass as they were.
+- **Profile** (`js/pages/profile.js`):
+  - **Log out loads the home page only when the stored session is confirmed absent.** Otherwise the page stays, with the header's wording.
+  - **The identity guard** (root review correction): the attempt keeps the page's `SessionGuard` token (user and generation). Its answer is used only if the identity is unchanged, or changed exactly once, to signed out (the expected effect of this sign-out).
+    - After any other change it is dropped silently, with no redirect and no message, and the auth listener's state stands. Examples: signed out then back in as the same account; another account; another account then signed out.
+    - This protects the page and its redirect from a stale answer. It can't recall a sign-out request the SDK has already started.
+  - **The age guard:** an under-13 result recorded in this tab meanwhile shows the public route, with no redirect.
+  - **After the page's session ends** (this tab or another), private fields are hidden at once, as before. The notice says only what the stored state confirms:
+    - **absent:** "You have been signed out";
+    - **a stored copy remains:** "You’re signed out on this page. This browser may still keep your sign-in. Reload this page to check.";
+    - **unknown:** "You’re signed out on this page. Couldn’t confirm that you’re logged out in this browser. Reload this page to check."
+  - **The listener's age guard:** in an under-13 tab it shows the public route, never an account state.
+  - **The held-account paths:** their background sign-outs use the strict proof too. Nothing visible changes.
+- **Password recovery** (`js/pages/auth.js`): "signed out" now needs the strict proof. Otherwise it says "Password updated, but we couldn’t confirm that you’re logged out in this browser. Sign in with your new password."
+- **Never:**
+  - page code removing a stored key;
+  - a global sign-out;
+  - an automatic retry.
+  - Only the SDK's local `signOut` is used.
+- **Unchanged:**
+  - the auth page's under-13 background sign-out (`becomeIneligible`), whose result isn't shown;
+  - every other auth flow.
+- **Test helper:** `tests/helpers/mini-dom.mjs` gains `after()`, which the profile's school picker uses.
+
+### Tests (`tests/profile-logout.test.mjs`, new, 11)
+- **The proof itself:** present, absent, and unknown for a throwing getter, no storage or a bad config, with no writes. The verdict never treats unknown as signed out.
+- **The real `profile.js` on the real `profile.html`** (a fake client through the same module-substitution pattern as the header tests; synthetic session text, no network):
+  - **Success:** a redirect to `/`; only `scope: 'local'`; no key removed by page code.
+  - **Failure:** it stays, with "Couldn’t log out. Try again.", and the profile is still shown.
+  - **Unreadable storage:** no redirect; private fields hidden; "You’re signed out on this page" with the unknown text; never "You have been signed out".
+  - **A stored copy left behind:** no redirect; the "may still keep" text.
+  - **Another tab's sign-out:** "You have been signed out" only when the stored copy is gone.
+  - **Guards** (a deferred sign-out):
+    - **This page's own sign-out seen by the listener before the answer:** private fields hidden at once, then the home page loads.
+    - **Signed out and back in as the same account:** no redirect, no message, and the profile is shown again.
+    - **Another account, and another account then signed out:** no redirect and no message.
+    - **An under-13 result during the attempt:** no redirect, and the public route.
+- **Source and unit guards:**
+  - the header, profile and recovery all use the strict proof;
+  - no private copy of the proof remains;
+  - the profile no longer uses `hasStoredSession`;
+  - none of the three removes keys or signs out globally;
+  - `updatePassword` reports `signedOut` only when absence is proven.
+- **Twelve spot mutants caught:**
+  - redirecting on unknown;
+  - the listener always saying "signed out";
+  - the previous id-only guard (caught by same-account re-login and another account then signed out);
+  - accepting any change to signed out;
+  - accepting only an unchanged identity (the page's own sign-out then fails);
+  - no identity check;
+  - no age guard in Log out;
+  - no age guard in the listener;
+  - unreadable storage counted as absent;
+  - the verdict trusting unknown;
+  - the header redirecting without proof;
+  - recovery back on the cheap check.
+- **Full suite on this branch:** 750/750 (`npm run check`), and `git diff --check` is clean.
+
+### Known limits
+- **Before the change (Codex):** in native Chrome, the synthetic fixture reproduced both issues, with 0 errors:
+  - with a stored copy kept, the page said "You have been signed out";
+  - with storage reads blocked, Log out redirected to `/`.
+- **After the change** (Codex, native Chrome, the same synthetic fixture on port 9012, no live account; `browser-qa.json` and a screenshot in Codex's batch-31 notes):
+  - **Blocked storage:** Log out stays on the page; the profile hides its fields and says it couldn't confirm the sign-out.
+  - **An SDK sign-out failure:** it stays; the profile fields stay, with "Couldn’t log out. Try again."
+  - **A sign-out event with the stored copy kept:** the fields are hidden, and the notice says this browser may still keep the sign-in.
+  - **The page's own SDK sign-out with the stored copy left behind (remove-fails):** the same honest notice, and no redirect.
+  - **A confirmed sign-out:** a redirect to `/`.
+  - 0 console errors.
+  - Codex independently ran `tests/profile-logout.test.mjs` and `tests/header-logout.test.mjs`, which passed 25/25, including the generation cases.
 - **Not tested:** a physical phone, Safari and a screen reader.

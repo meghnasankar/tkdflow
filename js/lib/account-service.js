@@ -24,6 +24,36 @@ export function sessionStorageKey(cfg = ACCOUNTS) {
   }
 }
 
+/** Logout proof, strict: 'present', 'absent', or 'unknown' when the stored
+ *  session can't be read (no key, no storage, or a throwing getter). Unreadable
+ *  storage is never proof of absence. Reads; never writes or removes anything. */
+export function storedSessionState(cfg = ACCOUNTS, storage) {
+  const key = sessionStorageKey(cfg);
+  if (!key) return 'unknown';
+  try {
+    if (storage === undefined) storage = globalThis.localStorage;
+    if (!storage) return 'unknown';
+    return storage.getItem(key) ? 'present' : 'absent';
+  } catch {
+    return 'unknown';
+  }
+}
+
+/** The same honest wording wherever a Log out is checked (header, profile). */
+export const LOGOUT_MESSAGES = Object.freeze({
+  unknown: 'Couldn’t confirm that you’re logged out in this browser. Try again.',
+  unavailable: 'Log out isn’t available right now. Reload this page and try again.',
+  error: 'Couldn’t log out. Try again.',
+});
+
+/** A Log out attempt counts as done only when the stored session is confirmed
+ *  absent; otherwise the visitor stays where they are with a message. */
+export function logoutVerdict(state, kind = 'error') {
+  if (state === 'absent') return { verified: true, message: '' };
+  if (state === 'unknown') return { verified: false, message: LOGOUT_MESSAGES.unknown };
+  return { verified: false, message: kind === 'unavailable' ? LOGOUT_MESSAGES.unavailable : LOGOUT_MESSAGES.error };
+}
+
 /** Cheap check used by the navbar: is there a stored session at all?
  *  (The profile page validates it properly.) */
 export function hasStoredSession(cfg = ACCOUNTS, storage) {
