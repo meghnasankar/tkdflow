@@ -16,13 +16,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 7 (saved-learning keyboard focus): published.** PR 31 merged as `main` `57fd990`. Codex verified 6/6 public files, headers and development 404s, plus the live tabs in native Chrome.
 - **Batch 8 (opt-in search of spoken instructions): published.** PR 32 merged as `main` `16260de`. Codex verified it live: 7/7 public files, security headers and development 404s; Koryo "throat" shows the 4 exact instructions; no account SDK loads.
 - **Batch 9 (full spoken instruction in Study view): published.** PR 33 merged as `main` `d77f81b`. Codex verified it live: 2/2 public files, headers and development 404s; real Chrome at 320×700 shows the caption at 47/47 and a 253 px canvas with the full body, controls visible without scrolling, and no errors.
-- **Batch 10 (My school’s forms, a private organizer):** on `improve/school-form-planner-2026-11-18`, cut from `d77f81b`. Passed Codex's browser, print and download review in real Chrome; uncommitted, ready for root's release. Scope: item 32.
+- **Batch 10 (My school’s forms, a private organizer): published.** PR 34 merged as `main` `665c3ff`. Codex verified it live: 72/72 public files, all headers and development 404s.
+- **Batch 11 (faster avatar garment construction):** on `improve/avatar-startup-2026-11-18`, cut from `665c3ff`. Passed Codex's browser timing and visual review; uncommitted, ready for root's release. Scope: item 33.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 10:** implemented locally and browser-reviewed by Codex, uncommitted, awaiting release.
+- **Batch 11:** implemented locally and browser-reviewed by Codex, uncommitted, awaiting release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -59,7 +60,8 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
-| 32 | No place to keep a school’s own order of forms | Schools use different belt names and orders, and the library’s belt filter is only a colour family. Learners had no private way to write down their own school’s list of levels and forms and print it. | P2 feature | Batch 10 |
+| 33 | Every lesson page builds the avatar's garments in one long main-thread task | Codex's controlled foreground Chrome probe, same module: Taegeuk Il Jang rig construction 1411 ms (jacket 957, trousers 445); Sipjin 5234 ms (jacket 3649, trousers 1576), page visible throughout. The page can't respond to input during that task. Diagnostic only, not a device benchmark. | P2 performance | Batch 11 |
+| 32 | No place to keep a school’s own order of forms | Schools use different belt names and orders, and the library’s belt filter is only a colour family. Learners had no private way to write down their own school’s list of levels and forms and print it. | P2 feature | Published (PR 34) |
 | 31 | Study view cut off long spoken instructions | Reproduced by Codex in real Chrome at 320×700, Study view, Taebaek pose 10: the 130-character instruction needs 3 lines but was clamped to 2 (`clientHeight` 31 vs `scrollHeight` 47). Short landscape clamped to 1 line. The full text was only in the DOM for screen readers. | P2 readability | Published (PR 33) |
 | 30 | Taebaek movement 14: the 180° right turn is shown as one stage | DTaF (physical p.58, printed p.52), root-verified: 14-1 is a closed stance facing Ma (back) and 14-2 faces Da2, so the turn is 90° then 90°. The site turns all 180° into pose 23 and none into pose 24; the final heading is the same. The school source gives a single 180°. A metadata-only split was modelled offline (pose 23 faces 180, pose 24 turns right 90°; narration timing still validates). Labels would need `cue.turn` updates, and pose 24's spoken text and audio don't mention the second turn. Details: `/private/tmp/tkdflow-taebaek14-followup.md`. | P3 content accuracy | Blocked (Meghna: source choice and any audio change) |
 | 29 | Saved-learning controls lose keyboard focus while saving | Reproduced by Codex in a real browser with the synthetic fixture (account mode, 3 s server). (1) Library: keyboard Unsave on Taegeuk Il Jang rebuilt the button natively `disabled`, focus became `<body>` and stayed there after confirmation. (2) My learning, Saved: Unsave on the middle card (Chon-Ji) removed the card and focus became `<body>`. (3) Lesson widget: Mark as practised, same as (1). All real backend traffic was 0. | P2 accessibility | Batch 7 |
@@ -810,3 +812,75 @@ Codex used `/private/tmp/tkdflow-school-planner-fixture.mjs` (outside the repo; 
 - `localStorage` has no transactions. Two tabs saving in the same instant could still race in the moment between the re-read and the write, a far smaller window than before. Different devices or browsers never sync, by design; use Export and Import.
 - Undo covers only the latest removal, in memory, and is gone after reload. Import replaces and never merges.
 - The organizer needs `data/forms.json` to open. If it fails, a Try again message is shown and nothing is lost.
+
+## Batch 11 — faster avatar garment construction, byte-identical (item 33)
+
+### Change (`js/animation/avatar-geometry.js` only)
+`buildGarmentGeometry` builds the jacket and trousers once per lesson page by marching tetrahedra over a distance field. It now reuses work it used to repeat, with the same arithmetic:
+- **Field values per lattice point, once:** a `Float64Array` holds the field at every grid point, instead of each cell evaluating its 8 corners. Each point is computed as `min + k*step` with an integer `k`, the same number the old `min + (x+c)*step` gave.
+- **Gradients per exact point, once:** every emitted vertex used to recompute a 6-sample gradient, although the 63,504 jacket vertices have only 10,586 distinct positions. The cache key is the raw bits of the three coordinates, so `0` and `-0` never share an entry. It is created inside each build and is not shared between garments or calls.
+- **Sort angles per point, once:** the polygon sort comparator used to build `Vector3`s and call `atan2` on every comparison. Each point's angle is now computed once, with the arithmetic of `Vector3.sub()` then `dot()`, so the comparisons and the resulting order are the same.
+- **Scalar distance functions:** `ellipsoid` and `capsule` take coordinates instead of building arrays with `map`, spread and `reduce`, with the same operations in the same order (`Math.hypot` arguments in order, dot products summed left to right from 0).
+- **Unchanged:** the exports (`buildGarmentGeometry`, `garmentField`, `garmentWeights`) and their signatures; attribute names, order, types and item sizes; the non-indexed layout and triangle order; `avatar.js`; motion, avatar look, artwork, materials, media, downloads and network.
+
+### Tests (`tests/garment-geometry.test.mjs`, 8)
+- **Frozen reference:** `tests/helpers/garment-reference.mjs` is a verbatim copy of the builder as published on `main` at `665c3ff`, marked test-only. Its source text is pinned by SHA-256, so editing it fails a test.
+- **Same-engine byte comparison:** both builders run in the same JavaScript engine. For each garment the test requires the same attribute names and order, array types, item sizes, counts, normalized flags, no index, identical bytes in all five attributes, and the same draw range and bounding sphere.
+- **Other spacings:** four other grid spacings are byte-identical too.
+- **Independence:** a rebuild after another garment matches the first build, and no globals are left behind.
+- **Field and weights:** `garmentField` and `garmentWeights` match the reference exactly (`Object.is`) at 412 points per garment, including `-0` coordinates.
+- **Exports:** the same three exports as before.
+- **Counts:** jacket 63,504 vertices and trousers 49,992, the same as Codex measured in Chrome.
+- **Not asserted:**
+  - No hash of the output is pinned, because another engine may compute the last bit of `Math.atan2` or `Math.hypot` differently. The test compares with the reference in whichever engine runs it.
+  - No timing is asserted.
+- **15 bounded mutants, all killed** (runner outside the repo, `/private/tmp/tkdflow-optA-mutants.mjs`):
+  - a rounded (`toFixed(4)`) cache key, and a key that ignores z;
+  - a corner point computed as `min + x*step + c*step`;
+  - the lattice built with `spacing` instead of `step`, and read with y and z strides swapped;
+  - a sort angle without the centre offset, and one with u and v swapped;
+  - reversed triangle winding;
+  - gradient components reordered;
+  - `Math.hypot` arguments reversed in `ellipsoid` and in `capsule`;
+  - `r` instead of `r*r` in the ellipsoid denominator;
+  - the union smoothing term re-associated;
+  - an extra export;
+  - a leaked global.
+- **Probes, reported rather than required:**
+  - **Changes that left every output byte the same here, so the byte test can't see them:**
+    - reordering the capsule dot product (every capsule lies along one axis);
+    - a `toFixed(6)` key (no two distinct points lie within 1e-6);
+    - merging `0` and `-0` in the key;
+    - dropping the leading `0+` of the dot products;
+    - `Math.sqrt` of a sum instead of `Math.hypot` (a last-bit double difference that disappears when stored as Float32);
+    - reordering the sort-angle dot products;
+    - removing the duplicate-point check;
+    - `> 0` instead of `>= 0` in the empty-cell test.
+
+    The product keeps the exact form of each anyway.
+  - **Caught:** sharing the gradient cache between builds.
+
+### Measurements (Node 24, this machine; a guide, not the claim)
+| | Jacket | Trousers |
+|---|---|---|
+| Reference builder | 748 ms | 347 ms |
+| New builder | 91 ms | 60 ms |
+
+Output is identical: all five attributes match byte for byte in Node.
+
+### Browser QA (Codex, foreground Chrome, same local diagnostic fixture before and after)
+- **Code review:** Codex independently ran the 8 geometry tests. The frozen reference, from its first import, matches `origin/main` exactly. No runtime export or call site changed.
+- **Rendering:** Taegeuk Il Jang pose 6 (front) and Sipjin pose 23 (right) show the same full body and approved look as the baseline screenshots, with 0 warnings or errors.
+- **Measured runs** (raw data: `/private/tmp/tkdflow-geometry-reference-t1.json`, `…-reference-sipjin.json`, `…-optimized-t1.json`, `…-optimized-sipjin.json`, outside the repo):
+
+| Page | Avatar rig construction | Avatar ready after navigation |
+|---|---|---|
+| Taegeuk Il Jang | 1411.3 → 155.5 ms | 1617.1 → 327 ms |
+| Sipjin | 5234.0 → 186.7 ms | 5684.5 → 583 ms |
+
+- **What this is:** local diagnostic runs on one machine, not a guarantee for every device and not a frame-rate measurement. The baseline itself varied 3.7× between pages, so no speed-up factor should be advertised. Release notes should quote only these measured before-and-after runs.
+
+### Known limits
+- Construction still runs once per page, as one main-thread task, only shorter. A module Worker (option B in `/private/tmp/tkdflow-garment-performance-plan.md`) is the next step if Codex still measures a noticeable task.
+- Byte-identical means identical to what the same engine computed before. Engines may already differ from each other in the last bit of `Math.atan2` and `Math.hypot`; this change doesn't alter that.
+- The same garment code took about 3.8 times longer on Sipjin than on Taegeuk Il Jang in Codex's baseline. The cause wasn't investigated (other work on the page or garbage collection are possibilities), so the gain on each page has to be measured, not assumed.
