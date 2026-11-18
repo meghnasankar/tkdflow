@@ -8,6 +8,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {register} from 'node:module';
 import {installDom,settle} from './helpers/mini-dom.mjs';
+import {parseQuery,toPredicate} from './helpers/postgrest-filter.mjs';
 
 const FAKE_ACCOUNT=`export const UNAVAILABLE_REASON='Test: unavailable.';
 export const accountsConfigured=()=>true;export const sessionStorageKey=()=>'test-session';
@@ -28,10 +29,15 @@ const deferred=()=>{let resolve;const promise=new Promise(r=>{resolve=r;});retur
 let run=0;
 
 async function community({search='',mode='public',reducedMotion=false,serviceGate=null,topics=[topic(T1,'First synthetic topic title'),topic(T2,'Second synthetic topic title')]}={}){
- const state={topics,replies:[reply(R1,T1)],replyGate:null,user:'adult-1',authListeners:[]};
+ const state={topics,replies:[reply(R1,T1)],replyGate:null,pageGate:null,pending:[],user:'adult-1',authListeners:[]};
+ // Answers the client's real query: equality filters, the keyset or=(…), order and limit.
+ const cmp=(a,b)=>a<b?-1:a>b?1:0;
  const rest=async url=>{
-  const u=new URL(url),table=u.pathname.split('/').pop();
-  const rows=table==='discussion_topics'?state.topics.filter(t=>!u.searchParams.get('id')||u.searchParams.get('id')===`eq.${t.id}`):state.replies.filter(r=>u.searchParams.get('topic_id')===`eq.${r.topic_id}`);
+  const q=parseQuery(url),table=q.table,keep=toPredicate(q,(col,a,b)=>cmp(String(a),String(b)));
+  if(q.logic&&state.pageGate)await state.pageGate;
+  let rows=(table==='discussion_topics'?state.topics:state.replies).filter(keep);
+  for(const o of [...q.order].reverse())rows=[...rows].sort((x,y)=>cmp(String(x[o.col]),String(y[o.col]))*(o.dir==='desc'?-1:1));
+  if(q.limit)rows=rows.slice(0,q.limit);
   if(table==='discussion_replies'&&state.replyGate)await state.replyGate.promise;
   return {ok:true,status:200,json:async()=>rows,text:async()=>JSON.stringify(rows)};
  };
@@ -42,17 +48,17 @@ async function community({search='',mode='public',reducedMotion=false,serviceGat
   el('a',{id:'start-topic-link',href:'#topic-composer',hidden:''}),el('a',{id:'my-submissions-link',href:'#my-submissions',hidden:''}),el('a',{id:'moderation-link',href:'#moderation',hidden:''}),el('a',{id:'forum-sign-in',href:'/auth.html',hidden:''}),
   el('div',{id:'category-nav'}),el('form',{id:'forum-search'},el('input',{type:'search',id:'forum-q'})),
   el('p',{id:'forum-summary','aria-live':'polite'}),el('p',{id:'discussion-message'}),
-  el('section',{id:'topic-detail',hidden:''}),el('div',{id:'forum-content'}),el('section',{id:'topic-composer',hidden:''}),
+  el('section',{id:'topic-detail',hidden:''}),el('div',{id:'forum-content'}),el('div',{id:'forum-more'}),el('section',{id:'topic-composer',hidden:''}),
   el('section',{id:'my-submissions',hidden:''},el('button',{type:'button',id:'refresh-submissions'}),el('div',{id:'my-submissions-list'})),
   el('section',{id:'moderation',hidden:''},el('button',{type:'button',id:'load-moderation'}),el('div',{id:'moderation-queue'}))));
  if(mode==='account'){
   const query=table=>{const filters=[];const run=async()=>{
-   if(filters.some(f=>f[0]==='neq'))return {data:[],error:null};
+   if(filters.some(f=>f[0]==='neq'))return {data:table==='discussion_replies'?state.pending:[],error:null};
    if(table==='discussion_replies'&&state.replyGate)await state.replyGate.promise;
    const list=table==='discussion_topics'?state.topics:state.replies;
    const rows=list.filter(r=>filters.every(([,k,v])=>String(r[k])===String(v)));
    return {data:rows,error:null};};
-   const q={select:()=>q,order:()=>q,limit:()=>q,eq:(k,v)=>{filters.push(['eq',k,v]);return q;},neq:(k,v)=>{filters.push(['neq',k,v]);return q;},maybeSingle:()=>run().then(r=>({data:r.data[0]||null,error:null})),then:(a,b)=>run().then(a,b)};return q;};
+   const q={select:()=>q,order:()=>q,limit:()=>q,or:()=>q,eq:(k,v)=>{filters.push(['eq',k,v]);return q;},neq:(k,v)=>{filters.push(['neq',k,v]);return q;},maybeSingle:()=>run().then(r=>({data:r.data[0]||null,error:null})),then:(a,b)=>run().then(a,b)};return q;};
   const client={auth:{getSession:async()=>({data:{session:state.user?{user:{id:state.user}}:null},error:null}),onAuthStateChange:fn=>{state.authListeners.push(fn);return {data:{subscription:{unsubscribe(){}}}};},stopAutoRefresh:async()=>{}},
    from:query,rpc:async name=>name==='discussion_access'?{data:{adult:true,moderator:false},error:null}:{data:null,error:{message:'test'}}};
   globalThis.__testAccount={session:true,service:async()=>{if(serviceGate)await serviceGate.promise;return {status:'ready',client};}};
@@ -267,5 +273,62 @@ test('other public reading controls (All topics) also keep focus when the first 
   const now=env.key(env.$('topic-detail'),'detail:back');
   assert.ok(now&&now!==back,'the panel was rebuilt');
   is(env.doc.activeElement,now,'focus is on the rebuilt All topics button');
+ }finally{await done(env);}
+});
+
+/* ── Load more (keyset pages of 50) ───────────────────────────────── */
+const many=n=>Array.from({length:n},(_,i)=>topic(`00000000-0000-4000-8000-${String(i+1).padStart(12,'0')}`,`Synthetic paged topic ${i+1}`));
+test('Load more appends older topics, focuses the first new one, and the summary is honest about what is loaded',async()=>{
+ const env=await community({topics:many(60)});
+ try{
+  assert.equal(env.$('forum-content').querySelectorAll('article').length,50);
+  assert.equal(env.$('forum-summary').textContent,'Showing the 50 topics loaded so far. Older discussions can be loaded.');
+  env.$('forum-q').value='paged topic 1';env.$('forum-q').dispatchEvent(new Event('input'));
+  assert.match(env.$('forum-summary').textContent,/^\d+ of the 50 topics loaded so far match “paged topic 1”\. Load more discussions to search older ones\.$/);
+  env.$('forum-q').value='';env.$('forum-q').dispatchEvent(new Event('input'));
+  const button=env.key(env.$('forum-more'),'more:topics');button.focus();button.click();await settle(40);
+  is(env.doc.activeElement,env.key(env.$('forum-content'),`topic:00000000-0000-4000-8000-000000000010:link`),'focus moves to the first newly listed topic');
+  assert.equal(env.$('forum-content').querySelectorAll('article').length,60);
+  assert.equal(env.$('forum-summary').textContent,'60 topics.');
+  assert.equal(env.key(env.$('forum-more'),'more:topics'),undefined,'no button once everything is loaded');
+ }finally{await done(env);}
+});
+
+test('a slow page never pulls focus from search the visitor moved to meanwhile',async()=>{
+ const env=await community({topics:many(60)});
+ try{
+  let release;env.state.pageGate=new Promise(r=>{release=r;});
+  const button=env.key(env.$('forum-more'),'more:topics');button.focus();button.click();await settle(5);
+  assert.equal(env.key(env.$('forum-more'),'more:topics').getAttribute('aria-disabled'),'true','the button stays focusable while loading');
+  env.$('forum-q').focus();release();await settle(40);
+  is(env.doc.activeElement,env.$('forum-q'),'focus stays in search');
+  assert.equal(env.$('forum-content').querySelectorAll('article').length,60);
+ }finally{await done(env);}
+});
+
+test('a pending reply in Your submissions links to the discussion it belongs to',async()=>{
+ const env=await community({mode:'account',topics:[topic(T1,'First synthetic topic title')]});
+ try{
+  env.state.pending=[{...reply('bbbbbbbb-1111-4111-8111-111111111111',T1),status:'pending'}];
+  env.$('refresh-submissions').click();await settle(40);
+  const link=env.$('my-submissions-list').querySelectorAll('a').find(a=>/topic=/.test(a.getAttribute('href')));
+  assert.ok(link,'reply has a link');assert.match(link.getAttribute('href'),new RegExp(`topic=${T1}`));
+  assert.equal(link.textContent,'Open the discussion this reply belongs to');
+ }finally{await done(env);}
+});
+
+test('a deep-linked older topic counts once in the loaded total, and later pages list it once',async()=>{
+ const old='00000000-0000-4000-8000-000000000005';      // beyond the first page of 50
+ const env=await community({search:`?topic=${old}`,topics:many(60)});
+ try{
+  assert.equal(env.$('forum-content').querySelectorAll('article').length,51,'first page plus the deep-linked topic');
+  env.$('forum-q').value='Synthetic paged topic';env.$('forum-q').dispatchEvent(new Event('input'));
+  assert.equal(env.$('forum-summary').textContent,'51 of the 51 topics loaded so far match “Synthetic paged topic”. Load more discussions to search older ones.');
+  env.$('forum-q').value='';env.$('forum-q').dispatchEvent(new Event('input'));
+  env.key(env.$('forum-more'),'more:topics').click();await settle(40);
+  const links=env.$('forum-content').querySelectorAll('[data-fk]').map(n=>n.dataset.fk).filter(k=>k.endsWith(':link'));
+  assert.equal(links.length,60);assert.equal(new Set(links).size,60,'each topic once');
+  assert.equal(links.filter(k=>k===`topic:${old}:link`).length,1);
+  assert.equal(env.$('forum-summary').textContent,'60 topics.');
  }finally{await done(env);}
 });

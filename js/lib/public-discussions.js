@@ -7,7 +7,7 @@
    topics, and to published replies of published topics. */
 import {ACCOUNTS} from '../config.js';
 import {publicBase,publicRequest} from './public-read.js';
-import {TOPIC_COLUMNS,REPLY_COLUMNS} from './discussions.js';
+import {TOPIC_COLUMNS,REPLY_COLUMNS,PAGE,cursorOf,keysetFilter,pageOf} from './discussions.js';
 
 /** The categories allowed by discussion_topics' check constraint. */
 export const CATEGORIES=Object.freeze(['technique-qa','forms-discussion','sparring','training','competitions','grading-testing','general']);
@@ -49,7 +49,18 @@ async function rows(url,check,opts){
  return {data:valid,error:null,dropped:result.data.length-valid.length};
 }
 
-export const publicTopics=(opts={})=>rows(publicUrl('discussion_topics',{status:'eq.published',order:'created_at.desc',limit:'100'},opts.cfg),publicTopicRow,opts);
+/** One page of a published list, by keyset (see discussions.js). */
+async function page(table,filters,dir,check,opts){
+ const after=opts.after||null;
+ if(after&&!cursorOf(after))return {data:null,error:{code:'cursor',message:MESSAGES.failed},hasMore:false,cursor:null};
+ const keyset=after?{or:`(${keysetFilter(after,dir)})`}:{};
+ const url=publicUrl(table,{...filters,...keyset,order:`created_at.${dir},id.${dir}`,limit:String(PAGE+1)},opts.cfg);
+ const result=await publicRequest(url,{...opts,messages:MESSAGES});
+ if(result.error)return {data:null,error:result.error,hasMore:false,cursor:null};
+ if(!Array.isArray(result.data))return {data:null,error:{code:'shape',message:MESSAGES.failed},hasMore:false,cursor:null};
+ return pageOf(result.data,check);
+}
+export const publicTopics=(opts={})=>page('discussion_topics',{status:'eq.published'},'desc',publicTopicRow,opts);
 export const publicGuides=(opts={})=>rows(publicUrl('discussion_topics',{status:'eq.published',editorial:'eq.true',order:'created_at.desc',limit:'20'},opts.cfg),publicTopicRow,opts);
 
 /** One published topic, or data:null when it is absent (pending, hidden or deleted). */
@@ -60,6 +71,6 @@ export async function publicTopic(raw,opts={}){
 }
 
 export function publicReplies(raw,opts={}){
- const topicId=canonicalUuid(raw);if(!topicId)return Promise.resolve({data:[],error:null});
- return rows(publicUrl('discussion_replies',{topic_id:`eq.${topicId}`,status:'eq.published',order:'created_at.asc',limit:'100'},opts.cfg),r=>publicReplyRow(r,topicId),opts);
+ const topicId=canonicalUuid(raw);if(!topicId)return Promise.resolve({data:[],error:null,hasMore:false,cursor:null});
+ return page('discussion_replies',{topic_id:`eq.${topicId}`,status:'eq.published'},'asc',r=>publicReplyRow(r,topicId),opts);
 }
