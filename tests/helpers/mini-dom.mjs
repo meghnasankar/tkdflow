@@ -97,7 +97,7 @@ export class MiniElement extends MiniNode{
  get id(){return this.getAttribute('id')||'';}set id(v){this.setAttribute('id',v);}
  get className(){return this.getAttribute('class')||'';}set className(v){this.setAttribute('class',v);}
  get type(){return this.getAttribute('type')||(this.tagName==='BUTTON'?'submit':'text');}
- get href(){return this.getAttribute('href')||'';}
+ get href(){return this.getAttribute('href')||'';}set href(v){this.setAttribute('href',v);}
  get options(){return this.querySelectorAll('option');}
  get value(){
   if(this.tagName==='OPTION')return this.getAttribute('value')??this.textContent;

@@ -112,6 +112,12 @@
     </select>
    </div>
    <button type="button" class="btn btn-secondary btn-sm tf-clear" id="tf-clear">Clear</button>
+   <div class="tf-field-check">
+    <input type="checkbox" id="tf-cues" name="cues" value="1" aria-describedby="tf-cues-hint">
+    <label for="tf-cues">Also search spoken instructions</label>
+    <p class="tf-hint" id="tf-cues-hint">Finds poses whose spoken instruction uses your words, even if the technique has another name.</p>
+    <p class="tf-cues-status" id="tf-cues-status" hidden><span id="tf-cues-message"></span> <button type="button" class="link-btn tf-cues-retry" id="tf-cues-retry" hidden>Try again</button></p>
+   </div>
   </form>
 
   <details class="tf-about">
@@ -120,6 +126,7 @@
     <li><strong>Study poses, not official counts.</strong> Results are the animation’s study poses, numbered as in each lesson. One counted movement can be split into several poses, so each pose also shows its movement or reference count as the lesson labels it.</li>
     <li><strong>Names follow each lesson’s own pose labels.</strong> The index covers the techniques those labels name; stances and turns are not indexed. Groups are by wording only: techniques with similar names in different styles are listed separately and are not claimed to be the same.</li>
     <li><strong>Korean pose names</strong> are currently available for Taegeuk Il Jang only.</li>
+    <li><strong>Spoken instructions are optional.</strong> With “Also search spoken instructions” ticked, a search also looks in each pose’s spoken instruction, word for word as the lesson says it (for example “chamber” or “turn left”), and shows that instruction under any pose found that way. Until the instructions have loaded, results are named techniques only.</li>
    </ul>
   </details>
 

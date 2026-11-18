@@ -12,6 +12,13 @@
 .tf-field label { font-weight: 700; font-size: .85rem; color: var(--navy); }
 .tf-field input, .tf-field select { width: 100%; min-height: 44px; padding: 8px 10px; border: 1px solid var(--gray-300); border-radius: var(--radius-sm); background: var(--white); font: inherit; color: var(--navy); }
 .tf-clear { min-height: 44px; }
+.tf-field-check { grid-column: 1 / -1; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 10px; align-items: center; }
+.tf-field-check input { width: 22px; height: 22px; margin: 11px 0; accent-color: var(--red-dark); }
+.tf-field-check label { font-weight: 700; color: var(--navy); cursor: pointer; }
+.tf-hint, .tf-cues-status { grid-column: 2; font-size: .85rem; color: var(--gray-600); line-height: 1.5; }
+.tf-cues-status { color: var(--navy); }
+.tf-cues-status:focus { outline: 3px solid var(--red); outline-offset: 2px; }
+.tf-cues-retry { min-height: 44px; padding: 6px 2px; background: none; border: 0; color: var(--red-dark); font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }
 
 .tf-results h2 { font-size: clamp(1.3rem, 3vw, 1.6rem); margin-bottom: 6px; }
 .tf-summary { color: var(--gray-600); margin-bottom: 14px; }
@@ -44,6 +51,8 @@
 .tf-form a { color: var(--red-dark); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
 .tf-ref, .tf-ko, .tf-kihap { font-size: .82rem; color: var(--gray-600); }
 .tf-kihap { font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+.tf-cue { flex: 1 0 100%; font-size: .88rem; color: var(--gray-600); line-height: 1.5; }
+.tf-cue-label { font-weight: 700; color: var(--navy); }
 .tf-show-all { margin-top: 6px; padding: 6px 2px; min-height: 44px; background: none; border: 0; color: var(--red-dark); font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }
 
 .tf-more { margin-top: 28px; color: var(--gray-600); }
