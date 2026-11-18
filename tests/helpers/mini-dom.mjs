@@ -55,6 +55,7 @@ export class MiniNode extends Target{
  }
  replaceChildren(...nodes){for(const child of [...this.childNodes])this._detach(child);this.append(...nodes);}
  remove(){this.parentNode?._detach(this);}
+ before(...nodes){const parent=this.parentNode;if(!parent)return;for(const raw of nodes)parent.insertBefore(raw,this);}
 }
 
 class MiniText extends MiniNode{
@@ -80,7 +81,13 @@ export class MiniElement extends MiniNode{
   this.style={setProperty(){},removeProperty(){}};
   this.classList={add:(...c)=>this._classes(s=>c.forEach(x=>s.add(x))),remove:(...c)=>this._classes(s=>c.forEach(x=>s.delete(x))),
    toggle:(c,force)=>{const on=force??!this.classList.contains(c);this._classes(s=>on?s.add(c):s.delete(c));return on;},contains:c=>this.className.split(/\s+/).includes(c)};
-  for(const name of BOOL)Object.defineProperty(this,name,{get:()=>this.hasAttribute(name),set:v=>v?this.setAttribute(name,''):this.removeAttribute(name),configurable:true});
+  for(const name of BOOL)Object.defineProperty(this,name,{get:()=>this.hasAttribute(name),set:v=>{
+   v?this.setAttribute(name,''):this.removeAttribute(name);
+   // Browser focus fix-up: a focused element that becomes hidden (or a focused
+   // form control that becomes disabled) stops being focused.
+   const doc=documentRef,active=doc?.activeElement;
+   if(v&&active&&active!==doc.body&&((name==='hidden'&&this.contains(active))||(name==='disabled'&&active===this&&/^(BUTTON|INPUT|SELECT|TEXTAREA)$/.test(this.tagName))))doc.activeElement=doc.body;
+  },configurable:true});
  }
  _classes(fn){const s=new Set(this.className.split(/\s+/).filter(Boolean));fn(s);this.className=[...s].join(' ');}
  setAttribute(k,v){this.attributes.set(k,String(v));}
@@ -100,7 +107,10 @@ export class MiniElement extends MiniNode{
  set value(v){this._value=String(v);if(this.tagName==='INPUT'||this.tagName==='TEXTAREA'){this.selectionStart=this.selectionEnd=this._value.length;}}
  get form(){return this.closest('form');}
  setSelectionRange(start,end,direction='none'){this.selectionStart=start;this.selectionEnd=end;this.selectionDirection=direction;}
- focus(options={}){if(!this.isConnected||this.hidden)return;this.focusCalls.push(options);documentRef.activeElement=this;}
+ /* Like browsers: hidden, detached and DISABLED form controls cannot take focus
+    (aria-disabled controls can). Without this, a test could not see focus
+    being lost to a natively disabled button. */
+ focus(options={}){if(!this.isConnected||this.hidden||(this.disabled&&/^(BUTTON|INPUT|SELECT|TEXTAREA)$/.test(this.tagName)))return;this.focusCalls.push(options);documentRef.activeElement=this;}
  blur(){if(documentRef.activeElement===this)documentRef.activeElement=documentRef.body;}
  click(){
   const event=new MiniEvent('click',{bubbles:true});this.dispatchEvent(event);

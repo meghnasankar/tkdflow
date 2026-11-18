@@ -12,13 +12,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 4 (keyboard and focus continuity): published.** PR 27 merged as `main` `d0fc54e`. Codex verified it live: 6/6 files match, headers and development 404s are correct, and Show more focuses the 25th event.
 - **Follow-up (Community initial focus): published.** PR 28 merged as `main` `9f5d5fd`, including the test-only CI timing fix `8835291`. Codex verified it live: source and header checks pass, the public heading keeps focus, and a teen moderator still has moderation but no public composer.
 - **Batch 5 (read and print companions): published.** PR 29 merged as `main` `e86803d`. Codex verified it live: 69/69 public files, headers and development 404s; the live index lists all 23; Koryo shows its 52 poses; print works; the header uses root-absolute profile links.
-- **Batch 6 (age-aware header):** on `improve/age-aware-navigation-2026-11-18`, cut from `e86803d`. Uncommitted, awaiting Codex review. Scope: item 23.
+- **Batch 6 (age-aware header): published.** PR 30 merged as `main` `dc05c83` (CI success). Codex verified 5/5 source files, headers and development 404s, and a normal member's UI live.
+- **Batch 7 (saved-learning keyboard focus):** on `improve/learning-focus-2026-11-18`, cut from `dc05c83`. Uncommitted, awaiting Codex review. Scope: item 29.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 6:** implemented locally, uncommitted, awaiting Codex review.
+- **Batch 7:** implemented locally, uncommitted, awaiting Codex review.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -49,12 +50,13 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 20 | Optional search of spoken instructions | Narration cues line up one-to-one with poses in all 23 lessons (about 47 KB). Searching them would help ("chamber", "knee") but is noisy by default. Candidate: an opt-in "also search spoken instructions". | P3 feature | Open |
 | 21 | Stance indexing in the technique finder | The finder indexes only the techniques named in pose labels, not stances. The 22 data-driven lessons record a `stance` per sequence entry (walking, back, horse, front, crane, rear-foot, low, closed, fixed, parallel, cross, wide-parallel, cat), but Taegeuk Il Jang has stance only in description text. Adding stances needs source-backed stance names per style and a Taegeuk Il Jang mapping. Do not derive them from description prose. | P3 feature | Open; needs sourced stance terms |
 | 22 | Community started the account service in a known under-13 tab | `forum.js` `connect()` and `community.js` `loadGuides()` called `getAccountService()` without checking this tab's age screen. That started the SDK client, which can restore a stored session (for example someone else's on a shared device) and offer reporting, submissions, posting or moderation. My learning, lesson help (page and widget), profile and sign-in already guarded this. | P1 privacy/policy | Published (PR 26) |
-| 23 | Header account link in a known under-13 tab | `site.js` shows "My profile" whenever a session is stored, including in an under-13 tab; the profile page then shows the public guidance. Harmless, but an owner/UX decision. Batch 3 deliberately leaves the header unchanged. | P3 UX | Batch 6 |
+| 23 | Header account link in a known under-13 tab | `site.js` shows "My profile" whenever a session is stored, including in an under-13 tab; the profile page then shows the public guidance. Harmless, but an owner/UX decision. Batch 3 deliberately leaves the header unchanged. | P3 UX | Published (PR 30) |
 | 24 | Signed-out eligible visitors start the account service to read Community | Needed today to notice a sign-in. A lazier start (read publicly, start the client on a session-key `storage` event) changes sign-in timing and needs its own review. | P3 | Open |
 | 25 | Events: Show more and background renders lose keyboard focus | Reproduced live by Codex after batch 2: with 24 of 164 events shown, Show more rendered 48 cards but focus became `<body>`, and the next Tab reached the first existing card, not the first new one. In code, `render()` rebuilt every card and every select's options on filter changes, the one-minute ticker, tab visibility and Back/Forward. A focused card control or an open select could be replaced by the timer; that case was not reproduced live. | P2 accessibility | Published (PR 27) |
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
+| 29 | Saved-learning controls lose keyboard focus while saving | Reproduced by Codex in a real browser with the synthetic fixture (account mode, 3 s server). (1) Library: keyboard Unsave on Taegeuk Il Jang rebuilt the button natively `disabled`, focus became `<body>` and stayed there after confirmation. (2) My learning, Saved: Unsave on the middle card (Chon-Ji) removed the card and focus became `<body>`. (3) Lesson widget: Mark as practised, same as (1). All real backend traffic was 0. | P2 accessibility | Batch 7 |
 
 ## Batch 1 — learner foundations (published, PR 24)
 
@@ -496,3 +498,61 @@ Run it with `node /private/tmp/tkdflow-age-nav-fixture.mjs --port 8951`.
 ### Limits
 - I used no browser. With the fake account module, the real `auth.html` age form and the profile hold can't reach the account service, so the same-page path is exercised through the shared store both of them use.
 - With storage blocked, a new page load can't remember the answer. That's the age policy's existing per-tab, client-side limit.
+
+## Batch 7 — keyboard focus through saved-learning changes (item 29)
+
+### Fix
+- **`js/lib/learning-ui.js`:** while a change is pending, Save, Mark as practised and Clear progress are **busy, not removed from focus**. They get `aria-disabled="true"` (already styled like disabled) instead of the native `disabled`, because a disabled button can't keep keyboard focus. Native `disabled` remains only where saving is impossible (`loading`, `unavailable`).
+- **Live guards:** every click re-checks the service's mode and pending count first (`readyToSave`), before any confirm dialog and again before `update()`. So there is still no write while a change is pending, and a stale button can't bypass it. The saved and practised toggles read the live record.
+- **Lesson widget:** restores focus with the shared `keepFocus` helper (keys `save:<id>`, `practised`).
+- **`js/pages/learning.js`:**
+  - tabs and cards are rebuilt inside `keepFocus`;
+  - when the focused card leaves the current view (Unsave on Saved, un-practise on Practised, Clear progress on In progress), focus goes to the card now in its place, then the empty-state "Explore forms" link, then the summary;
+  - focus on a tab or elsewhere is never moved;
+  - Refresh and Import are busy (`aria-disabled`) rather than natively disabled while saving, with live guards; Refresh stays natively disabled only while loading.
+- **Card names:** each card's primary link now has the accessible name "Resume lesson: <form>" or "Open lesson: <form>"; the visible text is unchanged and starts the name. A screen-reader user who lands there after a fallback hears which form it is.
+- **Library (`forms.js`):** unchanged. Its existing keyed refocus works once the button can take focus.
+- **`styles.css`:** "Clear progress" is a link-style button, not `.btn`, so it gets its own busy style (`.reset-learning[aria-disabled="true"]`: dimmed, not-allowed cursor, no underline).
+- **Transient controls** (found in Codex native QA after the first fix): a keyboard-activated Retry hid itself as its retry started (`hidden = !error`), so focus fell to `<body>` during and after the retry.
+  - New `setHidden` and `setDisabled` in `js/lib/focus-keep.js`: if the control (or something inside it) **had focus** when it is hidden or natively disabled, focus moves synchronously to the nearby status message. Otherwise nothing moves.
+  - **Used for:** the Library Retry (to `#forms-learning-status`); My learning's Retry, Refresh (natively disabled while the list reloads) and Import panel (all to `#learning-status`); the lesson widget's Retry (to the widget status).
+  - Retry semantics are unchanged: a failed, still-pending change stays retryable, and Retry isn't gated by `readyToSave`.
+  - **Import assessed:** `importBrowser()` doesn't clear browser saves, so the panel normally stays and its button stays focusable while busy. The handoff covers the panel disappearing while focused.
+- **`LearningState`:** unchanged (pending map, generation and owner checks, drain, error and retry, account switching). No backend or data-store change.
+
+### Test model and tests
+- **`tests/helpers/mini-dom.mjs`:** `focus()` now refuses natively disabled `button`, `input`, `select` and `textarea`, as browsers do; `aria-disabled` controls still take focus. It also gains `before()`. A focused element that becomes hidden, or a focused form control that becomes disabled, drops focus to `<body>` (browser focus fix-up). All existing suites pass under the stricter model.
+- **`tests/learning-focus.test.mjs` (19)** runs the real Library, My learning and lesson widget against the **real `LearningState`** with a fake account client whose server replies the test releases. Only `getLearningService()` is substituted, in this test process. Covered:
+  - the model check;
+  - Library Unsave through pending and confirmation, with a second press and another card's Save writing nothing;
+  - a failed save keeping focus and the busy state until Retry succeeds;
+  - the widget's Mark as practised through confirm and fail;
+  - My learning Saved: the middle card hands focus to the card now in its place, and the last card to the empty-state link;
+  - tab focus never moved, and Refresh busy-not-disabled while saving;
+  - an account switch discarding the old pending change, with a late reply ignored;
+  - browser mode saving at once;
+  - native `disabled` only when saving is impossible;
+  - card link accessible names for both Resume and Open;
+  - **Clear progress** with a fake `confirm`:
+    - In progress: the cleared card hands focus to the card now in its place, and a press while saving neither asks nor writes;
+    - Practised: clearing the last card focuses the empty-state link;
+    - a cancelled confirmation writes nothing;
+    - a save that starts while the dialog is open stops the reset (the second live check);
+  - **Refresh and Import:** spy wrappers show no call while saving and exactly one each once ready;
+  - the Clear progress busy style;
+  - **real transient controls:**
+    - Library Retry: confirm, fail again (focus not pulled back), retry again;
+    - a background retry never takes focus from search;
+    - My learning Retry and Refresh, with a reload started elsewhere not moving tab focus;
+    - Import busy-but-focusable, and the panel disappearing while focused;
+    - the widget Retry through confirm and failure.
+
+  Teardown answers any still-waiting reply, so a failing test can't hang on a timer. Assertions on elements are identity checks.
+- **Mutants caught** (25 s cap, full restore): native `disabled` while pending, no live guard, the widget without `keepFocus`, no My learning fallback, a fallback that steals focus, Refresh natively disabled while saving, a card link without its form name, and the old permissive focus model. Also caught: the Clear progress check before confirm, the check after confirm, unguarded Refresh, unguarded Import, and a missing Clear progress busy style. Also caught: plain `hidden`/`disabled` for each of the five transient controls, a helper that always moves focus, and a model without the focus fix-up.
+
+### QA
+The fixture `/private/tmp/tkdflow-learning-focus-fixture.mjs` (outside the repo, all Supabase traffic blocked) reproduces the original bugs and now exercises the fix.
+
+### Limits
+- I used no browser after the fix. Codex should re-run the three reproductions, plus fail and Retry, in Chrome.
+- A natively disabled control that already had focus (not rebuilt) isn't modelled; the product no longer disables during pending.
