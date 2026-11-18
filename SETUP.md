@@ -1,9 +1,16 @@
 # TKDflow · Setup, checks and restoring accounts
 
 The site is static HTML/CSS/JS (ES modules, no build step), deployed on
-Vercel. The only backend is **Supabase**, used for member accounts and two
-tables, `profiles` and `schools`. Member accounts are currently **switched
-off** (`js/config.js`) — see "Restoring member accounts".
+Vercel. The only backend is **Supabase**: member accounts, profiles, the school
+directory, Community discussions, saved learning and lesson help.
+
+**Current source state** (`js/config.js` → `ACCOUNTS`): `enabled`, `signupEnabled`
+and `googleEnabled` are all `true`. `enabled` also gates public Community, discussion
+and lesson-answer reads; there is no separate Community switch. What production
+actually serves is verified, not assumed: run `npm run check:live` (below) from the
+deployed commit. Cloud settings that can't be read from source (Supabase Auth
+options, SMTP, applied SQL) are owner records, kept in the dated sections at the end.
+"Restoring member accounts" is history from when accounts were off.
 
 ## Layout of the repository
 
@@ -17,7 +24,8 @@ off** (`js/config.js`) — see "Restoring member accounts".
 | `js/lib/*.js` | Tested logic: catalogue, events, auth flows, validation, DOM helpers |
 | `js/pages/*.js` | One controller per page |
 | `data/*.json` | Content: forms catalogue, events, forum/community preview examples |
-| `supabase-setup.sql` | Hardened schema + policies (fresh install or upgrade) |
+| `supabase-setup.sql` | Hardened base schema + policies (fresh install or upgrade) |
+| `supabase/*.sql` | Additive SQL on top of the base: `community`, `discussion-guides`, `discussion-report-review`, `enrollment`, `learning`, `lesson-help`, `school-directory` (+ seed); `preflight.sql` is read-only. Owner-applied, staging first |
 | `supabase/preflight.sql` | Read-only checks to run on the real project first |
 | `tests/` | `npm test` — unit, flow, database-permission and release checks |
 | `vercel.json`, `.vercelignore` | Deployment headers/redirects; dev files excluded from deploys |
@@ -49,7 +57,9 @@ Do not open pages as `file://` — modules and data loading need a server.
 npm run check
 ```
 
-This verifies the stamped layout is current and runs every test:
+This verifies that the generated files are current (stamped layout and sitemap,
+read and print companions, technique index; each has a `--check` drift mode)
+and runs every test:
 script syntax, no inline scripts/handlers/styles or raw HTML injection, no
 `href="#"` or dead local links, labels/accessible names, metadata,
 unsupported claims, content-file validation, safe account config, headers,
@@ -57,10 +67,27 @@ colour contrast, catalogue/event/lesson logic, auth/profile flows (with
 hanging and failing fake clients), preview-server path safety, and the
 database policies in an embedded Postgres (PGlite).
 
-After editing anything in `layout/`, run `npm run sync`.
+After editing anything in `layout/`, lesson data or narration cues, run `npm run sync`.
 
-After a deployment, `npm run check:live -- --csp report-only|enforced [--base <origin>]`
-runs read-only HTTP checks against the live site (see docs/RELEASE.md §5).
+After a deployment, from the deployed commit:
+
+```bash
+npm run check:live
+```
+
+It makes read-only GET requests to `https://tkdflow.com` (or `--base <origin>`, which must be
+a bare https origin with no credentials, path or query). It fails if:
+- any sitemap page, script or stylesheet, or any public file named on the command line,
+  differs byte for byte from this checkout;
+- the global `vercel.json` headers differ on the home page, `/styles.css` or a favicon, or
+  a favicon's own `Cache-Control` differs;
+- a `vercel.json` redirect differs;
+- any development path answers anything but 404: every `.vercelignore` entry, `vercel.json`
+  and every dot-file.
+
+Named files must be public files of this checkout. URLs, `..`, dot-files, development paths
+and symlinks are refused as usage errors before any request. `--csp report-only` expects the
+report-only header instead, and `--json <file>.json` saves the results. See docs/RELEASE.md §5.
 
 Manual checks still required (not automated here): keyboard-only pass and a
 screen-reader spot check on each page, phone widths 320/375/390/768, and the
@@ -69,7 +96,7 @@ staging account checks below.
 ## Releases, rollback and recovery
 
 Follow [docs/RELEASE.md](docs/RELEASE.md): release record, local checks, preview QA
-(36 pages × 5 widths), first public release with accounts off and no database migration,
+(every page in `layout/pages.json` × 5 widths), first public release with accounts off and no database migration,
 post-deploy header/CSP checks, Vercel Instant Rollback, CSP enforcement, the separate
 accounts rollout, and database recovery that never restores the old public policies.
 
@@ -86,8 +113,9 @@ accounts rollout, and database recovery that never restores the old public polic
   not a deadline). If the organiser's tier (e.g. ATA "Class A+") does not map
   to local/national/international, use level `unspecified` and record the tier
   as `organiserClass`.
-- Lessons record their review status in their data module
-  (`js/lessons/*.js`); do not mark one reviewed without a named reviewer.
+- Lessons record their review status in their lesson data (`data/lessons/*.json`,
+  and `js/lessons/taegeuk-1-data.js` for Taegeuk Il Jang); do not mark one reviewed
+  without a named reviewer.
 
 ## Pinning the Supabase SDK
 
@@ -95,7 +123,12 @@ accounts rollout, and database recovery that never restores the old public polic
 
 ## Restoring member accounts
 
-**Current restoration work:** read [docs/accounts-and-discussions-2026-11-16.md](docs/accounts-and-discussions-2026-11-16.md) first. It records the verified ownership/access blocker and the staged enrollment, Google-linking and discussion schema required by the current client. Earlier steps below remain reference material; flags alone cannot restore the service.
+> **History, not current status.** These steps were written on 2026-11-15, when accounts
+> were off and the old project failed DNS. Accounts are now on in source (see the top of
+> this file). Keep them as the reference for rebuilding a staging project; check current
+> facts in the dated sections at the end and with `npm run check:live`.
+
+**Historical reference (2026-11-16):** [docs/accounts-and-discussions-2026-11-16.md](docs/accounts-and-discussions-2026-11-16.md) records the ownership and access blocker as it stood then, and the staged enrollment, Google-linking and discussion schema the client needed. The steps below are reference material for rebuilding a project; flags alone could not restore the service.
 
 
 The previous project host (`ffkwwfwrqtwejyrnkxey.supabase.co`) failed DNS
@@ -152,11 +185,12 @@ during the 2026-11-15 audit. Do not guess a replacement. In order:
 
 `vercel.json` sets `X-Content-Type-Options`, `X-Frame-Options`,
 `Referrer-Policy`, `Permissions-Policy`, `Cross-Origin-Opener-Policy` and an
-**enforced** `Content-Security-Policy` (no `unsafe-inline`/`unsafe-eval`; only
-the site, Google Fonts, the pinned jsDelivr SDK and `*.supabase.co`).
-`tests/site.test.mjs` fails if the policy falls back to report-only or gains a
-source. Production still runs the earlier report-only policy until the
-enforcement release in docs/RELEASE.md §8 is approved and deployed.
+**enforced** `Content-Security-Policy`: `'self'` for scripts, styles, fonts and
+images (plus `data:` images), connections to `'self'` and `https://*.supabase.co`
+only, and `frame-ancestors 'none'`. Fonts and the Supabase SDK are first-party
+files, so no third-party origin is allowed. `tests/site.test.mjs` fails if the
+policy falls back to report-only or gains a source. `npm run check:live` confirms
+that production sends exactly these headers.
 
 
 ## Current account and school status — 2026-11-17

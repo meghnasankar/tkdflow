@@ -8,6 +8,7 @@
     "sync": "node scripts/build-companions.mjs && node scripts/sync-layout.mjs && node scripts/build-technique-index.mjs",
     "test": "node --test tests/*.test.mjs",
     "test:db": "node --test tests/db.test.mjs",
+    "check:live": "node scripts/check-live.mjs",
     "check": "node scripts/sync-layout.mjs --check && node scripts/build-technique-index.mjs --check && node scripts/build-companions.mjs --check && node --test tests/*.test.mjs"
   },
   "engines": {

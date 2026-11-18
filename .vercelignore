@@ -12,3 +12,5 @@ SETUP.md
 CLAUDE.local.md
 .claude
 .github
+.gitattributes
+.gitignore
