@@ -174,3 +174,7 @@
  .lesson-study .lesson-view-toolbar { grid-template-columns: minmax(250px,1fr) minmax(0,1fr); }
  .lesson-study .lesson-effects-toggle { min-height: 36px; padding: 5px 6px; }
 }
+
+/* Link from a lesson's pose list to the cross-lesson technique finder. */
+.move-panel-link { margin: -4px 0 10px; font-size: .88rem; }
+.move-panel-link a { color: var(--red-dark); font-weight: 600; text-decoration: underline; }
