@@ -1,6 +1,9 @@
-/* Shared behaviour for every page: mobile navigation, the account link and
-   small layout helpers. Deliberately independent of the account service —
-   navigation keeps working if the Supabase SDK or network is unavailable. */
+/* Shared behaviour for every page: mobile navigation, the account links and
+   small layout helpers. Rendering is independent of the account service —
+   navigation keeps working if the Supabase SDK or network is unavailable. The
+   account client is loaded only when a signed-in member presses the header's
+   Log out button; a page view never starts it, and a known under-13 tab never
+   shows the button. */
 import { ACCOUNTS } from './config.js';
 import { accountsConfigured, hasStoredSession, sessionStorageKey } from './lib/account-service.js';
 import { h, replaceChildren } from './lib/dom.js';
@@ -71,16 +74,86 @@ function replaceAccountLinks(slot, mode, page, cfg) {
     return;
   }
   if (mode === 'member') {
+    logoutButton = h('button', {
+      type: 'button', class: 'btn btn-secondary btn-sm nav-account-link nav-logout',
+      'aria-disabled': logoutPending ? 'true' : null, on: { click: () => headerLogout({ cfg }) },
+    }, logoutPending ? BUSY_TEXT : LOGOUT_TEXT);
+    logoutStatus = h('span', { class: 'nav-logout-status', role: 'status' });
     replaceChildren(slot, h('a', {
       href: '/profile.html', class: 'btn btn-secondary btn-sm nav-account-link',
       'aria-current': page === 'profile' ? 'page' : null,
-    }, 'My profile'));
+    }, 'My profile'), logoutButton, logoutStatus);
     return;
   }
+  logoutButton = null; logoutStatus = null;
   replaceChildren(slot,
     h('a', { href: '/auth.html', class: 'btn btn-secondary btn-sm nav-account-link' }, 'Log in'),
     mode === 'guest-signup' ? h('a', { href: '/auth.html?mode=register', class: 'btn btn-primary btn-sm nav-account-link' }, 'Join free') : null,
   );
+}
+
+/* ── Header Log out ── */
+const LOGOUT_TEXT = 'Log out', BUSY_TEXT = 'Logging out…';
+// `logoutAttempt` numbers each attempt. A Back/Forward restore or an under-13 result
+// invalidates the attempt in flight: its later answers never touch the header or navigate.
+let logoutPending = false, logoutAttempt = 0, logoutButton = null, logoutStatus = null;
+function showLogoutBusy(busy) {
+  if (!logoutButton) return;
+  // aria-disabled, not disabled: the button keeps keyboard focus while busy.
+  if (busy) logoutButton.setAttribute('aria-disabled', 'true'); else logoutButton.removeAttribute('aria-disabled');
+  logoutButton.textContent = busy ? BUSY_TEXT : LOGOUT_TEXT;
+}
+const sayLogout = (text) => { if (logoutStatus) logoutStatus.textContent = text; };
+/** Logout proof only (the navbar keeps the cheap hasStoredSession): 'present',
+ *  'absent' or 'unknown' when storage can't be read. Reads; never writes. */
+function sessionState(cfg) {
+  const key = sessionStorageKey(cfg);
+  if (!key) return 'unknown';
+  try { const storage = globalThis.localStorage; if (!storage) return 'unknown'; return storage.getItem(key) ? 'present' : 'absent'; }
+  catch { return 'unknown'; }
+}
+function cancelLogout() { logoutAttempt += 1; logoutPending = false; showLogoutBusy(false); sayLogout(''); }
+const defaults = {
+  service: () => import('./lib/account-service.js').then((m) => m.getAccountService()),
+  logout: () => import('./lib/auth-flows.js').then((m) => m.logout),
+  go: (url) => window.location.assign(url),
+};
+/** Sign out of this device (local scope, through the shared bounded logout helper),
+ *  then load a fresh public home page. Success requires that no session remains
+ *  stored; anything else keeps the visitor here with a message. One attempt at a
+ *  time. An attempt invalidated while it waits (Back/Forward restore, an under-13
+ *  result) stops before signing out; if its sign-out request had already started
+ *  it can't be recalled, but its answer is ignored. Dependencies are injectable. */
+export async function headerLogout({ cfg = ACCOUNTS, deps = {} } = {}) {
+  const d = { ...defaults, ...deps };
+  const ineligible = () => sharedEligibilityStore().read() === INELIGIBLE;
+  if (logoutPending) return 'busy';
+  if (ineligible()) { renderAccountNav(cfg); return 'ineligible'; }
+  const attempt = ++logoutAttempt, current = () => attempt === logoutAttempt;
+  logoutPending = true; showLogoutBusy(true); sayLogout('');
+  let outcome = { kind: 'error' };
+  try {
+    const svc = await d.service();
+    if (!current()) return 'stale';
+    if (ineligible()) { cancelLogout(); renderAccountNav(cfg); return 'ineligible'; }
+    if (svc?.status !== 'ready') outcome = { kind: 'unavailable' };
+    else {
+      const logout = await d.logout();
+      if (!current()) return 'stale';
+      // Unreadable storage is not proof of absence: treat it as still signed in.
+      outcome = await logout(svc.client, { stillSignedIn: () => sessionState(cfg) !== 'absent', ms: d.ms });
+    }
+  } catch { outcome = { kind: 'error' }; }
+  if (!current()) return 'stale';
+  logoutPending = false;
+  // Signed out here, or already signed out (for example by another tab): verified absent.
+  const state = sessionState(cfg);
+  if (state === 'absent') { d.go('/'); return 'signed-out'; }
+  showLogoutBusy(false);
+  if (state === 'unknown') { sayLogout('Couldn’t confirm that you’re logged out in this browser. Try again.'); return 'unconfirmed'; }
+  // The account service keeps an unavailable result for this page, so only a reload can retry it.
+  sayLogout(outcome.kind === 'unavailable' ? 'Log out isn’t available right now. Reload this page and try again.' : 'Couldn’t log out. Try again.');
+  return outcome.kind === 'unavailable' ? 'unavailable' : 'error';
 }
 
 /** Keep the header link current without the account client: another tab
@@ -91,10 +164,11 @@ function replaceAccountLinks(slot, mode, page, cfg) {
 export function watchAccountNav(win = window, render = renderAccountNav, cfg = ACCOUNTS) {
   const key = sessionStorageKey(cfg);
   const onStorage = (e) => { if (e.key === null || (key && e.key === key)) render(cfg); };
-  const onShow = (e) => { if (e.persisted) render(cfg); };
+  // A page restored by Back/Forward is never left showing an old "Logging out…".
+  const onShow = (e) => { if (e.persisted) { cancelLogout(); render(cfg); } };
   win.addEventListener('storage', onStorage);
   win.addEventListener('pageshow', onShow);
-  const stopAge = onEligibilityChange(() => render(cfg));
+  const stopAge = onEligibilityChange(() => { if (sharedEligibilityStore().read() === INELIGIBLE) cancelLogout(); render(cfg); });
   return () => { win.removeEventListener('storage', onStorage); win.removeEventListener('pageshow', onShow); stopAge(); };
 }
 

@@ -25,13 +25,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 16 (read-only live checker, deploy exclusions and current docs): published.** PR 40 merged as `main` `1bff3c5`. In production, `npm run check:live` passed 194/194, including a 404 for `/.gitattributes`.
 - **Batch 17 (Community search by every word): published.** PR 41 merged as `main` `1a5d72c`. In production, live checks passed 194/194, and Codex's native query checks passed.
 - **Batch 18 (Clear confirmation and other tabs): published.** PR 42 merged as `main` `8cb2551`. The full suite passed 687/687, and 247/247 live checks passed, including all 53 public JSON files.
-- **Batch 19 (school planner recovers from a failed save):** on `fix/planner-write-recovery-2026-11-18`, cut from `8cb2551`. Passed Codex's browser review; uncommitted, ready for root's release. Scope: item 39.
+- **Batch 19 (school planner recovers from a failed save): published.** PR 43 merged as `main` `1e017ac`. Codex verified it in production: main CI succeeded, 194 live checks passed and the source matched.
+- **Batch 21 (header Log out):** on `fix/header-log-out-2026-11-18`, cut from `1e017ac`. Passed Codex's browser review; ready for root's release. Scope: item 41. (Batch 20, removing tool credits, is prepared separately and waits on an owner fact.)
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 19:** implemented locally and browser-reviewed by Codex, uncommitted, awaiting release.
+- **Batch 21:** implemented locally and browser-reviewed by Codex, awaiting release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -68,7 +69,8 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
-| 39 | After one failed save the planner never retries in that visit, and the notice misdescribes reload | Code path: a throwing `setItem` (for example a full origin quota) sets `state = 'unavailable'` (`js/lib/school-planner.js:287`), so every later `save()`/`replace()` returns memory-only. The notice says the list lasts only until reload, but a reload shows the last saved, older list. Low likelihood (a valid list is at most about 105 KB). | P3 | Batch 19 |
+| 41 | No visible Log out | The owner reported "I can't find a logout button". A signed-in member's header showed only My profile (`js/site.js`, member mode); the only Log out was `#btn-logout` inside `profile.html`. | P2 usability | Batch 21 |
+| 39 | After one failed save the planner never retries in that visit, and the notice misdescribes reload | Code path: a throwing `setItem` (for example a full origin quota) sets `state = 'unavailable'` (`js/lib/school-planner.js:287`), so every later `save()`/`replace()` returns memory-only. The notice says the list lasts only until reload, but a reload shows the last saved, older list. Low likelihood (a valid list is at most about 105 KB). | P3 | Published (PR 43) |
 | 38 | A stale Clear confirmation could delete another tab's newer school list | Reproduced in the final focused audit with the real planner page in the test DOM. Tab A opened "Clear all 2 levels, 0 forms?"; tab B saved a third level; tab A silently adopted it ("Updated with changes made in another tab.") with the confirmation and its old count still open. Yes then saved an empty list ("List cleared."). | P2 data safety | Published (PR 42) |
 | 37 | Community search needed exact phrases | `js/pages/forum.js` filtered with one lower-cased substring of title plus body, so word order, hyphens, spacing and accents changed the results, unlike the library search. | P3 usability | Published (PR 41) |
 | 36 | Release docs named a live checker that didn't exist, and production served `/.gitattributes` | SETUP.md and docs/RELEASE.md told the owner to run `npm run check:live`, but there was no such script. Codex's read-only live audit found `/.gitattributes` answering 200 (whitespace rules only, no credentials), while other dot-files returned 404. SETUP.md and RELEASE.md §8 still described the earlier accounts-off, report-only state as current. | P2 maintenance | Published (PR 40) |
@@ -1348,4 +1350,74 @@ With the previous substring search, both tests fail. The full suite passes 673/6
   - **Initial blocked read:** 0 levels shown while an older 10 were still stored. One local edit plus a recovered external change protected the draft; an explicit Load adopted 11.
   - **Clear confirmation:** the PR 42 protection kept 11 while 12 were stored, and a normal Clear still worked.
   - **Layout and errors:** at 320 px the notice fits its 285 px width, with no horizontal overflow; 0 console errors and 0 Supabase calls.
+- **Not tested:** a real screen reader and Safari.
+
+## Batch 21 — header Log out (item 41)
+
+### Change (`js/site.js`, `styles.css`)
+- **The button:** in member mode the header shows **Log out** beside **My profile**, on every page, on desktop and in the mobile menu (the same `#nav-account` slot). Guest, accounts-off and under-13 modes are unchanged, with no button.
+- **No account client until the click:**
+  - `site.js` still imports only the storage helpers;
+  - the account service and the existing bounded `logout()` (`js/lib/auth-flows.js`, local scope, the same helper Profile uses) are loaded with dynamic `import()` only inside the click path;
+  - a page view never calls `getAccountService()`;
+  - before starting, the click re-reads the age store: a tab now known to be under 13 re-renders the header and starts nothing.
+- **Busy:** one attempt at a time; repeated clicks or key presses return without a second attempt. The button gets `aria-disabled="true"` and "Logging out…" and keeps keyboard focus.
+- **Success:** only when a strict read proves that no stored session remains: signed out here, or already signed out (for example by another tab). Then it loads a fresh `/`.
+  - **The strict read:** used only for this proof. It returns present, absent or unknown, and never writes. The navbar keeps its cheap `hasStoredSession` check unchanged.
+  - **Unknown (storage unreadable):** counts as still signed in, both for the bounded helper's check and afterwards. The header shows "Couldn't confirm that you're logged out in this browser. Try again." and never navigates.
+  - **Review fix (root):** the first version used `hasStoredSession`, which returns false on a read error, so blocked storage could have looked like a completed logout.
+- **Stale attempts:** each attempt is numbered.
+  - A Back/Forward restore, or an under-13 result recorded on the page, invalidates the attempt in flight.
+  - After each await (loading the service, loading the helper, the sign-out answer), an outdated attempt stops without signing out, navigating, writing the status or unlocking a newer attempt.
+  - The age is re-checked after the service loads.
+  - **Boundary:** a sign-out request already sent can't be recalled; its late answer is ignored and doesn't touch the current header.
+- **Failure:** this covers sign-out errors with the session remaining, a timeout (bounded by the helper), and an unavailable service.
+  - A status next to the button: "Couldn't log out. Try again." (a click retries), or "Log out isn't available right now. Reload this page and try again." The account service keeps an unavailable result for the page, so only a reload can retry it.
+  - The button is usable again, focus stays on it, and there's no navigation.
+- **Not done:** global or other-device sign-out, and any wider storage clearing.
+- **Other tabs and Back:**
+  - another tab signing out during an attempt re-renders to guest links through the existing storage watcher, and focus moves to the first header link as before; the attempt then ends on `/`;
+  - a page restored by Back/Forward resets any "Logging out…";
+  - the token-refresh and Back/Forward focus guards are unchanged.
+
+### Tests
+- **New `tests/header-logout.test.mjs` (14):** the real `site.js` in the mini DOM, with `account-service.js` replaced in this test process only by a fake that re-exports the real storage helpers and counts `getAccountService()`; the real `logout()` runs against synthetic clients.
+  - page views (member, guest, under-13) never start the client, and only members see the button;
+  - success: busy state and focus, one service call, the session gone, then `/`;
+  - failure keeps the session and the visitor here with a retryable message; a retry makes a new attempt;
+  - a hanging client times out as a failure; an unavailable service says so;
+  - double clicks give one attempt;
+  - an under-13 result recorded before the click starts nothing;
+  - another tab signing out mid-attempt;
+  - Back/Forward reset;
+  - Back/Forward while the service loads, then a second click: the old attempt never signs out, navigates or unlocks, and the newer one completes;
+  - a restored page with no new click ignores the old attempt;
+  - an under-13 result while the service loads stops before signing out;
+  - a sign-out already sent before Back/Forward: its late failure doesn't unlock or report over the newer attempt;
+  - no session left: it goes home rather than reporting a failure;
+  - session reads blocked during the attempt, with either a failed or a successful sign-out answer: no navigation, the synthetic record still stored, and a retryable "couldn't confirm" message with focus kept.
+- **Updated deliberately:**
+  - `site-nav.test.mjs` and the age-nav scenario now list header **links** (anchors) separately from the new button, and assert that members see Log out while under-13 tabs see no button;
+  - the `age-nav.test.mjs` string ban is replaced: still no `initAccountService|createClient|signOut|removeItem|.clear(|setItem` in `site.js`, no static import of the account client or logout, and the only references are the two lazy loaders in the Log out path. Behaviour is proven by the new tests.
+- **Eleven spot mutants caught:** using the cheap `hasStoredSession` as proof (the review fix), and no check after the sign-out answer, no age re-check after the service loads, Back/Forward not invalidating, and a failure reported with no session left, plus the first six:
+  - success without confirming the session is gone;
+  - the client started on page view;
+  - no one-attempt guard;
+  - no Back/Forward reset;
+  - no age re-check;
+  - native `disabled`, which drops focus.
+- **One redundant guard:** removing the check right after the service loads is still covered by the check after the helper loads.
+- **Full suite on this branch:** 708/708 (`npm run check`).
+
+### Known limits
+- The failure status sits just below the header button on desktop (absolutely positioned) and full-width in the mobile menu.
+- **Mobile menu (≤768 px):** the account buttons (My profile, Log out, Log in, Join free) are at least 44 px high. Codex had measured 40 px at 320 px.
+- **Browser review** (Codex: native Chrome with a synthetic fixture and a fake account service, never the real owner account; Codex's targeted header tests passed 31/31 independently):
+  - **Page view:** the real `about.html` made 0 account-service calls before the click, with 0 errors. A synthetic member saw Log out beside My profile.
+  - **Mobile menu:** at 320 and 390 px there was no horizontal overflow. The buttons first measured 40 px; after the mobile `min-height: 44px` change they measured 44 px.
+  - **769 px, member header:** it first overflowed (`scrollWidth` 771 once fonts settled, Log out's right edge at 771.38 against 769, about 800 before fonts loaded). After the CSS fix in the 769–900 px rule it fits once settled: `scrollWidth` 769, with Log out's right edge at 745. A fast viewport-resize loop briefly animates the padding but leaves no steady overflow.
+  - **Wider desktops:** no overflow at 820, 900 and 1280 px.
+  - **Keyboard:** a failure keeps focus, keeps the session and allows a retry. Success goes to a fresh home page. An unavailable service shows the honest "reload" message.
+  - **Under 13:** a tab known to be under 13, with a fake session key, shows About accounts and makes 0 service calls.
+  - **Not counted as error-free:** earlier forms and home page runs with a fake client showed expected fixture-only errors (an auth method the fake didn't implement).
 - **Not tested:** a real screen reader and Safari.
