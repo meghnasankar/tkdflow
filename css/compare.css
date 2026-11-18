@@ -1,0 +1,37 @@
+/* Compare two forms. */
+.cf-main { padding-top: 20px; padding-bottom: 48px; }
+/* A compact hero for this tool only, so the comparison starts near the top. */
+.page-hero.cf-hero { padding: 28px 0 24px; }
+.cf-hero h1 { font-size: clamp(1.6rem, 3.2vw, 2.2rem); }
+.cf-hero p { margin-top: 6px; font-size: .98rem; }
+.cf-pick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)) auto; gap: 12px; align-items: end; }
+.cf-field label { display: block; font-weight: 700; font-size: .88rem; color: var(--navy); margin-bottom: 4px; }
+.cf-field select { width: 100%; min-height: 44px; padding: 8px 10px; border: 1px solid var(--gray-300); border-radius: var(--radius-sm); background: var(--white); font: inherit; color: var(--navy); }
+.cf-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.cf-actions .btn { min-height: 44px; }
+.cf-actions .btn[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+.cf-copy-status:empty { display: none; }
+.cf-copy-status, .cf-copy-fallback { margin-top: 8px; font-size: .9rem; color: var(--gray-600); }
+.cf-copy-fallback input { width: 100%; max-width: 560px; min-height: 40px; padding: 6px 8px; border: 1px solid var(--gray-300); border-radius: var(--radius-sm); font: inherit; }
+.cf-summary { margin: 16px 0 10px; font-weight: 600; color: var(--navy); }
+.cf-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.cf-card { padding: 16px; border: 1px solid var(--gray-200); border-radius: var(--radius); background: var(--white); overflow-wrap: anywhere; }
+.cf-thumb { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: contain; border-radius: var(--radius-sm); background: var(--gray-50); }
+/* Desktop: a shorter thumbnail, with the whole figure visible (no cropping). */
+@media (min-width: 641px) { .cf-thumb { height: 190px; aspect-ratio: auto; } }
+.cf-card h2 { font-size: 1.25rem; margin: 12px 0 2px; }
+.cf-korean { color: var(--gray-600); margin: 0; }
+.cf-meaning { margin: 4px 0 0; color: var(--gray-600); font-style: italic; }
+.cf-facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 12px; margin: 12px 0; }
+.cf-facts dt { font-weight: 700; color: var(--navy); font-size: .88rem; }
+.cf-facts dd { margin: 0; font-size: .92rem; }
+.cf-links { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0; }
+.cf-links a { display: inline-block; padding: 4px 0; }
+.cf-shared { grid-column: 1 / -1; margin: 0; color: var(--gray-600); }
+.cf-note { margin-top: 16px; font-size: .9rem; color: var(--gray-600); }
+.cf-note a, .cf-nojs a { color: var(--red-dark); font-weight: 600; text-decoration: underline; }
+@media (max-width: 640px) {
+  .cf-pick { grid-template-columns: minmax(0, 1fr); }
+  .cf-cards { grid-template-columns: minmax(0, 1fr); }
+}
+.cf-desc { margin: 8px 0 0; font-size: .92rem; line-height: 1.55; }

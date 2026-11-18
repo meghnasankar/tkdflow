@@ -27,13 +27,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 18 (Clear confirmation and other tabs): published.** PR 42 merged as `main` `8cb2551`. The full suite passed 687/687, and 247/247 live checks passed, including all 53 public JSON files.
 - **Batch 19 (school planner recovers from a failed save): published.** PR 43 merged as `main` `1e017ac`. Codex verified it in production: main CI succeeded, 194 live checks passed and the source matched.
 - **Batch 21 (header Log out): published.** PR 44 merged as `main` `bc4c677`. Codex verified it in production: the source files match exactly, and the live member header shows Log out.
-- **Batch 20 (no tool credits on public pages):** on `chore/public-lesson-copy-2026-11-18`, cut from `bc4c677`. Passed Codex's review; ready for root's release. Scope: item 40.
+- **Batch 20 (no tool credits on public pages): published.** PR 45 merged as `main` `10a5496`. Codex verified it in production: the 72 changed public paths match (including the old catalog now answering 404), 246/246 live checks pass, the live print wording is clean, and the header Log out is visible.
+- **Batch 22 (compare two forms):** on `feat/form-comparison-2026-11-18`, cut from `10a5496`. Passed Codex's browser review; ready for root's release. Scope: item 42.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 20:** implemented locally and reviewed by Codex, awaiting release.
+- **Batch 22:** implemented locally and browser-reviewed by Codex, awaiting release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -70,8 +71,9 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
+| 42 | No way to look at two forms side by side | The library shows one card per form; choosing between two meant switching pages. All the facts already exist: `data/forms.json` and each lesson's study poses and reference count, which the companions state. | P3 feature | Batch 22 |
 | 41 | No visible Log out | The owner reported "I can't find a logout button". A signed-in member's header showed only My profile (`js/site.js`, member mode); the only Log out was `#btn-logout` inside `profile.html`. | P2 usability | Published (PR 44) |
-| 40 | Public pages credited the tools used to make the voice and texture | At the owner's request, which reached Codex. Found by Codex and checked by scan: all 23 lesson pages had a `.voice-credit` paragraph ("Voice instructions generated with ElevenLabs using the stock Sarah voice."); all 23 read and print companions repeated it, from `VOICE` in `scripts/build-companions.mjs`; all 23 public narration manifests carried `provider`/`voice`/`model`; the public `data/narration/catalog.json` (read by no page) held the full generation record; and a comment in `js/animation/avatar.js` named the texture tool. | P2 owner request | Batch 20 |
+| 40 | Public pages credited the tools used to make the voice and texture | At the owner's request, which reached Codex. Found by Codex and checked by scan: all 23 lesson pages had a `.voice-credit` paragraph ("Voice instructions generated with ElevenLabs using the stock Sarah voice."); all 23 read and print companions repeated it, from `VOICE` in `scripts/build-companions.mjs`; all 23 public narration manifests carried `provider`/`voice`/`model`; the public `data/narration/catalog.json` (read by no page) held the full generation record; and a comment in `js/animation/avatar.js` named the texture tool. | P2 owner request | Published (PR 45) |
 | 39 | After one failed save the planner never retries in that visit, and the notice misdescribes reload | Code path: a throwing `setItem` (for example a full origin quota) sets `state = 'unavailable'` (`js/lib/school-planner.js:287`), so every later `save()`/`replace()` returns memory-only. The notice says the list lasts only until reload, but a reload shows the last saved, older list. Low likelihood (a valid list is at most about 105 KB). | P3 | Published (PR 43) |
 | 38 | A stale Clear confirmation could delete another tab's newer school list | Reproduced in the final focused audit with the real planner page in the test DOM. Tab A opened "Clear all 2 levels, 0 forms?"; tab B saved a third level; tab A silently adopted it ("Updated with changes made in another tab.") with the confirmation and its old count still open. Yes then saved an empty list ("List cleared."). | P2 data safety | Published (PR 42) |
 | 37 | Community search needed exact phrases | `js/pages/forum.js` filtered with one lower-cased substring of title plus body, so word order, hyphens, spacing and accents changed the results, unlike the library search. | P3 usability | Published (PR 41) |
@@ -1460,4 +1462,62 @@ With the previous substring search, both tests fail. The full suite passes 673/6
   - **Taegeuk Il Jang lesson:** the voice and effects controls are available, and there's no `.voice-credit`.
   - **Playback:** Play brought both media to ready state 4 and playing. Time went from 0.18 s to 8.44 s, then both paused, the caption updated, and there were 0 console errors.
   - **Media:** no audio bytes changed, and no API generation happened.
+- **Not tested:** a real screen reader and Safari.
+
+## Batch 22 — compare two forms (item 42)
+
+### Change
+- **New `/compare.html`** (in `layout/pages.json` and the sitemap, `data-page="forms"`), with `js/pages/compare.js`, `js/lib/form-compare.js` and `css/compare.css`.
+- **Choosing forms:** two labelled selects, grouped by style, plus Swap and **Copy comparison link**. If copying fails, a selectable, focused field shows the address.
+- **The address:** the pair lives in it (`?a=<id>&b=<id>`), so it can be shared.
+  - Unknown, overlong or repeated values and the same form twice are reported in plain words, and the address is rewritten to what is shown, without adding a history entry.
+  - A choice adds a history entry, and Back restores the pair.
+  - The selects are never rebuilt, so focus stays on them.
+- **Each card:**
+  - the approved thumbnail and its alt text, name, Korean name and meaning;
+  - the form's existing catalogue description;
+  - style, series, **Typical belt / level** (the existing `beltLabel`, such as "Yellow Belt", "10th Gup" or a black-belt rank, plus "(typical)"; no derived mapping), **Reference counts** and **Study poses**;
+  - **Review fix (root):** the label was "Typical belt colour", which was wrong for entries such as Chon-Ji's "10th Gup" or black-belt ranks.
+  - links to the lesson, the read-and-print companion and the library entry.
+- **Not shown:** difficulty (not comparable across styles) and review status, at the owner's direction.
+- **Shared line:** a neutral one appears only when both forms share a series or style ("Both are in the …"). There's no ranking or equivalence.
+- **Counts note:** one line explains that study poses are the lesson's own steps (including the ready and return positions) while reference counts follow the form's reference, so the numbers differ. It links to Start here, "How lessons count poses" (`#sh-reading`). It's hidden when the counts file isn't available.
+- **Copy results:** each copy is numbered. A copy that finishes after a newer copy, or after a different pair is chosen or restored by Back, shows no stale success or fallback and doesn't move focus.
+- **School note:** "Belt colours and order vary by style and school; these are typical placements, not equivalents", linking to Start here and My school's forms.
+- **Counts:** `data/form-facts.json` (study poses and reference counts) is generated by `scripts/build-companions.mjs` from the same lesson data as the companions, and kept current by its `--check` drift mode. Without it, the cards show the catalogue facts only.
+- **Where it's linked:** a Forms library hero line, a Start here "Choose a form" item and a Community resource post (kind "Study guide"). The header is unchanged, and there's no per-card compare link for now.
+
+### Tests (`tests/compare.test.mjs`, 11)
+- **Address parsing:** valid pairs; the same form twice; a lone second form; unknown, traversal, case and overlong values; repeated parameters; extra parameters; canonical form.
+- **Counts:** the generated counts equal what each published companion states (all 23); shape checks.
+- **Card facts:** the facts and their order (no difficulty or review rows); catalogue-only facts without the counts; neutral shared lines only within a series or style.
+- **Real page:**
+  - a shared address shows the right facts, thumbnail, links (all existing files) and note;
+  - choosing and swapping update the address with focus kept, and Back restores;
+  - mistyped addresses are reported and rewritten;
+  - copy success and the selectable fallback;
+  - a missing counts file is tolerated;
+  - each card's description, and the counts note with its link (hidden without counts);
+  - with a deferred clipboard: a success or failure after the pair changes shows nothing and keeps focus on the select, and an older failing copy after a newer successful one leaves the newer result.
+- **Discoverability:** library, Start here, Community and the sitemap link to it; the header doesn't.
+- **Five spot mutants caught:** no stale-copy guard, plus:
+  - no address rewrite;
+  - difficulty shown;
+  - no copy fallback;
+  - the same form shown twice.
+
+  One was equivalent: rebuilding the options inside the same select keeps focus.
+- **Full suite on this branch:** 720/720 (`npm run check`).
+
+### Known limits
+- **Browser review** (Codex: native Chrome with a fake clipboard; the real clipboard was untouched):
+  - **Passed:** the address pair, the selects, Swap and Back; unknown and duplicate values rewritten to the canonical address; a fake copy succeeding, and a denied copy showing the selected, focused address; a delayed old copy after a pair change ignored.
+  - **Layout:** 320, 390, 820 and 1280 px with no overflow, 44 px tool controls, thumbnails loaded, 0 errors.
+  - **Review fix (layout):** at 1280×1000 the full-size hero and full-width thumbnails pushed almost every fact below the fold, with only "Style" starting at about 980 px.
+    - This page now has its own compact hero (28/24 px padding, a smaller heading). Other pages' heroes are unchanged.
+    - Desktop thumbnails are 190 px high with the whole figure visible (`object-fit: contain`); phones keep the natural 16:9 ratio. The approved art is unchanged.
+    - **Re-measured by Codex:**
+      - at 1280×900 the hero is 193.5 px, the thumbnails 190 px, all facts end at 869 px and the links sit near 915 px (before, only "Style" began near 980 px);
+      - at 320 px there's no overflow, the thumbnails keep their natural 16:9 ratio, and the four tool controls are 44 px;
+      - Codex independently ran all 11 comparison tests, which passed.
 - **Not tested:** a real screen reader and Safari.

@@ -144,6 +144,14 @@ function fill(html, marker, content, file) {
   return html.replace(re, (m, open, close) => `${open}\n${content}\n${close}`);
 }
 
+export const FACTS = 'data/form-facts.json';
+/** Small public facts for the comparison page, from the same lesson data the
+ *  companions use: study poses and the reference count each lesson states. */
+export function renderFacts(list) {
+  const forms = Object.fromEntries(list.map((f) => { const c = companion(f); return [f.id, { studyPoses: c.rows.length, referenceCounts: c.count.value }]; }));
+  return JSON.stringify({ version: 1, forms }, null, 1) + '\n';
+}
+
 /** Every file this generator owns, with its expected content. */
 export function outputs() {
   const list = lessons();
@@ -151,6 +159,7 @@ export function outputs() {
   return [
     ...list.map((f) => [pageFile(f.id), fill(current(pageFile(f.id), 'companion'), 'companion', renderCompanion(companion(f)), pageFile(f.id))]),
     [INDEX, fill(read(INDEX), 'companion-index', renderIndexList(list), INDEX)],
+    [FACTS, renderFacts(list)],
   ];
 }
 
