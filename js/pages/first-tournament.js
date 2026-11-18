@@ -55,6 +55,6 @@ $('ft-copy').addEventListener('click',async()=>{
  catch{$('ft-copy-status').textContent=`Copy this link: ${url}`;}
 });
 window.addEventListener('popstate',()=>{ctx=parseContext(location.search);render();});
-// Another tab changed ticks: re-read them without reloading the page.
-window.addEventListener('storage',e=>{if(e.key===STORAGE_KEY){store=createChecklistStore(undefined,{known});render();}});
+// Another tab changed ticks: take its views, keeping any this tab hasn't stored yet.
+window.addEventListener('storage',e=>{if(e.key===STORAGE_KEY||e.key===null){store.external(e.key===null?null:e.newValue);render();}});
 render();

@@ -30,13 +30,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 20 (no tool credits on public pages): published.** PR 45 merged as `main` `10a5496`. Codex verified it in production: the 72 changed public paths match (including the old catalog now answering 404), 246/246 live checks pass, the live print wording is clean, and the header Log out is visible.
 - **Batch 22 (compare two forms): published.** PR 46 merged as `main` `aed2905`. Codex verified it live: main CI passed, the 10 changed public files match, and the live Forms → Compare link works with Taegeuk Il Jang and Chon-Ji cards and no errors.
 - **Batch 23 (search and shareable filters for learning resources): published.** PR 47 merged as `main` `ac23656`. Codex verified it live: main CI passed, the 5 changed public files match, the live query "print read" shows 1 result, the search input is 44 px, the discussion guides are below the resources, and there were 0 errors.
-- **Batch 24 (2027 ATU National Championships, dates TBA):** on `content/atu-2027-announcement-2026-11-18`, cut from `ac23656`. Passed Codex's browser review; ready for root's release. Scope: item 44.
+- **Batch 24 (2027 ATU National Championships, dates TBA): published.** PR 48 merged as `main` `5d65fec`. Codex verified it in production: main CI passed, the 2 changed source files match, and the live ATU card shows dates TBA with no calendar export and 0 errors.
+- **Batch 25 (first-tournament checklist recovers from failed saves):** on `fix/tournament-save-recovery-2026-11-18`, cut from `5d65fec`. Passed Codex's browser review; ready for root's release. Scope: item 45.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 24:** implemented locally and browser-reviewed by Codex, awaiting release.
+- **Batch 25:** implemented locally and browser-reviewed by Codex, awaiting release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -73,7 +74,8 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
-| 44 | The 2027 ATU National Championships wasn't listed, and the 2026 note said no 2027 announcement existed | Codex rechecked the official sources on 18 November (evidence: root's `atu-announcement-source.json`). `https://www.joinatu.com/` announces the 2027 National Championships at the Gas South Convention Center, Duluth, Georgia. Its main announcement says May 28–29, 2027, but its countdown says May 27, 2027, and the linked `/event-schedule` still shows 2026 (May 22–23). | P3 content | Batch 24 |
+| 45 | The first-tournament checklist stopped saving after one failed write, and another tab could replace unsaved ticks | `js/lib/tournament-guide.js` `set()` made any write error a permanent `unavailable` state; the notice said ticks would be lost on leaving, although a reload shows the last saved ticks; `first-tournament.js` rebuilt the store on every `storage` event; and each save wrote the whole in-memory object, so a stale tab could erase another tab's other views. | P2 data safety | Batch 25 |
+| 44 | The 2027 ATU National Championships wasn't listed, and the 2026 note said no 2027 announcement existed | Codex rechecked the official sources on 18 November (evidence: root's `atu-announcement-source.json`). `https://www.joinatu.com/` announces the 2027 National Championships at the Gas South Convention Center, Duluth, Georgia. Its main announcement says May 28–29, 2027, but its countdown says May 27, 2027, and the linked `/event-schedule` still shows 2026 (May 22–23). | P3 content | Published (PR 48) |
 | 43 | Community learning resources had no search, and the category couldn't be shared | The resources view (`community.html?view=resources`) kept its category in a page variable, so it wasn't in the address, wasn't shareable and wasn't restored by Back. It also had no search, unlike the discussions pane. | P3 usability | Published (PR 47) |
 | 42 | No way to look at two forms side by side | The library shows one card per form; choosing between two meant switching pages. All the facts already exist: `data/forms.json` and each lesson's study poses and reference count, which the companions state. | P3 feature | Published (PR 46) |
 | 41 | No visible Log out | The owner reported "I can't find a logout button". A signed-in member's header showed only My profile (`js/site.js`, member mode); the only Log out was `#btn-logout` inside `profile.html`. | P2 usability | Published (PR 44) |
@@ -1613,3 +1615,60 @@ With the previous substring search, both tests fail. The full suite passes 673/6
   - 0 console errors.
   - Codex independently ran the events tests, which passed 20/20.
 - **Not tested:** a real screen reader and Safari.
+
+## Batch 25 — first-tournament checklist recovers from failed saves (item 45)
+
+### Change (`js/lib/tournament-guide.js`, `js/pages/first-tournament.js`)
+- **States:**
+  - `ok`;
+  - `unavailable`: storage can't be read or used right now; the next tick tries again;
+  - `write-failed`: the last save failed; the next tick tries again;
+  - `corrupt`: the saved data couldn't be read when the page loaded, so the checklist started empty;
+  - `damaged`: the saved data became unreadable after the page loaded. This tab keeps showing its ticks, with its own notice ("…became unreadable, so your latest tick wasn't saved. Your ticks are still shown here; ticking or unticking an item replaces the unreadable data.");
+  - `unsaved`: another tab's readable save was adopted, but some ticks here still aren't stored ("Some of your latest ticks aren't saved in this browser yet…"). No cause is guessed.
+  - In `corrupt` and `damaged`, unreadable data is replaced only by the visitor's next tick, after the notice has said so.
+- **Unsaved views:** views changed here but not yet stored are tracked. A successful save stores all of them and clears the warning.
+- **Merge on write:** each save re-reads what's stored and writes back only the views this tab changed, so another tab's ticks for **other** views are kept. For the **same** view the latest save wins; this isn't described as keeping every change.
+- **Unreadable data:**
+  - data that became unreadable after the page loaded is never overwritten unannounced: the save is skipped and the notice changes to the unreadable message;
+  - the next tick replaces it, writing every view this tab knows.
+- **Another tab's update:** a `storage` event adopts the other tab's views but keeps this tab's unsaved ones. Unreadable updates are ignored. (`localStorage.clear()` elsewhere is treated as an empty update.)
+  - When readable data returns with nothing unsaved here, the warning clears to the normal notice. With unsaved ticks here it becomes `unsaved`, or stays `write-failed` if the last write failed.
+  - **Review fix (root):** the first version kept a stale "unreadable" or "unavailable" warning after recovery, and used the "started empty" wording for data damaged after load.
+- **Best effort:** saving re-reads, merges and writes, so a **different** view already stored by another tab is kept. Two truly simultaneous saves can still end with whichever was written last. No locking is added.
+- **Honest notices:**
+  - **Failed write:** "Your latest ticks couldn't be saved in this browser (it may be out of space). They're still shown here, and the page tries again when you tick or untick an item. If you reload or leave now, the ticks last saved here come back without them."
+  - **Unavailable storage:** names the latest ticks kept only on this page, and earlier saved ticks possibly coming back.
+- **Unchanged:** the Reset confirmation, which still clears only the current view and doesn't promise to keep other changes made to that view elsewhere.
+
+### Tests (`tests/first-tournament.test.mjs`, +8; two existing assertions updated to the new meaning)
+- **Recovery:** one failed save, then a tick stores every unsaved view, with the older saved ticks untouched in between; a failed read while saving is retried.
+- **Two stale tabs:** both keep their different views, and the latest save wins for the same view.
+- **Another tab's update:** adopted for saved views, kept back for unsaved ones; unreadable updates are ignored.
+- **Data damaged after load:** left as it is, with the `damaged` notice (not "started empty"); the next tick replaces it with every known view.
+- **Recovery:** readable data coming back clears the warning (clean), or reports `unsaved` while keeping the unsaved view (dirty); the next tick then stores everything.
+- **Real page, both recovery cases:**
+  - unreadable at load, then another tab's readable save: the warning clears and the other tab's tick shows;
+  - ok, damaged, a refused tick, then another tab's readable save: the `unsaved` notice and the tick kept, and the next tick stores all.
+- **Real `first-tournament.js` page with injected write faults:** the honest notice after a failed tick; the next tick saves both; another tab's update keeps this tab's unsaved ticks.
+- **Six spot mutants caught:** no warning recovery, plus:
+  - a permanent failure;
+  - no merge;
+  - another tab replacing unsaved views;
+  - unreadable data overwritten unannounced;
+  - unsaved views forgotten after a failure.
+- **Found while testing:** replacing unreadable data with only the unsaved views would have dropped earlier saved views. It now writes every view this tab knows.
+- **Full suite on this branch:** 739/739 (`npm run check`).
+
+### Known limits
+- **Simultaneous saves:** two truly simultaneous saves can still end with whichever was written last; there's no locking.
+- **Browser review** (Codex, native Chrome, two tabs on a local storage-fault fixture; screenshot and JSON in Codex's batch-25 notes):
+  - **A failed write**, then the next tick stores both ticks.
+  - **Separate views** (AAU forms and USAT sparring) keep both tabs' contexts.
+  - **Damaged data** isn't overwritten by the first tick.
+  - **Another tab's readable save while AAU ticks were unsaved:** the unsaved ticks are kept, the notice says they're unsaved, and the next tick stores everything.
+  - **A blocked read**, then storage allowed: the next tick recovers.
+  - **The same view in two tabs:** the latest save updates the other tab.
+  - 0 app errors in both tabs.
+  - Codex independently ran `tests/first-tournament.test.mjs`, which passed 20/20.
+- **Not tested:** a physical phone, Safari and a screen reader.

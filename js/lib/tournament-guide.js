@@ -50,42 +50,79 @@ export function progressText(checked,total,ctx){
 }
 
 /** Browser-only ticks, kept separately for each organization/discipline view.
- *  state: 'ok' | 'unavailable' (storage blocked) | 'corrupt' (unreadable data,
- *  ignored and replaced only when the visitor changes a tick). */
+ *  state: 'ok' | 'unavailable' (storage can't be read or used right now) |
+ *  'corrupt' (the saved data couldn't be read when the page loaded, so it started
+ *  empty) | 'damaged' (the saved data became unreadable after this page loaded;
+ *  this tab keeps showing its ticks) | 'write-failed' (the last save failed) |
+ *  'unsaved' (another tab's readable save was adopted, but some ticks here are
+ *  still not stored). In every state but 'ok', the next tick tries again; an
+ *  unreadable saved value is replaced only after the page has said so.
+ *  Saving is best effort: it re-reads, merges and writes, so a different view
+ *  already stored by another tab is kept, but two truly simultaneous saves can
+ *  still end with the last one written.
+ *  Saving re-reads what is stored and writes back only the views this tab has
+ *  changed, so other tabs' ticks for other views are kept. For the same view the
+ *  most recent save wins. Views changed here but not yet stored stay "unsaved"
+ *  until a save succeeds, and another tab's update never replaces them. */
 export function createChecklistStore(source=()=>globalThis.localStorage,{known=null}={}){
- let contexts={},state='ok',loaded=false;
- const storage=()=>typeof source==='function'?source():source;
+ let contexts={},state='ok',loaded=false;const dirty=new Set();
+ const storage=()=>{const target=typeof source==='function'?source():source;if(!target)throw new Error('No storage');return target;};
  const clean=list=>[...new Set((Array.isArray(list)?list:[]).filter(id=>typeof id==='string'&&ITEM_ID.test(id)&&(!known||known.has(id))))].slice(0,MAX_ITEMS);
- function load(){
-  if(loaded)return;loaded=true;
-  let raw;
-  try{const target=storage();if(!target)throw new Error('No storage');raw=target.getItem(STORAGE_KEY);}catch{state='unavailable';return;}
-  if(raw===null||raw===undefined)return;
+ /** Stored contexts, {} when nothing is stored, or null when the data can't be read. */
+ function parse(raw){
+  if(raw===null||raw===undefined)return {};
   try{
    const data=JSON.parse(raw);
    if(data?.version!==1||!data.contexts||typeof data.contexts!=='object'||Array.isArray(data.contexts))throw new Error('shape');
-   for(const [key,list] of Object.entries(data.contexts))if(CONTEXT_KEY.test(key))contexts[key]=clean(list);
-  }catch{contexts={};state='corrupt';}
+   const out={};for(const [key,list] of Object.entries(data.contexts))if(CONTEXT_KEY.test(key)){const c=clean(list);if(c.length)out[key]=c;}
+   return out;
+  }catch{return null;}
  }
+ function load(){
+  if(loaded)return;loaded=true;
+  let raw;try{raw=storage().getItem(STORAGE_KEY);}catch{state='unavailable';return;}
+  const parsed=parse(raw);
+  if(parsed===null){contexts={};state='corrupt';}else contexts=parsed;
+ }
+ const withLocal=(base)=>{const next={...base};for(const k of dirty){if(contexts[k]?.length)next[k]=contexts[k];else delete next[k];}return next;};
  return {
   get state(){load();return state;},
+  /** True while this tab shows ticks that aren't stored yet. */
+  get unsaved(){load();return dirty.size>0;},
   get(key){load();return new Set(contexts[key]||[]);},
-  /** Returns true when saved in the browser, false when kept only in memory. */
+  /** Returns true when saved in the browser, false when kept only on this page. */
   set(key,ids){
    load();if(!CONTEXT_KEY.test(key))return false;
    const list=clean([...ids]);
    if(list.length)contexts[key]=list;else delete contexts[key];
-   if(state==='unavailable')return false;
-   try{
-    const target=storage();if(!target)throw new Error('No storage');
-    target.setItem(STORAGE_KEY,JSON.stringify({version:1,contexts}));
-    state='ok';return true;
-   }catch{state='unavailable';return false;}
+   dirty.add(key);
+   let target,raw;
+   try{target=storage();raw=target.getItem(STORAGE_KEY);}catch{state='unavailable';return false;}
+   const stored=parse(raw);
+   // Data that became unreadable since this page loaded is never overwritten
+   // unannounced: say so first; the visitor's next tick then replaces it.
+   if(stored===null&&state!=='corrupt'&&state!=='damaged'){state='damaged';return false;}
+   // Replacing unreadable data writes everything this tab knows; otherwise merge.
+   const next=stored===null?{...contexts}:withLocal(stored);
+   try{target.setItem(STORAGE_KEY,JSON.stringify({version:1,contexts:next}));}catch{state='write-failed';return false;}
+   contexts=next;dirty.clear();state='ok';return true;
+  },
+  /** Another tab's saved value: adopt its views, keeping this tab's unsaved ones. Unreadable values are ignored. */
+  external(raw){
+   load();const parsed=parse(raw);
+   if(parsed===null)return false;
+   contexts=withLocal(parsed);
+   // Readable data is back: clear the warning, unless ticks here still aren't stored.
+   if(!dirty.size)state='ok';else if(state!=='write-failed')state='unsaved';
+   return true;
   },
  };
 }
 export function storageMessage(state){
- if(state==='unavailable')return 'This browser is not saving ticks, so they will be lost when you leave the page. The checklist still works.';
+ if(state==='unavailable')return 'This browser isn’t letting the page use its storage right now, so your latest ticks are kept only on this page and are lost if you leave. Ticks saved here earlier may come back if the browser allows storage again. The checklist still works.';
+ if(state==='write-failed')return 'Your latest ticks couldn’t be saved in this browser (it may be out of space). They’re still shown here, and the page tries again when you tick or untick an item. If you reload or leave now, the ticks last saved here come back without them.';
  if(state==='corrupt')return 'Saved ticks on this browser could not be read, so the checklist started empty. Ticking an item replaces the unreadable data.';
+ if(state==='damaged')return 'The ticks saved in this browser became unreadable, so your latest tick wasn’t saved. Your ticks are still shown here; ticking or unticking an item replaces the unreadable data.';
+ if(state==='unsaved')return 'Some of your latest ticks aren’t saved in this browser yet. They’re still shown here, and the page tries again when you tick or untick an item.';
  return 'Ticks are saved on this browser only.';
 }

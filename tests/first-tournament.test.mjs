@@ -5,6 +5,8 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {ORGS,DISCIPLINES,DEFAULT_CONTEXT,STORAGE_KEY,parseContext,contextQuery,contextKey,contextLabel,parseScope,applies,eventsHref,progressText,createChecklistStore,storageMessage} from '../js/lib/tournament-guide.js';
 import {validateCommunity} from '../js/lib/validators.js';
+import {installDom,settle} from './helpers/mini-dom.mjs';
+import {parseInto} from './helpers/mini-html.mjs';
 
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const html=read('first-tournament.html');
@@ -66,10 +68,10 @@ test('blocked, failing and corrupt storage are reported honestly and never crash
  assert.equal(blocked.state,'unavailable');
  assert.equal(blocked.set('all:both',['choose-packet']),false,'kept in memory only');
  assert.deepEqual([...blocked.get('all:both')],['choose-packet'],'the checklist still works this visit');
- assert.match(storageMessage(blocked.state),/not saving ticks/);
+ assert.match(storageMessage(blocked.state),/latest ticks are kept only on this page/);assert.match(storageMessage(blocked.state),/saved here earlier may come back/);
  const quota=memoryStorage();quota.setItem=()=>{throw new DOMException('full','QuotaExceededError');};
  const full=createChecklistStore(quota);
- assert.equal(full.set('all:both',['choose-packet']),false);assert.equal(full.state,'unavailable');
+ assert.equal(full.set('all:both',['choose-packet']),false);assert.equal(full.state,'write-failed','a failed write is not blocked storage');assert.equal(full.unsaved,true);
  for(const bad of ['{not json','{"version":2,"contexts":{}}','{"version":1,"contexts":[]}','null','"text"'])
   {const s=createChecklistStore(memoryStorage(bad));assert.equal(s.state,'corrupt',bad);assert.equal(s.get('all:both').size,0);}
  const corruptStorage=memoryStorage('{not json'),corrupt=createChecklistStore(corruptStorage);
@@ -203,4 +205,143 @@ test('checklist rows lay out as checkbox column + label column, so badges never 
  assert.doesNotMatch(css,/\.ft-items label \{[^}]*display: flex/,'no flex label that would squeeze the badge');
  const sourced=items.filter(i=>/Organizer rule/.test(i.body));
  assert.ok(sourced.some(i=>i.id==='usat-sport80')&&sourced.some(i=>i.id==='usat-safesport'),'the items seen in QA are covered');
+});
+
+/* ── recovery, other tabs and unreadable data (item 45) ─────────────── */
+function faulty(init){const s=memoryStorage(init),f={write:0,read:0};const set=s.setItem.bind(s),get=s.getItem.bind(s);
+ s.setItem=(k,v)=>{if(f.write>0){f.write--;throw new DOMException('full','QuotaExceededError');}set(k,v);};
+ s.getItem=k=>{if(f.read>0){f.read--;throw new DOMException('read','SecurityError');}return get(k);};return {s,f};}
+const stored=s=>JSON.parse(s.data.get(STORAGE_KEY)).contexts;
+test('a failed save is retried on the next tick and then stores every unsaved view',()=>{
+ const known=new Set(items.map(i=>i.id)),{s,f}=faulty(),store=createChecklistStore(s,{known});
+ store.set('all:both',['choose-packet']);
+ f.write=1;assert.equal(store.set('aau:forms',['pay-forms']),false);
+ assert.equal(store.state,'write-failed');assert.equal(store.unsaved,true);
+ assert.deepEqual(stored(s),{'all:both':['choose-packet']},'the older saved ticks are untouched');
+ assert.match(storageMessage('write-failed'),/latest ticks couldn’t be saved/);assert.match(storageMessage('write-failed'),/tries again when you tick/);assert.match(storageMessage('write-failed'),/ticks last saved here come back/);
+ assert.equal(store.set('usatkd:sparring',['pay-equipment']),true);
+ assert.deepEqual(stored(s),{'all:both':['choose-packet'],'aau:forms':['pay-forms'],'usatkd:sparring':['pay-equipment']},'the retry stores the earlier unsaved view too');
+ assert.equal(store.state,'ok');assert.equal(store.unsaved,false);
+ // A read that fails while saving keeps the tick on the page and tries again next time.
+ f.read=1;assert.equal(store.set('atu:both',['choose-packet']),false);assert.equal(store.state,'unavailable');assert.equal(store.unsaved,true);
+ assert.equal(store.set('atu:both',['choose-packet','pay-forms']),true);assert.deepEqual(stored(s)['atu:both'],['choose-packet','pay-forms']);
+});
+
+test('saving keeps another tab’s ticks for other views; for the same view the latest save wins',()=>{
+ const known=new Set(items.map(i=>i.id)),s=memoryStorage(),a=createChecklistStore(s,{known}),b=createChecklistStore(s,{known});
+ a.get('all:both');b.get('all:both');                         // both tabs loaded before either ticked
+ a.set('aau:forms',['pay-forms']);
+ b.set('usatkd:sparring',['pay-equipment']);                   // b's memory never saw a's tick
+ assert.deepEqual(stored(s),{'aau:forms':['pay-forms'],'usatkd:sparring':['pay-equipment']},'b did not erase a’s view');
+ a.set('usatkd:sparring',['choose-packet']);
+ assert.deepEqual(stored(s)['usatkd:sparring'],['choose-packet'],'same view: the latest save wins');
+});
+
+test('another tab’s update is adopted, except for this tab’s unsaved views; unreadable updates are ignored',()=>{
+ const known=new Set(items.map(i=>i.id)),{s,f}=faulty(),a=createChecklistStore(s,{known});
+ a.set('all:both',['choose-packet']);
+ f.write=1;a.set('aau:forms',['pay-forms']);                   // unsaved here
+ const other=JSON.stringify({version:1,contexts:{'all:both':['pay-equipment'],'aau:forms':['pay-equipment']}});
+ assert.equal(a.external(other),true);
+ assert.deepEqual([...a.get('all:both')],['pay-equipment'],'a saved view follows the other tab');
+ assert.deepEqual([...a.get('aau:forms')],['pay-forms'],'an unsaved view here is kept');
+ assert.equal(a.external('{not json'),false);assert.deepEqual([...a.get('all:both')],['pay-equipment'],'unreadable updates change nothing');
+});
+
+test('data that became unreadable after the page loaded is not overwritten without saying so first',()=>{
+ const known=new Set(items.map(i=>i.id)),s=memoryStorage(),a=createChecklistStore(s,{known});
+ a.set('all:both',['choose-packet']);
+ s.data.set(STORAGE_KEY,'{damaged');                           // something else wrote unreadable data
+ assert.equal(a.set('aau:forms',['pay-forms']),false);
+ assert.equal(s.data.get(STORAGE_KEY),'{damaged','left as it is');assert.equal(a.state,'damaged');assert.equal(a.unsaved,true);
+ assert.match(storageMessage(a.state),/became unreadable/);assert.match(storageMessage(a.state),/ticks are still shown here/);
+ assert.doesNotMatch(storageMessage(a.state),/started empty/,'not the message for data that was unreadable from the start');
+ assert.equal(a.set('aau:forms',['pay-forms','choose-packet']),true,'the next tick, after the notice, replaces it');
+ assert.deepEqual(stored(s),{'all:both':['choose-packet'],'aau:forms':['pay-forms','choose-packet']});
+});
+
+test('page: a failed tick is shown honestly and saved by the next tick; another tab’s update keeps this tab’s unsaved tick',async()=>{
+ const html=read('first-tournament.html'),mainHtml=html.slice(html.indexOf('<main'),html.indexOf('</main>')+7);
+ const env=installDom({url:'https://tkdflow.com/first-tournament.html'});
+ const real=globalThis.localStorage,f={write:0};
+ const proxy={getItem:k=>real.getItem(k),removeItem:k=>real.removeItem(k),setItem:(k,v)=>{if(f.write>0){f.write--;throw new DOMException('full','QuotaExceededError');}real.setItem(k,v);}};
+ Object.defineProperty(globalThis,'localStorage',{configurable:true,get:()=>proxy});
+ try{
+  parseInto(env.doc,env.doc.body,mainHtml);
+  await import(`../js/pages/first-tournament.js?run=${Date.now()}`);await settle(4);
+  const boxes=()=>env.doc.querySelectorAll('#ft-checklist li[data-item]').filter(li=>!li.hidden).map(li=>li.querySelector('input'));
+  const tick=i=>{const b=boxes()[i];b.checked=true;b.dispatchEvent(env.event('change',{bubbles:true}));};
+  const status=()=>env.doc.getElementById('ft-storage').textContent;
+  f.write=1;tick(0);
+  assert.equal(status(),storageMessage('write-failed'));assert.equal(real.getItem(STORAGE_KEY),null,'nothing stored yet');
+  tick(1);
+  assert.equal(status(),storageMessage('ok'));
+  const view=contextKey(DEFAULT_CONTEXT),first=boxes()[0].closest('li').dataset.item,second=boxes()[1].closest('li').dataset.item;
+  assert.deepEqual(JSON.parse(real.getItem(STORAGE_KEY)).contexts[view],[first,second],'the retry stored both ticks');
+  // A failed tick, then another tab saves this view without it: the tick stays checked here.
+  f.write=1;tick(2);
+  const third=boxes()[2].closest('li').dataset.item;
+  const other=JSON.stringify({version:1,contexts:{[view]:[first]}});
+  env.win.dispatchEvent(env.event('storage',{key:STORAGE_KEY,newValue:other}));
+  assert.equal(boxes()[2].checked,true,'this tab’s unsaved tick is kept');
+  assert.equal(boxes()[1].checked,true,'and so is the rest of this unsaved view (the latest save here will win)');
+  tick(3);
+  assert.ok(JSON.parse(real.getItem(STORAGE_KEY)).contexts[view].includes(third));
+ }finally{env.restore();}
+});
+
+test('readable data coming back clears the warning, or says honestly that some ticks here are still unsaved',()=>{
+ const known=new Set(items.map(i=>i.id)),valid=JSON.stringify({version:1,contexts:{'aau:forms':['pay-forms']}});
+ // Clean: started with unreadable data, no ticks here yet.
+ const clean=createChecklistStore(memoryStorage('{not json'),{known});
+ assert.equal(clean.state,'corrupt');assert.equal(clean.external(valid),true);
+ assert.equal(clean.state,'ok');assert.deepEqual([...clean.get('aau:forms')],['pay-forms']);
+ // Dirty: data damaged after load with a tick here unsaved, then another tab saves a readable list.
+ const s=memoryStorage(),a=createChecklistStore(s,{known});a.set('all:both',['choose-packet']);
+ s.data.set(STORAGE_KEY,'{damaged');a.set('usatkd:sparring',['pay-equipment']);
+ assert.equal(a.state,'damaged');
+ s.data.set(STORAGE_KEY,valid);assert.equal(a.external(valid),true);
+ assert.equal(a.state,'unsaved');assert.equal(a.unsaved,true);
+ assert.match(storageMessage('unsaved'),/aren’t saved in this browser yet/);assert.doesNotMatch(storageMessage('unsaved'),/space/,'no guessed cause');
+ assert.deepEqual([...a.get('usatkd:sparring')],['pay-equipment'],'the unsaved view is kept');assert.deepEqual([...a.get('aau:forms')],['pay-forms']);
+ a.set('atu:both',['choose-packet']);
+ assert.equal(a.state,'ok');assert.deepEqual(Object.keys(stored(s)).sort(),['aau:forms','atu:both','usatkd:sparring']);
+});
+
+test('page: unreadable data, then another tab’s readable save, shows the right notice each time',async()=>{
+ const html=read('first-tournament.html'),mainHtml=html.slice(html.indexOf('<main'),html.indexOf('</main>')+7);
+ const env=installDom({url:'https://tkdflow.com/first-tournament.html'});
+ try{
+  globalThis.localStorage.setItem(STORAGE_KEY,'{not json');
+  parseInto(env.doc,env.doc.body,mainHtml);
+  await import(`../js/pages/first-tournament.js?run=${Date.now()}-c`);await settle(4);
+  const status=()=>env.doc.getElementById('ft-storage').textContent;
+  assert.equal(status(),storageMessage('corrupt'));
+  const view=contextKey(DEFAULT_CONTEXT);
+  const boxes=()=>env.doc.querySelectorAll('#ft-checklist li[data-item]').filter(li=>!li.hidden);
+  const id=boxes()[0].dataset.item,valid=JSON.stringify({version:1,contexts:{[view]:[id]}});
+  globalThis.localStorage.setItem(STORAGE_KEY,valid);
+  env.win.dispatchEvent(env.event('storage',{key:STORAGE_KEY,newValue:valid}));
+  assert.equal(status(),storageMessage('ok'),'the warning clears');
+  assert.equal(boxes()[0].querySelector('input').checked,true,'the other tab’s tick is shown');
+ }finally{env.restore();}
+});
+
+test('page: a tick refused because the data was damaged, then another tab’s readable save, keeps the tick and says it is unsaved',async()=>{
+ const html=read('first-tournament.html'),mainHtml=html.slice(html.indexOf('<main'),html.indexOf('</main>')+7);
+ const env=installDom({url:'https://tkdflow.com/first-tournament.html'});
+ try{
+  parseInto(env.doc,env.doc.body,mainHtml);
+  await import(`../js/pages/first-tournament.js?run=${Date.now()}-d`);await settle(4);
+  const status=()=>env.doc.getElementById('ft-storage').textContent;
+  const boxes=()=>env.doc.querySelectorAll('#ft-checklist li[data-item]').filter(li=>!li.hidden).map(li=>li.querySelector('input'));
+  const tick=i=>{const b=boxes()[i];b.checked=true;b.dispatchEvent(env.event('change',{bubbles:true}));};
+  tick(0);assert.equal(status(),storageMessage('ok'));
+  globalThis.localStorage.setItem(STORAGE_KEY,'{damaged');
+  tick(1);assert.equal(status(),storageMessage('damaged'));assert.equal(globalThis.localStorage.getItem(STORAGE_KEY),'{damaged');
+  const valid=JSON.stringify({version:1,contexts:{'aau:forms':['pay-forms']}});
+  globalThis.localStorage.setItem(STORAGE_KEY,valid);env.win.dispatchEvent(env.event('storage',{key:STORAGE_KEY,newValue:valid}));
+  assert.equal(status(),storageMessage('unsaved'));assert.equal(boxes()[1].checked,true,'the unsaved tick is still shown');
+  tick(2);assert.equal(status(),storageMessage('ok'),'the next tick stores everything');
+ }finally{env.restore();}
 });
