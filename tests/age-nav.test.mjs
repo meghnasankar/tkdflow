@@ -23,6 +23,7 @@ test('a known under-13 tab shows only About accounts, even with a stored session
  const r=run('initial-ineligible-session');
  assert.deepEqual(r.initial,ABOUT,'root-absolute; resolves from /companions/… too');
  assert.equal(r.initialSessionReads,0,'the stored session is not even read');
+ assert.equal(r.initialButtons,0,'no Log out button for a known under-13 tab');
 });
 
 test('accounts switched off or signup off do not bring account links back for that tab',()=>{
@@ -66,15 +67,21 @@ test('with session storage blocked, the shared store still switches the header (
 test('eligible and unscreened tabs keep today’s root-absolute links',()=>{
  const r=run('eligible-member');
  assert.deepEqual(r.member,[{text:'My profile',href:'/profile.html',resolved:'/profile.html'}]);
+ assert.equal(r.memberLogout,true,'members also get the header Log out button');
  assert.deepEqual(r.guest,GUEST);
 });
 
-test('the sign-in page records into the shared store; the header never signs out, writes credentials or starts the account library',()=>{
+test('the sign-in page records into the shared store; the header never writes credentials, and the account library loads only from the Log out click',()=>{
  const auth=read('js/pages/auth.js');
  assert.match(auth,/const eligibility = sharedEligibilityStore\(\);/);
  assert.doesNotMatch(auth,/createEligibilityStore\(/,'no private store on the page that records answers');
  const site=read('js/site.js');
- assert.doesNotMatch(site,/getAccountService|initAccountService|createClient|signOut|removeItem|\.clear\(|setItem/,'header is read-only');
+ assert.doesNotMatch(site,/initAccountService|createClient|signOut|removeItem|\.clear\(|setItem/,'the header never builds a client, signs out directly or writes storage');
+ // The account service and logout helper are reached only through lazy imports inside the click path
+ // (behaviour: tests/header-logout.test.mjs proves no call on page view, one call per click).
+ assert.doesNotMatch(site,/^import[^;]*(getAccountService|auth-flows)/m,'no static import of the account client or logout');
+ const uses=[...site.matchAll(/getAccountService|auth-flows/g)].map(m=>m.index),lazy=site.indexOf('const defaults = {'),end=site.indexOf('};',lazy);
+ assert.ok(uses.length===2&&uses.every(i=>i>lazy&&i<end),'the only references are the lazy loaders in the Log out defaults');
  const gate=read('js/lib/age-gate.js');
  assert.doesNotMatch(gate,/export function (reset|clear)|__test|forTesting/i,'no reset or test hook in the product');
  assert.ok(site.indexOf("sharedEligibilityStore().read() === INELIGIBLE ? 'age'")<site.indexOf('hasStoredSession(cfg)'),'the age result is checked before any session read');

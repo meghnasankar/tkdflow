@@ -10,6 +10,7 @@ class FakeText extends FakeNode {constructor(t){super();this.text=String(t);}get
 class FakeElement extends FakeNode {
  constructor(tag){super();this.tagName=tag.toUpperCase();this.attrs=new Map();this.children=[];this.dataset={};this.className='';this.style={setProperty(){}};}
  setAttribute(k,v){this.attrs.set(k,String(v));}
+ removeAttribute(k){this.attrs.delete(k);}
  getAttribute(k){return this.attrs.has(k)?this.attrs.get(k):null;}
  addEventListener(){}
  append(...nodes){this.children.push(...nodes);}
@@ -36,7 +37,10 @@ const {ACCOUNTS}=await import('../js/config.js');
 const {sessionStorageKey}=await import('../js/lib/account-service.js');
 const {renderAccountNav}=await import('../js/site.js');   // renders once and starts watching, as on every page
 const KEY=sessionStorageKey(ACCOUNTS);
-const links=()=>slot.children.map(a=>`${a.textContent}→${a.getAttribute('href')}`);
+// Links only; the member-mode Log out button and its status are checked separately.
+const anchors=()=>slot.children.filter(c=>c.tagName==='A');
+const links=()=>anchors().map(a=>`${a.textContent}→${a.getAttribute('href')}`);
+const logoutShown=()=>slot.children.some(c=>c.tagName==='BUTTON'&&c.textContent==='Log out');
 const otherTab=(key,value)=>{if(key){if(value===null)store.delete(key);else store.set(key,value);}else store.clear();window.dispatchEvent(Object.assign(new Event('storage'),{key}));};
 const restored=persisted=>window.dispatchEvent(Object.assign(new Event('pageshow'),{persisted}));
 
@@ -47,7 +51,7 @@ test('signed-out visitors see Log in and Join free on first render',()=>{
 
 test('signing in from another tab switches the header to My profile',()=>{
  otherTab(KEY,'{"access_token":"first"}');
- assert.deepEqual(links(),['My profile→/profile.html']);
+ assert.deepEqual(links(),['My profile→/profile.html']);assert.equal(logoutShown(),true,'members see Log out beside My profile');
 });
 
 test('a token refresh in another tab keeps the same, still-focused link',()=>{
@@ -114,7 +118,7 @@ test('narrow desktop (769–900px) keeps nav and account labels on one line with
 
 test('account links resolve to the site root from nested pages such as /companions/…, in every mode',()=>{
  const nested='https://tkdflow.com/companions/taegeuk-1.html';
- const resolved=()=>slot.children.map(a=>{const u=new URL(a.getAttribute('href'),nested);return u.pathname+u.search;});
+ const resolved=()=>anchors().map(a=>{const u=new URL(a.getAttribute('href'),nested);return u.pathname+u.search;});
  const modes=[
   ['accounts off',{...ACCOUNTS,enabled:false},null,['/auth.html']],
   ['guest, signup on',ACCOUNTS,null,['/auth.html','/auth.html?mode=register']],
@@ -125,7 +129,7 @@ test('account links resolve to the site root from nested pages such as /companio
   if(session)store.set(KEY,session);else store.delete(KEY);
   renderAccountNav(cfg);
   assert.deepEqual(resolved(),want,name);
-  for(const a of slot.children)assert.match(a.getAttribute('href'),/^\//,`${name}: root-absolute`);
+  for(const a of anchors())assert.match(a.getAttribute('href'),/^\//,`${name}: root-absolute`);
  }
  store.delete(KEY);renderAccountNav();
 });

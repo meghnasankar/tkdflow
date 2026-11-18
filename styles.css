@@ -196,6 +196,10 @@ p  { color: var(--gray-600); }
 .nav-links a:not(.btn):hover { background: var(--gray-100); color: var(--navy); }
 .nav-links a.active { font-weight: 700; color: var(--red-dark); background: var(--red-light); }
 .nav-account { display: flex; gap: 8px; margin-left: 8px; }
+.nav-account { position: relative; }
+.nav-logout[aria-disabled="true"] { opacity: .7; cursor: progress; }
+.nav-logout-status { position: absolute; top: calc(100% + 4px); right: 0; max-width: 260px; font-size: .8rem; font-weight: 600; color: var(--red-dark); background: var(--white); }
+.nav-logout-status:empty { display: none; }
 
 .nav-toggle {
   display: none; width: 44px; height: 44px; border-radius: var(--radius-sm);
@@ -448,16 +452,22 @@ p  { color: var(--gray-600); }
   .nav-links.open { display: flex; }
   .nav-links a:not(.btn) { padding: 12px 14px; font-size: 1rem; }
   .nav-account { margin: 8px 0 0; flex-wrap: wrap; }
-  .nav-account .btn { flex: 1; }
+  .nav-account .btn { flex: 1; min-height: 44px; }   /* comfortable touch targets in the mobile menu */
+  .nav-logout-status { position: static; flex-basis: 100%; max-width: none; }
 }
 /* Narrow desktop (769–900px): the full header is shown but space is tight.
    Hide the decorative Korean logotype and trim padding so nav labels and
    account buttons stay on one line. Mobile (≤768px) is unaffected. */
 @media (min-width: 769px) and (max-width: 900px) {
+  /* Signed-in members have six items (four links, My profile, Log out). These
+     sizes trim about 60px (an estimate) from the row, so it fits at 769px even
+     before the web fonts load. Labels stay visible. */
+  .navbar-logo { font-size: 1.25rem; gap: 8px; }
+  .navbar-logo .logo-icon { width: 34px; height: 34px; }
   .navbar-logo .kr { display: none; }
-  .nav-links a:not(.btn) { padding: 8px 10px; white-space: nowrap; }
-  .nav-account { margin-left: 4px; }
-  .nav-account .btn { padding: 8px 12px; white-space: nowrap; }
+  .nav-links a:not(.btn) { padding: 8px 6px; white-space: nowrap; }
+  .nav-account { margin-left: 2px; gap: 6px; }
+  .nav-account .btn { padding: 6px 10px; white-space: nowrap; }
 }
 @media (max-width: 480px) {
   .container { padding: 0 16px; }

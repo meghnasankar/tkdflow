@@ -26,8 +26,8 @@ if(scenario==='blocked-setitem')Object.defineProperty(globalThis,'sessionStorage
 
 const site=await import('../../js/site.js');
 const age=await import('../../js/lib/age-gate.js');
-const links=()=>slot.children.map(a=>({text:a.textContent,href:a.getAttribute('href'),resolved:new URL(a.getAttribute('href'),env.location.href).pathname+new URL(a.getAttribute('href'),env.location.href).hash+new URL(a.getAttribute('href'),env.location.href).search}));
-const out={scenario,initial:links(),initialSessionReads:sessionReads};
+const links=()=>slot.children.filter(c=>c.tagName==='A').map(a=>({text:a.textContent,href:a.getAttribute('href'),resolved:new URL(a.getAttribute('href'),env.location.href).pathname+new URL(a.getAttribute('href'),env.location.href).hash+new URL(a.getAttribute('href'),env.location.href).search}));
+const out={scenario,initial:links(),initialSessionReads:sessionReads,initialButtons:slot.children.filter(c=>c.tagName==='BUTTON').length};
 const fire=(type,init)=>env.win.dispatchEvent(env.event(type,init));
 
 switch(scenario){
@@ -71,7 +71,7 @@ switch(scenario){
   out.recorded=pageAge.sharedEligibilityStore().record('under-13');
   out.after=links();out.focusOnNew=doc.activeElement===slot.children[0];break;}
  case 'eligible-member':
-  out.member=links();
+  out.member=links();out.memberLogout=slot.children.some(c=>c.tagName==='BUTTON'&&c.textContent==='Log out');
   local.delete(SESSION_KEY);fire('storage',{key:SESSION_KEY});
   out.guest=links();break;
  default:throw new Error('unknown scenario '+scenario);
