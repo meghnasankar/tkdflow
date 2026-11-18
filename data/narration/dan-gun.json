@@ -1,9 +1,6 @@
 {
   "version": 1,
   "lessonId": "dan-gun",
-  "provider": "ElevenLabs",
-  "voice": "Sarah",
-  "model": "eleven_multilingual_v2",
   "audioSrc": "/assets/narration/dan-gun.mp3",
   "duration": 139.260099,
   "chapters": [

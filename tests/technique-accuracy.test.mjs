@@ -27,7 +27,7 @@ test('every marked kihap has one audible event at the movement finish; no extra 
  }assert.ok(shouts>25);assert.equal(POSES[9].kihap,false);assert.equal(POSES[18].kihap,true);
 });
 test('all 23 optional effect tracks and three original effects are real, integrity-checked audio',()=>{
- const catalog=json('data/narration/catalog.json');assert.equal(catalog.soundEffects.length,3);
+ const catalog=json('docs/narration/catalog.json');assert.equal(catalog.soundEffects.length,3);
  for(const f of catalog.files){const d=motions.get(f.lessonId).d,bytes=fs.readFileSync(new URL('..'+d.effectsSrc,import.meta.url));assert.equal(bytes.length,f.effects.bytes);assert.equal(createHash('sha256').update(bytes).digest('hex'),f.effects.sha256);assert.ok(d.effects.length>10);}
  for(const effect of catalog.soundEffects){const bytes=fs.readFileSync(new URL('../assets/effects/'+effect.name+'.mp3',import.meta.url));assert.equal(createHash('sha256').update(bytes).digest('hex'),effect.sha256);assert.ok(effect.duration>.05);assert.ok(effect.duration<=.7);}
 });

@@ -1,9 +1,6 @@
 {
   "version": 1,
   "lessonId": "sipjin",
-  "provider": "ElevenLabs",
-  "voice": "Sarah",
-  "model": "eleven_multilingual_v2",
   "audioSrc": "/assets/narration/sipjin.mp3",
   "duration": 289.307598,
   "chapters": [

@@ -1,9 +1,6 @@
 {
   "version": 1,
   "lessonId": "koryo",
-  "provider": "ElevenLabs",
-  "voice": "Sarah",
-  "model": "eleven_multilingual_v2",
   "audioSrc": "/assets/narration/koryo.mp3",
   "duration": 285.000306,
   "chapters": [

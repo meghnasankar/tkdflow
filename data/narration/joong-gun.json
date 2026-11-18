@@ -1,9 +1,6 @@
 {
   "version": 1,
   "lessonId": "joong-gun",
-  "provider": "ElevenLabs",
-  "voice": "Sarah",
-  "model": "eleven_multilingual_v2",
   "audioSrc": "/assets/narration/joong-gun.mp3",
   "duration": 197.837284,
   "chapters": [

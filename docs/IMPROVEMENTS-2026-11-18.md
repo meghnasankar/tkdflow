@@ -26,13 +26,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 17 (Community search by every word): published.** PR 41 merged as `main` `1a5d72c`. In production, live checks passed 194/194, and Codex's native query checks passed.
 - **Batch 18 (Clear confirmation and other tabs): published.** PR 42 merged as `main` `8cb2551`. The full suite passed 687/687, and 247/247 live checks passed, including all 53 public JSON files.
 - **Batch 19 (school planner recovers from a failed save): published.** PR 43 merged as `main` `1e017ac`. Codex verified it in production: main CI succeeded, 194 live checks passed and the source matched.
-- **Batch 21 (header Log out):** on `fix/header-log-out-2026-11-18`, cut from `1e017ac`. Passed Codex's browser review; ready for root's release. Scope: item 41. (Batch 20, removing tool credits, is prepared separately and waits on an owner fact.)
+- **Batch 21 (header Log out): published.** PR 44 merged as `main` `bc4c677`. Codex verified it in production: the source files match exactly, and the live member header shows Log out.
+- **Batch 20 (no tool credits on public pages):** on `chore/public-lesson-copy-2026-11-18`, cut from `bc4c677`. Passed Codex's review; ready for root's release. Scope: item 40.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 21:** implemented locally and browser-reviewed by Codex, awaiting release.
+- **Batch 20:** implemented locally and reviewed by Codex, awaiting release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -69,7 +70,8 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
-| 41 | No visible Log out | The owner reported "I can't find a logout button". A signed-in member's header showed only My profile (`js/site.js`, member mode); the only Log out was `#btn-logout` inside `profile.html`. | P2 usability | Batch 21 |
+| 41 | No visible Log out | The owner reported "I can't find a logout button". A signed-in member's header showed only My profile (`js/site.js`, member mode); the only Log out was `#btn-logout` inside `profile.html`. | P2 usability | Published (PR 44) |
+| 40 | Public pages credited the tools used to make the voice and texture | At the owner's request, which reached Codex. Found by Codex and checked by scan: all 23 lesson pages had a `.voice-credit` paragraph ("Voice instructions generated with ElevenLabs using the stock Sarah voice."); all 23 read and print companions repeated it, from `VOICE` in `scripts/build-companions.mjs`; all 23 public narration manifests carried `provider`/`voice`/`model`; the public `data/narration/catalog.json` (read by no page) held the full generation record; and a comment in `js/animation/avatar.js` named the texture tool. | P2 owner request | Batch 20 |
 | 39 | After one failed save the planner never retries in that visit, and the notice misdescribes reload | Code path: a throwing `setItem` (for example a full origin quota) sets `state = 'unavailable'` (`js/lib/school-planner.js:287`), so every later `save()`/`replace()` returns memory-only. The notice says the list lasts only until reload, but a reload shows the last saved, older list. Low likelihood (a valid list is at most about 105 KB). | P3 | Published (PR 43) |
 | 38 | A stale Clear confirmation could delete another tab's newer school list | Reproduced in the final focused audit with the real planner page in the test DOM. Tab A opened "Clear all 2 levels, 0 forms?"; tab B saved a third level; tab A silently adopted it ("Updated with changes made in another tab.") with the confirmation and its old count still open. Yes then saved an empty list ("List cleared."). | P2 data safety | Published (PR 42) |
 | 37 | Community search needed exact phrases | `js/pages/forum.js` filtered with one lower-cased substring of title plus body, so word order, hyphens, spacing and accents changed the results, unlike the library search. | P3 usability | Published (PR 41) |
@@ -1420,4 +1422,42 @@ With the previous substring search, both tests fail. The full suite passes 673/6
   - **Keyboard:** a failure keeps focus, keeps the session and allows a retry. Success goes to a fresh home page. An unavailable service shows the honest "reload" message.
   - **Under 13:** a tab known to be under 13, with a fake session key, shows About accounts and makes 0 service calls.
   - **Not counted as error-free:** earlier forms and home page runs with a fake client showed expected fixture-only errors (an auth method the fake didn't implement).
+- **Not tested:** a real screen reader and Safari.
+
+## Batch 20 — no tool credits on public pages (item 40)
+
+### Change
+- **Lesson pages:** the `.voice-credit` paragraph is removed from all 23. No CSS rule used it.
+- **Companions:** the generator's `VOICE` sentence is now "Instructions are the text of the lesson's spoken guidance.", and all 23 companions are regenerated. The generator's `--check` drift mode keeps them matching.
+- **Narration manifests (`data/narration/*.json`):** `provider`, `voice` and `model` are removed. Nothing at runtime reads them. Audio sources, duration, chapters, cues and effects are byte-for-byte the same (each manifest loses exactly 3 lines).
+- **Catalog:** `data/narration/catalog.json` moves to `docs/narration/catalog.json`, which is excluded from deployment. The tests and `scripts/assemble-narration.py` now read and write it there. The assembler no longer writes generation metadata into public manifests.
+- **`js/animation/avatar.js`:** the comment says "the existing texture atlas" without the tool name.
+- **Provenance kept:** `docs/narration/PROVENANCE.md` (development only) records the voice, models, effects, the texture record (`docs/animation-release-2026-11-16.md`) and the licence basis.
+- **Unchanged:**
+  - all 74 media files (narration, effects, animation, form images): SHA-256 checked before and after;
+  - vendor code and its required notices;
+  - Git history;
+  - photo and binary metadata.
+
+### Tests
+- **New `site.test.mjs` guard:**
+  - every deployable text file (not a dot-file, not excluded by `.vercelignore`, not vendor) is scanned for ElevenLabs, `eleven_*` model ids, Nano Banana, "stock voice", text-to-speech, "voice was generated", "generated with" and `voice-credit`;
+  - the catalog is not deployed, and provenance remains in docs;
+  - the companion generator can't add the credit back.
+- **`narration.test.mjs`:** public manifests must have no `provider`/`voice`/`model`; the catalog is read from docs, and audio hashes are still checked.
+- **`technique-accuracy.test.mjs`:** reads the catalog from docs.
+- **Full suite on this branch:** 709/709 (`npm run check`).
+
+### Licence basis
+- **ElevenLabs' help centre** (read 18 November 2026): audio generated during a subscription keeps a commercial licence, while "audio generated outside of a subscription will always require attribution".
+- **The owner confirmed on 18 November 2026** that the account was on a paid subscription when the audio was generated, and still is. This unblocked the batch.
+- **No independent check:** one read-only subscription API check returned HTTP 500, a retry by root timed out, and a narrow invoice search returned nothing. So the docs record the owner's statement and don't claim billing proof. The full note is in `docs/narration/PROVENANCE.md`, which isn't deployed.
+
+### Known limits
+- **Review** (Codex: 30 targeted narration and site tests; native in-app browser on a local build):
+  - **Data:** all 23 runtime narration objects are identical to `HEAD` once the 3 descriptive fields are removed, and the moved catalog is byte-identical.
+  - **Taegeuk Il Jang companion:** 20 poses, its sources, the neutral instruction line, no tool credit, 0 errors.
+  - **Taegeuk Il Jang lesson:** the voice and effects controls are available, and there's no `.voice-credit`.
+  - **Playback:** Play brought both media to ready state 4 and playing. Time went from 0.18 s to 8.44 s, then both paused, the caption updated, and there were 0 console errors.
+  - **Media:** no audio bytes changed, and no API generation happened.
 - **Not tested:** a real screen reader and Safari.

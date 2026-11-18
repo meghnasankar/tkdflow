@@ -1,9 +1,6 @@
 {
   "version": 1,
   "lessonId": "yul-gok",
-  "provider": "ElevenLabs",
-  "voice": "Sarah",
-  "model": "eleven_multilingual_v2",
   "audioSrc": "/assets/narration/yul-gok.mp3",
   "duration": 210.005619,
   "chapters": [
