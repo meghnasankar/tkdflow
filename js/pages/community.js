@@ -26,7 +26,7 @@ function render() {
   $('community-summary').textContent = `${shown.length} resource${shown.length === 1 ? '' : 's'}.`;
   if (!shown.length) { showEmpty($('community-feed'), 'No resources in this category.'); return; }
   replaceChildren($('community-feed'), ...shown.map((p) => h('article', { class: 'example-card' },
-    h('div', { class: 'example-meta' }, icon({'Study guide':'forms','Events calendar':'calendar','Founder story':'person','Discussion guide':'community'}[p.kind] || 'forms'), h('span', { class: 'badge badge-navy' }, p.kind)),
+    h('div', { class: 'example-meta' }, icon({'Study guide':'forms','Events calendar':'calendar','Founder story':'person','Discussion guide':'community','Competition guide':'trophy'}[p.kind] || 'forms'), h('span', { class: 'badge badge-navy' }, p.kind)),
     h('h3', {}, h('a', {href:safeHref(p.url)}, p.title)),
     h('p', {}, p.body),
     h('div', { class: 'example-meta' }, ...p.tags.map((t) => h('span', { class: 'badge badge-muted' }, t))))));
