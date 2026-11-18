@@ -49,6 +49,18 @@
       ]
     },
     {
+      "id": "compare",
+      "category": "Forms & curriculum",
+      "kind": "Study guide",
+      "title": "Compare two forms side by side",
+      "body": "Choose two forms to see their style, series, typical belt or level and lesson counts together, with links to each lesson and its printable text.",
+      "url": "compare.html",
+      "tags": [
+        "All lessons",
+        "Compare"
+      ]
+    },
+    {
       "id": "school-forms",
       "category": "Forms & curriculum",
       "kind": "Personal organizer",

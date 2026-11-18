@@ -1,0 +1,97 @@
+{
+ "version": 1,
+ "forms": {
+  "taegeuk-1": {
+   "studyPoses": 20,
+   "referenceCounts": 18
+  },
+  "taegeuk-2": {
+   "studyPoses": 25,
+   "referenceCounts": 18
+  },
+  "taegeuk-3": {
+   "studyPoses": 36,
+   "referenceCounts": 20
+  },
+  "taegeuk-4": {
+   "studyPoses": 31,
+   "referenceCounts": 20
+  },
+  "taegeuk-5": {
+   "studyPoses": 34,
+   "referenceCounts": 20
+  },
+  "taegeuk-6": {
+   "studyPoses": 33,
+   "referenceCounts": 19
+  },
+  "taegeuk-7": {
+   "studyPoses": 35,
+   "referenceCounts": 25
+  },
+  "taegeuk-8": {
+   "studyPoses": 40,
+   "referenceCounts": 27
+  },
+  "koryo": {
+   "studyPoses": 52,
+   "referenceCounts": 30
+  },
+  "keumgang": {
+   "studyPoses": 29,
+   "referenceCounts": 27
+  },
+  "taebaek": {
+   "studyPoses": 44,
+   "referenceCounts": 26
+  },
+  "pyongwon": {
+   "studyPoses": 33,
+   "referenceCounts": 21
+  },
+  "sipjin": {
+   "studyPoses": 47,
+   "referenceCounts": 28
+  },
+  "jitae": {
+   "studyPoses": 40,
+   "referenceCounts": 28
+  },
+  "chon-ji": {
+   "studyPoses": 21,
+   "referenceCounts": 19
+  },
+  "dan-gun": {
+   "studyPoses": 23,
+   "referenceCounts": 21
+  },
+  "do-san": {
+   "studyPoses": 26,
+   "referenceCounts": 24
+  },
+  "won-hyo": {
+   "studyPoses": 30,
+   "referenceCounts": 28
+  },
+  "yul-gok": {
+   "studyPoses": 40,
+   "referenceCounts": 38
+  },
+  "joong-gun": {
+   "studyPoses": 34,
+   "referenceCounts": 32
+  },
+  "songahm-1": {
+   "studyPoses": 20,
+   "referenceCounts": 18
+  },
+  "songahm-2": {
+   "studyPoses": 25,
+   "referenceCounts": 23
+  },
+  "songahm-3": {
+   "studyPoses": 30,
+   "referenceCounts": 28
+  }
+ }
+}
