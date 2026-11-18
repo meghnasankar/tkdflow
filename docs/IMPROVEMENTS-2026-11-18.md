@@ -22,13 +22,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 13 (library search ranking and belt note): published.** PR 37 merged as `main` `aab06f8`. Codex verified it live: 5/5 files, headers and development 404s; Won-Hyo is first for “Won”.
 - **Batch 14 (Community pages of 50): published.** PR 38 merged as `main` `102ebdc`. Codex verified it live: 7/7 public files, headers and development 404s; 9 topics shown; real anonymous API reads (new topics 9, after the cursor 8, replies 0), with no errors and no writes.
 - **Batch 15 (Replay move): published.** PR 39 merged as `main` `fda0dc9`. Codex verified it live: 29/29 files, 6 headers and development 404s; in native Chrome the Replay button and pose were healthy, with 0 errors.
-- **Batch 16 (read-only live checker, deploy exclusions and current docs):** on `improve/live-release-checks-2026-11-18`, cut from `fda0dc9`. Uncommitted, awaiting Codex review. Scope: item 36. No SQL change.
+- **Batch 16 (read-only live checker, deploy exclusions and current docs): published.** PR 40 merged as `main` `1bff3c5`. In production, `npm run check:live` passed 194/194, including a 404 for `/.gitattributes`.
+- **Batch 17 (Community search by every word):** on `improve/community-search-2026-11-18`, cut from `1bff3c5`. Passed Codex's browser review; uncommitted, ready for root's release. Scope: item 37.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 16:** implemented locally, uncommitted, awaiting Codex review.
+- **Batch 17:** implemented locally and browser-reviewed by Codex, uncommitted, awaiting release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -65,7 +66,8 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
-| 36 | Release docs named a live checker that didn't exist, and production served `/.gitattributes` | SETUP.md and docs/RELEASE.md told the owner to run `npm run check:live`, but there was no such script. Codex's read-only live audit found `/.gitattributes` answering 200 (whitespace rules only, no credentials), while other dot-files returned 404. SETUP.md and RELEASE.md §8 still described the earlier accounts-off, report-only state as current. | P2 maintenance | Batch 16 |
+| 37 | Community search needed exact phrases | `js/pages/forum.js` filtered with one lower-cased substring of title plus body, so word order, hyphens, spacing and accents changed the results, unlike the library search. | P3 usability | Batch 17 |
+| 36 | Release docs named a live checker that didn't exist, and production served `/.gitattributes` | SETUP.md and docs/RELEASE.md told the owner to run `npm run check:live`, but there was no such script. Codex's read-only live audit found `/.gitattributes` answering 200 (whitespace rules only, no credentials), while other dot-files returned 404. SETUP.md and RELEASE.md §8 still described the earlier accounts-off, report-only state as current. | P2 maintenance | Published (PR 40) |
 | 35 | No way to watch one move again | Codex's plan audit: Play after choosing a pose already rewound to that move's start in some cases, but then played on to the end of the form. There was no "play this move once and stop". | P2 learning | Published (PR 39) |
 | 34 | The homepage Explore cards hid the newer tools | Three of the six cards led to the forms library (the library, one lesson and the library filtered to lessons). Find a technique, the read and print companions, My school’s forms, the lesson answers and the first-tournament guide were reachable from the homepage only through the footer. Five of the six chips restated the section label. | P3 discoverability | Published (PR 36) |
 | 33 | Every lesson page builds the avatar's garments in one long main-thread task | Codex's controlled foreground Chrome probe, same module: Taegeuk Il Jang rig construction 1411 ms (jacket 957, trousers 445); Sipjin 5234 ms (jacket 3649, trousers 1576), page visible throughout. The page can't respond to input during that task. Diagnostic only, not a device benchmark. | P2 performance | Published (PR 35) |
@@ -1191,3 +1193,49 @@ Fixture on port 8994 with the real home and learning modules:
 - **First production run:** the checker hasn't run against production yet. Root runs `npm run check:live` from the deployed commit.
 - **Named files under 25 MB:** a larger file is refused locally rather than compared.
 - **Not corrected in this batch:** the comments in `supabase/preflight.sql` about the schools policy, and `supabase-setup.sql:222`, which points to a SETUP section that doesn't exist. These are SQL files, left for a later batch. The full SETUP rewrite plan is in `/private/tmp/tkdflow-setup-doc-plan.md`.
+
+## Batch 17 — Community search by every word (item 37)
+
+### Change (`js/pages/forum.js` only)
+- **How it matches now:** every typed word must appear in the topic's title or body. Words are compared with the catalogue's existing `normalize()`, which ignores case, accents, spaces and punctuation, the same function the library search uses. Word order no longer matters.
+- **Unchanged:**
+  - category filtering;
+  - the URL (`?q=` and `?category=`);
+  - the 50-topic paging and the "loaded so far" wording;
+  - focus handling;
+  - the bundled guides shown when the feed is unavailable;
+  - the "No topics match" message.
+- **Not added:** ranking, fuzzy matching or server-side search.
+
+### Observed on the real bundled guides (`data/forum.json`), before → after
+| Query | Before | After |
+|---|---|---|
+| `pose link` | "What information makes a technique question useful?" | that guide, plus "How to study a difficult transition with TKDflow" (which says "pose-link") |
+| `poselink` | none | the same two |
+| `playback slow` | none | "How to study a difficult transition with TKDflow" (`slow playback` found it before and still does) |
+| `packet information` | none | "A checklist for reading an event information packet" |
+| `ÉVENT PACKET` | none | that checklist and "Keep rules discussions specific to the event" |
+| `checklist venue` (title word plus body word) | none | "A checklist for reading an event information packet" |
+| `checklist zzzz` | none | none ("No topics match") |
+| `tournament first` | none (Codex also saw 0 results in production for `?q=tournament+first`) | "Which tournament organization should I look at first?" |
+
+### Tests (`tests/community-focus.test.mjs`, +2, real `forum.js` with the real guides as the feed)
+- hyphens and spacing, word order, case and accents, and words split across title and body;
+- every word required, with the no-match message and summary;
+- clearing the search shows every topic again;
+- a `?q=` search applied from the URL, with categories still filtering.
+
+With the previous substring search, both tests fail. The full suite passes 673/673 in the scratch copy.
+
+### Known limits
+- As in the library, normalized words are matched inside the joined text, so a word can match across a word boundary or inside a longer word ("poselink" matches "pose link").
+- Search still covers only the topics loaded so far; the wording says so.
+- **Browser review** (Codex: 34 independent targeted checks, plus native Chrome with the real Community page code and a synthetic feed):
+  - **Search across pages:** `playback slow` gave 0 of 50, then 0 of 100, then 1 when all 138 were loaded.
+  - **Real guides:** `pose link` and `poselink` each gave the 2 real guides; `ÉVENT PACKET` 2; `checklist venue` 1; `checklist zzzz` 0; `tournament first` 1.
+  - **Categories:** Competitions 1, Forms 0, All 1, with focus kept on the category button.
+  - **Clear:** 138 topics.
+  - **Slow page:** typing "discussion learning" during a 2-second page kept focus in search at 100.
+  - **Failed last page:** it kept 100 topics and the query. After the fixture recovered, Retry reached 130 unique topics, with the query preserved.
+  - **Layout and errors:** no overflow at 320 px, and 0 errors on the ordinary path.
+- **Not tested:** a real screen reader and Safari.

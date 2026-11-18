@@ -13,6 +13,7 @@ import {appendPage,listTopics,listReplies,discussionAccess,discussionProblem,sub
 import {publicTopics,publicTopic,publicReplies,canonicalUuid} from '../lib/public-discussions.js';
 import {createCommunityConnection,communityControls,NOTICES} from '../lib/community-connection.js';
 import {keepFocus,findKey,focusTarget,captureFocus,restoreFocus} from '../lib/focus-keep.js';
+import {normalize} from '../lib/catalog.js';
 const $=id=>document.getElementById(id),params=new URLSearchParams(location.search);
 /* Topic links may carry an upper-case UUID; the database returns lower case. */
 const topicParam=v=>canonicalUuid(v)||v;
@@ -114,7 +115,10 @@ function renderMore(){
 }
 function render({preserveDraft=false}={}){if(!doc)return;if(!doc.categories.some(c=>c.id===active))active='all';
  keepFocus($('category-nav'),()=>replaceChildren($('category-nav'),h('button',{type:'button',class:'category-btn','data-fk':'cat:all','aria-pressed':String(active==='all'),on:{click:()=>selectCategory('all')}},'All categories'),...doc.categories.map(c=>h('button',{type:'button',class:'category-btn','data-fk':`cat:${c.id}`,'aria-pressed':String(active===c.id),on:{click:()=>selectCategory(c.id)}},c.title))));
- const q=query.trim().toLowerCase(),shown=topics.filter(t=>(active==='all'||t.category===active)&&(!q||`${t.title} ${t.body}`.toLowerCase().includes(q)));
+ // Every typed word must appear in the title or body, compared the way the library
+ // compares names (catalogue normalize(): case, accents, spaces and punctuation).
+ const words=query.trim().split(/\s+/).map(normalize).filter(Boolean);
+ const shown=topics.filter(t=>(active==='all'||t.category===active)&&(!words.length||(hay=>words.every(w=>hay.includes(w)))(normalize(`${t.title} ${t.body}`))));
  $('forum-summary').textContent=summaryText(shown.length);
  // A focused topic that is no longer listed falls back to the results summary.
  keepFocus($('forum-content'),()=>{
