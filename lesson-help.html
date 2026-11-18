@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<!-- layout:head -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My lesson questions — TKDflow</title>
+<meta name="description" content="Your private lesson questions, their review status and moderator replies.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://tkdflow.com/lesson-help.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TKDflow">
+<meta property="og:title" content="My lesson questions — TKDflow">
+<meta property="og:description" content="Your private lesson questions, their review status and moderator replies.">
+<meta property="og:url" content="https://tkdflow.com/lesson-help.html">
+<meta property="og:image" content="https://tkdflow.com/assets/og-animation-v2.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="TKDflow: Learn the forms. Step by step. The full-body animated black-belt character performs a side kick.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://tkdflow.com/assets/og-animation-v2.png">
+<meta name="twitter:image:alt" content="TKDflow: Learn the forms. Step by step. The full-body animated black-belt character performs a side kick.">
+<meta name="theme-color" content="#0D1B2A">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="stylesheet" href="/css/fonts.css">
+<link rel="stylesheet" href="/styles.css">
+<script type="module" src="/js/site.js"></script>
+<!-- /layout:head -->
+<link rel="stylesheet" href="/css/help.css">
+<script type="module" src="/js/pages/lesson-help.js"></script>
+</head><body data-page="forms">
+<!-- layout:header -->
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="navbar">
+  <div class="container">
+    <a href="/" class="navbar-logo" data-nav="home">
+      <span class="logo-icon" aria-hidden="true">道</span>
+      <span>TKDflow</span><span class="kr" lang="ko">태권도 플로우</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+      <span class="sr-only">Open menu</span><span class="nav-toggle-bars" aria-hidden="true"></span>
+    </button>
+    <nav class="site-nav" aria-label="Main">
+      <ul class="nav-links" id="site-nav">
+        <li><a href="/" data-nav="home">Home</a></li>
+        <li><a href="/forms.html" data-nav="forms" class="active" aria-current="page">Forms Library</a></li>
+        <li><a href="/community.html" data-nav="community">Community</a></li>
+        <li><a href="/competitions.html" data-nav="events">Events</a></li>
+        <li class="nav-account" id="nav-account"><a href="/auth.html" class="btn btn-secondary btn-sm nav-account-link">Account</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<!-- /layout:header -->
+<main id="main" tabindex="-1">
+ <div class="page-hero"><div class="container"><p class="section-label on-dark">Your study space</p><h1>My lesson questions</h1><p>Private questions you asked about a lesson, their review status and moderator replies. Only you and TKDflow community moderators can read them.</p></div></div>
+ <div class="container help-main">
+  <div>
+   <p id="help-status" class="learning-storage-note" role="status">Loading…</p>
+   <div class="help-actions"><button id="help-refresh" class="btn btn-secondary btn-sm" type="button">Refresh</button><a id="help-sign-in" class="btn btn-secondary btn-sm" href="/auth.html" hidden>Sign in</a><a id="help-profile" class="btn btn-secondary btn-sm" href="/profile.html" hidden>Complete profile</a><a class="text-link" href="/lesson-faq.html">Public lesson answers</a></div>
+  </div>
+  <section id="my-questions" class="help-panel" aria-labelledby="my-questions-title" hidden>
+   <h2 id="my-questions-title">Your questions</h2>
+   <p class="field-help">Questions stay private and are not emailed. Replies from moderators appear here. To ask, open a lesson and use “Help with this lesson”.</p>
+   <div id="my-question-list" class="help-cards" aria-live="polite"></div>
+  </section>
+  <section id="review-panel" class="help-panel" aria-labelledby="review-title" hidden>
+   <h2 id="review-title">Review lesson questions</h2>
+   <p class="field-help">Visible only to community moderators. Members appear by a private label; their email, school and study history are not shown. Replies are private to the member. Avoid claiming instructor credentials unless they are verified.</p>
+   <div class="help-filters">
+    <label for="review-lesson">Lesson<select id="review-lesson"><option value="">All lessons</option></select></label>
+    <label for="review-status">Status<select id="review-status"><option value="open" selected>Open (waiting or reviewed)</option><option value="submitted">Waiting for review</option><option value="reviewed">Reviewed</option><option value="resolved">Resolved</option><option value="closed">Closed</option><option value="all">All</option></select></label>
+    <button id="review-load" class="btn btn-primary btn-sm" type="button">Load questions</button>
+   </div>
+   <p id="review-summary" class="results-summary" role="status"></p>
+   <div id="review-groups" class="help-groups" role="group" aria-label="Recurring questions"></div>
+   <div id="review-list" class="help-cards"></div>
+  </section>
+  <section id="faq-panel" class="help-panel" aria-labelledby="faq-admin-title" hidden>
+   <h2 id="faq-admin-title">Public answers (FAQ)</h2>
+   <p class="field-help">Write a new public question and answer for everyone. Do not copy a member’s private question; remove names, schools, contact details and anything that could identify them. New answers start as drafts and are published as a separate step. Editing a published answer updates the public page only after you confirm it. Every change is recorded.</p>
+   <form id="faq-form" class="help-form" novalidate>
+    <h3 id="faq-form-title">New answer</h3>
+    <label for="faq-form-lesson">Lesson</label><select id="faq-form-lesson" required><option value="">Choose a lesson</option></select>
+    <label for="faq-form-pose">Animation pose number (optional)</label><input id="faq-form-pose" type="number" min="1" step="1" inputmode="numeric" aria-describedby="faq-form-pose-help"><p id="faq-form-pose-help" class="field-help">Leave empty for the whole form. Pose numbers are not official movement counts.</p>
+    <label for="faq-form-question">Public question</label><textarea id="faq-form-question" rows="2" maxlength="300" required></textarea>
+    <label for="faq-form-answer">Answer</label><textarea id="faq-form-answer" rows="6" maxlength="4000" required></textarea>
+    <label for="faq-form-url">Reference link (optional, https only)</label><input id="faq-form-url" type="url" maxlength="500" inputmode="url">
+    <label for="faq-form-label">Reference name (optional)</label><input id="faq-form-label" type="text" maxlength="120">
+    <fieldset><legend>Credit</legend>
+     <label class="help-inline" for="faq-credit-keep" id="faq-credit-keep-row" hidden><input id="faq-credit-keep" type="radio" name="faq-credit" value="keep"><span id="faq-credit-keep-label"> Keep the current credit</span></label>
+     <label class="help-inline" for="faq-credit-team"><input id="faq-credit-team" type="radio" name="faq-credit" value="team" checked> TKDflow moderators</label>
+     <label class="help-inline" for="faq-credit-handle"><input id="faq-credit-handle" type="radio" name="faq-credit" value="handle"> My username</label>
+    </fieldset>
+    <label class="help-inline" for="faq-form-curated"><input id="faq-form-curated" type="checkbox" required> I wrote this for the public. It does not copy a member’s private question and contains no names, schools or contact details.</label>
+    <label class="help-inline" for="faq-form-live" id="faq-form-live-row" hidden><input id="faq-form-live" type="checkbox"> This answer is public. Update the public answer now.</label>
+    <div class="help-actions"><button id="faq-form-save" class="btn btn-primary btn-sm" type="submit">Save draft</button><button id="faq-form-cancel" class="btn btn-secondary btn-sm" type="button" hidden>Cancel editing</button></div>
+    <p id="faq-form-status" class="form-status" role="status"></p>
+   </form>
+   <h3>Saved answers</h3>
+   <p id="faq-admin-summary" class="results-summary" role="status"></p>
+   <div id="faq-admin-list" class="help-cards"></div>
+  </section>
+ </div>
+</main>
+<!-- layout:footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <p class="logo">TKDflow<span>.</span></p>
+        <p>A free taekwondo learning resource created by Meghna Sankar from her training and research.</p>
+      </div>
+      <div class="footer-col">
+        <h2>Learn</h2>
+        <ul>
+          <li><a href="/forms.html">Forms library</a></li>
+          <li><a href="/learning.html">Saved forms &amp; progress</a></li>
+          <li><a href="/lesson-faq.html">Lesson questions &amp; answers</a></li>
+          <li><a href="/taegeuk-1.html">Taegeuk Il Jang lesson</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>Community</h2>
+        <ul>
+          <li><a href="/community.html">Discussions</a></li>
+          <li><a href="/community.html?view=resources">Learning resources</a></li>
+          <li><a href="/competitions.html">Events</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>About</h2>
+        <ul>
+          <li><a href="/about.html">About &amp; project status</a></li>
+          <li><a href="/founder.html">Meet Meghna</a></li>
+          <li><a href="/about.html#privacy">Privacy</a></li>
+          <li><a href="/about.html#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-current-year>2026</span> TKDflow</span>
+      <span>Free to use · No ads</span>
+    </div>
+  </div>
+</footer>
+<!-- /layout:footer -->
+</body></html>

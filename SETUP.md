@@ -69,7 +69,7 @@ staging account checks below.
 ## Releases, rollback and recovery
 
 Follow [docs/RELEASE.md](docs/RELEASE.md): release record, local checks, preview QA
-(33 pages × 5 widths), first public release with accounts off and no database migration,
+(36 pages × 5 widths), first public release with accounts off and no database migration,
 post-deploy header/CSP checks, Vercel Instant Rollback, CSP enforcement, the separate
 accounts rollout, and database recovery that never restores the old public policies.
 
@@ -164,6 +164,11 @@ enforcement release in docs/RELEASE.md §8 is approved and deployed.
 Support forwarding delivery was confirmed by the owner. Staging email confirmation, password recovery/sign-in and Google connection/repeat login passed. The recovered original project belongs to Meghna; production signups and public website switches remain off. Read `docs/accounts-and-discussions-2026-11-16.md` for current observed state rather than treating earlier restoration steps as unresolved.
 
 The new school feature is additive: apply `supabase/school-directory.sql` after base setup and community, then `supabase/school-directory-seed.sql`. The directory exposes business facts only; private suggestions queue automatically from confirmed profile saves. Assign a verified school reviewer through the owner-controlled private.school_reviewers table to review schools in profile settings. Never grant this role from client code. See `docs/school-directory.md`.
+
+
+## Lesson help (local, not yet deployed) — 2026-11-17
+
+Private lesson questions, moderator review and public lesson answers are additive: after base setup, community and enrollment, apply `supabase/lesson-help.sql` on staging, then run a private copy of `supabase/tests/lesson-help-probe.sql` (owner approval required before any cloud run; it rolls back). See `docs/lesson-help.md`.
 
 
 ## Production account activation — 2026-11-17

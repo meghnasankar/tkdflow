@@ -2,6 +2,7 @@
 import {loadJSON} from '../lib/data.js';
 import {createFormMotion} from '../animation/form-motion.js';
 import {mountLesson} from './lesson-player.js';
+import {mountLessonHelp} from '../lib/lesson-help-ui.js';
 const id=document.body.dataset.formId;
 async function start(){
  try{
@@ -15,6 +16,8 @@ async function start(){
   const message=document.getElementById('lesson-fallback');message.hidden=false;message.textContent='This animation could not load. Reload the page to try again, or use the movement references below.';
   document.querySelectorAll('.lesson-controls button,.lesson-controls select,#lesson-progress,#btn-copy-link,#study-view,[data-lesson-view]').forEach(control=>{control.disabled=true;});
   document.getElementById('lesson-clock').textContent='Lesson unavailable';
+  // Questions and published answers still work without the animation.
+  mountLessonHelp({id,title:document.querySelector('h1')?.firstChild?.textContent?.trim()||'this lesson'});
  }
 }
 start();

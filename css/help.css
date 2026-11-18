@@ -1,0 +1,80 @@
+/* Lesson help, private questions, moderator review and public lesson FAQ. */
+
+/* ── lesson pages ── */
+.lesson-help { margin: 24px 0 8px; background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 20px; scroll-margin-top: 90px; }
+.lesson-help h2 { font-size: 1.15rem; margin-bottom: 6px; }
+.lesson-help-intro { color: var(--gray-600); max-width: 70ch; margin-bottom: 14px; }
+.lesson-help-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.lesson-help-subtitle { display: block; font-size: 1rem; font-weight: 800; color: var(--navy); margin-bottom: 10px; }
+.lesson-help-note { color: var(--gray-600); margin-bottom: 10px; }
+.lesson-help-links { margin-top: 16px; font-size: .92rem; }
+.lesson-help-links a, .faq-source a { color: var(--red-dark); font-weight: 600; text-decoration: underline; }
+/* Study view keeps the fitted player alone on screen. */
+.lesson-study .lesson-help { display: none; }
+
+.lesson-help-form { display: grid; gap: 8px; }
+.lesson-help-form label, .help-form label { font-weight: 700; color: var(--navy); }
+.lesson-help-form textarea, .help-form textarea, .help-form input[type="text"], .help-form input[type="url"], .help-form input[type="number"], .help-form select, .help-filters select, .faq-search input {
+  width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--gray-300); border-radius: var(--radius-sm); font: inherit; background: var(--white); color: var(--gray-800);
+}
+.lesson-help-form textarea, .help-form textarea { min-height: 112px; resize: vertical; }
+.help-scope { border: 1px solid var(--gray-200); border-radius: var(--radius-sm); padding: 10px 12px; display: grid; gap: 6px; }
+.help-scope legend { font-weight: 700; color: var(--navy); padding: 0 4px; }
+.help-scope label { font-weight: 600; color: var(--gray-800); display: flex; gap: 8px; align-items: center; min-height: 32px; }
+.help-attached { font-size: .9rem; color: var(--gray-600); background: var(--gray-50); border-left: 3px solid var(--navy); padding: 8px 10px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+.lesson-help-form > .btn, .help-form > .btn { justify-self: start; }
+.form-status.error { color: var(--red-dark); font-weight: 600; }
+
+/* ── FAQ entries ── */
+.faq-list { display: grid; gap: 10px; }
+.faq-item { border: 1px solid var(--gray-200); border-radius: var(--radius-sm); background: var(--white); }
+.faq-item + .faq-item { margin-top: 8px; }
+.faq-item summary { cursor: pointer; padding: 12px 14px; min-height: 44px; list-style-position: inside; }
+.faq-item summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.faq-question { display: inline; font-size: 1rem; font-weight: 700; color: var(--navy); }
+.faq-item[open] summary { border-bottom: 1px solid var(--gray-200); }
+.faq-answer { padding: 12px 14px; display: grid; gap: 8px; color: var(--gray-800); overflow-wrap: anywhere; }
+.faq-meta, .faq-source { font-size: .86rem; color: var(--gray-600); }
+.faq-meta a { color: var(--red-dark); font-weight: 600; }
+.faq-lesson-group { margin-top: 22px; }
+.faq-lesson-group h2 { font-size: 1.1rem; margin-bottom: 8px; }
+.faq-search { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 10px; align-items: end; margin-bottom: 12px; }
+.faq-search label { font-weight: 700; color: var(--navy); display: grid; gap: 4px; }
+
+/* ── member questions and moderator review ── */
+.help-main { padding-top: 28px; padding-bottom: 56px; display: grid; gap: 24px; }
+.help-panel { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 20px; }
+.help-panel > h2 { font-size: 1.2rem; margin-bottom: 6px; }
+.help-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+.help-cards { display: grid; gap: 12px; margin-top: 12px; }
+.help-card { border: 1px solid var(--gray-200); border-radius: var(--radius-sm); padding: 14px; background: var(--gray-50); display: grid; gap: 8px; overflow-wrap: anywhere; }
+.help-card h3 { font-size: 1rem; }
+.help-card-meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: .86rem; color: var(--gray-600); }
+.help-card-body { white-space: pre-line; color: var(--gray-800); }
+.help-reply { border-left: 3px solid var(--red); background: var(--white); padding: 8px 10px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+.help-reply-meta { font-size: .8rem; font-weight: 700; color: var(--navy); }
+.help-status-submitted { background: var(--gold-light); color: var(--gold-dark); }
+.help-status-reviewed { background: var(--gray-100); color: var(--navy); }
+.help-status-resolved { background: #E6F4EA; color: #1E5631; }
+.help-status-closed { background: var(--gray-100); color: var(--gray-600); }
+.help-status { display: inline-block; font-size: .75rem; font-weight: 800; padding: 3px 9px; border-radius: 999px; }
+.help-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; align-items: end; }
+.help-filters label { font-weight: 700; color: var(--navy); display: grid; gap: 4px; }
+.help-groups { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+.help-form { display: grid; gap: 8px; }
+.help-form fieldset { border: 1px solid var(--gray-200); border-radius: var(--radius-sm); padding: 10px 12px; display: grid; gap: 6px; }
+.help-form legend { font-weight: 700; color: var(--navy); }
+.help-form .help-inline { font-weight: 600; color: var(--gray-800); display: flex; gap: 8px; align-items: flex-start; }
+.help-review-tools { display: grid; gap: 8px; border-top: 1px solid var(--gray-200); padding-top: 10px; }
+.help-revisions { font-size: .82rem; color: var(--gray-600); }
+.help-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+
+@media (max-width: 900px) {
+  .lesson-help-grid { grid-template-columns: minmax(0, 1fr); }
+  .help-filters { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 480px) {
+  .lesson-help, .help-panel { padding: 14px; }
+  .faq-search { grid-template-columns: minmax(0, 1fr); }
+  .help-actions .btn { flex: 1 1 auto; }
+}
