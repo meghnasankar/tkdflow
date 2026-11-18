@@ -70,8 +70,26 @@ test('no placeholder or dead links; every local link and asset exists', () => {
       const file = path === '/' || path === '' ? 'index.html' : path.replace(/^\//, '');
       assert.ok(existsSync(join(ROOT, file)), `${p.file}: ${attr}="${raw}" → ${file} does not exist`);
       const hash = raw.split('#')[1];
-      if (hash && file.endsWith('.html')) assert.match(read(file), new RegExp(`id="${hash}"`), `${p.file}: anchor #${hash} missing in ${file}`);
+      if (hash && (file.endsWith('.html') || file === 'assets/icons.svg')) assert.match(read(file), new RegExp(`id="${hash}"`), `${p.file}: anchor #${hash} missing in ${file}`);
     }
+  }
+});
+
+test('homepage Explore section offers each learner task once, including the newer tools', () => {
+  const html = read('index.html');
+  const start = html.indexOf('aria-labelledby="status-title"'), section = html.slice(start, html.indexOf('</section>', start));
+  const cards = section.split('<li class="feature-item">').slice(1);
+  assert.equal(cards.length, 6, 'six task cards');
+  const hrefs = [...section.matchAll(/<a [^>]*href="([^"]+)"/g)].map((m) => m[1]);
+  assert.equal(new Set(hrefs).size, hrefs.length, 'no destination is offered twice');
+  for (const href of ['/forms.html', '/techniques.html', '/companions.html', '/learning.html', '/school-forms.html', '/community.html', '/lesson-faq.html', '/competitions.html', '/first-tournament.html']) assert.ok(hrefs.includes(href), `Explore links to ${href}`);
+  for (const card of cards) assert.match(card, /<use href="\/assets\/icons\.svg#[a-z]+"><\/use>/, 'each card has a sprite icon');
+  const events = cards.filter((c) => c.includes('href="/competitions.html"'));
+  assert.equal(events.length, 1);
+  for (const id of ['events-state', 'events-teaser']) {
+    assert.equal(html.split(`id="${id}"`).length, 2, `#${id} exists once`);
+    assert.ok(events[0].includes(`id="${id}"`), `#${id} stays on the Events card`);
+    assert.match(read('js/pages/home.js'), new RegExp(`\\$\\('${id}'\\)`), `home.js still updates #${id}`);
   }
 });
 

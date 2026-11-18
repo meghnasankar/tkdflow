@@ -42,6 +42,8 @@
 .feature-item p { font-size: .9rem; }
 .feature-link { display: inline-block; margin-top: 12px; font-size: .88rem; font-weight: 700; color: var(--red-dark); }
 .feature-link:hover { text-decoration: underline; }
+.feature-links { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 12px; }
+.feature-links .feature-link { margin-top: 0; padding: 4px 0; }
 .feature-state { display: inline-block; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; padding: 3px 10px; border-radius: 12px; }
 .feature-state.available { background: #D1FAE5; color: #065F46; }
 .feature-state.progress { background: var(--gold-light); color: var(--gold-dark); }
