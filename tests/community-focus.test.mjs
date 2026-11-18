@@ -332,3 +332,39 @@ test('a deep-linked older topic counts once in the loaded total, and later pages
   assert.equal(env.$('forum-summary').textContent,'60 topics.');
  }finally{await done(env);}
 });
+
+/* ── search: every word, compared with the catalogue's normalize() ─── */
+// Uses the real bundled discussion guides (data/forum.json) as the published feed.
+const guides=()=>forumData.topics.map(t=>({...t}));
+const titles=env=>env.$('forum-content').querySelectorAll('h3').map(h=>h.textContent);
+const search=(env,q)=>{env.$('forum-q').value=q;env.$('forum-q').dispatchEvent(new Event('input'));return titles(env);};
+const TRANSITION='How to study a difficult transition with TKDflow',PACKET='A checklist for reading an event information packet',QUESTION='What information makes a technique question useful?',RULES='Keep rules discussions specific to the event';
+const set=list=>[...list].sort();
+test('Community search matches every word regardless of order, hyphens, spacing, case or accents',async()=>{
+ const env=await community({topics:guides()});
+ try{
+  assert.equal(titles(env).length,forumData.topics.length);
+  // Observed on the real guides: before, “pose link” found only QUESTION (which says “pose link”);
+  // TRANSITION says “pose-link”, and now both match, with or without the space.
+  assert.deepEqual(set(search(env,'pose link')),set([TRANSITION,QUESTION]));
+  assert.deepEqual(set(search(env,'poselink')),set([TRANSITION,QUESTION]));
+  assert.deepEqual(search(env,'playback slow'),[TRANSITION],'word order does not matter');
+  assert.deepEqual(search(env,'packet information'),[PACKET]);
+  assert.deepEqual(set(search(env,'ÉVENT PACKET')),set([PACKET,RULES]),'case and accents are ignored (before: no result)');
+  assert.deepEqual(search(env,'checklist venue'),[PACKET],'one word in the title, one in the body');
+  assert.deepEqual(search(env,'checklist zzzz'),[],'every word must match');
+  assert.equal(env.$('forum-summary').textContent,'0 topics matching “checklist zzzz”.');
+  assert.equal(env.$('forum-content').textContent,'No topics match. Try another category or search.');
+  assert.equal(search(env,'').length,forumData.topics.length,'clearing the search shows every topic again');
+ }finally{await done(env);}
+});
+test('a search in the URL is applied with the same rules, and categories still filter',async()=>{
+ const env=await community({search:'?q=playback%20slow',topics:guides()});
+ try{
+  assert.equal(env.$('forum-q').value,'playback slow');assert.deepEqual(titles(env),[TRANSITION]);
+  env.key(env.$('category-nav'),'cat:competitions').click();
+  assert.deepEqual(titles(env),[],'the transition guide is not in Competitions');
+  env.key(env.$('category-nav'),'cat:forms-discussion').click();
+  assert.deepEqual(titles(env),[TRANSITION]);
+ }finally{await done(env);}
+});
