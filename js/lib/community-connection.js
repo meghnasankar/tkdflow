@@ -14,6 +14,14 @@
      ignored even if the SDK still calls it), private state is cleared and the
      feed is re-read publicly. Nobody is signed out and no stored session is
      touched.
+   - Any other back/forward restore in account mode rechecks the stored session
+     once, because a sign-out made in another tab while this page was cached
+     may never have reached it (the SDK's visibility recovery reports no event
+     when the stored session is gone). The same account confirmed: nothing
+     changes and nothing is fetched, so reply drafts stay. A different account
+     or signed out: private state is cleared and the feed is re-read. A failed
+     check clears private state (fail closed) and asks for a refresh. A newer
+     start, sign-in change or under-13 result meanwhile wins.
    Every await is followed by a request check, so a slower older response can
    never overwrite newer state. Dependencies are injected for tests.
    Paging: the feed is read 50 topics at a time by keyset. The cursor always
@@ -128,6 +136,35 @@ export function createCommunityConnection({eligibility,account,publicReader,stat
   try{return await (ineligible()?connectPublic(req,current):connectAccount(req,current));}
   finally{if(current()){state.loading=false;publish();}}
  }
+ /** Switch this tab to public reading (an under-13 result on a restored page). */
+ function toPublic(){
+  request++;dropAccount();state.mode='public';state.notice='loading';state.loading=true;
+  publish({privateCleared:true});
+  return connect();
+ }
+ /** A restored account-mode page: read the stored session once and act only
+  *  if it changed. Only the newest restore's answer counts (its own sequence,
+  *  so a same-account restore needn't bump `request` and strand a pending
+  *  feed); a newer start or sign-in change also wins. An under-13 result
+  *  meanwhile switches to public reading. */
+ let restoreSeq=0;
+ async function recheckRestored(){
+  const seq=++restoreSeq,req=request,token=guard.token();
+  const result=await account.currentSession(client);
+  if(seq!==restoreSeq||req!==request||!guard.isCurrent(token))return null;
+  if(ineligible())return state.mode==='public'?null:toPublic();
+  if(result.error){
+   // Fail closed: who is signed in can't be confirmed, so nothing private stays.
+   request++;guard.switchTo(null);session=null;access=NO_ACCESS;state.loading=false;state.notice='session-error';
+   publish({privateCleared:true});
+   return null;
+  }
+  const next=result.session||null,id=next?.user?.id||null;
+  if(id===guard.userId)return null;           // the same account (or still signed out): keep everything
+  request++;guard.switchTo(id);session=next;access=NO_ACCESS;state.loading=true;
+  publish({privateCleared:true});
+  return connect();
+ }
  /** Replies for the topic, one page at a time, read the way the current mode allows. */
  function replies(topicId,{after=null}={}){
   if(state.mode==='public')return publicReader.replies(topicId,{after});
@@ -158,10 +195,13 @@ export function createCommunityConnection({eligibility,account,publicReader,stat
   get state(){return snapshot();},
   /** pageshow handler. Only a page restored from the back/forward cache needs a recheck. */
   pageShown(event){
-   if(!event?.persisted||!ineligible()||state.mode==='public')return null;
-   request++;dropAccount();state.mode='public';state.notice='loading';state.loading=true;
-   publish({privateCleared:true});
-   return connect();
+   if(!event?.persisted)return null;
+   if(ineligible())return state.mode==='public'?null:toPublic();
+   // Account mode with a client: confirm who is signed in. Without a client
+   // there is no private state yet, and a start still waiting for the
+   // service reads the session after it arrives.
+   if(state.mode!=='account'||!client)return null;
+   return recheckRestored();
   },
  };
 }

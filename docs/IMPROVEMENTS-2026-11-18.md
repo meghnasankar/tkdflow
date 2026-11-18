@@ -33,13 +33,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 24 (2027 ATU National Championships, dates TBA): published.** PR 48 merged as `main` `5d65fec`. Codex verified it in production: main CI passed, the 2 changed source files match, and the live ATU card shows dates TBA with no calendar export and 0 errors.
 - **Batch 25 (first-tournament checklist recovers from failed saves): published.** PR 49 merged as `main` `44f573a`. Codex verified it in production: main CI passed, hosting is healthy, the 3 changed source files match, and security headers and private-path 404s pass.
 - **Batch 31 (Log out is reported only when it's proven): published.** PR 50 merged as `main` `d634ce8`. Codex verified it in production: main CI passed, the 5 changed source files match, security headers and private-path 404s pass, and the live signed-in header shows Log out with 0 errors.
-- **Batch 26 (Community Refresh recovery and an honest submissions limit):** on `fix/community-connection-retry-2026-11-18`, cut from `d634ce8`. Passed Codex's browser review; ready for root's release. Scope: items 46 and 47.
+- **Batch 26 (Community Refresh recovery and an honest submissions limit): published.** PR 51 merged as `main` `00d1366`. Codex verified it in production: main CI passed, the 6 changed source files match, security headers and private-path 404s pass, and the public resources view has 0 errors.
+- **Batches 27 and 30 (unsent reply drafts, and a session recheck after Back/Forward):** on `fix/community-drafts-and-session-restore-2026-11-18`, cut from `00d1366`, released together so drafts ship with the restore protection. Passed Codex's browser review (fixture-simulated restores; native back/forward caching not yet verified); ready for root's release. Scope: items 48 and 53.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 26:** implemented locally and browser-reviewed by Codex, awaiting release.
+- **Batches 27 and 30:** implemented locally and browser-reviewed by Codex, awaiting release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -76,9 +77,11 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
+| 53 | A Community page restored by Back/Forward kept a signed-out member's private controls | A read-only audit with the real pinned SDK (2.119.0) and the real connection code, offline and synthetic, found the gap: a sign-out made in another tab while this page sat in the back/forward cache wasn't noticed on restore. `pageShown` rechecked only under-13 tabs, and the SDK's visibility recovery returns without any event when the stored session is gone. The composer, Your submissions and the moderation queue stayed. An account switch was noticed. This is synthetic SDK evidence only; it hasn't been shown in a real browser, which may evict the cached page instead. No production leak is claimed. | P2 privacy | Batch 30 |
 | 52 | Profile Log out could report a sign-out it hadn't proved | `js/pages/profile.js` passed `stillSignedIn: () => hasStoredSession()`, which returns false when storage can't be read, so `logout()` treated unreadable storage as a verified sign-out and the page redirected home. Its auth listener said "You have been signed out" on any null session, even with a stored copy still present. Password recovery used the same weak proof for "signed out". Codex reproduced both profile cases in native Chrome with the synthetic fixture (`/private/tmp/tkdflow-profile-logout-fixture.mjs`). No live account was affected. | P2 accuracy | Published (PR 50) |
-| 47 | "Your submissions" quietly stopped at 30 topics and 30 replies | `reviewSubmissions` used `.limit(30)` on each list with no indication that more existed. | P3 honesty | Batch 26 |
-| 46 | Community Refresh couldn't recover from an unavailable account service | `getAccountService()` kept the first start-up result for the page, including `unavailable`, so **Refresh discussions** (and its "try refreshing" notice) could never succeed without reloading. | P3 reliability | Batch 26 |
+| 48 | An unsent Community reply was lost when switching topics | `forum.js` kept a reply draft only across re-renders of the same open topic; opening another topic, All topics or Back replaced the panel and its text. | P3 usability | Batch 27 |
+| 47 | "Your submissions" quietly stopped at 30 topics and 30 replies | `reviewSubmissions` used `.limit(30)` on each list with no indication that more existed. | P3 honesty | Published (PR 51) |
+| 46 | Community Refresh couldn't recover from an unavailable account service | `getAccountService()` kept the first start-up result for the page, including `unavailable`, so **Refresh discussions** (and its "try refreshing" notice) could never succeed without reloading. | P3 reliability | Published (PR 51) |
 | 45 | The first-tournament checklist stopped saving after one failed write, and another tab could replace unsaved ticks | `js/lib/tournament-guide.js` `set()` made any write error a permanent `unavailable` state; the notice said ticks would be lost on leaving, although a reload shows the last saved ticks; `first-tournament.js` rebuilt the store on every `storage` event; and each save wrote the whole in-memory object, so a stale tab could erase another tab's other views. | P2 data safety | Published (PR 49) |
 | 44 | The 2027 ATU National Championships wasn't listed, and the 2026 note said no 2027 announcement existed | Codex rechecked the official sources on 18 November (evidence: root's `atu-announcement-source.json`). `https://www.joinatu.com/` announces the 2027 National Championships at the Gas South Convention Center, Duluth, Georgia. Its main announcement says May 28–29, 2027, but its countdown says May 27, 2027, and the linked `/event-schedule` still shows 2026 (May 22–23). | P3 content | Published (PR 48) |
 | 43 | Community learning resources had no search, and the category couldn't be shared | The resources view (`community.html?view=resources`) kept its category in a page variable, so it wasn't in the address, wasn't shareable and wasn't restored by Back. It also had no search, unlike the discussions pane. | P3 usability | Published (PR 47) |
@@ -1807,3 +1810,159 @@ With the previous substring search, both tests fail. The full suite passes 673/6
   - Codex independently ran `tests/account-retry.test.mjs` and `tests/community-focus.test.mjs`, which passed 25/25.
 - **Not tested:** a physical phone, Safari and a screen reader.
 - **Not wired to the retry yet:** the header Log out and the learning service.
+
+## Batch 27 — keep unsent replies while switching topics (item 48)
+
+### Change (`js/pages/forum.js` only)
+- **Page memory only:** a map keyed by account and topic holds unsent reply text. It's never written to browser storage or sent anywhere, so it doesn't survive a reload or a closed page.
+  - It's saved on each input in the reply field.
+  - It's restored when the same account opens the same topic again, including by Back/Forward, with the note "Your unsent reply is kept while this page stays open."
+  - The consent checkbox is never restored, so the visitor confirms again before sending.
+- **Typing while a submission is sending** (root review fix): the fields stay editable while the request is in flight, and the old success path reset the whole form, erasing anything typed meanwhile.
+  - The page now keeps the values that were sent. On a successful response for the current account, it clears only the fields that still equal what was sent.
+  - Newer text stays where it is, with its caret and focus, and stays in the reply draft map. A new topic's category stays with its unsent text.
+  - The consent box is always cleared.
+  - The message then says: "Your earlier version was submitted for moderation. What you typed while it was sending is still here and has not been sent." An unchanged success shows the usual "Submitted for moderation…".
+  - The same rule covers the new-topic composer (title, body, category). No topic drafts are stored.
+  - **Topic switched while sending:** for a reply, the form now on the page for that topic is the one checked, so a copy restored from the draft is cleared once that exact text is saved. A reply's draft is removed only if it still equals the sent text.
+  - **Another topic open when the answer arrives** (root review fix): the message names the discussion instead of saying "still here".
+    - With text typed while sending: "Your reply to “…” was submitted for moderation. What you typed while it was sending is kept as an unsent reply for that discussion."
+    - With nothing new: "Your reply to “…” was submitted for moderation. Your username will appear with the text after a moderator approves it."
+    - The open topic's field is untouched, and the newer text comes back when that discussion is reopened.
+  - **Account changed while sending:** the existing guard means a late response changes nothing.
+- **One submission at a time per account and target** (root review; reproduced first): during a slow reply, switching topics and back rebuilt that topic's form, restored the sent text, and left Submit enabled. A second submit sent a second request (the harness counted 2).
+  - Now a form rebuilt for the same account and topic while its earlier submission is in flight stays locked: Submit is disabled, with "Your earlier submission is still sending.", and a submit attempt sends nothing.
+  - When the earlier request settles, success or failure, the form now on the page is unlocked. On success the copy of what was saved is cleared; on failure the text is kept.
+  - Other topics' forms and drafts aren't affected. The same lock covers the new-topic composer if it's rebuilt while a topic is sending.
+  - **Cross-account correction (root review):** when an earlier request settles, it always releases its own lock, even if stale. The forms on the page then show the **current** account's state for that target.
+    - A late answer for account A can't unlock account B's pending reply to the same topic.
+    - After signing out and back in as A while A's old reply is sending, the new form stays locked until it settles, then unlocks without bringing the old text back or showing a message.
+  - **Limit:** this is page-level only; nothing stops two tabs from each sending once.
+- **Cleared:**
+  - that topic's draft once its exact text is saved;
+  - every draft whenever private state is cleared: sign-in, sign-out (even back into the same account), an account switch, or switching to public reading.
+- **Kept:** a failed send keeps the draft.
+- **Unchanged:** the server and public mode (which has no composer).
+
+### Tests (`tests/community-focus.test.mjs`, +11, real `forum.js`, synthetic accounts)
+- **Switching:** type in topic A; topic B shows nothing; back in A the text returns with consent unchecked and the note shown; Back/Forward keep it; no draft is written to browser storage.
+- **Sending and accounts:** a failed send keeps the draft, a successful send clears it, and another account never sees it.
+- **Same account:** signing out and back in as the same account clears drafts.
+- **Typing while sending** (deferred submission RPC in the harness):
+  - **Reply edited while sending:** after success the newer text, focus and caret stay; consent is cleared; the "earlier version" message shows. After switching topics and back, the newer text is restored as a draft.
+  - **Reply unchanged while sending:** the field, the draft and the note are cleared, with the usual message.
+  - **Reply sent, then topics switched:** the restored copy is cleared on success; another topic's draft is untouched.
+  - **New topic:** a body edited while sending stays, with its category, while the sent title is cleared; an unchanged one returns every field to its default.
+  - **An account change while sending:** no success message, and the new account sees no draft.
+  - **A form rebuilt while its reply is sending** (success and failure): it's locked with the note; a submit attempt makes no second request (1 counted); it unlocks when the reply settles; the text is cleared on success and kept on failure; another topic's draft is kept.
+  - **Two accounts, two pending replies to one topic** (separate deferred answers): A's late answer leaves B's form busy, with no message and no duplicate request; B's own answer releases it.
+  - **Signed out and back in as the same account while sending:** locked until it settles, then released; the old text never returns.
+  - **Another topic opened before the answer:** the discussion is named; the open topic's text is untouched; the newer text is restored on reopening; an unchanged send keeps nothing.
+- **`tests/community-public.test.mjs`:** two source guards that pin the gated reply composer now name the new `withReplyDraft(composer(…))` expression. It's still gated by `controls().composer`.
+- **Spot mutants:**
+  - **Caught (twenty):**
+    - no clear on an auth change (by the same-account test);
+    - the draft kept after a successful send;
+    - no restore;
+    - clearing every field unconditionally on success;
+    - deleting the draft unconditionally;
+    - checking only the submitted form;
+    - keeping consent;
+    - resetting the category despite newer text;
+    - no account guard on the response;
+    - always showing the usual message;
+    - treating the topic as always open;
+    - clearing through another topic's form;
+    - no in-flight check on submit;
+    - a rebuilt form left unlocked;
+    - a rebuilt form never unlocked;
+    - one lock for every topic;
+    - a lock never released;
+    - an unconditional unlock (the previous version);
+    - a stale lock not released;
+    - only the submitted form updated.
+  - **Equivalent (one):** keying drafts by account is covered by clearing on every auth change, and is kept as defence.
+- **Full suite on this branch (with batch 30):** 773/773 (`npm run check`).
+
+### Known limits
+- **Browser review** (Codex, native Chrome, synthetic fixture on port 9015, no remote calls; JSON and a screenshot in Codex's batch-27-30 notes):
+  - **Drafts:** a per-topic draft is restored with consent unchecked; a failed send keeps the body.
+  - **Typing during a slow successful reply:** the newer text stays and consent is cleared.
+  - **A reply form reopened while its reply is pending:** it's locked, and a failure unlocks it.
+  - **A successful reply after moving to another topic:** the message names the original topic, and the current topic's draft is left alone.
+  - **An unchanged success:** the draft is cleared.
+  - **Two accounts:** A's late answer leaves B's pending reply to the same topic locked, with no stale message. B's failure unlocks it and keeps the body.
+  - **An account switch:** drafts are cleared.
+  - **New topic** (isolated run): success clears the sent title, keeps the newer body and category, and clears consent. An earlier slow manual run hit the 8 s request timeout and kept the text, as expected.
+  - **Phone width:** the pending note has no overflow at 390 px.
+  - 0 console errors.
+  - Codex independently ran `tests/community-focus.test.mjs` and `tests/community-public.test.mjs`, which passed 66/66.
+- **Back/Forward wording, bounded:**
+  - opening a topic uses `replaceState`, and Codex verified switching topics and All topics in the browser;
+  - `popstate` restores are covered by unit tests only;
+  - a real return to a cached page isn't verified yet. This batch doesn't change history behaviour.
+- **No persistent copy:** drafts are never written to browser storage, so they don't survive a reload or a closed page. While a browser keeps the page in its back/forward cache, page memory, drafts included, can come back with it; batch 30 rechecks the session on such a restore.
+- **Not tested:** a physical phone, Safari and a screen reader.
+
+## Batch 30 — Community rechecks the session after a Back/Forward restore (item 53)
+
+### Change (`js/lib/community-connection.js` only)
+- **A restored page in account mode** (`pageshow` with `persisted`), once it has an account client, reads the stored session once through the same `account.currentSession(client)` that a start uses.
+  - **The same account (or still signed out):** nothing is published and nothing else is fetched, so reply drafts, focus and a pending feed stay as they are.
+  - **Signed out, or another account:** private state is cleared (`privateCleared`, as for an auth-listener change), and the feed is re-read for the new state.
+  - **The check fails** (an error or timeout): fail closed. Private state is cleared, the notice is the existing "We could not check your sign-in. Refresh to try again…", loading ends, and there's no reconnect.
+- **Stale answers are dropped:**
+  - **Overlapping restores:** a restore has its own sequence, so only the newest restore's answer counts (root review correction). An older restore's late sign-out or error can't undo a newer same-account confirmation, and an older same-account answer can't undo a newer sign-out.
+  - **Same-account restores leave the feed request alone:** a same-account restore doesn't bump the feed `request`, so a pending Refresh still completes.
+  - **A newer start or a sign-in change** (request or guard token) also wins.
+  - **An under-13 result recorded meanwhile** switches to public reading, as before.
+- **Unchanged:**
+  - **Before a client exists** (the service still starting), there's no recheck; that start reads the session itself.
+  - the under-13 restore path;
+  - nobody is signed out;
+  - no stored session is touched.
+
+### Tests (+8)
+- **`tests/community-public.test.mjs`** (connection level, +7):
+  - **Signed out while cached:** private state is cleared, only Sign in remains, the feed is re-read, and there's no sign-out call.
+  - **The same account:** exactly one session read, nothing published, the guard token still current, and a normal load never rechecked.
+  - **Another account:** the switch, with access read again.
+  - **A failed check:** fails closed, with the session-error notice, no loading and no further reads.
+  - **Stale answers:** a sign-in change, a newer Refresh and an under-13 result each win over a pending recheck.
+  - **A failed check while a Refresh is loading:** loading ends, and that Refresh's late answer can't bring the old session back.
+  - **Overlapping restores:**
+    - an old error or sign-out answered after a newer same-account confirmation clears nothing;
+    - a newer sign-out wins over an old same-account answer;
+    - a same-account restore while a Refresh waits for the feed: that feed still completes.
+- **`tests/community-focus.test.mjs`** (real `forum.js`, +1):
+  - a same-account restore keeps the same reply field, its draft and focus;
+  - after a sign-out made while cached, the restore removes the reply composer, hides the topic composer, Your submissions and moderation, and empties the loaded lists;
+  - the draft doesn't survive.
+- **Spot mutants:**
+  - **Caught (nine):**
+    - no account-mode recheck;
+    - the same account still clearing;
+    - a failure keeping private state;
+    - no stale guard;
+    - no request guard;
+    - no age check after the read;
+    - a failure leaving loading on;
+    - no restore sequence;
+    - a same-account restore bumping the request.
+  - **Removed:** a redundant client-identity guard whose mutant survived; the request guard covers it.
+- **Full suite on this branch (with batch 27):** 773/773 (`npm run check`).
+
+### Assumptions and limits
+- **Evidence:** the bug is synthetic. The pinned SDK, offline, with the cross-tab message removed, as the HTML spec allows for a cached document. Real browsers may instead evict the page when that message arrives, in which case Back loads a fresh page and this code path isn't reached. That's harmless.
+- **Who is signed in:** the restore check reads the SDK's stored session; it doesn't ask the server who is signed in. That matches how a start decides.
+- **What it covers:** this protects what the page shows. It doesn't revoke anything or sign anyone out.
+- **Browser review** (Codex, native Chrome, synthetic fixture on port 9015; the restores were **simulated** by the fixture dispatching persisted `pageshow` events):
+  - **The same account A:** the draft is kept.
+  - **A quiet sign-out:** the composers and private cards are cleared.
+  - **A quiet switch to B:** A's draft is cleared.
+  - **Overlapping restores:** a newer A confirmation wins over an older failure.
+  - **A failed read:** private UI is cleared and the page asks for a Refresh.
+  - **Under 13:** private UI is hidden.
+  - 0 console errors.
+- **Not yet verified:** a real browser back/forward cache lifecycle. Whether native Chrome keeps or evicts the page with the real SDK is the pending native baseline (batch 33, part B).
+- **Reproduction script** (outside the repo): `/private/tmp/tkdflow-research/scripts/community-bfcache-repro.mjs`.
