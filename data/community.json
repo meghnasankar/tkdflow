@@ -1,6 +1,18 @@
 {
   "posts": [
     {
+      "id": "start-here",
+      "category": "Forms & curriculum",
+      "kind": "Beginner guide",
+      "title": "New to taekwondo forms? Start here",
+      "body": "How WT/Kukkiwon, ITF and ATA forms differ, how to find your school’s form, what the animation’s poses and left/right mean, and how to use the lessons.",
+      "url": "start-here.html",
+      "tags": [
+        "Beginners",
+        "Parents"
+      ]
+    },
+    {
       "id": "forms",
       "category": "Forms & curriculum",
       "kind": "Study guide",

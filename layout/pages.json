@@ -10,6 +10,14 @@
       "description": "A free taekwondo forms library with interactive 3D study lessons for WT/Kukkiwon, ITF and ATA patterns."
     },
     {
+      "file": "start-here.html",
+      "key": "start",
+      "path": "/start-here.html",
+      "sitemap": true,
+      "title": "Start here: a beginner’s guide to taekwondo forms — TKDflow",
+      "description": "New to taekwondo forms? Practical paths for new students, parents and returning learners: how WT/Kukkiwon, ITF and ATA differ, finding your form, reading poses and directions, and using the free lessons."
+    },
+    {
       "file": "forms.html",
       "key": "forms",
       "path": "/forms.html",

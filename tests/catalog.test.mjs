@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import {
-  applyState, facetCounts, stateFromParams, stateToParams, DEFAULT_STATE, matchesQuery, destinationFor, formRecordProblem,
+  applyState, facetCounts, stateFromParams, stateToParams, DEFAULT_STATE, matchesQuery, destinationFor, formRecordProblem, normalize,
 } from '../js/lib/catalog.js';
 
 const forms = JSON.parse(readFileSync(new URL('../data/forms.json', import.meta.url), 'utf8'));
@@ -89,4 +89,42 @@ test('search includes visible belt, difficulty and technique descriptions',()=>{
  assert.ok(applyState(forms,S({q:'intermediate'})).length>0);
  assert.ok(applyState(forms,S({q:'scissor block'})).some(f=>f.id==='taegeuk-7'));
  assert.deepEqual(names(applyState(forms,S({q:'belt yellow'}))),names(yellow));
+});
+
+test('official and common spellings find the one intended form, and punctuation is ignored', () => {
+  const only = (q) => applyState(forms, S({ q })).map((f) => f.id);
+  // Kukkiwon's own spelling, ATA's sheet title, Revised Romanization and a common Taegeuk spelling.
+  for (const [q, id] of [['Shipjin', 'sipjin'], ['Songahm #1', 'songahm-1'], ['Cheon-Ji', 'chon-ji'], ['Koryeo', 'koryo'],
+    ['Geumgang', 'keumgang'], ['Jung-Geun', 'joong-gun'], ['Taeguk 1', 'taegeuk-1'], ['Taegeuk Ee Jang', 'taegeuk-2']]) {
+    assert.deepEqual(only(q), [id], `“${q}” finds ${id} only`);
+  }
+  assert.equal(normalize('Songahm #1'), normalize('songahm 1'));
+  assert.equal(normalize('태극 1장'), '태극1장', 'Hangul survives normalization');
+  assert.deepEqual(only('DO SAN'), ['do-san'], 'short words do not match every form');
+});
+
+test('a style’s own word for forms finds that whole style and nothing else', () => {
+  const ids = (q) => applyState(forms, S({ q })).map((f) => f.id).sort();
+  const of = (org) => forms.filter((f) => f.category === org).map((f) => f.id).sort();
+  assert.deepEqual(ids('poomsae'), of('wt'), 'Kukkiwon colour-belt Taegeuk forms are poomsae too');
+  assert.deepEqual(ids('tul'), of('itf'));
+  assert.deepEqual(ids('songahm'), of('ata'));
+});
+
+test('form aliases are validated as short spellings', () => {
+  const base = forms.find((f) => f.id === 'sipjin');
+  assert.equal(formRecordProblem(base), null);
+  assert.match(formRecordProblem({ ...base, aliases: 'Shipjin' }), /aliases/);
+  assert.match(formRecordProblem({ ...base, aliases: [''] }), /aliases/);
+  assert.match(formRecordProblem({ ...base, aliases: ['x'.repeat(41)] }), /aliases/);
+});
+
+test('typing a whole form name shows that form, and the facet counts agree with the results', () => {
+  for (const [q, id] of [['Taegeuk Il Jang', 'taegeuk-1'], ['taegeuk il jang', 'taegeuk-1'], ['Taegeuk Ee Jang', 'taegeuk-2'], ['태극 2장', 'taegeuk-2']]) {
+    assert.deepEqual(applyState(forms, S({ q })).map((f) => f.id), [id], q);
+    assert.equal(facetCounts(forms, S({ q }), 'org').all, 1, `${q}: style counts match the single result`);
+  }
+  // Partial words still search broadly.
+  assert.ok(applyState(forms, S({ q: 'Il Jang' })).length > 1);
+  assert.ok(applyState(forms, S({ q: 'taegeuk' })).length === 8);
 });

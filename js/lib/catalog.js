@@ -24,15 +24,28 @@ export const SORTS = Object.freeze([
 
 export const DEFAULT_STATE = Object.freeze({ q: '', org: 'all', belt: 'all', level: 'all', lesson: false, sort: 'curriculum' });
 
-/** Lowercase, remove accents, spaces, hyphens and punctuation. */
+/** Lowercase, remove accents, spaces, hyphens and all punctuation (so
+ *  “Songahm #1”, “Cheon-Ji” and “Taegeuk 1” compare by letters and digits).
+ *  Hangul syllables are kept after recomposition. */
 export function normalize(text) {
   return String(text ?? '')
-    .normalize('NFKD').replace(/[̀-ͯ]/g, '')
-    .toLowerCase().replace(/[\s\-_.,'’()/·]+/g, '');
+    .normalize('NFKD').replace(/[\u0300-\u036f]/g, '').normalize('NFC')
+    .toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
 }
 
+/** What each style calls its forms, so a search for the word a school uses
+ *  (Kukkiwon “poomsae”, ITF “tul”/patterns, ATA Songahm) finds that style.
+ *  Generic words such as “taekwondo” are left out: they would make short
+ *  terms like “do” match every form. */
+export const STYLE_TERMS = Object.freeze({
+  wt: ['poomsae', 'Kukkiwon'],
+  itf: ['tul', 'patterns', 'Chang Hon'],
+  ata: ['Songahm'],
+});
+
 function haystack(form) {
-  return [form.id, form.name, form.koreanName, form.meaning, form.series, form.organization,
+  return [form.id, form.name, form.koreanName, ...(form.aliases || []), form.meaning, form.series, form.organization,
+    ...(STYLE_TERMS[form.category] || []),
     form.beltLabel, `${form.belt} belt`, form.difficultyLabel, form.description, form.thumbnail?.alt, ...(form.tags || [])]
     .map(normalize).join('|');
 }
@@ -44,8 +57,20 @@ export function matchesQuery(form, q) {
   return terms.every((t) => hay.includes(t));
 }
 
-function passes(form, state, skip) {
-  if (skip !== 'q' && !matchesQuery(form, state.q)) return false;
+/** Ids of forms whose name, id, Korean name or listed spelling is exactly the
+ *  query (“Taegeuk Il Jang”, “Shipjin”, “태극 1장”), or null. When a visitor
+ *  types a whole form name, short words in it (“Il”, “Ee”) must not pull in
+ *  other forms that merely contain those letters. */
+export function exactNameMatches(forms, q) {
+  const wanted = normalize(q);
+  if (!wanted) return null;
+  const ids = new Set(forms.filter((f) => [f.id, f.name, f.koreanName, ...(f.aliases || [])]
+    .some((name) => normalize(name) === wanted)).map((f) => f.id));
+  return ids.size ? ids : null;
+}
+
+function passes(form, state, skip, exact = null) {
+  if (skip !== 'q' && (exact ? !exact.has(form.id) : !matchesQuery(form, state.q))) return false;
   if (skip !== 'org' && state.org !== 'all' && form.category !== state.org) return false;
   if (skip !== 'belt' && state.belt !== 'all' && form.belt !== state.belt) return false;
   if (skip !== 'level' && state.level !== 'all' && String(form.difficulty) !== state.level) return false;
@@ -68,12 +93,14 @@ export function sortForms(forms, sort) {
 
 /** Apply every filter, then sort. */
 export function applyState(forms, state) {
-  return sortForms(forms.filter((f) => passes(f, state)), state.sort);
+  const exact = exactNameMatches(forms, state.q);
+  return sortForms(forms.filter((f) => passes(f, state, null, exact)), state.sort);
 }
 
 /** How many results each option of `facet` would give, keeping the other filters. */
 export function facetCounts(forms, state, facet) {
-  const base = forms.filter((f) => passes(f, state, facet));
+  const exact = exactNameMatches(forms, state.q);
+  const base = forms.filter((f) => passes(f, state, facet, exact));
   const key = { org: 'category', belt: 'belt', level: 'difficulty' }[facet];
   const counts = { all: base.length };
   for (const f of base) {
@@ -122,6 +149,8 @@ export function formRecordProblem(f) {
   if (!Number.isInteger(f.moves) || f.moves < 1) return `${f.id}: moves must be a positive integer`;
   if (!Number.isInteger(f.difficulty) || f.difficulty < 1 || f.difficulty > 5) return `${f.id}: difficulty must be 1–5`;
   if (!Array.isArray(f.tags)) return `${f.id}: tags must be a list`;
+  if (f.aliases != null && (!Array.isArray(f.aliases) || f.aliases.length > 8
+      || f.aliases.some((a) => typeof a !== 'string' || !a.trim() || a.length > 40))) return `${f.id}: aliases must be up to 8 short spellings`;
   if (f.lessonUrl != null && !/^[a-z0-9-]+\.html$/.test(f.lessonUrl)) return `${f.id}: lessonUrl must be a local page`;
   if (f.thumbnail != null && (f.thumbnail.src !== `/assets/forms/${f.id}.webp`
       || f.thumbnail.width !== 960 || f.thumbnail.height !== 540

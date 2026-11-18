@@ -450,6 +450,15 @@ p  { color: var(--gray-600); }
   .nav-account { margin: 8px 0 0; flex-wrap: wrap; }
   .nav-account .btn { flex: 1; }
 }
+/* Narrow desktop (769–900px): the full header is shown but space is tight.
+   Hide the decorative Korean logotype and trim padding so nav labels and
+   account buttons stay on one line. Mobile (≤768px) is unaffected. */
+@media (min-width: 769px) and (max-width: 900px) {
+  .navbar-logo .kr { display: none; }
+  .nav-links a:not(.btn) { padding: 8px 10px; white-space: nowrap; }
+  .nav-account { margin-left: 4px; }
+  .nav-account .btn { padding: 8px 12px; white-space: nowrap; }
+}
 @media (max-width: 480px) {
   .container { padding: 0 16px; }
   .grid-4 { grid-template-columns: minmax(0, 1fr); }

@@ -64,3 +64,7 @@
 .founder-teaser { border-left: 4px solid var(--red); padding: 8px 0 8px 24px; max-width: 760px; }
 .founder-teaser h2 { margin-bottom: 8px; }
 .founder-teaser p { font-size: 1.02rem; }
+
+/* Beginner hub link under the hero actions. */
+.hero-start { margin: -28px 0 40px; max-width: 600px; color: rgba(255,255,255,.82); font-size: .98rem; }
+.hero-start a { color: white; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
