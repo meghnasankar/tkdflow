@@ -69,5 +69,7 @@
   .org-tab { padding: 10px 12px; }
 }
 .page-hero .hero-jump { display: flex; flex-wrap: wrap; gap: 8px; }
-.page-hero .hero-companions { margin-top: 10px; }
-.page-hero .hero-companions a { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+/* Secondary tools: one wrapping row of text links under the primary buttons.
+   Each link's box is at least 24px high (WCAG 2.2 target size), with 20px gaps. */
+.page-hero .hero-tools { display: flex; flex-wrap: wrap; gap: 4px 20px; list-style: none; margin: 12px 0 0; padding: 0; }
+.page-hero .hero-tools a { display: inline-flex; align-items: center; min-height: 24px; padding: 2px 0; color: #fff; font-weight: 700; font-size: .95rem; text-decoration: underline; text-underline-offset: 3px; }

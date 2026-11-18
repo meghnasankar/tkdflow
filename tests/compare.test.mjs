@@ -129,7 +129,7 @@ test('page: without the counts file the cards still show the catalogue facts',as
 });
 
 test('the comparison is reachable from the library, Start here and Community, not the header',()=>{
- assert.match(read('forms.html'),/<p class="hero-companions"><a href="\/compare\.html">Compare two forms side by side<\/a><\/p>/);
+ assert.match(read('forms.html'),/<li><a href="\/compare\.html">Compare two forms<\/a><\/li>/);
  assert.match(read('start-here.html'),/<a href="\/compare\.html">Compare two forms<\/a>/);
  assert.equal(JSON.parse(read('data/community.json')).posts.find(p=>p.id==='compare').url,'compare.html');
  assert.doesNotMatch(read('layout/header.html'),/compare\.html/);

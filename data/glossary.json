@@ -1,0 +1,179 @@
+{
+  "version": 1,
+  "source": {
+    "title": "Taekwondo Technical Terminology",
+    "publisher": "Kukkiwon",
+    "edition": "English edition, 2011",
+    "url": "https://research.kukkiwon.or.kr/homepage/boardMedia/11621",
+    "pdfPages": 96
+  },
+  "terms": [
+    {
+      "id": "poomsae",
+      "term": "Poomsae",
+      "hangul": null,
+      "english": "Forms",
+      "plain": "Set sequences of techniques.",
+      "pages": [
+        4,
+        5
+      ],
+      "example": {
+        "href": "/forms.html",
+        "label": "Browse the forms library"
+      }
+    },
+    {
+      "id": "gyeorugi",
+      "term": "Gyeorugi",
+      "hangul": null,
+      "english": "Sparring",
+      "plain": null,
+      "pages": [
+        4,
+        5
+      ],
+      "example": null
+    },
+    {
+      "id": "gyeokpa",
+      "term": "Gyeokpa",
+      "hangul": "격파",
+      "english": "Breaking",
+      "plain": "Breaking hard objects with hands or feet.",
+      "pages": [
+        76
+      ],
+      "example": null
+    },
+    {
+      "id": "junbi-jase",
+      "term": "Junbi-jase",
+      "hangul": "준비자세",
+      "english": "Ready posture",
+      "plain": "How you stand and focus before a technique.",
+      "pages": [
+        11,
+        40
+      ],
+      "example": {
+        "href": "/taegeuk-1.html?pose=1",
+        "label": "Taegeuk Il Jang, pose 1: Junbi — Ready stance"
+      }
+    },
+    {
+      "id": "seogi",
+      "term": "Seogi",
+      "hangul": "서기",
+      "english": "Stance",
+      "plain": "How you stand to attack or defend.",
+      "pages": [
+        11,
+        61
+      ],
+      "example": null
+    },
+    {
+      "id": "makgi",
+      "term": "Makgi",
+      "hangul": "막기",
+      "english": "Blocking",
+      "plain": "Stopping an attack with the hand, arm, foot or leg.",
+      "pages": [
+        11,
+        44
+      ],
+      "example": {
+        "href": "/techniques.html?q=block",
+        "label": "Blocks in the lessons"
+      }
+    },
+    {
+      "id": "jireugi",
+      "term": "Jireugi",
+      "hangul": "지르기",
+      "english": "Punching",
+      "plain": "Striking with the fist.",
+      "pages": [
+        11,
+        33
+      ],
+      "example": {
+        "href": "/techniques.html?q=punch",
+        "label": "Punches in the lessons"
+      }
+    },
+    {
+      "id": "chigi",
+      "term": "Chigi",
+      "hangul": "치기",
+      "english": "Striking",
+      "plain": "Strikes, including knife-hand and back-fist techniques.",
+      "pages": [
+        11,
+        23
+      ],
+      "example": {
+        "href": "/taegeuk-3.html?pose=10",
+        "label": "Taegeuk Sam Jang, pose 10: Right knifehand strike"
+      }
+    },
+    {
+      "id": "chagi",
+      "term": "Chagi",
+      "hangul": "차기",
+      "english": "Kicking",
+      "plain": null,
+      "pages": [
+        11,
+        12
+      ],
+      "example": {
+        "href": "/techniques.html?q=kick",
+        "label": "Kicks in the lessons"
+      }
+    },
+    {
+      "id": "ap-chagi",
+      "term": "Ap-chagi",
+      "hangul": "앞차기",
+      "english": "Front kick",
+      "plain": null,
+      "pages": [
+        12
+      ],
+      "example": {
+        "href": "/techniques.html?q=front%20kick",
+        "label": "Front kicks in the lessons"
+      }
+    },
+    {
+      "id": "dollyeo-chagi",
+      "term": "Dollyeo-chagi",
+      "hangul": "돌려차기",
+      "english": "Roundhouse kick",
+      "plain": null,
+      "pages": [
+        15
+      ],
+      "example": {
+        "href": "/techniques.html?q=roundhouse%20kick",
+        "label": "Roundhouse kicks in the lessons"
+      }
+    },
+    {
+      "id": "yeop-chagi",
+      "term": "Yeop-chagi",
+      "hangul": "옆차기",
+      "english": "Side kick",
+      "plain": null,
+      "pages": [
+        22
+      ],
+      "example": {
+        "href": "/taegeuk-4.html?pose=9",
+        "label": "Taegeuk Sa Jang, pose 9: Left side kick"
+      }
+    }
+  ]
+}

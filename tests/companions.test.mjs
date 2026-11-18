@@ -143,7 +143,7 @@ test('every lesson links its own companion and the reading guide; the keyboard h
  assert.equal(playerKeyAction({key:'Home',target:null}),'first');assert.equal(playerKeyAction({key:'End',target:null}),'last');
  assert.match(read('js/lib/lesson-player.js'),/first\(\) \{ this\.select\(0, 'first'\); \}/,'Home selects the first pose');
  assert.match(read('js/lib/lesson-player.js'),/last\(\) \{ this\.select\(this\.count - 1, 'last'\); \}/,'End selects the last pose');
- assert.ok(read('forms.html').includes('<p class="hero-companions"><a href="/companions.html">Text and print companions for all 23 lessons</a></p>'));
+ assert.ok(read('forms.html').includes('<li><a href="/companions.html">Text and print companions</a></li>'),'the library’s tool row links the companions');
  const hub=read('start-here.html');
  assert.ok(hub.includes('<a href="/companions.html">Read and print companions</a>'));
  assert.ok(hub.includes('Home and End to jump to the first and last pose'));
