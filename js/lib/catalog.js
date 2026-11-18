@@ -69,6 +69,29 @@ export function exactNameMatches(forms, q) {
   return ids.size ? ids : null;
 }
 
+/** How closely a matching form's own names fit a partial query, lower first:
+ *  0 every word is a whole name word (“won” in “Won-Hyo”, “il jang” in
+ *  “Taegeuk Il Jang” but not in “…Chil Jang”); 1 every word starts a name word
+ *  (“song 2”, “tae”); 2 every word is inside a name; 3 found only in other text
+ *  (meaning, description, belt). Names are the form's name, Korean name, id and
+ *  listed spellings. */
+export function matchRank(form, q) {
+  const terms = String(q || '').trim().split(/\s+/).map(normalize).filter(Boolean);
+  const names = [form.name, form.koreanName, form.id, ...(form.aliases || [])].map((n) => String(n ?? ''));
+  const words = names.flatMap((n) => n.split(/[\s\-_/]+/).map(normalize)).filter(Boolean);
+  if (!terms.length) return 3;
+  if (terms.every((t) => words.includes(t))) return 0;
+  if (terms.every((t) => words.some((w) => w.startsWith(t)))) return 1;
+  if (terms.every((t) => names.some((n) => normalize(n).includes(t)))) return 2;
+  return 3;
+}
+
+/** With a search and the default order, closest name matches come first; ties
+ *  keep curriculum order. A chosen sort (name, difficulty, movements) is kept as is. */
+export function ranksBySearch(state) {
+  return Boolean(String(state.q || '').trim()) && (state.sort || DEFAULT_STATE.sort) === 'curriculum';
+}
+
 function passes(form, state, skip, exact = null) {
   if (skip !== 'q' && (exact ? !exact.has(form.id) : !matchesQuery(form, state.q))) return false;
   if (skip !== 'org' && state.org !== 'all' && form.category !== state.org) return false;
@@ -94,7 +117,9 @@ export function sortForms(forms, sort) {
 /** Apply every filter, then sort. */
 export function applyState(forms, state) {
   const exact = exactNameMatches(forms, state.q);
-  return sortForms(forms.filter((f) => passes(f, state, null, exact)), state.sort);
+  const results = forms.filter((f) => passes(f, state, null, exact));
+  if (!ranksBySearch(state)) return sortForms(results, state.sort);
+  return results.map((f, i) => ({ f, i, r: matchRank(f, state.q) })).sort((a, b) => a.r - b.r || a.i - b.i).map((x) => x.f);
 }
 
 /** How many results each option of `facet` would give, keeping the other filters. */

@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import {
-  applyState, facetCounts, stateFromParams, stateToParams, DEFAULT_STATE, matchesQuery, destinationFor, formRecordProblem, normalize,
+  applyState, facetCounts, stateFromParams, stateToParams, DEFAULT_STATE, matchesQuery, destinationFor, formRecordProblem, normalize, matchRank,
 } from '../js/lib/catalog.js';
 
 const forms = JSON.parse(readFileSync(new URL('../data/forms.json', import.meta.url), 'utf8'));
@@ -127,4 +127,40 @@ test('typing a whole form name shows that form, and the facet counts agree with 
   // Partial words still search broadly.
   assert.ok(applyState(forms, S({ q: 'Il Jang' })).length > 1);
   assert.ok(applyState(forms, S({ q: 'taegeuk' })).length === 8);
+});
+
+test('partial names put the closest name match first, without changing what matches', () => {
+  const ids = (list) => list.map((f) => f.id);
+  for (const [q, first] of [['won', 'won-hyo'], ['do', 'do-san'], ['Il Jang', 'taegeuk-1'], ['chil', 'taegeuk-7'], ['song 2', 'songahm-2'], ['sa', 'taegeuk-4'], ['geu', 'keumgang']]) {
+    const ranked = applyState(forms, S({ q }));
+    assert.equal(ranked[0].id, first, `${q}: closest name first (got ${ranked[0].id})`);
+    // Same forms as plain matching; only the order differs.
+    assert.deepEqual(new Set(ids(ranked)), new Set(ids(forms.filter((f) => matchesQuery(f, q)))), `${q}: same matches`);
+    assert.equal(facetCounts(forms, S({ q }), 'belt').all, ranked.length, `${q}: counts agree`);
+  }
+  // A whole word beats a word start ("sa": Sa Jang before Sam Jang); a word start beats
+  // letters inside a name ("geu": Geumgang before every Taegeuk).
+  // "il jang" must not rank Chil Jang (…ch-il jang) with Il Jang.
+  const ilJang = applyState(forms, S({ q: 'Il Jang' })).map((f) => f.id);
+  assert.ok(ilJang.indexOf('taegeuk-1') < ilJang.indexOf('taegeuk-7'));
+  assert.ok(matchRank(forms.find((f) => f.id === 'taegeuk-7'), 'il jang') > matchRank(forms.find((f) => f.id === 'taegeuk-1'), 'il jang'));
+  // Equal matches keep curriculum order.
+  assert.deepEqual(ids(applyState(forms, S({ q: 'jang' }))), ids(forms.filter((f) => matchesQuery(f, 'jang'))));
+});
+
+test('a chosen sort, filters, exact names and the URL are unchanged by search ranking', () => {
+  const byName = applyState(forms, S({ q: 'won', sort: 'name' })).map((f) => f.name);
+  assert.deepEqual(byName, [...byName].sort((a, b) => a.localeCompare(b)), 'name sort still wins over ranking');
+  assert.deepEqual(applyState(forms, S({ q: 'do', org: 'itf' })).map((f) => f.category), applyState(forms, S({ q: 'do', org: 'itf' })).map(() => 'itf'));
+  assert.equal(applyState(forms, S({ q: 'do', org: 'itf' }))[0].id, 'do-san');
+  assert.deepEqual(applyState(forms, S({ q: 'Taegeuk Il Jang' })).map((f) => f.id), ['taegeuk-1']);
+  assert.equal(stateToParams(S({ q: 'won' })).toString(), 'q=won', 'no new URL parameter');
+  assert.deepEqual(applyState(forms, S()).map((f) => f.id), forms.map((f) => f.id), 'no search keeps curriculum order');
+});
+
+test('the belt filter says colours are typical, not a school rule, and links to the school list', () => {
+  const html = readFileSync(new URL('../forms.html', import.meta.url), 'utf8');
+  const group = html.slice(html.indexOf('<legend>Belt colour</legend>') - 80, html.indexOf('id="level-options"'));
+  assert.match(group, /<fieldset class="filter-group" aria-describedby="belt-note">/);
+  assert.match(group, /<p class="filter-note" id="belt-note">[^<]*not a rule[^<]*<a href="\/school-forms\.html">/);
 });

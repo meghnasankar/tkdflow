@@ -60,8 +60,8 @@ async function service({mode='account',rows=[],owner='owner-1',browserRows=null}
 }
 const fetchJson=async url=>({ok:true,status:200,text:async()=>JSON.stringify(forms),json:async()=>forms,url});
 
-async function library(opts){
- const env=installDom({url:'https://tkdflow.com/forms.html',fetch:fetchJson});const {doc,el}=env;
+async function library(opts={}){
+ const env=installDom({url:'https://tkdflow.com/forms.html'+(opts.search||''),fetch:fetchJson});const {doc,el}=env;
  doc.body.append(el('main',{id:'main'},el('p',{id:'hero-summary'}),el('form',{id:'search-form'},el('input',{type:'search',id:'search'})),
   el('div',{id:'org-tabs'}),el('details',{id:'filters'},el('span',{id:'filter-count'}),el('div',{id:'belt-options'}),el('div',{id:'level-options'}),el('input',{type:'checkbox',id:'lesson-only'})),
   el('select',{id:'sort'}),el('button',{type:'button',id:'clear-filters'}),el('div',{id:'forms-active-filters'}),el('p',{id:'results-summary'}),
@@ -384,4 +384,33 @@ test('lesson widget: the real Retry hands focus to the widget status through con
    assert.equal(retry.hidden,outcome==='confirm');
   }finally{await done(env);}
  }
+});
+
+const cardOrder=doc=>[...doc.querySelectorAll('[data-fk]')].map(e=>e.dataset.fk).filter(k=>k.startsWith('save:')).map(k=>k.slice(5));
+test('Library search: cards render in the ranked order, across series, with no series regrouping',async()=>{
+ const {applyState,stateFromParams}=await import('../js/lib/catalog.js');
+ const p=await library({search:'?q=sa'});
+ try{
+  const shown=cardOrder(p.doc),ranked=applyState(forms,stateFromParams('?q=sa')).map(f=>f.id);
+  assert.deepEqual(shown,ranked,'the page shows exactly the ranked order');
+  assert.ok(shown.indexOf('do-san')<shown.indexOf('taegeuk-1'),'Do-San (name word "San") precedes Taegeuk forms that match only in their text');
+  assert.equal(p.doc.querySelector('.style-header'),null,'no series headers while ranking');
+ }finally{await done(p);}
+});
+
+test('Library search: the closest name leads across series, and the sort control says how results are ordered',async()=>{
+ const first=doc=>cardOrder(doc)[0];
+ const label=doc=>[...doc.getElementById('sort').children].find(o=>o.value==='curriculum').textContent;
+ let p=await library({search:'?q=Won'});
+ try{
+  assert.equal(first(p.doc),'won-hyo','Won-Hyo (ITF) before the Kukkiwon forms that match only through the word Kukkiwon');
+  assert.match(p.doc.getElementById('results-summary').textContent,/closest name matches first/);
+  assert.equal(label(p.doc),'Closest name match, then curriculum');
+ }finally{await done(p);}
+ p=await library({search:'?q=Won&sort=name'});
+ try{
+  assert.doesNotMatch(p.doc.getElementById('results-summary').textContent,/closest/);
+  assert.equal(label(p.doc),'Curriculum order','the default option keeps its plain label when another sort is chosen');
+  assert.equal(p.doc.getElementById('sort').value,'name');
+ }finally{await done(p);}
 });
