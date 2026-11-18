@@ -1,0 +1,68 @@
+/* First tournament guide. Builds on content.css; prints only the chosen checklist context. */
+.ft-main { padding-top: 32px; }
+.ft-notice { margin-bottom: 24px; }
+.ft-toc ol { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 32px; padding: 0; list-style: none; }
+.ft-toc a { display: inline-block; padding: 7px 14px; border-radius: 20px; border: 1px solid var(--gray-300); color: var(--navy); font-weight: 600; font-size: .88rem; }
+.ft-toc a:hover { border-color: var(--red); color: var(--red-dark); }
+
+.ft-levels, .ft-glossary { display: grid; gap: 12px; margin-top: 12px; }
+.ft-levels div, .ft-glossary div { padding: 14px 16px; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); background: var(--white); }
+.ft-levels dt, .ft-glossary dt { font-weight: 800; color: var(--navy); }
+.ft-levels dd, .ft-glossary dd { margin: 4px 0 0; color: var(--gray-600); line-height: 1.6; }
+.ft-glossary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.ft-context { margin: 16px 0; padding: 16px; border: 1px solid var(--gray-200); border-radius: var(--radius); background: var(--gray-50); }
+.ft-context-title { font-size: 1rem; margin-bottom: 10px; }
+.ft-context-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.ft-field { display: grid; gap: 4px; }
+.ft-field label { font-weight: 700; color: var(--navy); }
+.ft-field select { width: 100%; min-height: 44px; }
+
+.ft-orgs { display: grid; gap: 14px; margin-top: 16px; }
+.ft-org { padding: 18px; border: 1px solid var(--gray-200); border-radius: var(--radius); background: var(--white); overflow-wrap: anywhere; }
+.ft-org h3 { font-size: 1.1rem; margin-bottom: 6px; }
+.ft-org-short { display: inline-block; margin-left: 6px; font-size: .78rem; font-weight: 700; color: var(--gray-600); }
+.ft-org p, .ft-org li { color: var(--gray-600); line-height: 1.65; }
+.ft-org ul { list-style: disc; padding-left: 20px; margin: 8px 0; display: grid; gap: 6px; }
+.ft-org a, .ft-sources a, .ft-source, .ft-checklist-section a { color: var(--red-dark); font-weight: 600; text-decoration: underline; }
+.ft-org-links { font-size: .9rem; }
+
+.ft-tools { margin: 12px 0 18px; padding: 14px 16px; border-left: 3px solid var(--navy); background: var(--gray-50); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; display: grid; gap: 6px; }
+.ft-progress { font-weight: 700; color: var(--navy); }
+.ft-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.ft-print-context { font-weight: 700; color: var(--navy); }
+
+.ft-stage { margin-top: 20px; }
+.ft-stage h3 { display: flex; align-items: center; gap: 10px; font-size: 1.05rem; margin-bottom: 8px; }
+.ft-step { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--navy); color: var(--white); font-weight: 800; }
+.ft-items { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+/* Checkbox in the first column; the label (inline badge + text) and any source link
+   share the second column, so a badge never becomes a narrow flex column. */
+.ft-items li { display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 10px; row-gap: 4px; align-items: start;
+  padding: 10px 12px; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); background: var(--white); overflow-wrap: anywhere; }
+.ft-items input { grid-column: 1; width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--red); }
+.ft-item-label { grid-column: 2; display: block; min-width: 0; color: var(--gray-800); line-height: 1.55; cursor: pointer; }
+.ft-item-label .badge { display: inline-block; white-space: nowrap; margin-right: 4px; vertical-align: baseline; }
+.ft-source { grid-column: 2; justify-self: start; font-size: .85rem; }
+.ft-list { list-style: disc; padding-left: 20px; color: var(--gray-600); display: grid; gap: 4px; }
+.ft-sources { list-style: disc; padding-left: 22px; display: grid; gap: 8px; color: var(--gray-600); overflow-wrap: anywhere; }
+
+@media (max-width: 640px) {
+  .ft-context-fields, .ft-glossary { grid-template-columns: minmax(0, 1fr); }
+  .ft-actions .btn { flex: 1 1 100%; }
+}
+
+/* Print: the chosen context's checklist with its context line and source links. */
+@media print {
+  header, footer, .skip-link, .page-hero, .ft-toc, .ft-context, .ft-actions, #ft-storage, #ft-copy-status,
+  #ft-levels, #ft-disciplines, #ft-questions, #ft-glossary, .ft-notice + .ft-toc { display: none !important; }
+  body { background: #fff; color: #000; }
+  .ft-main { padding: 0; max-width: none; }
+  .ft-notice { border: 1px solid #000; background: none; color: #000; }
+  .ft-items li { break-inside: avoid; border-color: #999; }
+  .ft-items input { accent-color: #000; }
+  .ft-stage { break-inside: avoid-page; }
+  .ft-org, .ft-tools { border-color: #999; background: none; }
+  #ft-checklist a[href^="http"]::after, #ft-organizations a[href^="http"]::after, #ft-sources a[href^="http"]::after { content: " (" attr(href) ")"; font-weight: 400; font-size: .8em; word-break: break-all; }
+  [hidden] { display: none !important; }
+}

@@ -52,6 +52,14 @@
       "description": "Search official worldwide taekwondo events for 2026 and 2027 by year, country, organization, discipline and major championship."
     },
     {
+      "file": "first-tournament.html",
+      "key": "events",
+      "path": "/first-tournament.html",
+      "sitemap": true,
+      "title": "Your first taekwondo tournament — TKDflow",
+      "description": "Step-by-step checklists and plain explanations for a first USA Taekwondo, AAU Taekwondo or American Taekwondo United tournament, for forms and sparring."
+    },
+    {
       "file": "about.html",
       "key": "about",
       "path": "/about.html",

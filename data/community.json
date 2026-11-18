@@ -25,6 +25,18 @@
       ]
     },
     {
+      "id": "first-tournament",
+      "category": "Competitions",
+      "kind": "Competition guide",
+      "title": "Prepare for your first tournament",
+      "body": "Step-by-step checklists for USA Taekwondo, AAU and American Taekwondo United events, for forms and sparring, with links to each organization's official pages.",
+      "url": "first-tournament.html",
+      "tags": [
+        "USAT · AAU · ATU",
+        "Checklists"
+      ]
+    },
+    {
       "id": "founder",
       "category": "About the project",
       "kind": "Founder story",
