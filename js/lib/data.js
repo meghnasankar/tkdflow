@@ -95,9 +95,11 @@ export function showError(container, { title, error, onRetry }) {
   replaceChildren(container, panel);
 }
 
-export function showEmpty(container, message, action) {
+export function showEmpty(container, message, ...actions) {
   container.removeAttribute('aria-busy');
-  replaceChildren(container, h('div', { class: 'status-panel status-empty' }, h('p', { text: message }), action || null));
+  const shown = actions.filter(Boolean);
+  replaceChildren(container, h('div', { class: 'status-panel status-empty' }, h('p', { text: message }),
+    shown.length > 1 ? h('p', { class: 'status-actions' }, ...shown.flatMap((a, i) => (i ? [' ', a] : [a]))) : shown[0] || null));
 }
 
 /** Load a dataset into a container, handling loading, error and retry. */

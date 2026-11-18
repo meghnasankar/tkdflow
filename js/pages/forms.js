@@ -112,7 +112,8 @@ function renderResults() {
     (state.q.trim() ? ` matching “${state.q.trim()}”` : '') + '.';
   if (!results.length) {
     showEmpty(grid, 'No forms match these filters.',
-      h('button', { type: 'button', class: 'btn btn-secondary btn-sm', on: { click: clearAll } }, 'Clear search and filters'));
+      h('button', { type: 'button', class: 'btn btn-secondary btn-sm', on: { click: clearAll } }, 'Clear search and filters'),
+      state.q.trim() ? h('a', { class: 'btn btn-secondary btn-sm', href: `/techniques.html?q=${encodeURIComponent(state.q.trim())}` }, 'Search lesson poses for this technique') : null);
     return;
   }
   if (state.sort !== 'curriculum') {

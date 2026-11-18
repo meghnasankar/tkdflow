@@ -26,6 +26,14 @@
       "description": "Search and filter taekwondo forms by style, belt and difficulty. WT/Kukkiwon poomsae, ITF patterns and ATA Songahm forms."
     },
     {
+      "file": "techniques.html",
+      "key": "forms",
+      "path": "/techniques.html",
+      "sitemap": true,
+      "title": "Find a technique in the form lessons — TKDflow",
+      "description": "Search the blocks, strikes and kicks named in every TKDflow form lesson and open each lesson paused on the exact study pose."
+    },
+    {
       "file": "taegeuk-1.html",
       "key": "forms",
       "path": "/taegeuk-1.html",

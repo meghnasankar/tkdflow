@@ -25,6 +25,18 @@
       ]
     },
     {
+      "id": "techniques",
+      "category": "Forms & curriculum",
+      "kind": "Technique finder",
+      "title": "Find a technique in every lesson",
+      "body": "Search blocks, strikes and kicks across all form lessons and open each lesson paused on the exact study pose.",
+      "url": "techniques.html",
+      "tags": [
+        "All lessons",
+        "Study poses"
+      ]
+    },
+    {
       "id": "events",
       "category": "Competitions",
       "kind": "Events calendar",
