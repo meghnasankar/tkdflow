@@ -229,7 +229,7 @@ test('the Community pages use the connection and public reader; guides never sta
  assert.ok(forum.includes('createCommunityConnection({eligibility:createEligibilityStore()'),'the page passes this tab’s age screen');
  assert.ok(forum.includes("window.addEventListener('pageshow',e=>connection.pageShown(e));"),'a back/forward restore is handed to the connection');
  assert.doesNotMatch(forum,/getAccountService\(/,'the page never starts the service itself');
- for(const control of ["const live=mode==='public'||Boolean(client),canReport=controls().report","canReport?h('button',{type:'button',class:'report-button','data-fk':'detail:report'","canReport?h('button',{type:'button',class:'report-button','data-fk':`reply:","controls().composer?(draft||composer({reply:true,topic}))","!show.composer","!show.moderation","!show.submissions","!show.signIn"])
+ for(const control of ["const live=mode==='public'||Boolean(client),canReport=controls().report","canReport?h('button',{type:'button',class:'report-button','data-fk':'detail:report'","canReport?h('button',{type:'button',class:'report-button','data-fk':`reply:","controls().composer?(draft||withReplyDraft(composer({reply:true,topic}),topic))","!show.composer","!show.moderation","!show.submissions","!show.signIn"])
   assert.ok(forum.includes(control),`member control gated: ${control}`);
  assert.ok(forum.includes("mode==='public'?'Reading is open to everyone.'"),'no sign-in prompt in public mode');
 });
@@ -400,8 +400,124 @@ test('a teen moderator (moderator, not adult) keeps the review queue and reports
  assert.ok(forum.includes('if(!client||!access.moderator)return;'),'the queue (topics, replies and reports) needs moderator access only');
  assert.ok(forum.includes("$('moderation').hidden=!show.moderation;")&&forum.includes("$('moderation-link').hidden=!show.moderation;"));
  assert.ok(forum.includes("$('topic-composer').hidden=!show.composer;")&&forum.includes("$('start-topic-link').hidden=!show.composer;"),'new-topic composer follows adult access');
- assert.ok(forum.includes('controls().composer?(draft||composer({reply:true,topic}))'),'reply composer follows adult access');
+ assert.ok(forum.includes('controls().composer?(draft||withReplyDraft(composer({reply:true,topic}),topic))'),'reply composer follows adult access');
  const restored=harness({sessionUser:'teen-moderator',accessData:{adult:false,moderator:true}});await restored.connection.connect();
  restored.elig.value=INELIGIBLE;await restored.connection.pageShown({persisted:true});
  assert.deepEqual(communityControls(restored.last()),{composer:false,moderation:false,report:false,submissions:false,signIn:false},'an under-13 tab gets none of it, even with this session stored');
+});
+
+/* ── Back/Forward restore in account mode: one stored-session recheck (item 53) ── */
+const restoreWith=(h,result)=>{h.account.currentSession=()=>{h.calls.push('session');return Promise.resolve(result);};};
+const userResult=id=>({session:id?{user:{id}}:null,error:null});
+
+test('a restore after a sign-out made while cached clears private state and re-reads the feed',async()=>{
+ const h=harness();await h.connection.connect();
+ assert.equal(communityControls(h.last()).composer,true);
+ restoreWith(h,userResult(null));const cleared=h.extras.filter(e=>e?.privateCleared).length,before=h.calls.length;
+ await h.connection.pageShown({persisted:true});
+ assert.ok(h.extras.filter(e=>e?.privateCleared).length>cleared,'the page is told to clear private controls and data');
+ const s=h.last();assert.equal(s.mode,'account');assert.equal(s.session,null);assert.equal(h.guard.userId,null);
+ assert.deepEqual(communityControls(s),{composer:false,moderation:false,report:false,submissions:false,signIn:true});
+ assert.ok(h.calls.slice(before).includes('topics'),'the feed is re-read for the signed-out visitor');
+ assert.equal(h.auth.used.includes('signOut'),false,'nobody is signed out by Community');
+});
+
+test('the same account confirmed on restore: nothing is cleared and nothing else is fetched',async()=>{
+ const h=harness();await h.connection.connect();
+ const token=h.guard.token(),extras=h.extras.length,before=h.calls.length;
+ restoreWith(h,userResult('adult-1'));
+ assert.equal(await h.connection.pageShown({persisted:true}),null);
+ assert.deepEqual(h.calls.slice(before),['session'],'one session read, no reconnect');
+ assert.equal(h.extras.length,extras,'no state published, so drafts and focus stay');
+ assert.ok(h.guard.isCurrent(token),'pending work for this account stays valid');
+ assert.equal(h.connection.pageShown({persisted:false}),null,'a normal load is never rechecked');
+});
+
+test('another account on restore switches private state to it',async()=>{
+ const h=harness();await h.connection.connect();
+ restoreWith(h,userResult('adult-2'));const before=h.calls.length;
+ await h.connection.pageShown({persisted:true});
+ assert.equal(h.guard.userId,'adult-2');assert.equal(h.last().session.user.id,'adult-2');
+ assert.ok(h.extras.some(e=>e?.privateCleared));
+ assert.ok(h.calls.slice(before).includes('access'),'access is read again for the new account');
+});
+
+test('a failed recheck fails closed: private state cleared, refresh asked for, no reconnect',async()=>{
+ const h=harness();await h.connection.connect();
+ restoreWith(h,{session:null,error:{message:'timeout'}});const before=h.calls.length;
+ assert.equal(await h.connection.pageShown({persisted:true}),null);
+ const s=h.last();assert.equal(s.session,null);assert.equal(s.notice,'session-error');assert.equal(s.loading,false);
+ assert.deepEqual(communityControls(s),{composer:false,moderation:false,report:false,submissions:false,signIn:true});
+ assert.ok(h.extras.at(-1)?.privateCleared);
+ assert.deepEqual(h.calls.slice(before),['session'],'no further account reads');
+});
+
+test('a stale recheck is dropped: a sign-in change or a newer start wins; an under-13 result switches to public',async()=>{
+ const h=harness();await h.connection.connect();
+ let answer;h.account.currentSession=()=>new Promise(r=>{answer=r;});
+ const pending=h.connection.pageShown({persisted:true});
+ h.auth.listeners[0]('SIGNED_IN',{user:{id:'adult-2'}});   // the SDK reports another account meanwhile
+ answer({session:null,error:{message:'late failure'}});
+ assert.equal(await pending,null);
+ assert.notEqual(h.last().notice,'session-error','the stale failure is not applied');
+ assert.equal(h.guard.userId,'adult-2');
+
+ const g=harness();await g.connection.connect();
+ let later;g.account.currentSession=()=>new Promise(r=>{later=r;});
+ const restored=g.connection.pageShown({persisted:true});
+ g.elig.value=INELIGIBLE;later(userResult('adult-1'));await restored;
+ assert.equal(g.last().mode,'public');
+ assert.deepEqual(communityControls(g.last()),{composer:false,moderation:false,report:false,submissions:false,signIn:false});
+
+ const n=harness();await n.connection.connect();
+ let stale;n.account.currentSession=()=>new Promise(r=>{stale=r;});
+ const old=n.connection.pageShown({persisted:true});
+ restoreWith(n,userResult('adult-1'));const newer=n.connection.connect();   // a newer start (Refresh)
+ stale({session:null,error:null});assert.equal(await old,null);await newer;
+ assert.equal(n.guard.userId,'adult-1','the older recheck’s “signed out” is not applied');
+ assert.equal(communityControls(n.last()).composer,true);
+});
+
+test('a failed recheck while a start is still loading ends the loading state, and that start’s late answer is dropped',async()=>{
+ const h=harness();await h.connection.connect();
+ h.gates.topics=deferred();const pending=h.connection.connect();for(let i=0;i<10;i++)await new Promise(r=>setImmediate(r));   // a Refresh waiting for the feed
+ assert.equal(h.last().loading,true);
+ restoreWith(h,{session:null,error:{message:'timeout'}});
+ await h.connection.pageShown({persisted:true});
+ assert.equal(h.last().loading,false,'not left loading');assert.equal(h.last().notice,'session-error');
+ h.gates.topics.resolve();await pending;
+ assert.equal(h.last().session,null,'the superseded start cannot bring the old session back');
+ assert.equal(communityControls(h.last()).composer,false);
+});
+
+test('overlapping restores: only the newest restore’s answer counts, and a same-account restore never strands a pending feed',async()=>{
+ const later=()=>{let answer;const promise=new Promise(r=>{answer=r;});return {promise,answer};};
+ // An older restore's late failure or sign-out cannot undo a newer same-account confirmation.
+ for(const old of [{session:null,error:{message:'late failure'}},{session:null,error:null}]){
+  const h=harness();await h.connection.connect();
+  const first=later(),second=later(),queue=[first,second];h.account.currentSession=()=>queue.shift().promise;
+  const a=h.connection.pageShown({persisted:true}),b=h.connection.pageShown({persisted:true});
+  second.answer(userResult('adult-1'));assert.equal(await b,null);
+  first.answer(old);assert.equal(await a,null);
+  assert.notEqual(h.last().notice,'session-error');assert.equal(h.guard.userId,'adult-1','nothing cleared');
+  assert.equal(communityControls(h.last()).composer,true);
+ }
+ // A newer restore that finds the visitor signed out wins over an older same-account answer.
+ {
+  const h=harness();await h.connection.connect();
+  const first=later(),second=later(),queue=[first,second];
+  h.account.currentSession=()=>queue.length?queue.shift().promise:Promise.resolve(userResult(null));
+  const a=h.connection.pageShown({persisted:true}),b=h.connection.pageShown({persisted:true});
+  second.answer(userResult(null));await b;
+  first.answer(userResult('adult-1'));await a;
+  assert.equal(h.guard.userId,null,'still signed out');assert.equal(communityControls(h.last()).composer,false);
+ }
+ // A same-account restore while a Refresh waits for the feed: that feed still completes.
+ {
+  const h=harness();await h.connection.connect();
+  h.gates.topics=deferred();const pending=h.connection.connect();for(let i=0;i<10;i++)await new Promise(r=>setImmediate(r));
+  restoreWith(h,userResult('adult-1'));assert.equal(await h.connection.pageShown({persisted:true}),null);
+  h.gates.topics.resolve();await pending;
+  assert.equal(h.last().loading,false,'not stranded');assert.equal(h.last().notice,'account-ready');
+ }
 });

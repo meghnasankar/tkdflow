@@ -43,17 +43,75 @@ function report(kind,id){
  const form=h('form',{class:'discussion-form',on:{submit:async e=>{e.preventDefault();const reason=form.querySelector('textarea').value.trim();if(reason.length<5||reason.length>500)return;const button=form.querySelector('button');button.disabled=true;const token=guard.token(),r=await reportContent(client,kind,id,reason);if(!guard.isCurrent(token))return;message(r.error?'The report could not be sent. Try again.':'Report received for moderator review.',!!r.error);if(!r.error)form.remove();else button.disabled=false;}}},h('label',{for:`report-${id}`},'What should a moderator check?'),h('textarea',{id:`report-${id}`,required:true,minLength:5,maxLength:500,rows:3}),h('button',{type:'submit',class:'btn btn-secondary btn-sm'},'Send report'));
  $('topic-detail').append(form);form.querySelector('textarea').focus();
 }
+/* Unsent replies, kept in this page's memory only (never written to browser
+   storage or sent), per account and topic, so switching topics or going Back
+   doesn't lose them. A reply's draft is removed once that exact text is saved,
+   and every draft whenever private state is cleared (sign-in, sign-out, account
+   switch, public reading). The consent box is never restored. */
+const replyDrafts=new Map();
+const draftKey=topic=>`${guard.userId||''}:${topic.id}`;
+function withReplyDraft(form,topic){
+ const area=form.querySelector('#reply-body'),key=draftKey(topic),saved=guard.userId?replyDrafts.get(key):null;
+ if(saved){area.value=saved;form.append(h('p',{class:'field-help draft-note'},'Your unsent reply is kept while this page stays open.'));}
+ area.addEventListener('input',()=>{if(!guard.userId)return;if(area.value.trim())replyDrafts.set(key,area.value);else replyDrafts.delete(key);});
+ return form;
+}
+/* The fields stay editable while a submission is sending. After it succeeds,
+   clear only what still equals what was sent; anything typed since stays (with
+   its caret and focus) as unsent text, and the category stays with it. The
+   consent box is always cleared, so the next submission is confirmed again.
+   For a reply, the form on the page for that topic is used, which may be a newer
+   one restored from the draft after switching topics. Returns whether newer
+   text remains. */
+function clearSent(form,sent){
+ const title=form.querySelector('[name="title"]'),select=form.querySelector('select'),area=form.querySelector('textarea');
+ let newer=false;
+ for(const [field,value] of [[title,sent.title],[area,sent.body]]){if(!field)continue;if(field.value===value)field.value='';else newer=true;}
+ if(select&&!newer&&select.value===sent.category)select.value=select.options[0]?.value??'';
+ form.querySelector('.discussion-consent input').checked=false;
+ if(!area.value)form.querySelector('.draft-note')?.remove();
+ return newer;
+}
+/* One submission at a time per account and target (a topic's reply, or a new
+   topic). A form rebuilt while one is in flight (switching topics and back)
+   stays locked until it settles, so no second request is sent. */
+const pendingSends=new Set();
+const sendKey=(reply,topic)=>reply?draftKey(topic):`${guard.userId||''}:new-topic`;
+function lockForm(form,on){
+ const button=form.querySelector('button[type="submit"]');if(button)button.disabled=on;
+ form.querySelector('.send-pending')?.remove();
+ if(on)button?.before(h('p',{class:'field-help send-pending',role:'status'},'Your earlier submission is still sending.'));
+}
+const liveForm=(reply,topic)=>reply?(selected===topic.id&&$('topic-detail').dataset.topicId===topic.id?$('reply-body')?.closest('form'):null):$('topic-composer').querySelector('form');
 function composer({reply=false,topic=null}={}){
  const form=h('form',{class:'discussion-form',on:{submit:async e=>{
-  e.preventDefault();message('');const body=form.querySelector('textarea').value,title=reply?'':form.querySelector('[name="title"]').value,category=reply?topic.category:form.querySelector('select').value;
+  e.preventDefault();const lock=sendKey(reply,topic);if(pendingSends.has(lock))return;   // the earlier one is still in flight
+  message('');const body=form.querySelector('textarea').value,title=reply?'':form.querySelector('[name="title"]').value,category=reply?topic.category:form.querySelector('select').value,key=reply?draftKey(topic):null;
   const problem=discussionProblem({title,body,category},doc.categories.map(c=>c.id),{reply});if(problem){message(Object.values(problem).join(' '),true);return;}
-  const token=guard.token(),button=form.querySelector('button[type="submit"]');button.disabled=true;
-  const r=reply?await submitReply(client,topic.id,body):await submitTopic(client,{title,body,category});button.disabled=false;if(!guard.isCurrent(token))return;
+  const token=guard.token(),button=form.querySelector('button[type="submit"]');button.disabled=true;pendingSends.add(lock);
+  const r=reply?await submitReply(client,topic.id,body):await submitTopic(client,{title,body,category});
+  // Always release this submission's own lock, even if it is stale. The forms on
+  // the page then show the CURRENT account's state for this target: another
+  // account's (or a re-signed-in account's) own pending send keeps them locked.
+  pendingSends.delete(lock);
+  const busy=pendingSends.has(sendKey(reply,topic));
+  for(const f of new Set([form,liveForm(reply,topic)]))if(f)lockForm(f,busy);
+  if(!guard.isCurrent(token))return;
   if(r.error){message('Your submission was not saved. Please try again; if you posted recently, wait a minute.',true);return;}
-  form.reset();message('Submitted for moderation. Your username will appear with the text after a moderator approves it.');loadSubmissions();
+  // A reply's topic may no longer be open (the visitor moved to another one): then
+  // the message names it, and newer text waits as that topic's unsent draft.
+  const open=!reply||(selected===topic.id&&$('topic-detail').dataset.topicId===topic.id);
+  const newer=clearSent(reply&&open&&$('reply-body')?.closest('form')||form,{title,body,category});
+  if(reply&&replyDrafts.get(key)===body)replyDrafts.delete(key);
+  const saved=open?'Submitted for moderation.':`Your reply to “${topic.title}” was submitted for moderation.`;
+  message(!newer?`${saved} Your username will appear with the text after a moderator approves it.`
+   :open?'Your earlier version was submitted for moderation. What you typed while it was sending is still here and has not been sent.'
+   :`${saved} What you typed while it was sending is kept as an unsent reply for that discussion.`);loadSubmissions();
  }}},h('h3',{},reply?'Write a reply':'Start a discussion'));
  if(!reply){form.append(h('label',{for:'topic-title'},'Title'),h('input',{id:'topic-title',name:'title',type:'text',minLength:8,maxLength:160,required:true}),h('label',{for:'topic-category'},'Category'),h('select',{id:'topic-category',required:true},...doc.categories.map(c=>h('option',{value:c.id},c.title))));}
- const id=reply?'reply-body':'topic-body';form.append(h('label',{for:id},reply?'Reply':'Question or discussion'),h('textarea',{id,'data-fk':reply?'detail:reply':'composer:body',rows:6,minLength:reply?10:20,maxLength:reply?4000:8000,required:true}),h('label',{class:'discussion-consent'},h('input',{type:'checkbox',required:true}),'I want my username and this text to be public after moderation.'),h('p',{class:'field-help'},'Use respectful language and credit your sources. Leave out contact details, school schedules and other private information.'),h('button',{type:'submit',class:'btn btn-primary'},'Submit for review'));return form;
+ const id=reply?'reply-body':'topic-body';form.append(h('label',{for:id},reply?'Reply':'Question or discussion'),h('textarea',{id,'data-fk':reply?'detail:reply':'composer:body',rows:6,minLength:reply?10:20,maxLength:reply?4000:8000,required:true}),h('label',{class:'discussion-consent'},h('input',{type:'checkbox',required:true}),'I want my username and this text to be public after moderation.'),h('p',{class:'field-help'},'Use respectful language and credit your sources. Leave out contact details, school schedules and other private information.'),h('button',{type:'submit',class:'btn btn-primary'},'Submit for review'));
+ if(pendingSends.has(sendKey(reply,topic)))lockForm(form,true);
+ return form;
 }
 async function detail(topic,{preserveDraft=false}={}){
  const request=++detailRequest,token=guard.token(),panel=$('topic-detail');
@@ -69,7 +127,7 @@ async function detail(topic,{preserveDraft=false}={}){
    topic.resourceUrl?h('a',{href:safeHref(topic.resourceUrl),class:'text-link','data-fk':'detail:resource'},'Open the related resource →'):null,
    canReport?h('button',{type:'button',class:'report-button','data-fk':'detail:report',on:{click:()=>report('topic',topic.id)}},'Report this topic'):null,
    h('h3',{},'Replies'),holder,
-   controls().composer?(draft||composer({reply:true,topic})):h('p',{class:'discussion-access'},mode==='public'?'Reading is open to everyone.':session?'Reading is open to everyone. Public posting is available only to adult accounts with a completed profile.':h('a',{href:'/auth.html',class:'text-link'},'Sign in to join the discussion')));
+   controls().composer?(draft||withReplyDraft(composer({reply:true,topic}),topic)):h('p',{class:'discussion-access'},mode==='public'?'Reading is open to everyone.':session?'Reading is open to everyone. Public posting is available only to adult accounts with a completed profile.':h('a',{href:'/auth.html',class:'text-link'},'Sign in to join the discussion')));
   panel.setAttribute('aria-labelledby','topic-detail-title');
  },{fallback:()=>$('topic-detail-title')});   // a focused control that is rebuilt later (e.g. a reply's Report) lands on the heading
  if(!live)return;
@@ -134,6 +192,7 @@ function render({preserveDraft=false}={}){if(!doc)return;if(!doc.categories.some
  if(!show.composer)$('topic-composer').replaceChildren();
 }
 function clearPrivate(){
+ replyDrafts.clear();
  access={adult:false,moderator:false};detailKey=null;detailRequest++;submissionRequest++;queueRequest++;
  for(const id of ['my-submissions','moderation','topic-composer','start-topic-link','my-submissions-link','moderation-link'])$(id).hidden=true;
  for(const id of ['my-submissions-list','moderation-queue','topic-composer','topic-detail'])$(id).replaceChildren();

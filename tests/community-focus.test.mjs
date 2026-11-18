@@ -61,7 +61,12 @@ async function community({search='',mode='public',reducedMotion=false,serviceGat
    return {data:rows,error:null};};
    const q={select:()=>q,order:()=>q,limit:()=>q,or:()=>q,eq:(k,v)=>{filters.push(['eq',k,v]);return q;},neq:(k,v)=>{filters.push(['neq',k,v]);return q;},maybeSingle:()=>run().then(r=>({data:r.data[0]||null,error:null})),then:(a,b)=>run().then(a,b)};return q;};
   const client={auth:{getSession:async()=>({data:{session:state.user?{user:{id:state.user}}:null},error:null}),onAuthStateChange:fn=>{state.authListeners.push(fn);return {data:{subscription:{unsubscribe(){}}}};},stopAutoRefresh:async()=>{}},
-   from:query,rpc:async name=>name==='discussion_access'?{data:{adult:true,moderator:false},error:null}:{data:null,error:{message:'test'}}};
+   from:query,rpc:async name=>{if(name==='discussion_access')return {data:{adult:true,moderator:false},error:null};
+    // state.submitGate holds a reply or topic submission in flight until the test resolves it.
+    if(name==='reply_discussion'||name==='submit_discussion')state.submits=(state.submits||0)+1;
+    // state.submitGates (one per call, in order) or state.submitGate (shared) hold submissions in flight.
+    if(name==='reply_discussion'||name==='submit_discussion'){const gate=state.submitGates?.shift()||state.submitGate;if(gate)await gate.promise;}
+    return (name==='reply_discussion'&&state.replyOk)||(name==='submit_discussion'&&state.topicOk)?{data:'new-id',error:null}:{data:null,error:{message:'test'}};}};
   // firstService:'unavailable' makes the first start fail; retries (Refresh) then succeed.
   const calls={service:0,retry:0};state.calls=calls;
   globalThis.__testAccount={session:true,service:async()=>{calls.service++;if(serviceGate)await serviceGate.promise;return firstService==='unavailable'?{status:'unavailable',reason:'test'}:{status:'ready',client};},
@@ -400,4 +405,280 @@ test('Your submissions says which list shows only its 30 most recent items, and 
    assert.equal(env.$('my-submissions-list').querySelectorAll('article').length,Math.min(topics,30)+Math.min(replies,30));
   }finally{await done(env);}
  }
+});
+
+/* ── unsent reply drafts, page memory only (item 48) ─────────────── */
+test('an unsent reply survives switching topics and Back, without its consent box, and never touches storage',async()=>{
+ const env=await community({mode:'account'});
+ const writes=[];for(const s of [globalThis.localStorage,globalThis.sessionStorage]){const orig=s.setItem.bind(s);s.setItem=(k,v)=>{writes.push(k);orig(k,v);};}
+ try{
+  const open=id=>{env.key(env.$('forum-content'),`topic:${id}:link`).click();};
+  const area=()=>env.$('reply-body');
+  open(T1);await settle(10);
+  area().value='My synthetic unsent reply text';area().dispatchEvent(env.event('input',{bubbles:true}));
+  env.$('topic-detail').querySelector('input[type="checkbox"]').checked=true;
+  open(T2);await settle(10);
+  assert.equal(area().value,'','another topic does not show it');
+  open(T1);await settle(10);
+  assert.equal(area().value,'My synthetic unsent reply text','restored for the same topic');
+  assert.equal(env.$('topic-detail').querySelector('input[type="checkbox"]').checked,false,'consent is asked again');
+  assert.match(env.$('topic-detail').textContent,/Your unsent reply is kept while this page stays open/);
+  env.history.replaceState(null,'',`/community.html?topic=${T2}`);env.win.dispatchEvent(env.event('popstate',{}));await settle(10);
+  env.history.replaceState(null,'',`/community.html?topic=${T1}`);env.win.dispatchEvent(env.event('popstate',{}));await settle(10);
+  assert.equal(area().value,'My synthetic unsent reply text','Back and Forward keep it');
+  assert.deepEqual(writes.filter(k=>!/age|session/i.test(k)&&k!=='test-session'),[],'no browser storage writes for drafts');
+ }finally{await done(env);}
+});
+
+test('a sent reply clears its draft; a failed one keeps it; an account change clears every draft',async()=>{
+ const env=await community({mode:'account'});
+ try{
+  const open=id=>{env.key(env.$('forum-content'),`topic:${id}:link`).click();};
+  const area=()=>env.$('reply-body');
+  const send=()=>{area().closest('form').dispatchEvent(env.event('submit',{bubbles:true,cancelable:true}));};
+  open(T1);await settle(10);
+  area().value='A synthetic reply that will fail first';area().dispatchEvent(env.event('input',{bubbles:true}));
+  send();await settle(20);
+  open(T2);await settle(10);open(T1);await settle(10);
+  assert.equal(area().value,'A synthetic reply that will fail first','a failed send keeps the draft');
+  env.state.replyOk=true;send();await settle(20);
+  open(T2);await settle(10);open(T1);await settle(10);
+  assert.equal(area().value,'','a successful send clears it');
+  area().value='Draft before another account signs in';area().dispatchEvent(env.event('input',{bubbles:true}));
+  open(T2);await settle(10);
+  for(const fn of env.state.authListeners)fn('SIGNED_IN',{user:{id:'adult-2'}});env.state.user='adult-2';await settle(40);
+  open(T1);await settle(10);
+  assert.equal(area()?.value??'','','a different account never sees the previous draft');
+ }finally{await done(env);}
+});
+
+test('signing out and back in as the same account also clears drafts',async()=>{
+ const env=await community({mode:'account'});
+ try{
+  const open=id=>{env.key(env.$('forum-content'),`topic:${id}:link`).click();};
+  open(T1);await settle(10);
+  env.$('reply-body').value='Synthetic draft before signing out';env.$('reply-body').dispatchEvent(env.event('input',{bubbles:true}));
+  for(const fn of env.state.authListeners)fn('SIGNED_OUT',null);env.state.user=null;await settle(40);
+  for(const fn of env.state.authListeners)fn('SIGNED_IN',{user:{id:'adult-1'}});env.state.user='adult-1';await settle(40);
+  open(T2);await settle(10);open(T1);await settle(10);
+  assert.ok(env.$('reply-body'),'the composer is back for the same account');
+  assert.equal(env.$('reply-body').value,'','the draft did not survive signing out');
+ }finally{await done(env);}
+});
+
+/* ── typing while a submission is sending ───────────────────────── */
+const typeInto=(env,field,text)=>{field.value=text;field.dispatchEvent(env.event('input',{bubbles:true}));};
+test('text typed while a reply is sending survives its success, keeps caret and focus, and is restored after switching topics',async()=>{
+ const env=await community({mode:'account'});
+ try{
+  const open=id=>{env.key(env.$('forum-content'),`topic:${id}:link`).click();};
+  const area=()=>env.$('reply-body'),consent=()=>env.$('topic-detail').querySelector('.discussion-consent input');
+  const send=()=>{area().closest('form').dispatchEvent(env.event('submit',{bubbles:true,cancelable:true}));};
+  env.state.replyOk=true;env.state.submitGate=deferred();
+  open(T1);await settle(10);
+  typeInto(env,area(),'The synthetic reply that is being sent');consent().checked=true;send();await settle(10);
+  typeInto(env,area(),'The synthetic reply that is being sent, plus newer words');
+  area().focus();area().selectionStart=area().selectionEnd=4;
+  env.state.submitGate.resolve();await settle(20);
+  assert.equal(area().value,'The synthetic reply that is being sent, plus newer words','newer text is kept');
+  is(env.doc.activeElement,area(),'focus stays in the reply');
+  assert.equal(area().selectionStart,4,'the caret is not moved');
+  assert.equal(consent().checked,false,'consent is asked again');
+  assert.match(env.$('discussion-message').textContent,/earlier version was submitted for moderation\. What you typed while it was sending is still here and has not been sent/);
+  open(T2);await settle(10);open(T1);await settle(10);
+  assert.equal(area().value,'The synthetic reply that is being sent, plus newer words','the unsent newer text is still a draft');
+  assert.match(env.$('topic-detail').textContent,/Your unsent reply is kept while this page stays open/);
+  // Unchanged while sending: the success clears the field, the draft and the note.
+  env.state.submitGate=deferred();consent().checked=true;send();await settle(10);
+  env.state.submitGate.resolve();await settle(20);
+  assert.equal(area().value,'');assert.equal(consent().checked,false);
+  assert.equal(env.$('topic-detail').querySelector('.draft-note'),null);
+  assert.match(env.$('discussion-message').textContent,/^Submitted for moderation\./);
+  open(T2);await settle(10);open(T1);await settle(10);
+  assert.equal(area().value,'','nothing sent comes back as a draft');
+ }finally{await done(env);}
+});
+
+test('a reply sent before switching topics and back clears the restored copy, not newer text elsewhere',async()=>{
+ const env=await community({mode:'account'});
+ try{
+  const open=id=>{env.key(env.$('forum-content'),`topic:${id}:link`).click();};
+  const area=()=>env.$('reply-body');
+  env.state.replyOk=true;env.state.submitGate=deferred();
+  open(T1);await settle(10);
+  typeInto(env,area(),'Synthetic reply sent before switching');env.$('topic-detail').querySelector('.discussion-consent input').checked=true;
+  area().closest('form').dispatchEvent(env.event('submit',{bubbles:true,cancelable:true}));await settle(10);
+  open(T2);await settle(10);typeInto(env,area(),'An unrelated synthetic draft for topic two');
+  open(T1);await settle(10);
+  assert.equal(area().value,'Synthetic reply sent before switching','restored while still sending');
+  env.state.submitGate.resolve();await settle(20);
+  assert.equal(area().value,'','the copy of what was sent is cleared once it is saved');
+  open(T2);await settle(10);
+  assert.equal(area().value,'An unrelated synthetic draft for topic two','another topic’s draft is untouched');
+ }finally{await done(env);}
+});
+
+test('a new topic: only the fields still as sent are cleared; newer text and its category stay unsent',async()=>{
+ const env=await community({mode:'account'});
+ try{
+  const title=()=>env.$('topic-title'),body=()=>env.$('topic-body'),select=()=>env.$('topic-category'),consent=()=>env.$('topic-composer').querySelector('.discussion-consent input');
+  const send=()=>{env.$('topic-composer').querySelector('form').dispatchEvent(env.event('submit',{bubbles:true,cancelable:true}));};
+  const other=forumData.categories[1].id;
+  env.state.topicOk=true;env.state.submitGate=deferred();
+  typeInto(env,title(),'A synthetic topic title');typeInto(env,body(),'A synthetic question body that is long enough');select().value=other;consent().checked=true;
+  send();await settle(10);
+  typeInto(env,body(),'A synthetic question body that is long enough, now edited');body().focus();
+  env.state.submitGate.resolve();await settle(20);
+  assert.equal(title().value,'','the title that was sent is cleared');
+  assert.equal(body().value,'A synthetic question body that is long enough, now edited','the newer body stays');
+  assert.equal(select().value,other,'the category stays with the unsent text');
+  assert.equal(consent().checked,false);is(env.doc.activeElement,body());
+  assert.match(env.$('discussion-message').textContent,/earlier version was submitted/);
+  // Unchanged while sending: everything returns to its default.
+  env.state.submitGate=deferred();typeInto(env,title(),'A second synthetic topic title');consent().checked=true;send();await settle(10);
+  env.state.submitGate.resolve();await settle(20);
+  assert.deepEqual([title().value,body().value,select().value,consent().checked],['','',forumData.categories[0].id,false]);
+  assert.match(env.$('discussion-message').textContent,/^Submitted for moderation\./);
+ }finally{await done(env);}
+});
+
+test('a submission that finishes after an account change touches nothing',async()=>{
+ const env=await community({mode:'account'});
+ try{
+  const open=id=>{env.key(env.$('forum-content'),`topic:${id}:link`).click();};
+  env.state.replyOk=true;env.state.submitGate=deferred();
+  open(T1);await settle(10);
+  typeInto(env,env.$('reply-body'),'Synthetic reply in flight during a switch');env.$('topic-detail').querySelector('.discussion-consent input').checked=true;
+  env.$('reply-body').closest('form').dispatchEvent(env.event('submit',{bubbles:true,cancelable:true}));await settle(10);
+  for(const fn of env.state.authListeners)fn('SIGNED_IN',{user:{id:'adult-2'}});env.state.user='adult-2';await settle(40);
+  env.state.submitGate.resolve();await settle(20);
+  assert.doesNotMatch(env.$('discussion-message').textContent,/Submitted|earlier version/,'no success message for the earlier account');
+  open(T1);await settle(10);
+  assert.equal(env.$('reply-body')?.value??'','','the new account sees no draft');
+ }finally{await done(env);}
+});
+
+test('a reply that finishes after moving to another topic names its discussion and keeps newer text as that topic’s draft',async()=>{
+ const env=await community({mode:'account'});
+ try{
+  const open=id=>{env.key(env.$('forum-content'),`topic:${id}:link`).click();};
+  const area=()=>env.$('reply-body'),consent=()=>env.$('topic-detail').querySelector('.discussion-consent input');
+  const send=()=>{area().closest('form').dispatchEvent(env.event('submit',{bubbles:true,cancelable:true}));};
+  env.state.replyOk=true;
+  // Newer text typed while sending, then another topic opened before the answer.
+  env.state.submitGate=deferred();open(T1);await settle(10);
+  typeInto(env,area(),'Synthetic reply sent from topic one');consent().checked=true;send();await settle(10);
+  typeInto(env,area(),'Synthetic reply sent from topic one, with more');
+  open(T2);await settle(10);typeInto(env,area(),'Topic two text that must stay');
+  env.state.submitGate.resolve();await settle(20);
+  assert.equal(env.$('discussion-message').textContent,'Your reply to “First synthetic topic title” was submitted for moderation. What you typed while it was sending is kept as an unsent reply for that discussion.');
+  assert.equal(area().value,'Topic two text that must stay','the open topic is untouched');
+  open(T1);await settle(10);
+  assert.equal(area().value,'Synthetic reply sent from topic one, with more','the newer text is that topic’s draft');
+  // Unchanged, then another topic opened: named, nothing kept.
+  env.state.submitGate=deferred();consent().checked=true;typeInto(env,area(),'A second synthetic reply for topic one');send();await settle(10);
+  open(T2);await settle(10);
+  env.state.submitGate.resolve();await settle(20);
+  assert.equal(env.$('discussion-message').textContent,'Your reply to “First synthetic topic title” was submitted for moderation. Your username will appear with the text after a moderator approves it.');
+  open(T1);await settle(10);
+  assert.equal(area().value,'','nothing sent comes back as a draft');
+ }finally{await done(env);}
+});
+
+
+test('a reply form rebuilt while its earlier reply is sending stays locked: no second request; it unlocks when that one settles',async()=>{
+ for(const ok of [true,false]){
+  const env=await community({mode:'account'});
+  try{
+   const open=id=>{env.key(env.$('forum-content'),`topic:${id}:link`).click();};
+   const area=()=>env.$('reply-body'),form=()=>area().closest('form'),button=()=>form().querySelector('button[type="submit"]');
+   const consent=()=>env.$('topic-detail').querySelector('.discussion-consent input');
+   const send=()=>{form().dispatchEvent(env.event('submit',{bubbles:true,cancelable:true}));};
+   env.state.replyOk=ok;env.state.submitGate=deferred();
+   open(T1);await settle(10);typeInto(env,area(),'Synthetic reply that is slow to send');consent().checked=true;send();await settle(10);
+   open(T2);await settle(10);
+   assert.equal(button().disabled,false,'another topic’s reply is not locked');typeInto(env,area(),'Topic two draft that must stay');
+   open(T1);await settle(10);
+   assert.equal(button().disabled,true,'the rebuilt form for the same topic is locked');
+   assert.match(form().textContent,/Your earlier submission is still sending\./);
+   consent().checked=true;send();await settle(10);
+   assert.equal(env.state.submits,1,'no duplicate request while the first is in flight');
+   env.state.submitGate.resolve();await settle(20);
+   assert.equal(button().disabled,false,`unlocked after ${ok?'success':'failure'}`);
+   assert.doesNotMatch(form().textContent,/still sending/);
+   assert.equal(area().value,ok?'':'Synthetic reply that is slow to send',ok?'the restored copy of what was saved is cleared':'a failed send keeps the text');
+   open(T2);await settle(10);assert.equal(area().value,'Topic two draft that must stay','other topics’ drafts are kept');
+  }finally{await done(env);}
+ }
+});
+
+test('a late answer for one account never unlocks another account’s pending reply to the same topic',async()=>{
+ const env=await community({mode:'account'});
+ try{
+  const open=id=>{env.key(env.$('forum-content'),`topic:${id}:link`).click();};
+  const area=()=>env.$('reply-body'),form=()=>area().closest('form'),button=()=>form().querySelector('button[type="submit"]');
+  const send=text=>{typeInto(env,area(),text);env.$('topic-detail').querySelector('.discussion-consent input').checked=true;form().dispatchEvent(env.event('submit',{bubbles:true,cancelable:true}));};
+  const a=deferred(),b=deferred();env.state.submitGates=[a,b];env.state.replyOk=true;
+  open(T1);await settle(10);send('Synthetic reply from account one');await settle(10);
+  for(const fn of env.state.authListeners)fn('SIGNED_IN',{user:{id:'adult-2'}});env.state.user='adult-2';await settle(40);
+  open(T1);await settle(10);
+  assert.equal(button().disabled,false,'the other account’s form is not locked by account one');
+  send('Synthetic reply from account two');await settle(10);
+  assert.equal(button().disabled,true);assert.equal(env.state.submits,2,'one request each');
+  a.resolve();await settle(20);
+  assert.equal(button().disabled,true,'account one’s late answer leaves account two’s send busy');
+  assert.match(form().textContent,/still sending/,'the form says a submission is in flight');
+  assert.doesNotMatch(env.$('discussion-message').textContent,/Submitted|earlier version/,'no message from account one');
+  assert.equal(area().value,'Synthetic reply from account two','account two’s text is untouched');
+  b.resolve();await settle(20);
+  assert.equal(button().disabled,false,'released when account two’s own reply settles');
+  assert.match(env.$('discussion-message').textContent,/^Submitted for moderation\./);
+  assert.equal(env.state.submits,2,'no duplicate request');
+ }finally{await done(env);}
+});
+
+test('signed out and back in as the same account while a reply is sending: the form stays locked until it settles, and the old text never returns',async()=>{
+ const env=await community({mode:'account'});
+ try{
+  const open=id=>{env.key(env.$('forum-content'),`topic:${id}:link`).click();};
+  const area=()=>env.$('reply-body'),button=()=>area().closest('form').querySelector('button[type="submit"]');
+  const gate=deferred();env.state.submitGates=[gate];env.state.replyOk=true;
+  open(T1);await settle(10);typeInto(env,area(),'Synthetic reply sent before signing out');
+  env.$('topic-detail').querySelector('.discussion-consent input').checked=true;
+  area().closest('form').dispatchEvent(env.event('submit',{bubbles:true,cancelable:true}));await settle(10);
+  for(const fn of env.state.authListeners)fn('SIGNED_OUT',null);env.state.user=null;await settle(40);
+  for(const fn of env.state.authListeners)fn('SIGNED_IN',{user:{id:'adult-1'}});env.state.user='adult-1';await settle(40);
+  open(T1);await settle(10);
+  assert.equal(area().value,'','the draft was cleared by the sign-out');
+  assert.equal(button().disabled,true,'still locked: the earlier request for this account and topic is in flight');
+  gate.resolve();await settle(20);
+  assert.equal(button().disabled,false,'released when it settles');
+  assert.equal(area().value,'','the old text never comes back');
+  assert.doesNotMatch(env.$('discussion-message').textContent,/Submitted|earlier version/,'no message for the earlier session');
+  assert.equal(env.state.submits,1);
+ }finally{await done(env);}
+});
+
+/* ── Back/Forward restore rechecks the stored session (item 53) ─────── */
+test('a restore by the same account keeps the reply draft; after a sign-out made while cached the private UI is gone',async()=>{
+ const env=await community({mode:'account'});
+ try{
+  const open=id=>{env.key(env.$('forum-content'),`topic:${id}:link`).click();};
+  const restore=async()=>{env.win.dispatchEvent(env.event('pageshow',{persisted:true}));await settle(40);};
+  open(T1);await settle(10);
+  typeInto(env,env.$('reply-body'),'Synthetic draft kept across a restore');
+  const field=env.$('reply-body');field.focus();
+  assert.equal(env.$('topic-composer').hidden,false);assert.equal(env.$('my-submissions').hidden,false);
+  await restore();
+  is(env.$('reply-body'),field,'the same field, not rebuilt');
+  assert.equal(field.value,'Synthetic draft kept across a restore');is(env.doc.activeElement,field,'focus stays');
+  env.state.user=null;                      // signed out in another tab while this page was cached
+  await restore();
+  assert.equal(env.$('reply-body'),null,'no reply composer');
+  for(const id of ['topic-composer','my-submissions','moderation'])assert.equal(env.$(id).hidden,true,`${id} hidden`);
+  assert.equal(env.$('my-submissions-list').children.length,0,'loaded private lists are emptied');
+  env.state.user='adult-1';for(const fn of env.state.authListeners)fn('SIGNED_IN',{user:{id:'adult-1'}});await settle(40);
+  open(T2);await settle(10);open(T1);await settle(10);
+  assert.equal(env.$('reply-body').value,'','the draft did not survive the sign-out');
+ }finally{await done(env);}
 });
