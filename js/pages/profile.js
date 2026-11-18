@@ -17,7 +17,7 @@ import {
   populateBelts, schoolPicker, readProfileForm, showFieldErrors, createStatus, withBusy,
 } from '../lib/profile-form.js';
 import { beltColor } from '../lib/belts.js';
-import { createEligibilityStore, INELIGIBLE } from '../lib/age-gate.js';
+import { sharedEligibilityStore, INELIGIBLE } from '../lib/age-gate.js';
 import { h, replaceChildren } from '../lib/dom.js';
 
 const $ = (id) => document.getElementById(id);
@@ -28,7 +28,7 @@ let client = null;
 let original = null;   // last saved profile values
 let joinedAt = null;
 let email = '';
-const eligibility = createEligibilityStore();
+const eligibility = sharedEligibilityStore();   // shared with the site header, which follows an under-13 hold at once
 
 const publicLinks = () => [
   h('a', { class: 'btn btn-primary', href: '/forms.html' }, 'Browse the forms library'),

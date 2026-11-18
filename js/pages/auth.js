@@ -14,7 +14,7 @@ import {
   signIn, register, completeProfile, requestReset, updatePassword, routeSignedIn, startGoogle, logout,
 } from '../lib/auth-flows.js';
 import {
-  createEligibilityStore, classifyAge, authEntryPanel, AGE_SCREEN_RETRY, ELIGIBLE, INELIGIBLE,
+  sharedEligibilityStore, classifyAge, authEntryPanel, AGE_SCREEN_RETRY, ELIGIBLE, INELIGIBLE,
 } from '../lib/age-gate.js';
 import {
   populateBelts, schoolPicker, readProfileForm, showFieldErrors, createStatus, withBusy,
@@ -40,7 +40,7 @@ let client = null;
 let flow = null;          // non-null while a flow owns navigation (prevents auth-event races)
 let routing = null;
 
-const eligibility = createEligibilityStore();   // 'eligible' | 'ineligible' | null — never the age itself
+const eligibility = sharedEligibilityStore();   // 'eligible' | 'ineligible' | null — never the age itself; shared with the site header
 let enrollmentTicket=null, enrollmentExpires=0;
 let afterAge = null;                            // what to continue with once the screen is passed
 

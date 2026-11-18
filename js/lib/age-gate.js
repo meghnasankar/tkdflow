@@ -83,6 +83,31 @@ export function createEligibilityStore(source = () => globalThis.sessionStorage)
   };
 }
 
+/* One store per page. Every reader on the page (the shared header, the auth
+   page) uses this instance, so a result that could only be kept in memory
+   (session storage blocked) is still seen by all of them. Subscribers hear
+   only real changes of the result in effect. */
+let shared = null;
+const listeners = new Set();
+export function sharedEligibilityStore() {
+  if (shared) return shared;
+  const store = createEligibilityStore();
+  shared = Object.freeze({
+    read: () => store.read(),
+    record(result) {
+      const before = store.read(), now = store.record(result);
+      if (now !== before) for (const fn of [...listeners]) { try { fn(now); } catch { /* one listener cannot block others */ } }
+      return now;
+    },
+  });
+  return shared;
+}
+/** Be told when this page's age-screen result changes. Returns an unsubscribe. */
+export function onEligibilityChange(fn) {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
+}
+
 /** Only an explicit 'eligible' result allows an account-creating call. */
 export function mayCreateAccount(eligibility) {
   return eligibility === ELIGIBLE;
