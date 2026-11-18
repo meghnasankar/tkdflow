@@ -7,14 +7,14 @@ import * as original from '../js/animation/taegeuk-1-motion.js';
 import {narratedMotion,narrationProblem} from '../js/animation/narrated-motion.js';
 import {createLessonAudio} from '../js/lib/lesson-audio.js';
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8'),json=p=>JSON.parse(read(p));
-const forms=json('data/forms.json'),catalog=json('data/narration/catalog.json');
+const forms=json('data/forms.json'),catalog=json('docs/narration/catalog.json');
 const baseFor=id=>id==='taegeuk-1'?original:createFormMotion(json(`data/lessons/${id}.json`));
 const near=(a,b)=>Math.abs(a-b)<1e-6;
 test('all 23 lessons have real ElevenLabs audio covering all 748 poses',()=>{
  assert.equal(catalog.files.length,23);assert.equal(catalog.provider,'ElevenLabs');assert.equal(catalog.stockVoice,true);assert.equal(catalog.voiceCloning,false);assert.equal(catalog.generationRequests,7);
  let cues=0;
  for(const f of forms){const d=json(`data/narration/${f.id}.json`),base=baseFor(f.id),record=catalog.files.find(r=>r.lessonId===f.id);
-  assert.equal(narrationProblem(d,base,f.id),null);assert.equal(d.provider,'ElevenLabs');cues+=d.cues.length;
+  assert.equal(narrationProblem(d,base,f.id),null);for(const k of ['provider','voice','model'])assert.equal(k in d,false,`${f.id}: no generation metadata in the public manifest`);cues+=d.cues.length;
   const file=new URL('..'+d.audioSrc,import.meta.url),bytes=readFileSync(file);assert.equal(statSync(file).size,record.bytes);assert.equal(createHash('sha256').update(bytes).digest('hex'),record.sha256);assert.ok(Math.abs(record.audio_duration-d.duration)<.15);
   const html=read(f.lessonUrl);for(const id of ['voice-toggle','voice-instruction','lesson-audio','voice-status'])assert.match(html,new RegExp(`id="${id}"`));
   for(const c of d.cues){assert.ok(c.text.length>15);assert.doesNotMatch(c.text,/DTaF|source typo|reference edition|API|https?:/i);}

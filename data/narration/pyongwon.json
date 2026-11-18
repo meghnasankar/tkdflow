@@ -1,9 +1,6 @@
 {
   "version": 1,
   "lessonId": "pyongwon",
-  "provider": "ElevenLabs",
-  "voice": "Sarah",
-  "model": "eleven_multilingual_v2",
   "audioSrc": "/assets/narration/pyongwon.mp3",
   "duration": 187.467251,
   "chapters": [

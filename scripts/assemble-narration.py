@@ -81,10 +81,10 @@ for lesson in plan['lessons']:
   for j,v in enumerate(fx[event['type']]):effectsTrack[at+j]=max(-32767,min(32767,effectsTrack[at+j]+v))
  effectsTarget=media/(lesson['id']+'-effects.mp3')
  subprocess.run(['ffmpeg','-v','error','-y','-f','s16le','-ar',str(rate),'-ac','1','-i','pipe:0','-c:a','libmp3lame','-q:a','8',str(effectsTarget)],input=effectsTrack.tobytes(),check=True)
- manifest={'version':1,'lessonId':lesson['id'],'provider':'ElevenLabs','voice':'Sarah','model':plan['model'],'audioSrc':'/assets/narration/'+target.name,'duration':duration,'chapters':chapters,'cues':cues,'effectsSrc':'/assets/narration/'+effectsTarget.name,'effects':events}
+ manifest={'version':1,'lessonId':lesson['id'],'audioSrc':'/assets/narration/'+target.name,'duration':duration,'chapters':chapters,'cues':cues,'effectsSrc':'/assets/narration/'+effectsTarget.name,'effects':events}
  (data/(lesson['id']+'.json')).write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
  actual=float(subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration','-of','default=noprint_wrappers=1:nokey=1',str(target)],text=True));assert abs(actual-duration)<.15
  record={'lessonId':lesson['id'],'cues':len(cues),'duration':duration,'audio_duration':actual,'bytes':target.stat().st_size,'sha256':hashlib.sha256(target.read_bytes()).hexdigest()};record['effects']={'bytes':effectsTarget.stat().st_size,'sha256':hashlib.sha256(effectsTarget.read_bytes()).hexdigest(),'events':len(events),'kihaps':sum(e['type']=='kihap' for e in events)};records.append(record);print(json.dumps(record),flush=True)
 catalog={'provider':'ElevenLabs','voice':'Sarah','model':plan['model'],'stockVoice':True,'voiceCloning':False,'generationCharacters':plan['generationCharacters'],'uniqueUtterances':plan['uniqueUtterances'],'generationRequests':len(plan['banks']),'accountOrPlanChanges':False,'soundEffects':effectRecords,'files':records}
-(data/'catalog.json').write_text(json.dumps(catalog,indent=2)+'\n');(folder/'assembly-record.json').write_text(json.dumps(catalog,indent=2)+'\n')
+(root/'docs'/'narration'/'catalog.json').write_text(json.dumps(catalog,indent=2)+'\n');(folder/'assembly-record.json').write_text(json.dumps(catalog,indent=2)+'\n')
 print(json.dumps({'lessons':len(records),'poseCues':sum(r['cues'] for r in records),'audioBytes':sum(r['bytes'] for r in records)}),flush=True)

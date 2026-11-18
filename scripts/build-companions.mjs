@@ -30,7 +30,7 @@ export const pageFile = (id) => `companions/${id}.html`;
 const STYLE = Object.fromEntries(ORGS.filter((o) => o.id !== 'all').map((o) => [o.id, o.label]));
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 export const NOTE = 'Pose numbers count the lesson’s study poses; the count shows the movement or reference count the lesson labels. Left and right are the performer’s own. Each pose links to the lesson, paused on that pose.';
-export const VOICE = 'Instructions are the text of the lesson’s spoken guidance (the lesson’s voice was generated with ElevenLabs using the stock Sarah voice).';
+export const VOICE = 'Instructions are the text of the lesson’s spoken guidance.';
 
 /** The turn wording the lesson's pose counter uses. */
 export const turnText = (turn) => (turn ? `${turn.side === 'left' ? '↶' : '↷'} Turn ${turn.side} ${turn.degrees}°` : '');

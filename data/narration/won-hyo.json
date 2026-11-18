@@ -1,9 +1,6 @@
 {
   "version": 1,
   "lessonId": "won-hyo",
-  "provider": "ElevenLabs",
-  "voice": "Sarah",
-  "model": "eleven_multilingual_v2",
   "audioSrc": "/assets/narration/won-hyo.mp3",
   "duration": 163.664146,
   "chapters": [

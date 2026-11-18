@@ -1,9 +1,6 @@
 {
   "version": 1,
   "lessonId": "taebaek",
-  "provider": "ElevenLabs",
-  "voice": "Sarah",
-  "model": "eleven_multilingual_v2",
   "audioSrc": "/assets/narration/taebaek.mp3",
   "duration": 255.28834,
   "chapters": [

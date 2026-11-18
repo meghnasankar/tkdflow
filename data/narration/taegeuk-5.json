@@ -1,9 +1,6 @@
 {
   "version": 1,
   "lessonId": "taegeuk-5",
-  "provider": "ElevenLabs",
-  "voice": "Sarah",
-  "model": "eleven_multilingual_v2",
   "audioSrc": "/assets/narration/taegeuk-5.mp3",
   "duration": 191.106069,
   "chapters": [

@@ -311,3 +311,23 @@ test('release runbook exists, is linked, and invents no owners or contacts', () 
   assert.match(read('SETUP.md'), /\(docs\/RELEASE\.md\)/);
   assert.match(read('docs/audit-tracker.md'), /\(RELEASE\.md\)/);
 });
+
+test('public files carry no voluntary AI or tool credits; provenance stays in development-only docs', () => {
+  // Everything deployable: not a dot-file, not excluded by .vercelignore, not vendor code (which keeps its own required notices).
+  const ignored = new Set(read('.vercelignore').split('\n').map((l) => l.trim().replace(/^\//, '')).filter((l) => l && !l.startsWith('#')));
+  const TEXT = /\.(html|js|mjs|css|json|svg|xml|txt|webmanifest)$/;
+  const walkPublic = (dir) => readdirSync(join(ROOT, dir)).flatMap((name) => {
+    const rel = dir ? `${dir}/${name}` : name;
+    if (name.startsWith('.') || (!dir && (ignored.has(name) || name === 'vercel.json' || name === 'vendor'))) return [];
+    return statSync(join(ROOT, rel)).isDirectory() ? walkPublic(rel) : TEXT.test(name) ? [rel] : [];
+  });
+  const files = walkPublic('');
+  assert.ok(files.includes('koryo.html') && files.includes('companions/koryo.html') && files.includes('data/narration/koryo.json') && files.includes('js/animation/avatar.js'));
+  const CREDIT = /eleven ?labs|eleven_[a-z0-9_]+|nano ?banana|stock (sarah )?voice|text-to-speech|voice was generated|generated with|voice-credit/i;
+  for (const f of files) assert.doesNotMatch(read(f), CREDIT, `${f} carries a tool credit`);
+  assert.ok(!existsSync(join(ROOT, 'data/narration/catalog.json')), 'the generation catalog is not deployed');
+  const catalog = JSON.parse(read('docs/narration/catalog.json'));
+  assert.equal(catalog.provider, 'ElevenLabs', 'provenance is kept in docs/narration/catalog.json');
+  assert.ok(ignored.has('docs'), 'docs/ is excluded from deployment');
+  assert.doesNotMatch(read('scripts/build-companions.mjs'), CREDIT, 'the companion generator cannot add it back');
+});

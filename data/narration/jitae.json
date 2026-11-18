@@ -1,9 +1,6 @@
 {
   "version": 1,
   "lessonId": "jitae",
-  "provider": "ElevenLabs",
-  "voice": "Sarah",
-  "model": "eleven_multilingual_v2",
   "audioSrc": "/assets/narration/jitae.mp3",
   "duration": 238.085912,
   "chapters": [

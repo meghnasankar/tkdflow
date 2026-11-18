@@ -1,9 +1,6 @@
 {
   "version": 1,
   "lessonId": "do-san",
-  "provider": "ElevenLabs",
-  "voice": "Sarah",
-  "model": "eleven_multilingual_v2",
   "audioSrc": "/assets/narration/do-san.mp3",
   "duration": 146.319771,
   "chapters": [

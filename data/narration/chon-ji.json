@@ -1,9 +1,6 @@
 {
   "version": 1,
   "lessonId": "chon-ji",
-  "provider": "ElevenLabs",
-  "voice": "Sarah",
-  "model": "eleven_multilingual_v2",
   "audioSrc": "/assets/narration/chon-ji.mp3",
   "duration": 118.749287,
   "chapters": [

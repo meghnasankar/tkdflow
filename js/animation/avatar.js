@@ -1,5 +1,5 @@
 /* A connected skinned 3D avatar with a locally modeled Indian girl face.
-   The existing Nano Banana atlas supplies cotton texture only. No photograph
+   The existing texture atlas supplies cotton texture only. No photograph
    is placed on the face and no head images are swapped during playback. */
 import * as THREE from '../../vendor/three/three.module.js';
 import { BODY } from './motion-math.js';
