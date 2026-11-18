@@ -34,6 +34,7 @@ export function initNav(root = document) {
 }
 
 /** Header account link. Never shows member data — just where to go.
+ *  Destinations are root-absolute so nested pages (e.g. /companions/…) work.
  *  Re-rendering with the same visible state leaves the existing links (and
  *  any keyboard focus on them) untouched, so a token refresh in another tab
  *  does not disturb the header. Returns true when the links were replaced. */
@@ -48,21 +49,21 @@ export function renderAccountNav(cfg = ACCOUNTS) {
   slot.dataset.navState = visible;
   if (mode === 'off') {
     replaceChildren(slot, h('a', {
-      href: 'auth.html', class: 'btn btn-secondary btn-sm nav-account-link',
+      href: '/auth.html', class: 'btn btn-secondary btn-sm nav-account-link',
       'aria-current': page === 'auth' ? 'page' : null,
     }, 'Log in'));
     return true;
   }
   if (mode === 'member') {
     replaceChildren(slot, h('a', {
-      href: 'profile.html', class: 'btn btn-secondary btn-sm nav-account-link',
+      href: '/profile.html', class: 'btn btn-secondary btn-sm nav-account-link',
       'aria-current': page === 'profile' ? 'page' : null,
     }, 'My profile'));
     return true;
   }
   replaceChildren(slot,
-    h('a', { href: 'auth.html', class: 'btn btn-secondary btn-sm nav-account-link' }, 'Log in'),
-    mode === 'guest-signup' ? h('a', { href: 'auth.html?mode=register', class: 'btn btn-primary btn-sm nav-account-link' }, 'Join free') : null,
+    h('a', { href: '/auth.html', class: 'btn btn-secondary btn-sm nav-account-link' }, 'Log in'),
+    mode === 'guest-signup' ? h('a', { href: '/auth.html?mode=register', class: 'btn btn-primary btn-sm nav-account-link' }, 'Join free') : null,
   );
   return true;
 }

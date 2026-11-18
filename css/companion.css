@@ -1,0 +1,43 @@
+/* Read-and-print lesson companions. Plain, narrow text; no fixed widths.
+   Lists use role="list" in the markup so list-style:none keeps list semantics. */
+.cp-hero .kr-title { font-size: .6em; font-weight: 600; margin-left: 6px; }
+.cp-meta-line { color: rgba(255,255,255,.86); margin-top: 6px; }
+.cp-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.cp-main { max-width: 760px; padding-top: 24px; padding-bottom: 56px; }
+.cp-note { color: var(--gray-600); line-height: 1.6; margin-bottom: 20px; }
+.cp-print-url { display: none; }
+.cp-main h2 { font-size: clamp(1.25rem, 3vw, 1.5rem); margin: 8px 0 10px; }
+
+.cp-poses { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.cp-poses li { padding: 12px 14px; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); background: var(--white); overflow-wrap: anywhere; scroll-margin-top: 90px; }
+.cp-head { font-weight: 700; color: var(--navy); }
+.cp-head a { color: var(--red-dark); text-decoration: underline; text-underline-offset: 2px; margin-right: 4px; }
+.cp-ko { font-weight: 500; color: var(--gray-600); margin-left: 4px; }
+.cp-meta { display: flex; flex-wrap: wrap; gap: 2px 12px; font-size: .86rem; color: var(--gray-600); margin-top: 2px; }
+.cp-kihap { font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--red-dark); }
+.cp-say { margin-top: 6px; line-height: 1.6; }
+
+.cp-sources { margin-top: 32px; color: var(--gray-600); line-height: 1.6; }
+.cp-sources ul { margin: 6px 0 12px; padding-left: 1.2em; display: grid; gap: 4px; }
+.cp-sources a, .cp-more a, .cp-index a { color: var(--red-dark); font-weight: 600; text-decoration: underline; }
+.cp-index-group { margin-top: 24px; }
+.cp-index { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.cp-index li { padding: 10px 12px; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); background: var(--white); overflow-wrap: anywhere; }
+.cp-index-meta { display: block; font-size: .86rem; color: var(--gray-600); }
+.cp-more { margin-top: 28px; color: var(--gray-600); }
+
+@media print {
+  @page { margin: 14mm; }
+  .skip-link, .navbar, .footer, [data-print], .cp-actions, .cp-more { display: none !important; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  .page-hero, .cp-hero { background: none !important; color: #000; padding: 0 0 6pt; }
+  .cp-hero h1, .cp-meta-line, .cp-hero .section-label { color: #000 !important; }
+  .cp-main { max-width: none; padding: 0; }
+  .cp-print-url { display: block; font-size: 9pt; margin-bottom: 6pt; }
+  .cp-poses { gap: 4pt; }
+  .cp-poses li { border: 0; border-bottom: 1px solid #999; border-radius: 0; padding: 4pt 0; break-inside: avoid; page-break-inside: avoid; }
+  .cp-main h2 { break-after: avoid; page-break-after: avoid; }
+  .cp-head a, .cp-sources a { color: #000; text-decoration: none; }
+  .cp-main, .cp-main h2, .cp-main p, .cp-head, .cp-name, .cp-say, .cp-meta, .cp-count, .cp-turn, .cp-ko, .cp-kihap,
+  .cp-sources, .cp-sources li, .cp-note, .cp-index li, .cp-index-meta { color: #000; }
+}

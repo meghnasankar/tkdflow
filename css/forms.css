@@ -67,3 +67,5 @@
   .org-tab { padding: 10px 12px; }
 }
 .page-hero .hero-jump { display: flex; flex-wrap: wrap; gap: 8px; }
+.page-hero .hero-companions { margin-top: 10px; }
+.page-hero .hero-companions a { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
