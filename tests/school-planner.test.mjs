@@ -453,3 +453,61 @@ test('the page is private, literal and honest: no account, network beyond the le
  for(const lesson of forms.filter(f=>f.lessonUrl)){const h=read(lesson.lessonUrl);assert.doesNotMatch(h.slice(h.indexOf('<main'),h.indexOf('</main>')),/school-forms\.html/,'not added to lesson content (the shared footer link only)');}
  assert.doesNotMatch(read('layout/header.html'),/school-forms/,'not in the top navigation');
 });
+
+test('another tab’s save while Clear is being confirmed shows the conflict, and a stale Yes cannot overwrite it',async()=>{
+ const p=await page();
+ try{
+  p.addLevelUI('White');p.addLevelUI('Yellow');
+  p.$('sp-clear').click();
+  const asked=p.$('sp-clear-text').textContent;
+  assert.match(asked,/^Clear all 2 levels/);
+  // Another tab adds a level meanwhile.
+  const other=createPlannerStore(()=>globalThis.localStorage);other.save(addLevel(other.load().list,'Black').list);
+  p.storageEvent(globalThis.localStorage.getItem(STORAGE_KEY));
+  assert.equal(p.shown(p.$('sp-conflict')),true,'the conflict notice is shown instead of adopting the change silently');
+  assert.equal(p.levels().length,2,'this tab still shows what the confirmation describes');
+  assert.equal(p.shown(p.$('sp-clear-confirm')),true);assert.equal(p.$('sp-clear-text').textContent,asked);
+  assert.match(p.status(),/changed in another tab/);
+  // Yes on the confirmation that predates the other tab's save.
+  p.$('sp-clear-yes').click();
+  assert.deepEqual(p.saved().levels.map(l=>l.label),['White','Yellow','Black'],'the other tab’s newer list stays saved');
+  assert.match(p.status(),/^List cleared\. Not saved yet: choose which version to keep above\.$/);
+  assert.equal(p.shown(p.$('sp-conflict')),true);
+  // The existing choice still works: loading the other version brings back all three levels.
+  p.$('sp-conflict-load').click();
+  assert.deepEqual(p.levels().map(l=>l.querySelector('h3').textContent),['White','Yellow','Black']);
+ }finally{await p.done?.();}
+});
+
+test('after another tab’s version is loaded, the old Clear confirmation is gone and a new Clear counts the loaded list',async()=>{
+ const p=await page();
+ try{
+  p.addLevelUI('White');p.addLevelUI('Yellow');
+  p.$('sp-clear').click();
+  const other=createPlannerStore(()=>globalThis.localStorage);other.save(addLevel(other.load().list,'Black').list);
+  p.storageEvent(globalThis.localStorage.getItem(STORAGE_KEY));
+  p.$('sp-conflict-load').click();
+  assert.equal(p.shown(p.$('sp-clear-confirm')),false,'the confirmation for the old 2 levels is closed');
+  assert.equal(p.levels().length,3);assert.deepEqual(p.saved().levels.map(l=>l.label),['White','Yellow','Black']);
+  p.$('sp-clear').click();
+  assert.match(p.$('sp-clear-text').textContent,/^Clear all 3 levels/,'a fresh confirmation counts what is shown');
+  p.$('sp-clear-no').click();assert.equal(p.levels().length,3);assert.equal(p.saved().levels.length,3);
+  p.$('sp-clear').click();p.$('sp-clear-yes').click();
+  assert.deepEqual(p.saved().levels,[],'a confirmed Clear of the shown list still works');
+ }finally{await p.done?.();}
+});
+
+test('adding or renaming in this tab while Clear is being confirmed closes the old confirmation',async()=>{
+ const p=await page();
+ try{
+  p.addLevelUI('White');p.addLevelUI('Yellow');
+  p.$('sp-clear').click();assert.match(p.$('sp-clear-text').textContent,/^Clear all 2 levels/);
+  p.addLevelUI('Green');
+  assert.equal(p.shown(p.$('sp-clear-confirm')),false,'an add closes the confirmation');
+  p.$('sp-clear').click();assert.match(p.$('sp-clear-text').textContent,/^Clear all 3 levels/);
+  const rename=p.doc.querySelector('.sp-rename input');rename.value='White belt';p.submit(rename.closest('form'));
+  assert.equal(p.saved().levels[0].label,'White belt');
+  assert.equal(p.shown(p.$('sp-clear-confirm')),false,'a rename closes it too');
+  assert.equal(p.saved().levels.length,3,'nothing was cleared');
+ }finally{await p.done?.();}
+});

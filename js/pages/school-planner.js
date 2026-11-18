@@ -34,9 +34,10 @@ function showStorage() {
   el.textContent = storageMessage(store.state);
   el.classList.toggle('is-warn', store.state !== 'ok');
 }
-/** Uncommitted typing or choices inside the list (a rename, a typed form name, a chosen lesson). */
+/** Uncommitted typing or choices inside the list (a rename, a typed form name, a chosen lesson),
+ *  an import preview, or an open Clear confirmation (its count must not go stale under it). */
 function editing() {
-  if (importing) return true;
+  if (importing || !$('sp-clear-confirm').hidden) return true;
   return [...levelsEl.querySelectorAll('input,select')].some((el) => el.value !== (el.dataset.default ?? ''));
 }
 function button(act, key, text, { level, form, labelledby, describedby, disabled = false, cls = 'btn btn-secondary btn-sm' } = {}) {
@@ -128,8 +129,16 @@ function setUndo(next) {
   setHidden(undoBtn, !undo, statusEl);
 }
 
+/** An open Clear confirmation describes one version of the list; once the list
+ *  changes (an edit here, or another tab's version loaded or replaced), close it
+ *  so a later Yes can never clear a version the visitor didn't see counted. */
+function dismissClear() {
+  if (!$('sp-clear-confirm').hidden) setHidden($('sp-clear-confirm'), true, $('sp-clear'));
+}
+
 /** Apply a new list: save it (unless another tab saved first), render, report. */
 function commit(next, { status = '', undo: offer = null, rerender = true } = {}) {
+  dismissClear();
   list = next;
   const result = store.save(list);
   if (rerender) render();
@@ -152,7 +161,7 @@ function hideConflict(target) {
 $('sp-conflict-load').addEventListener('click', () => {
   const loaded = store.reload();
   if (!loaded.list) { say('The other version couldn’t be read, so this tab’s list is kept.'); return; }
-  list = loaded.list;
+  list = loaded.list; dismissClear();
   importing = null; $('sp-preview').hidden = true;
   render(); setUndo(null); showStorage();
   hideConflict($('sp-list-title'));
@@ -171,7 +180,7 @@ $('sp-conflict-keep').addEventListener('click', () => {
     input.value = label; input.dataset.default = label; input.setAttribute('value', label);
     $(`sp-h-${levelId}`).textContent = label;
   }
-  const result = store.replace(list);
+  const result = store.replace(list); dismissClear();
   showStorage();
   hideConflict(statusEl);
   focusTarget(statusEl);
@@ -190,7 +199,7 @@ window.addEventListener('storage', (e) => {
   }
   const loaded = store.reload();
   if (!loaded.list) return;
-  list = loaded.list;
+  list = loaded.list; dismissClear();
   render(); setUndo(null); showStorage();
   say('Updated with changes made in another tab.');
 });
@@ -294,8 +303,8 @@ $('sp-clear').addEventListener('click', () => {
   focusTarget($('sp-clear-text'));
 });
 $('sp-clear-yes').addEventListener('click', () => {
+  setHidden($('sp-clear-confirm'), true, $('sp-level-name'));   // closed first, so focus goes to the add field
   commit(emptyList(), { status: 'List cleared.' });
-  setHidden($('sp-clear-confirm'), true, $('sp-level-name'));
   focusTarget($('sp-level-name'));
 });
 $('sp-clear-no').addEventListener('click', () => { setHidden($('sp-clear-confirm'), true, $('sp-clear')); focusTarget($('sp-clear')); });
