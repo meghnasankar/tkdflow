@@ -61,6 +61,18 @@
       ]
     },
     {
+      "id": "glossary",
+      "category": "Forms & curriculum",
+      "kind": "Study guide",
+      "title": "Taekwondo words explained",
+      "body": "Short, plain-English meanings for common Korean taekwondo terms, with the Kukkiwon source and lesson examples where the forms have them.",
+      "url": "glossary.html",
+      "tags": [
+        "Beginners",
+        "Terms"
+      ]
+    },
+    {
       "id": "school-forms",
       "category": "Forms & curriculum",
       "kind": "Personal organizer",

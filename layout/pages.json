@@ -58,6 +58,14 @@
       "description": "Choose two taekwondo forms and see their style, series, typical belt or level and lesson counts side by side, with links to each lesson and its printable text."
     },
     {
+      "file": "glossary.html",
+      "key": "forms",
+      "path": "/glossary.html",
+      "sitemap": true,
+      "title": "Taekwondo words explained — TKDflow",
+      "description": "Short, plain-English meanings for 12 Korean taekwondo terms from Kukkiwon’s terminology reference, such as Chagi, Makgi and Junbi-jase, with source pages and lesson examples where the forms have them."
+    },
+    {
       "file": "companions/taegeuk-1.html",
       "key": "forms",
       "path": "/companions/taegeuk-1.html",

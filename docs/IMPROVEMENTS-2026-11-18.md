@@ -34,13 +34,15 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 25 (first-tournament checklist recovers from failed saves): published.** PR 49 merged as `main` `44f573a`. Codex verified it in production: main CI passed, hosting is healthy, the 3 changed source files match, and security headers and private-path 404s pass.
 - **Batch 31 (Log out is reported only when it's proven): published.** PR 50 merged as `main` `d634ce8`. Codex verified it in production: main CI passed, the 5 changed source files match, security headers and private-path 404s pass, and the live signed-in header shows Log out with 0 errors.
 - **Batch 26 (Community Refresh recovery and an honest submissions limit): published.** PR 51 merged as `main` `00d1366`. Codex verified it in production: main CI passed, the 6 changed source files match, security headers and private-path 404s pass, and the public resources view has 0 errors.
-- **Batches 27 and 30 (unsent reply drafts, and a session recheck after Back/Forward):** on `fix/community-drafts-and-session-restore-2026-11-18`, cut from `00d1366`, released together so drafts ship with the restore protection. Passed Codex's browser review (fixture-simulated restores; native back/forward caching not yet verified); ready for root's release. Scope: items 48 and 53.
+- **Batches 27 and 30 (unsent reply drafts, and a session recheck after Back/Forward): published.** PR 52 merged as `main` `b4c97e2`. Codex verified it in production: main CI passed, the 3 source files checked match, and security headers and private-path 404s pass.
+- **Batches 28 and 29 (Taekwondo words explained, and one compact Forms tool row):** on `content/glossary-and-forms-tools-2026-11-18`, cut from `b4c97e2`. Codex's browser review passed on 18 November (results in each batch's Known limits); awaiting root's release. Scope: items 49 and 50.
+- **Closeout:** batches 32, 33A and 34 are prepared but not published, and 33B isn't implemented. See "Closeout — prepared, not published" at the end.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batches 27 and 30:** implemented locally and browser-reviewed by Codex, awaiting release.
+- **Batches 28 and 29:** implemented locally and browser-reviewed by Codex; awaiting root's release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -77,9 +79,11 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
-| 53 | A Community page restored by Back/Forward kept a signed-out member's private controls | A read-only audit with the real pinned SDK (2.119.0) and the real connection code, offline and synthetic, found the gap: a sign-out made in another tab while this page sat in the back/forward cache wasn't noticed on restore. `pageShown` rechecked only under-13 tabs, and the SDK's visibility recovery returns without any event when the stored session is gone. The composer, Your submissions and the moderation queue stayed. An account switch was noticed. This is synthetic SDK evidence only; it hasn't been shown in a real browser, which may evict the cached page instead. No production leak is claimed. | P2 privacy | Batch 30 |
+| 53 | A Community page restored by Back/Forward kept a signed-out member's private controls | A read-only audit with the real pinned SDK (2.119.0) and the real connection code, offline and synthetic, found the gap: a sign-out made in another tab while this page sat in the back/forward cache wasn't noticed on restore. `pageShown` rechecked only under-13 tabs, and the SDK's visibility recovery returns without any event when the stored session is gone. The composer, Your submissions and the moderation queue stayed. An account switch was noticed. This is synthetic SDK evidence only; it hasn't been shown in a real browser, which may evict the cached page instead. No production leak is claimed. | P2 privacy | Published (PR 52) |
 | 52 | Profile Log out could report a sign-out it hadn't proved | `js/pages/profile.js` passed `stillSignedIn: () => hasStoredSession()`, which returns false when storage can't be read, so `logout()` treated unreadable storage as a verified sign-out and the page redirected home. Its auth listener said "You have been signed out" on any null session, even with a stored copy still present. Password recovery used the same weak proof for "signed out". Codex reproduced both profile cases in native Chrome with the synthetic fixture (`/private/tmp/tkdflow-profile-logout-fixture.mjs`). No live account was affected. | P2 accuracy | Published (PR 50) |
-| 48 | An unsent Community reply was lost when switching topics | `forum.js` kept a reply draft only across re-renders of the same open topic; opening another topic, All topics or Back replaced the panel and its text. | P3 usability | Batch 27 |
+| 50 | The Forms library hero stacked three separate tool lines | Below the three primary buttons, `forms.html` had three `<p class="hero-companions">` lines (companions, school order, compare), each a full-width line, pushing the summary and style tabs down. Codex measured the hero before the change at 699/624/420/443 px high at 320/390/768/1280 px, with the style tabs at y=676/601/445/468 and no overflow (`/private/tmp/tkdflow-forms-tools-before.json`). | P3 layout | Batch 29 |
+| 49 | Beginners and parents meet Korean taekwondo terms without a plain-English key | Lesson poses use words such as Chagi, Makgi and Junbi; the site had no short explanation of them. | P3 learning | Batch 28 |
+| 48 | An unsent Community reply was lost when switching topics | `forum.js` kept a reply draft only across re-renders of the same open topic; opening another topic, All topics or Back replaced the panel and its text. | P3 usability | Published (PR 52) |
 | 47 | "Your submissions" quietly stopped at 30 topics and 30 replies | `reviewSubmissions` used `.limit(30)` on each list with no indication that more existed. | P3 honesty | Published (PR 51) |
 | 46 | Community Refresh couldn't recover from an unavailable account service | `getAccountService()` kept the first start-up result for the page, including `unavailable`, so **Refresh discussions** (and its "try refreshing" notice) could never succeed without reloading. | P3 reliability | Published (PR 51) |
 | 45 | The first-tournament checklist stopped saving after one failed write, and another tab could replace unsaved ticks | `js/lib/tournament-guide.js` `set()` made any write error a permanent `unavailable` state; the notice said ticks would be lost on leaving, although a reload shows the last saved ticks; `first-tournament.js` rebuilt the store on every `storage` event; and each save wrote the whole in-memory object, so a stale tab could erase another tab's other views. | P2 data safety | Published (PR 49) |
@@ -1966,3 +1970,126 @@ With the previous substring search, both tests fail. The full suite passes 673/6
   - 0 console errors.
 - **Not yet verified:** a real browser back/forward cache lifecycle. Whether native Chrome keeps or evicts the page with the real SDK is the pending native baseline (batch 33, part B).
 - **Reproduction script** (outside the repo): `/private/tmp/tkdflow-research/scripts/community-bfcache-repro.mjs`.
+
+## Batch 28 — Taekwondo words explained (item 49)
+
+### Source
+- **One publisher reference:** Kukkiwon, *Taekwondo Technical Terminology* (English edition, first published 31 December 2011; preface dated 1 March 2012), `https://research.kukkiwon.or.kr/homepage/boardMedia/11621` (96 PDF pages).
+  - Every term, spelling and Hangul comes from it: contents on PDF page 11, introduction on pages 4–5, and entries on pages 12, 15, 22, 23, 33, 40, 44, 61 and 76.
+  - Each entry links to its page with `#page=N`.
+- **Wording:** the explanations are short paraphrases, 84 words across the entries, under the 200-word budget with the reference line.
+- **Not reproduced:** no pages, images, audio or long quotations, and no tool credits.
+- **Hangul:** none is shown for Poomsae or Gyeorugi, because the source doesn't give either as a standalone entry.
+
+### Change
+- **New `/glossary.html`, "Taekwondo words explained"**, generated from the new `data/glossary.json` by the new `scripts/build-glossary.mjs`.
+  - **Generator:** it joins `npm run sync`, and `npm run check` adds its `--check` drift mode.
+  - **Without JavaScript:** the page is complete, with a stable anchor per term (`#ap-chagi`, `#junbi-jase` and so on).
+  - **Hero:** compact, like the comparison page.
+  - **Title (root review):** "Taekwondo words explained" rather than "Words in the lessons", because Gyeorugi and Gyeokpa have no form-lesson examples. The same name is used in the page title, the Start here link and the Community resource.
+  - **Intro:** the terms and spellings come from Kukkiwon's *Taekwondo Technical Terminology* (English edition, 2011); some, such as Gyeorugi and Gyeokpa, aren't part of the form lessons; other styles and schools may use different names. No equivalence is claimed.
+  - **Unchanged by the retitle:** the 12 terms, their wording and the scope. No new translations.
+- **12 entries:** Poomsae, Gyeorugi, Gyeokpa, Junbi-jase, Seogi, Makgi, Jireugi, Chigi, Chagi, Ap-chagi, Dollyeo-chagi and Yeop-chagi.
+  - **Chigi:** "Strikes, including knife-hand and back-fist techniques" (PDF page 23).
+- **Examples:** only where they're verified.
+  - **Finder links:** block, punch, kick, front kick, roundhouse kick.
+  - **Direct poses:** Junbi-jase → Taegeuk Il Jang pose 1 "Junbi — Ready stance"; Chigi → Taegeuk Sam Jang pose 10 "Right knifehand strike"; Yeop-chagi → Taegeuk Sa Jang pose 9 "Left side kick".
+  - **Library:** Poomsae → the forms library.
+  - **None:** Gyeorugi, Gyeokpa and Seogi (the lessons have none, and stances aren't indexed).
+- **Search** (`js/pages/glossary.js`, shown only with JavaScript): Korean, romanized or English words, with every word required and any order, using the catalogue `normalize()`. `?q=` goes in the address, plus a summary, an empty state with "Show all words", and focus back in the field.
+- **Where it's linked:** a note in Start here's "Reading a lesson" section and a Community resource (kind "Study guide"). The header is unchanged.
+
+### Tests (`tests/glossary.test.mjs`, 6)
+- **Source fidelity:** spellings and a Hangul allowlist exactly as the source prints them, PDF pages within 1–96, labelled by vintage (no "latest"), and the publisher's host.
+- **Budget:** the word budget (at most 200).
+- **Examples:**
+  - every link resolves;
+  - for each finder link, every pose it shows has the words in its group or pose name;
+  - each direct pose's label matches the real companion pose name;
+  - no examples for terms without one.
+- **Generated page:** `glossary.html` equals the generator's output, every anchor and page link is present, and the search appears only with JavaScript.
+- **Real page:** search by "앞차기", "front kick", "ap chagi" and "KICK FRONT"; "kick" gives 4; `?q=`; the empty state and clear with focus; a Korean address query.
+- **Discoverability:** Start here and Community link to the page, and the header doesn't.
+- **Five spot mutants caught:**
+  - invented Hangul;
+  - the wrong example pose;
+  - an empty finder example;
+  - a hand-edited page (drift);
+  - any-word search.
+- **Found while building:** a "block" finder link also shows a pose named "knifehand high block + knifehand strike". The check therefore looks at each pose's own name as well as its group.
+- **Full suite on this branch (with batch 29):** 779/779 (`npm run check`).
+
+### Browser review (Codex, 18 November)
+- **Tests:** `tests/glossary.test.mjs` passed 6/6 when Codex ran it independently.
+- **Search, in the in-app browser:**
+  - "kick front" gives 1 result, Ap-chagi;
+  - "막기" gives 1, Makgi;
+  - "junbi jase" gives 1, Junbi-jase;
+  - a nonsense query gives 0.
+  - **Show all words** restores all 12 and puts focus back in the search field (`gl-q`). The query survives a reload.
+- **Example link:** Chigi's Taegeuk Sam Jang pose 10 example loads the actual "Right knifehand strike".
+- **Layout:** no overflow at 320, 390, 768 and 1280 px, and the search field is 44 px high.
+- **Source links:** each p. N link's href was checked. The source PDF and its page numbers were researched when the batch was built.
+- **Evidence:** root's `fivehour/batch-28-29` artifacts (JSON and screenshots).
+
+### Known limits
+- **Not retested:** that a browser's PDF viewer opens each p. N link at its anchor.
+- **Not checked in a browser:**
+  - reading without JavaScript (covered by the generated-page test only);
+  - the other example links (Junbi-jase, Yeop-chagi and the finder links), which the tests check against the real pose names.
+- **Not tested:** a physical phone, Safari and a screen reader.
+
+## Batch 29 — one compact tool row in the Forms library hero (item 50)
+
+### Change (`forms.html`, `css/forms.css`)
+- **One list replaces the three paragraphs**, directly after the primary buttons: `<ul class="hero-tools" aria-label="More forms tools">` with "Text and print companions", "Your school’s order of forms" and "Compare two forms", in the same order as before.
+  - No `<nav>`, so no extra landmark.
+  - No glossary link yet.
+- **CSS:**
+  - one wrapping flex row (gaps of 4 × 20 px), with no bullets;
+  - the existing white, bold, underlined link style at .95 rem;
+  - each link a 24 px minimum target.
+  - The two `hero-companions` rules are removed; nothing else used them.
+- **Unchanged:** the three primary buttons ("My saved forms & progress", "New here? Start here", "Find a technique"), the summary, the style tabs, the header and every destination page.
+
+### Tests
+- **Pins updated:**
+  - `tests/companions.test.mjs`: the library links `/companions.html` as "Text and print companions";
+  - `tests/compare.test.mjs`: it links `/compare.html` as "Compare two forms".
+  - `tests/school-planner.test.mjs` still finds `/school-forms.html` unchanged.
+- **No new tests (root review):** a layout-only, reversible change; Codex's responsive and keyboard review is the meaningful check.
+- **Full suite on this branch (with batch 28):** 779/779 (`npm run check`), and `git diff --check` is clean.
+
+### Browser review (Codex, native Chrome, 18 November)
+- **Layout:**
+  - no overflow at 320, 390, 768 and 1280 px;
+  - all three tool links are 28.32 px high;
+  - the hero is about 59 px shorter at phone widths, and about 70 px shorter at desktop width, than Codex's earlier native baseline.
+- **Keyboard:** Tab goes through the primary buttons, then the three tool links, then All styles. Each has a visible focus state with a solid outline.
+- **Accessibility name:** the list is named "More forms tools".
+- **Console:** 0 errors.
+- **Evidence:** root's `fivehour/batch-28-29` artifacts (JSON and screenshots).
+
+### Known limits
+- **Not tested:** a physical phone, Safari and a screen reader.
+
+## Closeout — prepared, not published (18 November)
+The work below stays in the backlog. None of it is on this branch, and none of it is published. The patch files are outside the repository, in `/private/tmp`.
+- **Batch 32, item 56 (operational docs current state):**
+  - `/private/tmp/tkdflow-ops-docs-current-state.patch`, docs-only plus one runbook consistency test;
+  - 779/779 on `b4c97e2` plus batches 28 and 29;
+  - to apply after this branch is committed.
+- **Batch 33A, item 57 (working retries on Lesson help, the lesson panel and saved learning):**
+  - `/private/tmp/tkdflow-private-pages-retry.patch`;
+  - 762/762 alone, with 19 spot mutants caught;
+  - not tested in a browser.
+- **Batch 34, item 55 (CI actions pinned to release SHAs):**
+  - `/private/tmp/tkdflow-ci-actions-pin.patch`;
+  - 750/750 alone;
+  - the real check is a GitHub Actions run.
+- **Together:** 32, 33A and 34 on `b4c97e2` plus 28 and 29 passed 787/787 in scratch, and `git diff --check` was clean.
+- **Batch 33B (Back/Forward restore checks on the other private pages): not implemented.**
+  - **Codex's clean native Chrome baseline:** after a same-user Back, Chrome restored the cached profile document. When a sign-out happened while the profile page was cached, Chrome evicted it (`notRestoredReasons`: `broadcastchannel-message`). The fresh load went to sign-in with no private fields shown.
+  - **Result:** no stale profile was reproduced.
+  - **Not tested:** Safari, which could use `/private/tmp/tkdflow-bfcache-native-baseline-fixture.mjs` later.
+- **Known test flake, not fixed:** batch 21's header Log out test "a sign-out already sent before Back/Forward…" failed once under load.

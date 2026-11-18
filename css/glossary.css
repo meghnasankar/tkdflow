@@ -1,0 +1,17 @@
+/* Taekwondo words explained. */
+.page-hero.gl-hero { padding: 28px 0 24px; }
+.gl-hero h1 { font-size: clamp(1.6rem, 3.2vw, 2.2rem); }
+.gl-hero p { margin-top: 6px; font-size: .98rem; }
+.gl-main { padding-top: 20px; padding-bottom: 48px; }
+.gl-intro { color: var(--gray-600); margin-bottom: 12px; }
+.gl-search .search-bar, #gl-q { min-height: 44px; }
+.gl-summary { margin: 10px 0; font-weight: 600; color: var(--navy); }
+.gl-list { display: grid; gap: 12px; }
+.gl-entry { padding: 14px 16px; border: 1px solid var(--gray-200); border-radius: var(--radius); background: var(--white); overflow-wrap: anywhere; }
+.gl-entry h2 { font-size: 1.15rem; margin: 0; }
+.gl-ko { font-weight: 600; color: var(--gray-600); margin-left: 4px; }
+.gl-en { margin: 2px 0 0; font-weight: 600; color: var(--navy); }
+.gl-plain { margin: 4px 0 0; }
+.gl-meta { margin: 8px 0 0; font-size: .88rem; color: var(--gray-600); }
+.gl-meta a, .gl-source a { color: var(--red-dark); text-decoration: underline; }
+.gl-source { margin-top: 20px; font-size: .88rem; color: var(--gray-600); }
