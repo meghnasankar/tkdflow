@@ -39,12 +39,12 @@ const restored=persisted=>window.dispatchEvent(Object.assign(new Event('pageshow
 
 test('signed-out visitors see Log in and Join free on first render',()=>{
  assert.ok(ACCOUNTS.enabled&&ACCOUNTS.signupEnabled&&KEY,'shipped config has accounts and signup on');
- assert.deepEqual(links(),['Log in→auth.html','Join free→auth.html?mode=register']);
+ assert.deepEqual(links(),['Log in→/auth.html','Join free→/auth.html?mode=register']);
 });
 
 test('signing in from another tab switches the header to My profile',()=>{
  otherTab(KEY,'{"access_token":"first"}');
- assert.deepEqual(links(),['My profile→profile.html']);
+ assert.deepEqual(links(),['My profile→/profile.html']);
 });
 
 test('a token refresh in another tab keeps the same, still-focused link',()=>{
@@ -58,7 +58,7 @@ test('a token refresh in another tab keeps the same, still-focused link',()=>{
 test('a real sign-out in another tab replaces My profile with Log in and Join free',()=>{
  const before=slot.children[0];
  otherTab(KEY,null);
- assert.deepEqual(links(),['Log in→auth.html','Join free→auth.html?mode=register']);
+ assert.deepEqual(links(),['Log in→/auth.html','Join free→/auth.html?mode=register']);
  assert.notEqual(slot.children[0],before);
 });
 
@@ -66,28 +66,28 @@ test('unrelated storage changes are ignored; a whole-storage change re-reads the
  const emit=key=>window.dispatchEvent(Object.assign(new Event('storage'),{key}));
  store.set(KEY,'{"access_token":"x"}');           // session present, but no session-key event yet
  emit('tkdflow.learning.browser.v1');
- assert.deepEqual(links(),['Log in→auth.html','Join free→auth.html?mode=register'],'another key does not re-read the session');
+ assert.deepEqual(links(),['Log in→/auth.html','Join free→/auth.html?mode=register'],'another key does not re-read the session');
  emit(null);                                     // e.g. storage cleared or restored elsewhere: key is null
- assert.deepEqual(links(),['My profile→profile.html']);
+ assert.deepEqual(links(),['My profile→/profile.html']);
  otherTab(null);                                 // localStorage.clear() in another tab
- assert.deepEqual(links(),['Log in→auth.html','Join free→auth.html?mode=register']);
+ assert.deepEqual(links(),['Log in→/auth.html','Join free→/auth.html?mode=register']);
 });
 
 test('a page restored by Back/Forward after a sign-in or sign-out shows the current state',()=>{
  store.set(KEY,'{"access_token":"z"}');
  restored(false);
- assert.deepEqual(links(),['Log in→auth.html','Join free→auth.html?mode=register'],'a normal load already rendered; nothing to redo');
+ assert.deepEqual(links(),['Log in→/auth.html','Join free→/auth.html?mode=register'],'a normal load already rendered; nothing to redo');
  restored(true);
- assert.deepEqual(links(),['My profile→profile.html']);
+ assert.deepEqual(links(),['My profile→/profile.html']);
  store.delete(KEY);restored(true);
- assert.deepEqual(links(),['Log in→auth.html','Join free→auth.html?mode=register']);
+ assert.deepEqual(links(),['Log in→/auth.html','Join free→/auth.html?mode=register']);
 });
 
 test('signup switched off or accounts disabled change the visible links',()=>{
  assert.equal(renderAccountNav({...ACCOUNTS,signupEnabled:false}),true);
- assert.deepEqual(links(),['Log in→auth.html']);
+ assert.deepEqual(links(),['Log in→/auth.html']);
  assert.equal(renderAccountNav({...ACCOUNTS,enabled:false}),true);
- assert.deepEqual(links(),['Log in→auth.html']);
+ assert.deepEqual(links(),['Log in→/auth.html']);
  assert.equal(renderAccountNav({...ACCOUNTS,enabled:false}),false);
  document.body.dataset.page='auth';
  assert.equal(renderAccountNav({...ACCOUNTS,enabled:false}),true,'the current-page marker is part of what is shown');
@@ -107,4 +107,22 @@ test('narrow desktop (769–900px) keeps nav and account labels on one line with
  assert.doesNotMatch(block,/grid|\.container|nav-toggle|\.nav-links \{|display: flex/,'only header spacing changes; grids and the mobile menu are untouched');
  const mobile=css.slice(css.indexOf('@media (max-width: 768px) {'));
  assert.match(mobile,/\.nav-toggle \{ display: inline-flex;/,'the mobile menu still takes over at 768px and below');
+});
+
+test('account links resolve to the site root from nested pages such as /companions/…, in every mode',()=>{
+ const nested='https://tkdflow.com/companions/taegeuk-1.html';
+ const resolved=()=>slot.children.map(a=>{const u=new URL(a.getAttribute('href'),nested);return u.pathname+u.search;});
+ const modes=[
+  ['accounts off',{...ACCOUNTS,enabled:false},null,['/auth.html']],
+  ['guest, signup on',ACCOUNTS,null,['/auth.html','/auth.html?mode=register']],
+  ['guest, signup off',{...ACCOUNTS,signupEnabled:false},null,['/auth.html']],
+  ['member',ACCOUNTS,'{"access_token":"nested"}',['/profile.html']],
+ ];
+ for(const [name,cfg,session,want] of modes){
+  if(session)store.set(KEY,session);else store.delete(KEY);
+  renderAccountNav(cfg);
+  assert.deepEqual(resolved(),want,name);
+  for(const a of slot.children)assert.match(a.getAttribute('href'),/^\//,`${name}: root-absolute`);
+ }
+ store.delete(KEY);renderAccountNav();
 });

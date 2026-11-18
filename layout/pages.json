@@ -34,6 +34,198 @@
       "description": "Search the blocks, strikes and kicks named in every TKDflow form lesson and open each lesson paused on the exact study pose."
     },
     {
+      "file": "companions.html",
+      "key": "forms",
+      "path": "/companions.html",
+      "sitemap": true,
+      "title": "Read and print companions for every lesson — TKDflow",
+      "description": "Every TKDflow form lesson as plain text to read or print: study poses, count labels, turns, kihap and spoken instructions, each linked to the paused lesson."
+    },
+    {
+      "file": "companions/taegeuk-1.html",
+      "key": "forms",
+      "path": "/companions/taegeuk-1.html",
+      "sitemap": true,
+      "title": "Taegeuk Il Jang — read and print companion — TKDflow",
+      "description": "Taegeuk Il Jang (WT/Kukkiwon) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/taegeuk-2.html",
+      "key": "forms",
+      "path": "/companions/taegeuk-2.html",
+      "sitemap": true,
+      "title": "Taegeuk Yi Jang — read and print companion — TKDflow",
+      "description": "Taegeuk Yi Jang (WT/Kukkiwon) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/taegeuk-3.html",
+      "key": "forms",
+      "path": "/companions/taegeuk-3.html",
+      "sitemap": true,
+      "title": "Taegeuk Sam Jang — read and print companion — TKDflow",
+      "description": "Taegeuk Sam Jang (WT/Kukkiwon) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/taegeuk-4.html",
+      "key": "forms",
+      "path": "/companions/taegeuk-4.html",
+      "sitemap": true,
+      "title": "Taegeuk Sa Jang — read and print companion — TKDflow",
+      "description": "Taegeuk Sa Jang (WT/Kukkiwon) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/taegeuk-5.html",
+      "key": "forms",
+      "path": "/companions/taegeuk-5.html",
+      "sitemap": true,
+      "title": "Taegeuk Oh Jang — read and print companion — TKDflow",
+      "description": "Taegeuk Oh Jang (WT/Kukkiwon) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/taegeuk-6.html",
+      "key": "forms",
+      "path": "/companions/taegeuk-6.html",
+      "sitemap": true,
+      "title": "Taegeuk Yuk Jang — read and print companion — TKDflow",
+      "description": "Taegeuk Yuk Jang (WT/Kukkiwon) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/taegeuk-7.html",
+      "key": "forms",
+      "path": "/companions/taegeuk-7.html",
+      "sitemap": true,
+      "title": "Taegeuk Chil Jang — read and print companion — TKDflow",
+      "description": "Taegeuk Chil Jang (WT/Kukkiwon) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/taegeuk-8.html",
+      "key": "forms",
+      "path": "/companions/taegeuk-8.html",
+      "sitemap": true,
+      "title": "Taegeuk Pal Jang — read and print companion — TKDflow",
+      "description": "Taegeuk Pal Jang (WT/Kukkiwon) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/koryo.html",
+      "key": "forms",
+      "path": "/companions/koryo.html",
+      "sitemap": true,
+      "title": "Koryo — read and print companion — TKDflow",
+      "description": "Koryo (WT/Kukkiwon) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/keumgang.html",
+      "key": "forms",
+      "path": "/companions/keumgang.html",
+      "sitemap": true,
+      "title": "Keumgang — read and print companion — TKDflow",
+      "description": "Keumgang (WT/Kukkiwon) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/taebaek.html",
+      "key": "forms",
+      "path": "/companions/taebaek.html",
+      "sitemap": true,
+      "title": "Taebaek — read and print companion — TKDflow",
+      "description": "Taebaek (WT/Kukkiwon) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/pyongwon.html",
+      "key": "forms",
+      "path": "/companions/pyongwon.html",
+      "sitemap": true,
+      "title": "Pyongwon — read and print companion — TKDflow",
+      "description": "Pyongwon (WT/Kukkiwon) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/sipjin.html",
+      "key": "forms",
+      "path": "/companions/sipjin.html",
+      "sitemap": true,
+      "title": "Sipjin — read and print companion — TKDflow",
+      "description": "Sipjin (WT/Kukkiwon) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/jitae.html",
+      "key": "forms",
+      "path": "/companions/jitae.html",
+      "sitemap": true,
+      "title": "Jitae — read and print companion — TKDflow",
+      "description": "Jitae (WT/Kukkiwon) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/chon-ji.html",
+      "key": "forms",
+      "path": "/companions/chon-ji.html",
+      "sitemap": true,
+      "title": "Chon-Ji — read and print companion — TKDflow",
+      "description": "Chon-Ji (ITF) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/dan-gun.html",
+      "key": "forms",
+      "path": "/companions/dan-gun.html",
+      "sitemap": true,
+      "title": "Dan-Gun — read and print companion — TKDflow",
+      "description": "Dan-Gun (ITF) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/do-san.html",
+      "key": "forms",
+      "path": "/companions/do-san.html",
+      "sitemap": true,
+      "title": "Do-San — read and print companion — TKDflow",
+      "description": "Do-San (ITF) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/won-hyo.html",
+      "key": "forms",
+      "path": "/companions/won-hyo.html",
+      "sitemap": true,
+      "title": "Won-Hyo — read and print companion — TKDflow",
+      "description": "Won-Hyo (ITF) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/yul-gok.html",
+      "key": "forms",
+      "path": "/companions/yul-gok.html",
+      "sitemap": true,
+      "title": "Yul-Gok — read and print companion — TKDflow",
+      "description": "Yul-Gok (ITF) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/joong-gun.html",
+      "key": "forms",
+      "path": "/companions/joong-gun.html",
+      "sitemap": true,
+      "title": "Joong-Gun — read and print companion — TKDflow",
+      "description": "Joong-Gun (ITF) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/songahm-1.html",
+      "key": "forms",
+      "path": "/companions/songahm-1.html",
+      "sitemap": true,
+      "title": "Songahm 1 — read and print companion — TKDflow",
+      "description": "Songahm 1 (ATA Songahm) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/songahm-2.html",
+      "key": "forms",
+      "path": "/companions/songahm-2.html",
+      "sitemap": true,
+      "title": "Songahm 2 — read and print companion — TKDflow",
+      "description": "Songahm 2 (ATA Songahm) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
+      "file": "companions/songahm-3.html",
+      "key": "forms",
+      "path": "/companions/songahm-3.html",
+      "sitemap": true,
+      "title": "Songahm 3 — read and print companion — TKDflow",
+      "description": "Songahm 3 (ATA Songahm) as plain text to read or print: every study pose with its count label, turn, kihap and spoken instruction, linked to the paused lesson."
+    },
+    {
       "file": "taegeuk-1.html",
       "key": "forms",
       "path": "/taegeuk-1.html",

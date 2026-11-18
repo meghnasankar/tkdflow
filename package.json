@@ -5,10 +5,10 @@
   "description": "TKDflow static site — local checks and preview server",
   "scripts": {
     "serve": "node scripts/serve.mjs",
-    "sync": "node scripts/sync-layout.mjs && node scripts/build-technique-index.mjs",
+    "sync": "node scripts/build-companions.mjs && node scripts/sync-layout.mjs && node scripts/build-technique-index.mjs",
     "test": "node --test tests/*.test.mjs",
     "test:db": "node --test tests/db.test.mjs",
-    "check": "node scripts/sync-layout.mjs --check && node scripts/build-technique-index.mjs --check && node --test tests/*.test.mjs"
+    "check": "node scripts/sync-layout.mjs --check && node scripts/build-technique-index.mjs --check && node scripts/build-companions.mjs --check && node --test tests/*.test.mjs"
   },
   "engines": {
     "node": ">=20"

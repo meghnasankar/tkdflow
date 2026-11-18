@@ -10,13 +10,14 @@ This file tracks the extended improvement session that started from `main` at `d
   - an existing signed-in teen moderator still has moderation but no composer;
   - no errors, and all 527 checks passed.
 - **Batch 4 (keyboard and focus continuity): published.** PR 27 merged as `main` `d0fc54e`. Codex verified it live: 6/6 files match, headers and development 404s are correct, and Show more focuses the 25th event.
-- **Follow-up (Community initial focus):** on `fix/community-initial-focus-2026-11-18`, cut from `d0fc54e`. Uncommitted, awaiting Codex review. See item 28.
+- **Follow-up (Community initial focus): published.** PR 28 merged as `main` `9f5d5fd`, including the test-only CI timing fix `8835291`. Codex verified it live: source and header checks pass, the public heading keeps focus, and a teen moderator still has moderation but no public composer.
+- **Batch 5 (read and print companions):** on `improve/printable-companions-2026-11-18`, cut from `9f5d5fd`. Uncommitted, awaiting Codex review. Scope: items 27, 7 and 8.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Follow-up:** implemented locally, uncommitted, awaiting Codex review.
+- **Batch 5:** implemented locally, uncommitted, awaiting Codex review.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -31,8 +32,8 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 4 | No beginner orientation | `main` has no Start here page. Style differences, pose vs count and performer's left/right were explained only inside individual lessons. | P1 content | Published (PR 24) |
 | 5 | Header labels wrap on narrow desktops (769–900 px) | Codex browser measurement, signed out at 769 px: no horizontal overflow, and the header fits 69 px high. But "Forms Library" wraps (62 px link height), and Log in / Join free become two-line buttons 52.6 px tall. Normal at 900 px. Fix: for 769–900 px only, hide the decorative Korean logotype, trim nav and account-button padding, and keep labels on one line. Mobile menu and other breakpoints unchanged. "Start here" stays out of the top nav. | P2 layout | Published (PR 24); no wrapping at 769–900 px |
 | 6 | Technique and term finder across lesson poses | Library search works at form level only; "low block" correctly returns 5 forms. The 22 data-driven lessons hold 89 structured action types (`data/lessons/*.json` `sequence[].actions[].type`) plus stances and turns, and lessons accept `?pose=N`. A static index could link straight to every pose using a technique, with style filters. Enhancement, not a defect. | P2 feature | Published (PR 25, `/techniques.html`) |
-| 7 | Lessons do not link to the shared explanation of poses and directions | Each lesson says "Views are fixed to the starting stance…" but offers no further help. A small "How to read this lesson" link to `/start-here.html#sh-reading` would serve all 23 lessons. | P2 content | Open |
-| 8 | The lesson keyboard hint says "Home End first/last" | `taegeuk-1.html` `#player-keys` does not say whether these mean pose or time. Check `lesson-player.js` behaviour, then make the hint specific. | P3 accessibility | Open |
+| 7 | Lessons do not link to the shared explanation of poses and directions | Each lesson says "Views are fixed to the starting stance…" but offers no further help. A small "How to read this lesson" link to `/start-here.html#sh-reading` would serve all 23 lessons. | P2 content | Batch 5 |
+| 8 | The lesson keyboard hint says "Home End first/last" | `taegeuk-1.html` `#player-keys` does not say whether these mean pose or time. Check `lesson-player.js` behaviour, then make the hint specific. | P3 accessibility | Batch 5 (confirmed: Home and End select the first and last pose) |
 | 9 | Library belt filter vs school differences | Belt facets are colour buckets across styles. The hub now says labels are typical, not rules; the library has no such note. Consider one line beside the belt facet. | P3 content | Open |
 | 10 | Lesson content items marked unresolved | `unresolved` notes with `reviewStatus: pending` in do-san, joong-gun, koryo, pyongwon, sipjin, songahm-3, taebaek and yul-gok. Motion or sequence changes need primary-reference confidence and must keep the approved avatar look. | P2 content accuracy | Open; needs owner/Meghna for any instructor input |
 | 11 | Search ranking for partial words | Partial multi-word searches ("Il Jang") still match broadly and are sorted by curriculum, not relevance. Acceptable now that exact names win. | P3 | Open |
@@ -51,8 +52,8 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 24 | Signed-out eligible visitors start the account service to read Community | Needed today to notice a sign-in. A lazier start (read publicly, start the client on a session-key `storage` event) changes sign-in timing and needs its own review. | P3 | Open |
 | 25 | Events: Show more and background renders lose keyboard focus | Reproduced live by Codex after batch 2: with 24 of 164 events shown, Show more rendered 48 cards but focus became `<body>`, and the next Tab reached the first existing card, not the first new one. In code, `render()` rebuilt every card and every select's options on filter changes, the one-minute ticker, tab visibility and Back/Forward. A focused card control or an open select could be replaced by the timer; that case was not reproduced live. | P2 accessibility | Published (PR 27) |
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
-| 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Open (next content batch) |
-| 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Follow-up branch |
+| 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Batch 5 |
+| 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
 
 ## Batch 1 — learner foundations (published, PR 24)
 
@@ -386,3 +387,58 @@ Mutation checks: removing the restore fails 3 tests, and carrying private keys f
 
   Both tests fail with the old immediate-only `settle()`.
 - **Validation:** two full `npm run check` runs passed 555/555. The page harnesses also pass with timers slowed to 5 ms and 15 ms, and `git diff --check` is clean.
+
+## Batch 5 — read and print companions (items 27, 7, 8)
+
+### Pages
+- `/companions.html` (index) and `/companions/<lesson>.html` (23 pages). They are static, need no JavaScript and use the shared layout. They're listed in `layout/pages.json` (key `forms`) and the sitemap.
+- **Each page:**
+  - the form name and its Korean name;
+  - "<style> · N study poses · M movements | reference counts in the reference", worded exactly as the lesson page words its count;
+  - links to the full lesson, Lesson answers and All companions;
+  - one short note that pose numbers aren't counts and that left and right are the performer's own;
+  - an ordered list of every study pose (endpoints included): a link to the lesson paused on that pose (`?pose=N#player`, 1-based), the lesson's pose name (plus Korean for Taegeuk Il Jang only), the lesson's count label (endpoints: "Ready position" / "Return"), the narration turn in the lesson counter's wording, Kihap, and the spoken instruction verbatim;
+  - Sources: the lesson's reference edition and links exactly as stored (PDF page ranges where recorded; Taegeuk Il Jang uses its page's reference link), plus the lesson's existing voice credit.
+- No source document's content is copied. Per the reference audit, the stored titles and editions are kept and the Southbury "private use" PDFs are linked only.
+
+### Generator and checks
+- `scripts/build-companions.mjs` reads the real sources: Taegeuk Il Jang's `POSES` or `createFormMotion()`, `officialLabel()`, the narration cues, the lesson data and the lesson pages.
+- It writes only the `<!-- companion -->` / `<!-- companion-index -->` regions and creates missing pages with layout markers.
+- `npm run sync` now runs companions, then layout, then technique index. `npm run check` adds `build-companions.mjs --check`.
+
+### Print and responsiveness
+- `css/companion.css`: no fixed widths and `overflow-wrap:anywhere`.
+- In print: header, footer, skip link, actions and the Print button are hidden; each pose has `break-inside: avoid`; headings don't break after; the lesson address prints once; text is black at 11pt with 14 mm margins.
+- `js/pages/companion.js` unhides the optional Print button and calls `print()` only on click. Without JavaScript, the browser's own Print works the same.
+
+### Links (items 7 and 8 included)
+- **Every lesson:** "Read or print this lesson as text" (its companion) and "How to read poses, counts and directions" (`/start-here.html#sh-reading`).
+- **Keyboard hint:** now "Home End first/last pose". `playerKeyAction` maps Home and End to `first()` and `last()`, which select pose 1 and the last pose. The hub's Lesson tools wording was updated to match.
+- **Elsewhere:** the library hero, a hub "Read and print" entry, Community learning resources, the footer (Learn) and the sitemap.
+
+### Tests (`tests/companions.test.mjs`, 9)
+- **Generator drift**, and one page per lesson with no strays.
+- **All 748 rows** against independently computed lesson data: the link, and that `parsePoseParam` accepts it; the name; the count label; kihap; the turn; the spoken text verbatim.
+- **Korean** only where the lesson has it.
+- **The heading count** worded as each lesson page.
+- **Sources and editions** equal the lesson data or page.
+- **Index order and counts**, plus manifest and sitemap.
+- **No-JS and safety:** no inline code or styles; the Print button is hidden and prints only on click (fake window); compact size.
+- **Print CSS rules.**
+- **No review or verification claims.**
+- **Lesson, hub, library, footer and community links**, and the keyboard hint against the real key mapping.
+
+Mutation checks (pages regenerated with each defect; 25 s cap) are all caught: an off-by-one pose link, a wrong count label, a dropped Return pose, missing Taegeuk Il Jang Korean, swapped turn arrows, non-verbatim instructions, auto-print on load, and navigation visible in print.
+
+### Limits
+- I used no browser. Print layout, page breaks and the Korean font in print need Codex QA.
+- No lesson data, sources, narration, motion, avatar or audio changed.
+- The Sipjin, Taebaek and other source questions stay in `/private/tmp/tkdflow-source-accuracy-plan.md` for later visual review.
+
+### Review fixes (batch 5)
+- **Header account links** (`js/site.js`) are now root-absolute (`/auth.html`, `/auth.html?mode=register`, `/profile.html`) in every mode. On nested pages such as `/companions/…` they had resolved to `/companions/auth.html`.
+  - A site-nav test resolves every mode against `/companions/taegeuk-1.html`.
+  - Skipping the redraw when nothing changed, the cross-tab and back/forward refresh, and the no-account-library behaviour are unchanged.
+- **Companion pose and index lists** carry `role="list"`, because `list-style: none` can drop list semantics in some browser and screen-reader combinations. Numbering stays in the visible "Pose N" text.
+- **Print:** Kihap prints black.
+- **Mutants:** relative links (fail 5–6), no list role (fail 1) and red Kihap in print (fail 1) are all caught.

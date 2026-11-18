@@ -37,6 +37,18 @@
       ]
     },
     {
+      "id": "companions",
+      "category": "Forms & curriculum",
+      "kind": "Lesson companion",
+      "title": "Read or print any lesson as text",
+      "body": "Every form lesson as plain text: study poses with their count labels, turns, kihap and spoken instructions, each linked to the paused lesson.",
+      "url": "companions.html",
+      "tags": [
+        "All lessons",
+        "Print"
+      ]
+    },
+    {
       "id": "events",
       "category": "Competitions",
       "kind": "Events calendar",
