@@ -11,7 +11,8 @@ import {installDom,settle} from './helpers/mini-dom.mjs';
 const REAL=new URL('../js/lib/account-service.js',import.meta.url).href+'?real';
 const FAKE=`export * from ${JSON.stringify(REAL)};
 export function getAccountService(){const t=globalThis.__logoutTest;t.serviceCalls++;return t.service();}
-export const initAccountService=getAccountService;`;
+export const initAccountService=getAccountService;
+export const retryAccountService=getAccountService;`;
 register('data:text/javascript,'+encodeURIComponent(`export async function resolve(s,c,next){
  if(/(^|\\/)account-service\\.js$/.test(s)&&!s.includes('?real'))return {url:'data:text/javascript,'+encodeURIComponent(${JSON.stringify(FAKE)}),shortCircuit:true};
  return next(s,c);}`));

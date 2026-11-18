@@ -5,11 +5,11 @@
 import {loadJSON} from '../lib/data.js';
 import {validateForum} from '../lib/validators.js';
 import {h,replaceChildren,safeHref} from '../lib/dom.js';
-import {getAccountService} from '../lib/account-service.js';
+import {getAccountService,retryAccountService} from '../lib/account-service.js';
 import {currentSession} from '../lib/account-ops.js';
 import {SessionGuard} from '../lib/auth-flows.js';
 import {createEligibilityStore} from '../lib/age-gate.js';
-import {appendPage,listTopics,listReplies,discussionAccess,discussionProblem,submitTopic,submitReply,reportContent,moderationQueue,moderateContent,reviewSubmissions,discussionUrl,publishedTopic,copyDiscussionLink,resolveReport,reportDecisionMessage} from '../lib/discussions.js';
+import {SUBMISSIONS_SHOWN,appendPage,listTopics,listReplies,discussionAccess,discussionProblem,submitTopic,submitReply,reportContent,moderationQueue,moderateContent,reviewSubmissions,discussionUrl,publishedTopic,copyDiscussionLink,resolveReport,reportDecisionMessage} from '../lib/discussions.js';
 import {publicTopics,publicTopic,publicReplies,canonicalUuid} from '../lib/public-discussions.js';
 import {createCommunityConnection,communityControls,NOTICES} from '../lib/community-connection.js';
 import {keepFocus,findKey,focusTarget,captureFocus,restoreFocus} from '../lib/focus-keep.js';
@@ -147,7 +147,10 @@ async function loadSubmissions(){
  button.disabled=false;
  const holder=$('my-submissions-list');
  if(result.error){replaceChildren(holder,h('p',{class:'status-panel'},'Your submissions could not be loaded. Use Refresh your submissions to try again.'));return;}
- replaceChildren(holder,...(result.data.length?result.data.map(item=>h('article',{class:'discussion-card'},h('div',{class:'example-meta'},h('span',{class:'badge badge-muted'},item.kind==='topic'?'Discussion':'Reply'),h('span',{class:'badge badge-navy'},item.status==='pending'?'Awaiting review':'Not published')),h('h3',{},item.title||'Your reply'),...paragraph(item.body),item.kind==='reply'&&canonicalUuid(item.topic_id)?h('a',{href:discussionUrl({topic:canonicalUuid(item.topic_id)}),class:'text-link'},'Open the discussion this reply belongs to'):null)):[h('p',{class:'status-panel'},'You have no unpublished submissions. After you submit a topic or reply, its review status will appear here.')]));
+ // Say which list was cut to its most recent 30, and only that one.
+ const cut=[result.moreTopics?'topics':null,result.moreReplies?'replies':null].filter(Boolean);
+ const truncated=cut.length?h('p',{class:'submissions-limit'},`Showing your ${SUBMISSIONS_SHOWN} most recent unpublished ${cut.join(` and your ${SUBMISSIONS_SHOWN} most recent unpublished `)}.`):null;
+ replaceChildren(holder,truncated,...(result.data.length?result.data.map(item=>h('article',{class:'discussion-card'},h('div',{class:'example-meta'},h('span',{class:'badge badge-muted'},item.kind==='topic'?'Discussion':'Reply'),h('span',{class:'badge badge-navy'},item.status==='pending'?'Awaiting review':'Not published')),h('h3',{},item.title||'Your reply'),...paragraph(item.body),item.kind==='reply'&&canonicalUuid(item.topic_id)?h('a',{href:discussionUrl({topic:canonicalUuid(item.topic_id)}),class:'text-link'},'Open the discussion this reply belongs to'):null)):[h('p',{class:'status-panel'},'You have no unpublished submissions. After you submit a topic or reply, its review status will appear here.')]));
 }
 /* Public reading controls of an open discussion. Their focus may survive an
    account change (for example the first session arriving after a guide was
@@ -223,7 +226,7 @@ $('forum-q').addEventListener('input',e=>{query=e.target.value;writeUrl();render
 window.addEventListener('popstate',()=>{const p=new URLSearchParams(location.search);active=p.get('category')||'all';selected=topicParam(p.get('topic'));query=p.get('q')||'';$('forum-q').value=query;render();});
 if(params.get('view')!=='resources')try{doc=await loadJSON('/data/forum.json',{validate:validateForum});topics=doc.topics;
  connection=createCommunityConnection({eligibility:createEligibilityStore(),guard,staticTopics:doc.topics,selected:()=>selected,onState:applyConnection,
-  account:{getService:getAccountService,currentSession,discussionAccess,listTopics,listReplies,publishedTopic},
+  account:{getService:getAccountService,retryService:retryAccountService,currentSession,discussionAccess,listTopics,listReplies,publishedTopic},
   publicReader:{topics:publicTopics,topic:publicTopic,replies:publicReplies}});
  // A page restored by Back after the age screen recorded an under-13 result must not keep account controls.
  window.addEventListener('pageshow',e=>connection.pageShown(e));
