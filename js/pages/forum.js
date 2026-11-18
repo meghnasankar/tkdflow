@@ -9,14 +9,14 @@ import {getAccountService} from '../lib/account-service.js';
 import {currentSession} from '../lib/account-ops.js';
 import {SessionGuard} from '../lib/auth-flows.js';
 import {createEligibilityStore} from '../lib/age-gate.js';
-import {listTopics,listReplies,discussionAccess,discussionProblem,submitTopic,submitReply,reportContent,moderationQueue,moderateContent,reviewSubmissions,discussionUrl,publishedTopic,copyDiscussionLink,resolveReport,reportDecisionMessage} from '../lib/discussions.js';
+import {appendPage,listTopics,listReplies,discussionAccess,discussionProblem,submitTopic,submitReply,reportContent,moderationQueue,moderateContent,reviewSubmissions,discussionUrl,publishedTopic,copyDiscussionLink,resolveReport,reportDecisionMessage} from '../lib/discussions.js';
 import {publicTopics,publicTopic,publicReplies,canonicalUuid} from '../lib/public-discussions.js';
 import {createCommunityConnection,communityControls,NOTICES} from '../lib/community-connection.js';
 import {keepFocus,findKey,focusTarget,captureFocus,restoreFocus} from '../lib/focus-keep.js';
 const $=id=>document.getElementById(id),params=new URLSearchParams(location.search);
 /* Topic links may carry an upper-case UUID; the database returns lower case. */
 const topicParam=v=>canonicalUuid(v)||v;
-let doc=null,topics=[],active=params.get('category')||'all',query=params.get('q')||'',selected=topicParam(params.get('topic')),client=null,session=null,access={adult:false,moderator:false},mode=null,connection=null;
+let doc=null,topics=[],more={hasMore:false,cursor:null,status:'idle'},loaded=0,active=params.get('category')||'all',query=params.get('q')||'',selected=topicParam(params.get('topic')),client=null,session=null,access={adult:false,moderator:false},mode=null,connection=null;
 const guard=new SessionGuard();let submissionRequest=0,queueRequest=0,detailRequest=0,detailKey=null,feedState='loading',topicLoadError=null;
 const controls=()=>communityControls({mode,session,access});
 const paragraph=body=>String(body).split(/\n\s*\n/).map(p=>h('p',{},p));
@@ -72,21 +72,56 @@ async function detail(topic,{preserveDraft=false}={}){
   panel.setAttribute('aria-labelledby','topic-detail-title');
  },{fallback:()=>$('topic-detail-title')});   // a focused control that is rebuilt later (e.g. a reply's Report) lands on the heading
  if(!live)return;
- const r=await connection.replies(topic.id);if(selected!==topic.id||request!==detailRequest||!guard.isCurrent(token))return;
- // Only the replies area changes after the await; focus elsewhere is untouched.
- if(r.error)replaceChildren(holder,h('p',{},'Replies could not be loaded. Refresh to try again.'));
- else if(!r.data?.length)replaceChildren(holder,h('p',{},'No published replies yet.'));
- else replaceChildren(holder,...r.data.map(reply=>h('article',{class:'discussion-reply'},h('p',{class:'topic-author'},`@${reply.author_handle}`),...paragraph(reply.body),canReport?h('button',{type:'button',class:'report-button','data-fk':`reply:${reply.id}:report`,on:{click:()=>report('reply',reply.id)}},'Report reply'):null)));
+ // Replies arrive 50 at a time. Only the replies area changes after an await;
+ // a reply draft, the composer and focus elsewhere are untouched.
+ let rows=[],next={hasMore:false,cursor:null,status:'idle'};
+ const current=()=>selected===topic.id&&request===detailRequest&&guard.isCurrent(token);
+ const article=reply=>h('article',{class:'discussion-reply','data-reply':reply.id},h('p',{class:'topic-author'},`@${reply.author_handle}`),...paragraph(reply.body),canReport?h('button',{type:'button',class:'report-button','data-fk':`reply:${reply.id}:report`,on:{click:()=>report('reply',reply.id)}},'Report reply'):null);
+ const show=()=>keepFocus(holder,()=>replaceChildren(holder,...rows.map(article),
+  next.status==='error'?h('p',{class:'form-status error',role:'status'},'More replies could not be loaded.'):null,
+  next.hasMore?h('button',{type:'button',class:'btn btn-secondary btn-sm','data-fk':'more:replies','aria-disabled':next.status==='loading'?'true':null,on:{click:loadMoreReplies}},next.status==='loading'?'Loading more replies…':next.status==='error'?'Try loading more replies again':'Load more replies'):null),
+  {fallback:()=>$('topic-detail-title')});
+ async function loadMoreReplies(){
+  if(next.status==='loading'||!next.hasMore)return;
+  const cursor=next.cursor,before=rows.length;next={...next,status:'loading'};show();
+  const r=await connection.replies(topic.id,{after:cursor});if(!current())return;
+  if(r.error){next={...next,status:'error'};show();return;}
+  rows=appendPage(rows,r.data||[]);next={hasMore:Boolean(r.hasMore),cursor:r.cursor||null,status:'idle'};
+  const onButton=document.activeElement?.dataset?.fk==='more:replies';
+  show();
+  const first=holder.querySelectorAll('[data-reply]')[before];
+  if(onButton&&first)focusTarget(first);
+ }
+ const r=await connection.replies(topic.id);if(!current())return;
+ if(r.error){replaceChildren(holder,h('p',{},'Replies could not be loaded. Refresh to try again.'));return;}
+ if(!r.data?.length&&!r.hasMore){replaceChildren(holder,h('p',{},'No published replies yet.'));return;}
+ rows=r.data||[];next={hasMore:Boolean(r.hasMore),cursor:r.cursor||null,status:'idle'};show();
+}
+/* Search and categories filter the topics loaded so far; while older ones can
+   still be loaded, say so instead of implying the count covers everything. */
+function summaryText(n){
+ const plural=x=>`${x} topic${x===1?'':'s'}`,q=query.trim(),filtered=Boolean(q)||active!=='all';
+ if(!more.hasMore)return `${plural(n)}${q?` matching “${q}”`:''}.`;
+ if(filtered)return `${n} of the ${plural(loaded)} loaded so far ${n===1?'matches':'match'}${q?` “${q}”`:''}. Load more discussions to search older ones.`;
+ return `Showing the ${plural(n)} loaded so far. Older discussions can be loaded.`;
+}
+function renderMore(){
+ const holder=$('forum-more');if(!holder)return;
+ keepFocus(holder,()=>replaceChildren(holder,
+  more.status==='error'?h('p',{class:'form-status error',role:'status'},'Older discussions could not be loaded.'):null,
+  more.hasMore?h('button',{type:'button',class:'btn btn-secondary','data-fk':'more:topics','aria-disabled':more.status==='loading'?'true':null,on:{click:()=>connection?.loadMore()}},more.status==='loading'?'Loading more discussions…':more.status==='error'?'Try loading more discussions again':'Load more discussions'):null),
+  {fallback:()=>$('forum-summary')});
 }
 function render({preserveDraft=false}={}){if(!doc)return;if(!doc.categories.some(c=>c.id===active))active='all';
  keepFocus($('category-nav'),()=>replaceChildren($('category-nav'),h('button',{type:'button',class:'category-btn','data-fk':'cat:all','aria-pressed':String(active==='all'),on:{click:()=>selectCategory('all')}},'All categories'),...doc.categories.map(c=>h('button',{type:'button',class:'category-btn','data-fk':`cat:${c.id}`,'aria-pressed':String(active===c.id),on:{click:()=>selectCategory(c.id)}},c.title))));
  const q=query.trim().toLowerCase(),shown=topics.filter(t=>(active==='all'||t.category===active)&&(!q||`${t.title} ${t.body}`.toLowerCase().includes(q)));
- $('forum-summary').textContent=`${shown.length} topic${shown.length===1?'':'s'}${query?` matching “${query.trim()}”`:''}.`;
+ $('forum-summary').textContent=summaryText(shown.length);
  // A focused topic that is no longer listed falls back to the results summary.
  keepFocus($('forum-content'),()=>{
   if(!shown.length)replaceChildren($('forum-content'),h('p',{class:'status-panel'},'No topics match. Try another category or search.'));
   else replaceChildren($('forum-content'),...shown.map(t=>h('article',{class:'discussion-card'},h('div',{class:'example-meta'},h('span',{class:'badge badge-navy'},categoryName(t.category)),h('span',{class:'badge badge-muted'},t.editorial?'Discussion guide':'Member topic')),h('h3',{},h('a',{href:discussionUrl({category:active,query,topic:t.id}),'data-fk':`topic:${t.id}:link`,on:{click:e=>{e.preventDefault();openTopic(t.id,'link');}}},t.title)),h('p',{},t.body.split('\n')[0]),h('button',{type:'button',class:'btn btn-secondary btn-sm','data-fk':`topic:${t.id}:read`,on:{click:()=>openTopic(t.id,'read')}},'Read discussion →'))));
  },{fallback:()=>$('forum-summary')});
+ renderMore();
  const topic=topics.find(t=>t.id===selected);$('topic-detail').hidden=!topic;if(topic){const key=topic.id+':'+guard.generation+':'+mode+':'+Boolean(client)+':'+access.adult;if(key!==detailKey){detailKey=key;detail(topic,{preserveDraft});}}else{detailKey=null;detailRequest++;if(selected){$('topic-detail').hidden=false;$('topic-detail').removeAttribute('aria-labelledby');keepFocus($('topic-detail'),()=>replaceChildren($('topic-detail'),h('p',{},feedState==='loading'?'Loading this discussion…':topicLoadError===selected||feedState==='unavailable'?'This discussion could not be loaded. Use Refresh discussions to try again.':'This discussion is unavailable or has not been published.'),h('a',{href:discussionUrl(),class:'text-link','data-fk':'detail:browse'},'Browse all discussions')),{fallback:()=>$('forum-summary')});}}
  const show=controls();
  $('topic-composer').hidden=!show.composer;if(show.composer&&!$('topic-composer').children.length)$('topic-composer').append(composer());
@@ -108,7 +143,7 @@ async function loadSubmissions(){
  button.disabled=false;
  const holder=$('my-submissions-list');
  if(result.error){replaceChildren(holder,h('p',{class:'status-panel'},'Your submissions could not be loaded. Use Refresh your submissions to try again.'));return;}
- replaceChildren(holder,...(result.data.length?result.data.map(item=>h('article',{class:'discussion-card'},h('div',{class:'example-meta'},h('span',{class:'badge badge-muted'},item.kind==='topic'?'Discussion':'Reply'),h('span',{class:'badge badge-navy'},item.status==='pending'?'Awaiting review':'Not published')),h('h3',{},item.title||'Your reply'),...paragraph(item.body))):[h('p',{class:'status-panel'},'You have no unpublished submissions. After you submit a topic or reply, its review status will appear here.')]));
+ replaceChildren(holder,...(result.data.length?result.data.map(item=>h('article',{class:'discussion-card'},h('div',{class:'example-meta'},h('span',{class:'badge badge-muted'},item.kind==='topic'?'Discussion':'Reply'),h('span',{class:'badge badge-navy'},item.status==='pending'?'Awaiting review':'Not published')),h('h3',{},item.title||'Your reply'),...paragraph(item.body),item.kind==='reply'&&canonicalUuid(item.topic_id)?h('a',{href:discussionUrl({topic:canonicalUuid(item.topic_id)}),class:'text-link'},'Open the discussion this reply belongs to'):null)):[h('p',{class:'status-panel'},'You have no unpublished submissions. After you submit a topic or reply, its review status will appear here.')]));
 }
 /* Public reading controls of an open discussion. Their focus may survive an
    account change (for example the first session arriving after a guide was
@@ -119,12 +154,20 @@ function publicReadingFocus(){
  return saved&&PUBLIC_READING.has(saved.key)?{saved,topicId:panel.dataset.topicId}:null;
 }
 function applyConnection(next,extra){
- client=next.client;session=next.session;access=next.access;mode=next.mode;feedState=next.feedState;topicLoadError=next.topicLoadError;topics=next.topics;
+ client=next.client;session=next.session;access=next.access;mode=next.mode;feedState=next.feedState;topicLoadError=next.topicLoadError;topics=next.topics;more=next.more||more;loaded=next.loaded||0;
  $('refresh-discussions').disabled=next.loading;   // the connection owns every start and end
  const reading=extra.privateCleared?publicReadingFocus():null;
  if(extra.privateCleared)clearPrivate();
  $('forum-service').textContent=NOTICES[next.notice]||NOTICES.loading;
- if(extra.feedDone){detailKey=null;render({preserveDraft:true});if(controls().submissions)loadSubmissions();}else render();
+ if(extra.feedDone){detailKey=null;render({preserveDraft:true});if(controls().submissions)loadSubmissions();}
+ else if(extra.moreDone){
+  // Explicit Load more: focus the first newly listed topic only if the Load more
+  // button still has focus; a visitor who moved to search or a draft keeps focus.
+  const onButton=document.activeElement?.dataset?.fk==='more:topics';
+  render();
+  const first=(extra.added||[]).map(id=>findKey($('forum-content'),`topic:${id}:link`)).find(Boolean);
+  if(onButton&&first)focusTarget(first);
+ }else render();
  // Same discussion still open: return focus to the same public control, but
  // only if it was lost (never from search or anywhere else).
  if(reading&&selected===reading.topicId)restoreFocus($('topic-detail'),reading.saved);

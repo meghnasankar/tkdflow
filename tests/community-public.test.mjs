@@ -31,7 +31,7 @@ test('public reads request exactly the columns anonymous readers are granted, wi
  assert.equal(result.error,null);assert.equal(result.data.length,1);
  const url=new URL(f.calls[0].url);
  assert.equal(url.origin+url.pathname,'https://exampleproject.supabase.co/rest/v1/discussion_topics');
- assert.deepEqual(Object.fromEntries(url.searchParams),{select:TOPIC_COLUMNS,status:'eq.published',order:'created_at.desc',limit:'100'});
+ assert.deepEqual(Object.fromEntries(url.searchParams),{select:TOPIC_COLUMNS,status:'eq.published',order:'created_at.desc,id.desc',limit:'51'});
  const init=f.calls[0].init;
  assert.equal(init.method,'GET');assert.equal(init.credentials,'omit');assert.equal(init.cache,'no-store');assert.equal(init.referrerPolicy,'no-referrer');
  assert.deepEqual(Object.keys(init.headers).sort(),['accept','apikey'],'no Authorization, session or content-type');
@@ -39,7 +39,7 @@ test('public reads request exactly the columns anonymous readers are granted, wi
  const guides=fakeFetch([]);await publicGuides({cfg,fetchImpl:guides});
  assert.equal(new URL(guides.calls[0].url).searchParams.get('editorial'),'eq.true');
  const replies=fakeFetch([reply(R1,T1)]);await publicReplies(T1,{cfg,fetchImpl:replies});
- assert.deepEqual(Object.fromEntries(new URL(replies.calls[0].url).searchParams),{select:REPLY_COLUMNS,topic_id:`eq.${T1}`,status:'eq.published',order:'created_at.asc',limit:'100'});
+ assert.deepEqual(Object.fromEntries(new URL(replies.calls[0].url).searchParams),{select:REPLY_COLUMNS,topic_id:`eq.${T1}`,status:'eq.published',order:'created_at.asc,id.asc',limit:'51'});
 });
 
 test('rows are reduced to the public allowlist and checked against the table’s constraints',async()=>{
@@ -59,7 +59,7 @@ test('rows are reduced to the public allowlist and checked against the table’s
 test('topic ids are validated before any request; absent, failing and malformed responses are distinguished',async()=>{
  const none=fakeFetch([]);
  for(const id of ['', 'abc', `${T1}&status=eq.pending`, '../x', null])assert.deepEqual(await publicTopic(id,{cfg,fetchImpl:none}),{data:null,error:null});
- assert.deepEqual(await publicReplies('nope',{cfg,fetchImpl:none}),{data:[],error:null});
+ assert.deepEqual(await publicReplies('nope',{cfg,fetchImpl:none}),{data:[],error:null,hasMore:false,cursor:null});
  assert.equal(none.calls.length,0,'nothing is requested for an invalid id');
  assert.deepEqual(await publicTopic(T1,{cfg,fetchImpl:fakeFetch([])}),{data:null,error:null},'absent: pending, hidden or deleted');
  assert.equal((await publicTopic(T1,{cfg,fetchImpl:fakeFetch([topic(T1)])})).data.id,T1);

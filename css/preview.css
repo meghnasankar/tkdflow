@@ -126,3 +126,4 @@
    clear of the sticky header when the browser scrolls them into view. */
 .event-card,.discussion-card,#events-summary,#forum-summary,.topic-detail h2 { scroll-margin-top:90px; }
 .topic-detail h2:focus-visible,#events-summary:focus-visible,#forum-summary:focus-visible { outline:3px solid var(--red);outline-offset:3px; }
+.forum-more { display: grid; justify-items: start; gap: 8px; margin-top: 16px; }

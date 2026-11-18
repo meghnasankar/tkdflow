@@ -19,13 +19,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 10 (My school’s forms, a private organizer): published.** PR 34 merged as `main` `665c3ff`. Codex verified it live: 72/72 public files, all headers and development 404s.
 - **Batch 11 (faster avatar garment construction): published.** PR 35 merged as `main` `0d0a340`. Codex verified it live: 2/2 public files, headers and development 404s; Sipjin ready in native Chrome with 0 errors.
 - **Batch 12 (homepage Explore by learner task): published.** PR 36 merged as `main` `4412fcf`.
-- **Batch 13 (library search ranking and belt note):** on `improve/extension-discovery-2026-11-18`, cut from `4412fcf`. Passed Codex's browser review in real Chrome; uncommitted, ready for root's release. Scope: items 11 and 9.
+- **Batch 13 (library search ranking and belt note): published.** PR 37 merged as `main` `aab06f8`. Codex verified it live: 5/5 files, headers and development 404s; Won-Hyo is first for “Won”.
+- **Batch 14 (Community pages of 50):** on `improve/community-pagination-2026-11-18`, cut from `aab06f8`. Passed Codex's browser review; uncommitted, ready for root's release. Scope: the pagination part of item 12. No schema, grant or cloud change.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 13:** implemented locally and browser-reviewed by Codex, uncommitted, awaiting release.
+- **Batch 14:** implemented locally and browser-reviewed by Codex, uncommitted, awaiting release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -42,10 +43,10 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 6 | Technique and term finder across lesson poses | Library search works at form level only; "low block" correctly returns 5 forms. The 22 data-driven lessons hold 89 structured action types (`data/lessons/*.json` `sequence[].actions[].type`) plus stances and turns, and lessons accept `?pose=N`. A static index could link straight to every pose using a technique, with style filters. Enhancement, not a defect. | P2 feature | Published (PR 25, `/techniques.html`) |
 | 7 | Lessons do not link to the shared explanation of poses and directions | Each lesson says "Views are fixed to the starting stance…" but offers no further help. A small "How to read this lesson" link to `/start-here.html#sh-reading` would serve all 23 lessons. | P2 content | Published (PR 29) |
 | 8 | The lesson keyboard hint says "Home End first/last" | `taegeuk-1.html` `#player-keys` does not say whether these mean pose or time. Check `lesson-player.js` behaviour, then make the hint specific. | P3 accessibility | Published (PR 29; confirmed: Home and End select the first and last pose) |
-| 9 | Library belt filter vs school differences | Belt facets are colour buckets across styles. The hub now says labels are typical, not rules; the library has no such note. Consider one line beside the belt facet. | P3 content | Batch 13 |
+| 9 | Library belt filter vs school differences | Belt facets are colour buckets across styles. The hub now says labels are typical, not rules; the library has no such note. Consider one line beside the belt facet. | P3 content | Published (PR 37) |
 | 10 | Lesson content items marked unresolved | `unresolved` notes with `reviewStatus: pending` in do-san, joong-gun, koryo, pyongwon, sipjin, songahm-3, taebaek and yul-gok. Motion or sequence changes need primary-reference confidence and must keep the approved avatar look. | P2 content accuracy | Open; needs owner/Meghna for any instructor input |
-| 11 | Search ranking for partial words | Partial multi-word searches ("Il Jang") still match broadly and are sorted by curriculum, not relevance. Acceptable now that exact names win. | P3 | Batch 13 |
-| 12 | Community author controls, notifications, pagination | From the 17 November usability review. Needs SQL and RLS work, a staging apply and owner release approval. | P2 feature | Open (backend) |
+| 11 | Search ranking for partial words | Partial multi-word searches ("Il Jang") still match broadly and are sorted by curriculum, not relevance. Acceptable now that exact names win. | P3 | Published (PR 37) |
+| 12 | Community author controls, notifications, pagination | From the 17 November usability review. Needs SQL and RLS work, a staging apply and owner release approval.  Pagination needs no schema change and is batch 14; author controls and notifications still need SQL, RLS and an owner staging apply. | P2 feature | Pagination: Batch 14; the rest Open (backend) |
 | 13 | School directory coverage and picker compactness | 334 sourced records, explicitly incomplete. | P3 | Open |
 | 14 | Performance and accessibility pass on live pages | No current measurements in the repo. Needs live Lighthouse or axe runs. | P2 | Verify (Codex browser) |
 | 15 | Old "Start here" draft in the original checkout | Unmerged and out of scope. The new hub was written from current `main` and official sources, not imported. The owner can discard or compare it. | P3 | Owner decision |
@@ -997,3 +998,80 @@ Fixture on port 8994 with the real home and learning modules:
 - Ranking uses names only. A form found only through its description is ranked by curriculum order among the others found that way.
 - The option's value stays `curriculum`, so links that set `sort=curriculum` are unchanged; only its visible label changes during a search.
 - No real screen-reader test of the sort label change or the belt note.
+
+## Batch 14 — Community pages of 50 (item 12, pagination part)
+
+### What changed (`js/lib/discussions.js`, `js/lib/public-discussions.js`, `js/lib/community-connection.js`, `js/pages/forum.js`, `community.html`, `css/preview.css`)
+- **Before:** topics and replies were each read as one fixed list of 100, ordered by time only. A topic with more than 100 replies silently showed only the oldest 100, and search covered only those rows.
+- **Now:** both are read 50 at a time, with "Load more discussions" under the list and "Load more replies" inside an open discussion.
+- **Keyset:**
+  - Order is by the full keyset, `created_at` then `id`: newest first for topics, oldest first for replies. 51 rows are requested to learn whether more exist.
+  - A later page uses `or=(created_at.lt."<ts>",and(created_at.eq."<ts>",id.lt.<id>))`, with `gt` for replies. Any number of rows sharing one timestamp is walked exactly once.
+- **Cursor values:**
+  - The timestamp is the server's own string, keeping microseconds and offset; it is never parsed into a `Date`.
+  - It must have a safe ISO shape, the id must be a UUID, and the timestamp is double-quoted in the filter.
+  - The URL goes through `URLSearchParams`, so `+` and `:` are percent-encoded.
+  - An unsafe cursor is refused before any request.
+- **Cursor source:**
+  - The cursor comes from the raw rows of the last feed page consumed. A row dropped as invalid never makes the next page skip posts.
+  - A deep-linked older topic, read on its own, never moves the cursor. It is shown after the feed until a later page reaches it, then appears once in its own place.
+- **Failures and late answers:**
+  - A failed page keeps everything shown, says "Older discussions could not be loaded" and offers a retry. Two clicks make one request.
+  - A page answered after a Refresh, a sign-in change or a switch to public reading is discarded.
+- **Focus:** after an explicit Load more, focus moves to the first new topic link or reply, but only if the Load more button still has focus. A visitor who moved to search or a reply draft keeps their place. The button stays focusable while loading (`aria-disabled`).
+- **Honest search wording:**
+  - While older topics remain: "Showing the 50 topics loaded so far. Older discussions can be loaded."
+  - With a search or category: "N of the 50 topics loaded so far match … Load more discussions to search older ones."
+  - With everything loaded, the plain count as before.
+  - The loaded total counts every distinct topic shown, including a deep-linked older one. The feed cursor stays independent of it.
+  - **Review fix (root browser QA):** the first build counted only feed rows, so a deep link plus a search that matched everything read "51 of the 50 topics loaded so far".
+- **Reply links:** a pending or rejected reply in "Your submissions" now links to the discussion it belongs to.
+- **Under-13 tabs:** they keep reading publicly; Load more uses only the stateless public reader and never starts the account service.
+- **Unchanged:** schema, grants, RLS and cloud settings; columns requested (`TOPIC_COLUMNS`, `REPLY_COLUMNS`); posting, reporting and moderation.
+- **Production syntax:** Codex had already checked the compound keyset filter read-only on production: HTTP 200 for baseline, descending and ascending.
+
+### Tests
+- **New `tests/community-pagination.test.mjs` (13):**
+  - **Cursors:** exact cursor strings and validation (microseconds, offsets, no `Date`, injection characters).
+  - **Request syntax:** the exact emitted query in both directions, percent-encoded; the SDK path (`or`, both `order`s, `limit 51`); the cursor taken from raw rows.
+  - **PGlite oracle:**
+    - the real client walks every page against the real schema and row security as anonymous; a test-only parser (`tests/helpers/postgrest-filter.mjs`) turns the client's actual URL into SQL;
+    - seeds include 70 published topics and 60 replies sharing one exact timestamp, rows a microsecond apart, equal instants written with other offsets, and pending or rejected rows;
+    - the walk equals a plain ordered `SELECT`, each published row once, and unpublished rows never appear.
+  - **Controller:** Load more and a deep link; a failed page and retry; double clicks; late answers after a Refresh and after an account switch.
+- **`tests/community-focus.test.mjs` (+4, real `forum.js`):**
+  - the harness now answers the client's real query (filters, keyset, order, limit);
+  - Load more focuses the first new topic and the summary wording is right;
+  - a slow page doesn't take focus from search;
+  - the pending-reply link;
+  - a deep-linked older topic plus a broad search: "51 of the 51", and after Load more each topic is listed once.
+- **Updated:** `tests/community-public.test.mjs`, the request shape (`created_at,id` order, limit 51).
+- **Six spot-checked mutants, all caught:**
+  - a timestamp-only cursor;
+  - unquoted timestamps;
+  - a cursor taken from the kept rows only;
+  - no late-answer check;
+  - focus taken after a slow page;
+  - a duplicated deep-linked topic.
+
+### Browser QA (Codex, native Chrome, root's local fixture on port 9002; synthetic data only)
+- **Tests:** Codex independently ran the 62 Community checks. They need permission to bind a local server; a run under the default scope failed only with `EPERM`. The full suite is 664/664.
+- **Topics:**
+  - 50 → 100 → 138, all unique, with no Load more at the end; focus moved to the first new topic each time;
+  - a search for a word that occurs once: 0 of 50, then 0 of 100, then 1 when everything was loaded;
+  - Retry after a failed page kept 50, then reached 100;
+  - typing in search during a 2-second page kept focus in search.
+- **Replies:** 50 → 100 → 130, unique. A failed last page plus Retry kept the reply draft and focus.
+- **Links:** the pending reply's parent link opened topic 005. The deep link to topic 005 showed 51 of 51, then 101, then 130 for "Demo", with topic 005 listed once.
+- **Under-13 public tab, with a planted moderator account:** 0 SDK or account queries; no composer, report, moderation or submissions controls; public replies reached 130.
+- **Category plus "Demo":** 25 → 50 → 65 unique.
+- **Sign-out:** a page that arrived after signing out kept 50 topics, and private controls stayed hidden.
+- **Layout:** 320, 390, 820 and 1280 px, retry controls included, no overflow.
+- **Errors:** 0 on the ordinary path.
+- **Not completed:** a native check of repeated key presses while busy (the control had changed); the unit guards cover it. No real screen reader or Safari.
+
+### Known limits
+- Search and category still filter only the loaded topics; the wording now says so. A server-side search would need a new query or index.
+- A topic published between two page loads, newer than the first page, appears only after Refresh. One hidden meanwhile disappears from the list on Refresh.
+- No real screen-reader or Safari test. The native repeated-keypress-while-busy check wasn't completed; the unit guards cover it.
+- Author controls (edit or withdraw) and notifications remain open. They need SQL, RLS and an owner staging apply.
