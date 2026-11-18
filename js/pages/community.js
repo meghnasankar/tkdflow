@@ -1,10 +1,12 @@
-/* Community learning resources and published member discussions. */
+/* Community learning resources and published member discussions. Discussion
+   guides are public editorial content, so they are read statelessly for every
+   visitor (public-discussions.js): this view never starts the account service. */
 import { loadInto, showEmpty } from '../lib/data.js';
 import { h, replaceChildren, safeHref } from '../lib/dom.js';
 import {icon} from '../lib/icons.js';
 import { validateCommunity } from '../lib/validators.js';
-import {getAccountService} from '../lib/account-service.js';
-import {listDiscussionGuides,starterGuides,discussionUrl} from '../lib/discussions.js';
+import {starterGuides,discussionUrl} from '../lib/discussions.js';
+import {publicGuides} from '../lib/public-discussions.js';
 
 const $ = (id) => document.getElementById(id);
 const resourceView=new URLSearchParams(location.search).get('view')==='resources';
@@ -41,7 +43,7 @@ if(resourceView)loadInto($('community-feed'), '/data/community.json', {
 let guideRequest=0;
 async function loadGuides(){
  const request=++guideRequest;
- const service=await getAccountService(),result=service.status==='ready'?await listDiscussionGuides(service.client):{error:true};
+ const result=await publicGuides();
  if(request!==guideRequest)return;
  const holder=$('community-guides');
  if(result.error){replaceChildren(holder,h('p',{},'Discussion guides could not be loaded.'),h('button',{type:'button',class:'btn btn-secondary btn-sm',on:{click:loadGuides}},'Try again'));return;}
