@@ -12,7 +12,7 @@ import {createEligibilityStore} from '../lib/age-gate.js';
 import {listTopics,listReplies,discussionAccess,discussionProblem,submitTopic,submitReply,reportContent,moderationQueue,moderateContent,reviewSubmissions,discussionUrl,publishedTopic,copyDiscussionLink,resolveReport,reportDecisionMessage} from '../lib/discussions.js';
 import {publicTopics,publicTopic,publicReplies,canonicalUuid} from '../lib/public-discussions.js';
 import {createCommunityConnection,communityControls,NOTICES} from '../lib/community-connection.js';
-import {keepFocus,findKey,focusTarget} from '../lib/focus-keep.js';
+import {keepFocus,findKey,focusTarget,captureFocus,restoreFocus} from '../lib/focus-keep.js';
 const $=id=>document.getElementById(id),params=new URLSearchParams(location.search);
 /* Topic links may carry an upper-case UUID; the database returns lower case. */
 const topicParam=v=>canonicalUuid(v)||v;
@@ -110,12 +110,24 @@ async function loadSubmissions(){
  if(result.error){replaceChildren(holder,h('p',{class:'status-panel'},'Your submissions could not be loaded. Use Refresh your submissions to try again.'));return;}
  replaceChildren(holder,...(result.data.length?result.data.map(item=>h('article',{class:'discussion-card'},h('div',{class:'example-meta'},h('span',{class:'badge badge-muted'},item.kind==='topic'?'Discussion':'Reply'),h('span',{class:'badge badge-navy'},item.status==='pending'?'Awaiting review':'Not published')),h('h3',{},item.title||'Your reply'),...paragraph(item.body))):[h('p',{class:'status-panel'},'You have no unpublished submissions. After you submit a topic or reply, its review status will appear here.')]));
 }
+/* Public reading controls of an open discussion. Their focus may survive an
+   account change (for example the first session arriving after a guide was
+   opened); private controls (reply drafts, reports) never carry over. */
+const PUBLIC_READING=new Set(['detail:title','detail:back','detail:copy','detail:resource']);
+function publicReadingFocus(){
+ const panel=$('topic-detail'),saved=captureFocus(panel);
+ return saved&&PUBLIC_READING.has(saved.key)?{saved,topicId:panel.dataset.topicId}:null;
+}
 function applyConnection(next,extra){
  client=next.client;session=next.session;access=next.access;mode=next.mode;feedState=next.feedState;topicLoadError=next.topicLoadError;topics=next.topics;
  $('refresh-discussions').disabled=next.loading;   // the connection owns every start and end
+ const reading=extra.privateCleared?publicReadingFocus():null;
  if(extra.privateCleared)clearPrivate();
  $('forum-service').textContent=NOTICES[next.notice]||NOTICES.loading;
  if(extra.feedDone){detailKey=null;render({preserveDraft:true});if(controls().submissions)loadSubmissions();}else render();
+ // Same discussion still open: return focus to the same public control, but
+ // only if it was lost (never from search or anywhere else).
+ if(reading&&selected===reading.topicId)restoreFocus($('topic-detail'),reading.saved);
 }
 const connect=()=>connection?connection.connect():Promise.resolve();
 function reportCard(report,{supported,token}){

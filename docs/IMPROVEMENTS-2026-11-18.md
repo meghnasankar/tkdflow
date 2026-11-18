@@ -9,13 +9,14 @@ This file tracks the extended improvement session that started from `main` at `d
   - the live resources view loads 3 guides with no account-library script;
   - an existing signed-in teen moderator still has moderation but no composer;
   - no errors, and all 527 checks passed.
-- **Batch 4 (keyboard and focus continuity):** on `improve/navigation-continuity-2026-11-18`, cut from `47bee71`. Uncommitted, awaiting Codex review.
+- **Batch 4 (keyboard and focus continuity): published.** PR 27 merged as `main` `d0fc54e`. Codex verified it live: 6/6 files match, headers and development 404s are correct, and Show more focuses the 25th event.
+- **Follow-up (Community initial focus):** on `fix/community-initial-focus-2026-11-18`, cut from `d0fc54e`. Uncommitted, awaiting Codex review. See item 28.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 4:** implemented locally, uncommitted, awaiting Codex review.
+- **Follow-up:** implemented locally, uncommitted, awaiting Codex review.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -48,9 +49,10 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 22 | Community started the account service in a known under-13 tab | `forum.js` `connect()` and `community.js` `loadGuides()` called `getAccountService()` without checking this tab's age screen. That started the SDK client, which can restore a stored session (for example someone else's on a shared device) and offer reporting, submissions, posting or moderation. My learning, lesson help (page and widget), profile and sign-in already guarded this. | P1 privacy/policy | Published (PR 26) |
 | 23 | Header account link in a known under-13 tab | `site.js` shows "My profile" whenever a session is stored, including in an under-13 tab; the profile page then shows the public guidance. Harmless, but an owner/UX decision. Batch 3 deliberately leaves the header unchanged. | P3 UX | Open (owner decision) |
 | 24 | Signed-out eligible visitors start the account service to read Community | Needed today to notice a sign-in. A lazier start (read publicly, start the client on a session-key `storage` event) changes sign-in timing and needs its own review. | P3 | Open |
-| 25 | Events: Show more and background renders lose keyboard focus | Reproduced live by Codex after batch 2: with 24 of 164 events shown, Show more rendered 48 cards but focus became `<body>`, and the next Tab reached the first existing card, not the first new one. In code, `render()` rebuilt every card and every select's options on filter changes, the one-minute ticker, tab visibility and Back/Forward. A focused card control or an open select could be replaced by the timer; that case was not reproduced live. | P2 accessibility | Batch 4 |
-| 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Batch 4 |
+| 25 | Events: Show more and background renders lose keyboard focus | Reproduced live by Codex after batch 2: with 24 of 164 events shown, Show more rendered 48 cards but focus became `<body>`, and the next Tab reached the first existing card, not the first new one. In code, `render()` rebuilt every card and every select's options on filter changes, the one-minute ticker, tab visibility and Back/Forward. A focused card control or an open select could be replaced by the timer; that case was not reproduced live. | P2 accessibility | Published (PR 27) |
+| 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Open (next content batch) |
+| 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Follow-up branch |
 
 ## Batch 1 — learner foundations (published, PR 24)
 
@@ -345,3 +347,42 @@ Run it with `node /private/tmp/tkdflow-navigation-fixture.mjs --port 8941`.
 ### Known limits
 - I used no browser. Real screen-reader announcements, smooth scrolling under the sticky header, and an open native select during the ticker need Codex QA.
 - The test DOM models focus loss on removal and moving, but not every browser quirk; helper tests cover caret jumps separately.
+
+## Follow-up — focus kept when the first session arrives (item 28)
+
+### Fix (`js/pages/forum.js`, `applyConnection`)
+- Before `clearPrivate()` empties private state on an account boundary, capture focus only if it is on a **public reading control** of the open discussion: its heading, "← All topics", "Copy discussion link" or the related-resource link.
+- After the synchronous clear and render, restore that focus with the existing lost-focus guard, and only if the same discussion is still open.
+- Private controls (reply drafts, reports, submissions, moderator items) are never carried over. A visitor who moved focus elsewhere, such as search, is never pulled back.
+- No auth-policy, content or data change.
+
+### Tests (`tests/community-focus.test.mjs`, real `forum.js`)
+- Opening a bundled guide while the account service is deferred: after the session arrives, focus is on the rebuilt heading. This reproduced the bug (focus was `<body>`) before the fix.
+- Moving to search during the wait: the session's arrival leaves focus in search.
+- "← All topics" focused during the wait stays focused after the rebuild.
+- A change to a different account: the previous account's reply draft is removed (a new empty form, the old node gone), and focus is not placed into the new form.
+
+Mutation checks: removing the restore fails 3 tests, and carrying private keys fails 2. The "restore steals focus" mutant is equivalent, because focus elsewhere is never captured and the clear and restore are synchronous.
+
+### Fixture
+`/private/tmp/tkdflow-navigation-fixture.mjs` gains "Toggle slow account start (3 s)": choose an eligible adult, toggle it on, open a guide before the session arrives, and watch the focus readout.
+
+### CI follow-up (PR 28): harness timing, not a product race
+- **Symptom:** PR 28's push CI passed, but its pull-request CI failed 2 of 553 tests in `tests/community-focus.test.mjs`:
+  - "a change to a different account removes the previous reply draft…": the reply form was `null`;
+  - "other public reading controls (All topics)…": the guide link was missing.
+
+  Both passed locally.
+- **Root cause:** `settle()` in `tests/helpers/mini-dom.mjs` waited only for `setImmediate` rounds. The page reconnects after a sign-in change with `setTimeout(connect, 0)`, so on a runner with slower or coarser timers the reconnect had not run when the first test checked. Its late timer then fired during the next test and redrew that test's document, which removed the guide link. The product behaviour is correct: private state clears first, then the page reconnects.
+- **Reproduced deterministically:** running the file with zero-delay timers held for at least 5 ms reproduced exactly the same two failures.
+- **Fix (tests only):**
+  - each `settle()` round now waits for a timer turn as well as an immediate, so earlier zero-delay page timers always run first;
+  - teardown in both page harnesses awaits `settle()` before restoring globals, so no late timer can reach the next test.
+
+  The account-isolation assertions are unchanged.
+- **Coverage:** `tests/harness-timing.test.mjs`:
+  - `settle()` drains an earlier zero-delay timer with timers slowed to 15 ms;
+  - the Events and Community page harnesses run in a child process with timers slowed to 5 ms, and must report 0 failures and exit with status 0.
+
+  Both tests fail with the old immediate-only `settle()`.
+- **Validation:** two full `npm run check` runs passed 555/555. The page harnesses also pass with timers slowed to 5 ms and 15 ms, and `git diff --check` is clean.

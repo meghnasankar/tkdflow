@@ -27,8 +27,8 @@ const reply=(id,topicId)=>({id,topic_id:topicId,body:'Synthetic reply body text.
 const deferred=()=>{let resolve;const promise=new Promise(r=>{resolve=r;});return {promise,resolve};};
 let run=0;
 
-async function community({search='',mode='public',reducedMotion=false,topics=[topic(T1,'First synthetic topic title'),topic(T2,'Second synthetic topic title')]}={}){
- const state={topics,replies:[reply(R1,T1)],replyGate:null};
+async function community({search='',mode='public',reducedMotion=false,serviceGate=null,topics=[topic(T1,'First synthetic topic title'),topic(T2,'Second synthetic topic title')]}={}){
+ const state={topics,replies:[reply(R1,T1)],replyGate:null,user:'adult-1',authListeners:[]};
  const rest=async url=>{
   const u=new URL(url),table=u.pathname.split('/').pop();
   const rows=table==='discussion_topics'?state.topics.filter(t=>!u.searchParams.get('id')||u.searchParams.get('id')===`eq.${t.id}`):state.replies.filter(r=>u.searchParams.get('topic_id')===`eq.${r.topic_id}`);
@@ -53,16 +53,18 @@ async function community({search='',mode='public',reducedMotion=false,topics=[to
    const rows=list.filter(r=>filters.every(([,k,v])=>String(r[k])===String(v)));
    return {data:rows,error:null};};
    const q={select:()=>q,order:()=>q,limit:()=>q,eq:(k,v)=>{filters.push(['eq',k,v]);return q;},neq:(k,v)=>{filters.push(['neq',k,v]);return q;},maybeSingle:()=>run().then(r=>({data:r.data[0]||null,error:null})),then:(a,b)=>run().then(a,b)};return q;};
-  const client={auth:{getSession:async()=>({data:{session:{user:{id:'adult-1'}}},error:null}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}}),stopAutoRefresh:async()=>{}},
+  const client={auth:{getSession:async()=>({data:{session:state.user?{user:{id:state.user}}:null},error:null}),onAuthStateChange:fn=>{state.authListeners.push(fn);return {data:{subscription:{unsubscribe(){}}}};},stopAutoRefresh:async()=>{}},
    from:query,rpc:async name=>name==='discussion_access'?{data:{adult:true,moderator:false},error:null}:{data:null,error:{message:'test'}}};
-  globalThis.__testAccount={session:true,service:async()=>({status:'ready',client})};
+  globalThis.__testAccount={session:true,service:async()=>{if(serviceGate)await serviceGate.promise;return {status:'ready',client};}};
  }else globalThis.__testAccount=null;
  await import(`../js/pages/forum.js?run=${++run}`);
  await settle(40);
  const $=id=>doc.getElementById(id),key=(root,k)=>root.querySelectorAll('[data-fk]').find(n=>n.dataset.fk===k);
  return {...env,state,$,key,refresh:async()=>{$('refresh-discussions').click();await settle(40);}};
 }
-const done=env=>{env.restore();globalThis.__testAccount=null;};
+/* Drain the page's scheduled work BEFORE restoring globals, so a late timer
+   from this test's page can never run against the next test's document. */
+const done=async env=>{await settle(10);env.restore();globalThis.__testAccount=null;};
 /* Identity checks: never let assert format whole (cyclic) DOM trees. */
 const is=(a,b,msg='not the expected element')=>assert.ok(a===b,`${msg} (got ${a?.dataset?.fk||a?.id||a?.tagName||a})`);
 const isnt=(a,b,msg='unexpectedly the same element')=>assert.ok(a!==b,msg);
@@ -80,7 +82,7 @@ test('opening a topic focuses its heading and scrolls the panel, honouring reduc
    assert.equal(env.$('topic-detail').getAttribute('aria-labelledby'),'topic-detail-title');
    const scroll=env.doc.scrolls.at(-1);
    is(scroll.element,env.$('topic-detail'));assert.equal(scroll.options.behavior,reducedMotion?'auto':'smooth');
-  }finally{done(env);}
+  }finally{await done(env);}
  }
 });
 
@@ -92,7 +94,7 @@ test('All topics returns focus to the link or button that opened the discussion'
    env.key(env.$('topic-detail'),'detail:back').click();
    assert.equal(fk(env.doc.activeElement),`topic:${T2}:${part}`);
    assert.ok(env.$('forum-content').contains(env.doc.activeElement));
-  }finally{done(env);}
+  }finally{await done(env);}
  }
 });
 
@@ -102,7 +104,7 @@ test('choosing a category keeps focus on the category button after the list is r
   const button=env.key(env.$('category-nav'),'cat:technique-qa');button.focus();button.click();
   assert.equal(fk(env.doc.activeElement),'cat:technique-qa');
   assert.equal(env.doc.activeElement.getAttribute('aria-pressed'),'true');
- }finally{done(env);}
+ }finally{await done(env);}
 });
 
 test('a background refresh keeps focus on a listed topic and never moves focus from elsewhere',async()=>{
@@ -115,7 +117,7 @@ test('a background refresh keeps focus on a listed topic and never moves focus f
   await env.refresh();
   is(env.doc.activeElement,search);
   assert.equal(env.doc.scrolls.length,0,'no scrolling');
- }finally{done(env);}
+ }finally{await done(env);}
 });
 
 test('a focused topic removed by a refresh hands focus to the results summary',async()=>{
@@ -125,7 +127,7 @@ test('a focused topic removed by a refresh hands focus to the results summary',a
   env.state.topics=env.state.topics.filter(t=>t.id!==T2);
   await env.refresh();
   is(env.doc.activeElement,env.$('forum-summary'));
- }finally{done(env);}
+ }finally{await done(env);}
 });
 
 test('a deep link opens the discussion without moving focus or scrolling',async()=>{
@@ -135,7 +137,7 @@ test('a deep link opens the discussion without moving focus or scrolling',async(
   assert.ok(env.$('topic-detail-title'));
   is(env.doc.activeElement,env.doc.body);
   assert.equal(env.doc.scrolls.length,0);
- }finally{done(env);}
+ }finally{await done(env);}
 });
 
 test('the focused discussion heading survives a background refresh that rebuilds the panel',async()=>{
@@ -147,7 +149,7 @@ test('the focused discussion heading survives a background refresh that rebuilds
   const after=env.$('topic-detail-title');
   isnt(after,before,'the panel was rebuilt');
   is(env.doc.activeElement,after,'focus is on the rebuilt heading');
- }finally{done(env);}
+ }finally{await done(env);}
 });
 
 test('a reply’s Report button that is rebuilt hands focus to the heading at once, and replies loading later never take it back',async()=>{
@@ -163,7 +165,7 @@ test('a reply’s Report button that is rebuilt hands focus to the heading at on
   env.state.replyGate.resolve();await settle(40);
   assert.ok(env.key(env.$('topic-detail'),`reply:${R1}:report`),'replies are back');
   is(env.doc.activeElement,search,'the replies arriving later do not move focus');
- }finally{done(env);}
+ }finally{await done(env);}
 });
 
 test('a reply draft keeps its text, focus and caret through a refresh, restored before replies load',async()=>{
@@ -181,7 +183,7 @@ test('a reply draft keeps its text, focus and caret through a refresh, restored 
   env.state.replyGate.resolve();await settle(40);
   is(env.doc.activeElement,env.$('forum-q'),'no delayed jump back to the draft');
   assert.equal(box.value,'Partial reply text');
- }finally{done(env);}
+ }finally{await done(env);}
 });
 
 test('Community points to public lesson answers and private 13+ lesson help without offering posting',()=>{
@@ -203,5 +205,67 @@ test('an unkeyed control inside the preserved draft (its consent checkbox) keeps
   consent.focus();
   await env.refresh();
   is(env.doc.activeElement,consent,'the same re-attached checkbox has focus');
- }finally{done(env);}
+ }finally{await done(env);}
+});
+
+/* ── a signed-in visitor opens a public guide before their session arrives ── */
+const GUIDE=forumData.topics[0];
+const liveGuide={id:GUIDE.id,category:GUIDE.category,title:GUIDE.title,body:GUIDE.body,author_handle:'tkdflow',editorial:true,status:'published',created_at:'2026-11-01T09:00:00Z'};
+
+test('opening a guide while the account service is still starting keeps focus on its heading when the session arrives',async()=>{
+ const gate=deferred();
+ const env=await community({mode:'account',serviceGate:gate,topics:[liveGuide,topic(T1,'First synthetic topic title')]});
+ try{
+  const link=env.key(env.$('forum-content'),`topic:${GUIDE.id}:link`);assert.ok(link,'the bundled guide is listed before the account service answers');
+  link.click();
+  const first=env.$('topic-detail-title');is(env.doc.activeElement,first,'the heading has focus');
+  gate.resolve();await settle(60);
+  const heading=env.$('topic-detail-title');
+  assert.ok(heading&&heading.textContent===GUIDE.title,'the same discussion is still open');
+  is(env.doc.activeElement,heading,'focus is on the (rebuilt) heading after the session arrives');
+  assert.ok(env.$('reply-body'),'the signed-in adult now sees the reply form');
+  assert.ok(env.$('reply-body')!==env.doc.activeElement,'focus was not moved into a private control');
+ }finally{await done(env);}
+});
+
+test('if the visitor moves to search while the session is starting, its arrival does not pull focus back',async()=>{
+ const gate=deferred();
+ const env=await community({mode:'account',serviceGate:gate,topics:[liveGuide]});
+ try{
+  env.key(env.$('forum-content'),`topic:${GUIDE.id}:link`).click();
+  const search=env.$('forum-q');search.focus();
+  gate.resolve();await settle(60);
+  is(env.doc.activeElement,search);
+ }finally{await done(env);}
+});
+
+test('a change to a different account removes the previous reply draft and does not restore focus into private controls',async()=>{
+ const env=await community({mode:'account'});
+ try{
+  env.key(env.$('forum-content'),`topic:${T1}:link`).click();await settle(20);
+  const box=env.$('reply-body');box.focus();box.value='Draft written by the first account';box.setSelectionRange(2,6);
+  env.state.user='adult-2';
+  for(const fn of env.state.authListeners)fn('SIGNED_IN',{user:{id:'adult-2'}});
+  await settle(60);
+  const fresh=env.$('reply-body');
+  assert.ok(fresh,'the new adult account sees a reply form');
+  assert.ok(fresh!==box,'it is a new form, not the previous account’s draft');
+  assert.equal(fresh.value,'','no text from the previous account');
+  assert.ok(!env.$('topic-detail').contains(box),'the old draft is gone');
+  assert.ok(env.doc.activeElement!==fresh,'focus is not placed into the new account’s form');
+  assert.equal(env.$('topic-detail-title').textContent,'First synthetic topic title','the public discussion remains open');
+ }finally{await done(env);}
+});
+
+test('other public reading controls (All topics) also keep focus when the first session arrives',async()=>{
+ const gate=deferred();
+ const env=await community({mode:'account',serviceGate:gate,topics:[liveGuide]});
+ try{
+  env.key(env.$('forum-content'),`topic:${GUIDE.id}:link`).click();
+  const back=env.key(env.$('topic-detail'),'detail:back');back.focus();
+  gate.resolve();await settle(60);
+  const now=env.key(env.$('topic-detail'),'detail:back');
+  assert.ok(now&&now!==back,'the panel was rebuilt');
+  is(env.doc.activeElement,now,'focus is on the rebuilt All topics button');
+ }finally{await done(env);}
 });

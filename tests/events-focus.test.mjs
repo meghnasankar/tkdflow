@@ -30,7 +30,7 @@ async function page({search=''}={}){
  const cards=()=>list.children.filter(n=>n.dataset.event);
  return {...env,list,cards,tick:()=>tick?.(),key:k=>list.querySelectorAll('[data-fk]').find(n=>n.dataset.fk===k)};
 }
-function cleanup(env){env.restore();globalThis.Date=RealDate;clock=Date.parse('2026-11-18T12:00:00Z');}
+async function cleanup(env){await settle(5);env.restore();globalThis.Date=RealDate;clock=Date.parse('2026-11-18T12:00:00Z');}
 /* Identity checks: never let assert format whole (cyclic) DOM trees. */
 const is=(a,b,msg='not the expected element')=>assert.ok(a===b,`${msg} (got ${a?.dataset?.fk||a?.id||a?.tagName||a})`);
 const isnt=(a,b,msg='unexpectedly the same element')=>assert.ok(a!==b,msg);
@@ -50,7 +50,7 @@ test('Show more moves focus to the first newly shown event, without scrolling',a
   assert.deepEqual(active.focusCalls.at(-1),{preventScroll:true});
   assert.equal(env.doc.scrolls.length,0,'no scroll jump');
   is(env.key('events:more'),more,'the same Show more button stays for the next batch');
- }finally{cleanup(env);}
+ }finally{await cleanup(env);}
 });
 
 test('the one-minute refresh keeps the focused control and the unchanged card nodes',async()=>{
@@ -65,7 +65,7 @@ test('the one-minute refresh keeps the focused control and the unchanged card no
   same([...env.doc.getElementById('ev-country').options],options,'no option node was replaced');
   const search=env.doc.getElementById('ev-q');search.focus();env.tick();
   is(env.doc.activeElement,search,'a refresh never takes focus from the search box');
- }finally{cleanup(env);}
+ }finally{await cleanup(env);}
 });
 
 test('filter changes update option labels in place and keep the select',async()=>{
@@ -79,7 +79,7 @@ test('filter changes update option labels in place and keep the select',async()=
   same([...year.options],yearOptions);same([...country.options],countryOptions,'same option nodes');
   assert.notDeepEqual(countryOptions.map(o=>o.textContent),labels,'their counts were updated in place');
   assert.equal(year.value,target.value);
- }finally{cleanup(env);}
+ }finally{await cleanup(env);}
 });
 
 test('when a focused event changes status it keeps focus on the same control in its new card',async()=>{
@@ -100,7 +100,7 @@ test('when a focused event changes status it keeps focus on the same control in 
    isnt(newCard,oldCard,'the card was rebuilt for its new status');
    assert.equal(fk(env.doc.activeElement),key,'focus moved to the same control in the new card, not <body>');
   }else isnt(env.doc.activeElement,env.doc.body,'focus did not fall to <body>');
- }finally{cleanup(env);}
+ }finally{await cleanup(env);}
 });
 
 test('if the focused event leaves the results, focus goes to the card now in its place',async()=>{
@@ -115,7 +115,7 @@ test('if the focused event leaves the results, focus goes to the card now in its
   assert.ok(!env.cards().some(c=>c.dataset.event===ev.id),'the event left the list');
   const replacement=env.cards()[Math.min(index,env.cards().length-1)];
   assert.equal(fk(env.doc.activeElement),`event:${replacement.dataset.event}:title`,'the card now at its position has focus');
- }finally{cleanup(env);}
+ }finally{await cleanup(env);}
 });
 
 test('when the last result leaves and the list becomes empty, focus goes to the results summary only if it was in the list',async()=>{
@@ -132,14 +132,14 @@ test('when the last result leaves and the list becomes empty, focus goes to the 
   const summary=env.doc.getElementById('events-summary');
   is(env.doc.activeElement,summary,'the results summary, not <body>');
   assert.equal(summary.getAttribute('tabindex'),'-1');
- }finally{cleanup(env);}
+ }finally{await cleanup(env);}
  const again=await page({search:`?q=${encodeURIComponent(ev.name)}`});
  try{
   const search=again.doc.getElementById('ev-q');search.focus();
   clock=later;again.tick();
   assert.equal(again.cards().length,0);
   is(again.doc.activeElement,search,'focus in the search box is never moved');
- }finally{cleanup(again);}
+ }finally{await cleanup(again);}
 });
 
 test('Back/Forward restores filters without moving focus',async()=>{
@@ -150,5 +150,5 @@ test('Back/Forward restores filters without moving focus',async()=>{
   env.win.dispatchEvent(env.event('popstate'));
   is(env.doc.activeElement,search);
   assert.equal(env.doc.querySelector('[data-status="past"]').getAttribute('aria-pressed'),'true');
- }finally{cleanup(env);}
+ }finally{await cleanup(env);}
 });
