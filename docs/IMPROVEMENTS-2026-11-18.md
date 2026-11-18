@@ -24,13 +24,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 15 (Replay move): published.** PR 39 merged as `main` `fda0dc9`. Codex verified it live: 29/29 files, 6 headers and development 404s; in native Chrome the Replay button and pose were healthy, with 0 errors.
 - **Batch 16 (read-only live checker, deploy exclusions and current docs): published.** PR 40 merged as `main` `1bff3c5`. In production, `npm run check:live` passed 194/194, including a 404 for `/.gitattributes`.
 - **Batch 17 (Community search by every word): published.** PR 41 merged as `main` `1a5d72c`. In production, live checks passed 194/194, and Codex's native query checks passed.
-- **Batch 18 (Clear confirmation and other tabs):** on `fix/planner-clear-conflict-2026-11-18`, cut from `1a5d72c`. Passed Codex's two-tab browser review; uncommitted, ready for root's release. Scope: item 38.
+- **Batch 18 (Clear confirmation and other tabs): published.** PR 42 merged as `main` `8cb2551`. The full suite passed 687/687, and 247/247 live checks passed, including all 53 public JSON files.
+- **Batch 19 (school planner recovers from a failed save):** on `fix/planner-write-recovery-2026-11-18`, cut from `8cb2551`. Passed Codex's browser review; uncommitted, ready for root's release. Scope: item 39.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 18:** implemented locally and browser-reviewed by Codex, uncommitted, awaiting release.
+- **Batch 19:** implemented locally and browser-reviewed by Codex, uncommitted, awaiting release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -67,8 +68,8 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
-| 39 | After one failed save the planner never retries in that visit, and the notice misdescribes reload | Code path: a throwing `setItem` (for example a full origin quota) sets `state = 'unavailable'` (`js/lib/school-planner.js:287`), so every later `save()`/`replace()` returns memory-only. The notice says the list lasts only until reload, but a reload shows the last saved, older list. Low likelihood (a valid list is at most about 105 KB). | P3 | Open (backlog only) |
-| 38 | A stale Clear confirmation could delete another tab's newer school list | Reproduced in the final focused audit with the real planner page in the test DOM. Tab A opened "Clear all 2 levels, 0 forms?"; tab B saved a third level; tab A silently adopted it ("Updated with changes made in another tab.") with the confirmation and its old count still open. Yes then saved an empty list ("List cleared."). | P2 data safety | Batch 18 |
+| 39 | After one failed save the planner never retries in that visit, and the notice misdescribes reload | Code path: a throwing `setItem` (for example a full origin quota) sets `state = 'unavailable'` (`js/lib/school-planner.js:287`), so every later `save()`/`replace()` returns memory-only. The notice says the list lasts only until reload, but a reload shows the last saved, older list. Low likelihood (a valid list is at most about 105 KB). | P3 | Batch 19 |
+| 38 | A stale Clear confirmation could delete another tab's newer school list | Reproduced in the final focused audit with the real planner page in the test DOM. Tab A opened "Clear all 2 levels, 0 forms?"; tab B saved a third level; tab A silently adopted it ("Updated with changes made in another tab.") with the confirmation and its old count still open. Yes then saved an empty list ("List cleared."). | P2 data safety | Published (PR 42) |
 | 37 | Community search needed exact phrases | `js/pages/forum.js` filtered with one lower-cased substring of title plus body, so word order, hyphens, spacing and accents changed the results, unlike the library search. | P3 usability | Published (PR 41) |
 | 36 | Release docs named a live checker that didn't exist, and production served `/.gitattributes` | SETUP.md and docs/RELEASE.md told the owner to run `npm run check:live`, but there was no such script. Codex's read-only live audit found `/.gitattributes` answering 200 (whitespace rules only, no credentials), while other dot-files returned 404. SETUP.md and RELEASE.md §8 still described the earlier accounts-off, report-only state as current. | P2 maintenance | Published (PR 40) |
 | 35 | No way to watch one move again | Codex's plan audit: Play after choosing a pose already rewound to that move's start in some cases, but then played on to the end of the form. There was no "play this move once and stop". | P2 learning | Published (PR 39) |
@@ -1283,4 +1284,68 @@ With the previous substring search, both tests fail. The full suite passes 673/6
   - **Same tab:** an Add (6) closed an open confirmation; so did a rename.
   - **Normal Clear:** a fresh Clear for 6 saved 0, which persisted after B reloaded, and focus went to the add field.
   - **Errors:** 0 console errors.
+- **Not tested:** a real screen reader and Safari.
+
+## Batch 19 — school planner recovers from a failed save (item 39)
+
+### Change (`js/lib/school-planner.js`, `js/pages/school-planner.js`)
+- **Two different problems, now handled differently:**
+  - **Unreadable storage** (the storage getter or a read throws) stays memory-only. Its notice now describes the latest changes rather than the whole list: "This browser isn't letting the page read or save its storage, so your latest changes are kept only on this page and are lost if you reload or leave. A list saved here earlier may come back if the browser allows storage again. Use Export to keep a copy."
+  - **A failed write** (for example a full quota) gets its own `write-failed` state.
+- **What happens after a failed write:**
+  - the last successful save stays the known version (`knownRaw`/`knownRev` change only after a successful `setItem`);
+  - the next explicit change, or **Keep this tab's version**, tries to save again;
+  - a successful retry stores every current edit and the status adds "Your earlier unsaved changes are now saved too.";
+  - continued failure keeps the warning on every change.
+- **Honest notice:** "Your latest changes couldn't be saved in this browser (it may be out of space). They're still on this page, and the page tries again when you make your next change. If you reload or leave now, the list last saved here comes back without them. Use Export to keep a copy." The status after a failed change adds "Not saved in this browser: see the notice above."
+- **Unsaved changes are tracked on their own:** a `dirty` flag records that this tab holds changes that aren't stored, whatever the reason: a failed write, unreadable storage or a conflict.
+  - Any save or Keep sets it until that write succeeds.
+  - Only a successful write, the initial load or adopting the stored version (Load the other version) clears it.
+  - So a later read failure, for example Load failing to read and the storage becoming unreadable, can't make the page forget unsaved edits.
+  - Read-blocked storage stays memory-only as before.
+  - **Review fix (root, notice):** when Load the other version failed to read, the page didn't refresh the storage notice, so it kept promising a retry ("tries again…") although unreadable storage won't retry. A failed Load now refreshes the notice.
+  - **Review fix (root):** the first version derived "unsaved" only from the `write-failed` state. A failed read afterwards changed the state to `unavailable` and lost that meaning, so a later storage event could have adopted another tab's list over the edits.
+- **Other tabs:** while this tab holds unsaved changes, another tab's save is routed to the existing conflict flow ("…while your latest changes here weren't saved. They're kept on this page; choose which version to keep.") instead of being adopted silently. A later save in this tab still reports the conflict and never overwrites the other tab. **Load the other version** and **Keep this tab's version** work as before, and either clears the warning once a version is stored.
+- **Unchanged:** the Clear protection from PR 42, import, export, blocked and corrupt storage.
+
+### Tests (`tests/school-planner.test.mjs`, +5; the page harness gains a `faulty` storage mode whose writes throw a quota error on demand)
+- **Store:**
+  - one failed write, then a save stores all current edits, and the older list is untouched in between;
+  - continued failure stays warned and retries every time; Keep also retries and reports failure;
+  - unreadable storage stays memory-only.
+- **Store and another tab:** another tab's save after a failed write is news; the next save is a conflict and doesn't overwrite; Load adopts and clears the warning.
+- **Store, unsaved marking:**
+  - starting blocked and empty claims no unsaved edits, and a change kept only in memory is unsaved;
+  - after a failed write, a failed Load read and a save that can't read both keep the edits marked unsaved;
+  - only adopting the stored version clears it.
+- **Messages:**
+  - the failed-write notice names the latest changes, the older list returning on reload, the retry and Export;
+  - the unreadable-storage notice names the latest changes held only on this page and an earlier list possibly returning, with no retry promised;
+  - neither claims the whole list disappears.
+- **Real page:**
+  - one failed add warns while the list keeps the change; the next add saves all three and says so; continued failure stays warned;
+  - another tab's save after a failed add shows the conflict with the unsaved levels kept, a further add doesn't overwrite, and both Keep and Load work and clear the warning.
+- **Real page, a failed write and then a failed read:**
+  - Load failing to read refreshes the notice to the unreadable-storage message; then reads recovering and another tab saving again: the conflict is shown, the unsaved levels are kept, and the other tab isn't overwritten;
+  - an add whose save can't read, then another tab saving: the conflict, not a silent adopt, and an explicit Load still adopts;
+  - a tab with no changes still adopts another tab's save.
+- **Updated:** the existing quota assertion now expects `write-failed` rather than `unavailable`.
+- **Eight spot mutants, all caught:** a failed Load not refreshing the notice, "unsaved" derived only from `write-failed`, and Load not clearing the flag, plus:
+  - a write failure made permanent (the old behaviour);
+  - `knownRaw` updated before the write;
+  - an external change adopted despite unsaved edits;
+  - no status warning;
+  - the old "lasts only until reload" message for failed writes.
+
+### Known limits
+- **Retry trigger:** the retry happens on the next explicit change or Keep, not on a timer.
+- **Same-instant saves:** two tabs saving at exactly the same moment remain the documented `localStorage` limit.
+- **Browser review** (Codex: 31 independent planner checks, plus native Chrome on an isolated storage-fault fixture with synthetic levels only; results saved as root's `browser-qa.json` for batch 19):
+  - **One failed write:** 2 visible and 1 stored, then the next change persisted all 3.
+  - **Continued failure:** 5 visible and 3 stored; after unblocking, Enter persisted all 6 and kept focus in the field.
+  - **Another tab, Keep:** a save in another tab after a failed write kept the local edits and showed the conflict; an explicit Keep wrote this tab's version.
+  - **Failed Load:** after a failed write, a failed Load read showed the updated unreadable-storage message. When reads recovered, another tab's update kept the unsaved draft; an explicit Load adopted the other version and cleared the warning.
+  - **Initial blocked read:** 0 levels shown while an older 10 were still stored. One local edit plus a recovered external change protected the draft; an explicit Load adopted 11.
+  - **Clear confirmation:** the PR 42 protection kept 11 while 12 were stored, and a normal Clear still worked.
+  - **Layout and errors:** at 320 px the notice fits its 285 px width, with no horizontal overflow; 0 console errors and 0 Supabase calls.
 - **Not tested:** a real screen reader and Safari.

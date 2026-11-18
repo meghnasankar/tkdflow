@@ -236,12 +236,16 @@ export function parseImport(text) {
  * The stored value carries `rev`, raised on every save. Before writing, the
  * store re-reads storage; if another tab saved since this one last loaded or
  * wrote, it does NOT write and reports a conflict, so the page can ask which
- * version to keep. state: 'ok' | 'unavailable' (memory only) | 'corrupt'
- * (unreadable data, left untouched until the visitor changes something).
+ * version to keep. state: 'ok' | 'unavailable' (storage can't be read: memory
+ * only) | 'write-failed' (the last write failed; the next save tries again) |
+ * 'corrupt' (unreadable data, left untouched until the visitor changes something).
  */
 export function createPlannerStore(source = () => globalThis.localStorage) {
   const storage = () => { const s = typeof source === 'function' ? source() : source; if (!s) throw new Error('No storage'); return s; };
-  let state = 'ok', knownRaw = null, knownRev = 0;
+  // `dirty`: this tab holds changes that aren't stored, whatever the reason (a failed
+  // write, unreadable storage, a conflict). Cleared only by a successful write or by
+  // adopting the stored version (load, Load the other version).
+  let state = 'ok', knownRaw = null, knownRev = 0, dirty = false;
 
   function parse(raw) {
     if (raw === null || raw === undefined) return { list: emptyList(), rev: 0, empty: true };
@@ -257,12 +261,13 @@ export function createPlannerStore(source = () => globalThis.localStorage) {
   function write(list, rev) {
     const raw = JSON.stringify({ version: VERSION, rev, levels: plainLevels(list, { ids: true }) });
     storage().setItem(STORAGE_KEY, raw);
-    knownRaw = raw; knownRev = rev; state = 'ok';
+    knownRaw = raw; knownRev = rev; state = 'ok'; dirty = false;
   }
   return {
     get state() { return state; },
     /** Read the saved list (or an empty one). */
     load() {
+      dirty = false;
       let raw;
       try { raw = readRaw(); } catch { state = 'unavailable'; return { list: emptyList(), state }; }
       knownRaw = raw;
@@ -272,9 +277,12 @@ export function createPlannerStore(source = () => globalThis.localStorage) {
       return { list: parsed.list, state };
     },
     /** Save unless another tab saved first. Returns { saved: true },
-     *  { saved: false, memory: true } (storage unavailable) or
-     *  { saved: false, conflict: { list } }. */
+     *  { saved: false, memory: true } (storage can't be read at all),
+     *  { saved: false, writeFailed: true } (this write failed, for example a full
+     *  quota: the last successful save stays the known version and the next save
+     *  tries again) or { saved: false, conflict: { list } }. */
     save(list) {
+      dirty = true;   // until the write below succeeds
       if (state === 'unavailable') return { saved: false, memory: true };
       let raw;
       try { raw = readRaw(); } catch { state = 'unavailable'; return { saved: false, memory: true }; }
@@ -284,17 +292,20 @@ export function createPlannerStore(source = () => globalThis.localStorage) {
         if (!other.corrupt) return { saved: false, conflict: { list: other.list, rev: other.rev } };
       }
       const current = parse(raw);
-      try { write(list, Math.max(knownRev, current.rev || 0) + 1); } catch { state = 'unavailable'; return { saved: false, memory: true }; }
+      try { write(list, Math.max(knownRev, current.rev || 0) + 1); } catch { state = 'write-failed'; return { saved: false, writeFailed: true }; }
       return { saved: true };
     },
     /** "Keep this tab's version": replace whatever is saved. */
     replace(list) {
+      dirty = true;   // until the write below succeeds
       if (state === 'unavailable') return { saved: false, memory: true };
       let current = { rev: 0 };
       try { current = parse(readRaw()); } catch { state = 'unavailable'; return { saved: false, memory: true }; }
-      try { write(list, Math.max(knownRev, current.rev || 0) + 1); } catch { state = 'unavailable'; return { saved: false, memory: true }; }
+      try { write(list, Math.max(knownRev, current.rev || 0) + 1); } catch { state = 'write-failed'; return { saved: false, writeFailed: true }; }
       return { saved: true };
     },
+    /** True while this tab holds changes that aren't stored, whatever the error. */
+    get unsaved() { return dirty; },
     /** A `storage` event's new value: what another tab saved, or null if it
      *  is unreadable or the same as what this tab already has. */
     external(raw) {
@@ -308,14 +319,15 @@ export function createPlannerStore(source = () => globalThis.localStorage) {
       try { raw = readRaw(); } catch { state = 'unavailable'; return { list: null, state }; }
       const parsed = parse(raw);
       if (parsed.corrupt) return { list: null, state };
-      knownRaw = raw; knownRev = parsed.rev; state = 'ok';
+      knownRaw = raw; knownRev = parsed.rev; state = 'ok'; dirty = false;
       return { list: parsed.list, state };
     },
   };
 }
 
 export function storageMessage(state) {
-  if (state === 'unavailable') return 'This browser isn’t letting the page save, so your list lasts only until you leave or reload this page. Use Export to keep a copy.';
+  if (state === 'unavailable') return 'This browser isn’t letting the page read or save its storage, so your latest changes are kept only on this page and are lost if you reload or leave. A list saved here earlier may come back if the browser allows storage again. Use Export to keep a copy.';
+  if (state === 'write-failed') return 'Your latest changes couldn’t be saved in this browser (it may be out of space). They’re still on this page, and the page tries again when you make your next change. If you reload or leave now, the list last saved here comes back without them. Use Export to keep a copy.';
   if (state === 'corrupt') return 'The list saved in this browser couldn’t be read, so the page started empty. It is left as it is until you add something, which replaces it.';
   return 'Saved in this browser on this device only.';
 }

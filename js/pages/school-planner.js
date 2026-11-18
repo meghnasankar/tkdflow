@@ -140,13 +140,15 @@ function dismissClear() {
 function commit(next, { status = '', undo: offer = null, rerender = true } = {}) {
   dismissClear();
   list = next;
+  const wasUnsaved = store.unsaved;
   const result = store.save(list);
   if (rerender) render();
   setUndo(offer);
   showStorage();
   // Focus stays where the visitor is working; the status and the notice explain.
   if (result.conflict) { showConflict(); say(`${status} Not saved yet: choose which version to keep above.`.trim()); return; }
-  say(status);
+  if (result.writeFailed) { say(`${status} Not saved in this browser: see the notice above.`.trim()); return; }
+  say(result.saved && wasUnsaved ? `${status} Your earlier unsaved changes are now saved too.`.trim() : status);
 }
 
 function showConflict() {
@@ -160,7 +162,7 @@ function hideConflict(target) {
 
 $('sp-conflict-load').addEventListener('click', () => {
   const loaded = store.reload();
-  if (!loaded.list) { say('The other version couldn’t be read, so this tab’s list is kept.'); return; }
+  if (!loaded.list) { showStorage(); say('The other version couldn’t be read, so this tab’s list is kept.'); return; }
   list = loaded.list; dismissClear();
   importing = null; $('sp-preview').hidden = true;
   render(); setUndo(null); showStorage();
@@ -191,10 +193,13 @@ window.addEventListener('storage', (e) => {
   if (e.key !== STORAGE_KEY && e.key !== null) return;
   const other = store.external(e.newValue ?? null);
   if (!other) return;
-  if (conflict || editing()) {
-    // Never replace what the visitor is in the middle of; let them choose.
+  if (conflict || editing() || store.unsaved) {
+    // Never replace what the visitor is in the middle of, or changes this tab
+    // couldn't save yet; let them choose.
     showConflict();
-    say('This list was changed in another tab. What you are typing is kept; choose which version to keep.');
+    say(store.unsaved
+      ? 'This list was changed in another tab while your latest changes here weren’t saved. They’re kept on this page; choose which version to keep.'
+      : 'This list was changed in another tab. What you are typing is kept; choose which version to keep.');
     return;
   }
   const loaded = store.reload();

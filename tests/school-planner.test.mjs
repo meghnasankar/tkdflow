@@ -137,13 +137,13 @@ test('store: saves, survives blocked storage in memory, and leaves unreadable da
  const blocked=createPlannerStore(()=>{throw new DOMException('no','SecurityError');});
  assert.equal(blocked.load().state,'unavailable');assert.deepEqual(blocked.save(l),{saved:false,memory:true});
  const full={getItem:()=>null,setItem:()=>{throw new DOMException('quota','QuotaExceededError');}};
- const q=createPlannerStore(()=>full);q.load();assert.deepEqual(q.save(l),{saved:false,memory:true});assert.equal(q.state,'unavailable');
+ const q=createPlannerStore(()=>full);q.load();assert.deepEqual(q.save(l),{saved:false,writeFailed:true});assert.equal(q.state,'write-failed');assert.equal(q.unsaved,true);
  for(const bad of ['{bad','{"version":2,"rev":1,"levels":[]}','{"version":1,"rev":-1,"levels":[]}','{"version":1,"rev":1,"levels":[{"label":"","forms":[]}]}']){
   const c=memory({[STORAGE_KEY]:bad}),st=createPlannerStore(()=>c);
   assert.equal(st.load().state,'corrupt');assert.equal(c.getItem(STORAGE_KEY),bad,'left untouched on load');
   assert.deepEqual(st.save(l),{saved:true});assert.equal(st.state,'ok');assert.notEqual(c.getItem(STORAGE_KEY),bad,'replaced only by a change');
  }
- assert.match(storageMessage('unavailable'),/only until you leave or reload/);assert.match(storageMessage('ok'),/this browser on this device only/);
+ assert.match(storageMessage('unavailable'),/latest changes are kept only on this page and are lost if you reload or leave/);assert.match(storageMessage('unavailable'),/saved here earlier may come back/);assert.match(storageMessage('ok'),/this browser on this device only/);
 });
 
 test('store: a save never overwrites what another tab saved meanwhile; the visitor chooses',()=>{
@@ -171,7 +171,11 @@ async function page({storage='ok',stored=null,formsFail=false}={}){
  const fetch=async url=>{calls.push(String(url));if(formsFail&&calls.length===1)return {ok:false,status:500,headers:{get:()=>null},text:async()=>''};return {ok:true,status:200,headers:{get:()=>null},text:async()=>formsJson};};
  const env=installDom({url:'https://tkdflow.com/school-forms.html',fetch});
  if(stored!==null)globalThis.localStorage.setItem(STORAGE_KEY,stored);
+ const real=globalThis.localStorage,fault={fail:0,always:false,writes:0,readFail:0};
  if(storage==='blocked')Object.defineProperty(globalThis,'localStorage',{configurable:true,get(){throw new DOMException('blocked','SecurityError');}});
+ // 'faulty': reads work; writes throw a quota error while fault.fail > 0 (counting down) or fault.always.
+ if(storage==='faulty'){const proxy={getItem:k=>{if(fault.readFail>0){fault.readFail--;throw new DOMException('read','SecurityError');}return real.getItem(k);},removeItem:k=>real.removeItem(k),setItem:(k,v)=>{fault.writes++;if(fault.always||fault.fail>0){if(fault.fail>0)fault.fail--;throw new DOMException('full','QuotaExceededError');}real.setItem(k,v);}};
+  Object.defineProperty(globalThis,'localStorage',{configurable:true,get:()=>proxy});}
  parseInto(env.doc,env.doc.body,mainHtml);
  const prints=[];env.win.print=()=>prints.push(1);
  await import(`../js/pages/school-planner.js?run=${++run}`);await settle(4);
@@ -186,7 +190,7 @@ async function page({storage='ok',stored=null,formsFail=false}={}){
  const addCustom=(i,name)=>{const {li}=level(i);const inp=li.querySelector('form[data-act="add-custom"] input');inp.value=name;submit(inp.closest('form'));};
  const saved=()=>{try{return JSON.parse(globalThis.localStorage.getItem(STORAGE_KEY));}catch{return null;}};
  const storageEvent=newValue=>env.win.dispatchEvent(env.event('storage',{key:STORAGE_KEY,newValue}));
- return {...env,calls,prints,$,shown,levels,key,submit,addLevelUI,level,addLesson,addCustom,saved,storageEvent,
+ return {...env,calls,prints,$,shown,levels,key,submit,addLevelUI,level,addLesson,addCustom,saved,storageEvent,fault,real,
   status:()=>$('sp-status').textContent,done:()=>env.restore()};
 }
 
@@ -370,7 +374,7 @@ test('page: export downloads exactly the list; print uses the browser; clearing 
 test('page: blocked storage keeps working in memory and says so; unreadable data is left until a change',async()=>{
  const b=await page({storage:'blocked'});
  try{
-  assert.match(b.$('sp-storage').textContent,/only until you leave or reload this page\. Use Export/);assert.ok(b.$('sp-storage').classList.contains('is-warn'));
+  assert.equal(b.$('sp-storage').textContent,storageMessage('unavailable'));assert.match(b.$('sp-storage').textContent,/Use Export to keep a copy\.$/);assert.ok(b.$('sp-storage').classList.contains('is-warn'));
   b.addLevelUI('White');assert.equal(b.levels().length,1,'editing works in memory');assert.equal(b.status(),'Added White (level 1 of 1).');
  }finally{b.done();}
  const c=await page({stored:'{broken'});
@@ -509,5 +513,145 @@ test('adding or renaming in this tab while Clear is being confirmed closes the o
   assert.equal(p.saved().levels[0].label,'White belt');
   assert.equal(p.shown(p.$('sp-clear-confirm')),false,'a rename closes it too');
   assert.equal(p.saved().levels.length,3,'nothing was cleared');
+ }finally{await p.done?.();}
+});
+
+/* ── a failed write is not blocked storage (item 39) ─────────────────── */
+function flaky(init={}){const m=memory(init),f={fail:0,always:false};return {f,m,getItem:k=>m.getItem(k),removeItem:k=>m.removeItem(k),setItem:(k,v)=>{if(f.always||f.fail>0){if(f.fail>0)f.fail--;throw new DOMException('full','QuotaExceededError');}m.setItem(k,v);}};}
+const savedLabels=raw=>JSON.parse(raw).levels.map(l=>l.label);
+test('store: a failed write keeps the last save as the known version and the next save stores every current edit',()=>{
+ const st=flaky(),a=createPlannerStore(()=>st);a.load();
+ let l=build(['White']);assert.deepEqual(a.save(l),{saved:true});
+ st.f.fail=1;l=build(['White'],['Yellow']);
+ assert.deepEqual(a.save(l),{saved:false,writeFailed:true});assert.equal(a.state,'write-failed');assert.equal(a.unsaved,true);
+ assert.deepEqual(savedLabels(st.m.getItem(STORAGE_KEY)),['White'],'the older saved list is untouched');
+ assert.equal(a.external(st.m.getItem(STORAGE_KEY)),null,'its own last save is not news');
+ l=build(['White'],['Yellow'],['Green']);assert.deepEqual(a.save(l),{saved:true});assert.equal(a.state,'ok');
+ assert.deepEqual(savedLabels(st.m.getItem(STORAGE_KEY)),['White','Yellow','Green']);
+ // Continued failure stays warned, and every attempt is a real retry.
+ st.f.always=true;for(let i=0;i<3;i++)assert.deepEqual(a.save(build(['X'+i])),{saved:false,writeFailed:true});
+ assert.equal(a.state,'write-failed');assert.deepEqual(savedLabels(st.m.getItem(STORAGE_KEY)),['White','Yellow','Green']);
+ assert.deepEqual(a.replace(build(['Kept'])),{saved:false,writeFailed:true},'Keep also tries, and reports the failure');
+ st.f.always=false;assert.deepEqual(a.replace(build(['Kept'])),{saved:true});assert.deepEqual(savedLabels(st.m.getItem(STORAGE_KEY)),['Kept']);
+ // Unreadable storage is different: it stays memory-only.
+ const blocked=createPlannerStore(()=>{throw new Error('blocked');});blocked.load();
+ assert.equal(blocked.unsaved,false,'starting blocked and empty claims no unsaved edits');
+ assert.deepEqual(blocked.save(l),{saved:false,memory:true});assert.equal(blocked.state,'unavailable');assert.equal(blocked.unsaved,true,'a change kept only in memory is unsaved');
+});
+
+test('store: another tab’s save after a failed write is a conflict, never overwritten, until Load or Keep',()=>{
+ const st=flaky(),a=createPlannerStore(()=>st),b=createPlannerStore(()=>st.m);
+ a.load();a.save(build(['White']));
+ st.f.fail=1;assert.equal(a.save(build(['White'],['Yellow'])).writeFailed,true);
+ b.load();b.save(build(['White'],['Black']));
+ const raw=st.m.getItem(STORAGE_KEY);
+ assert.deepEqual(a.external(raw).list.levels.map(l=>l.label),['White','Black'],'the other version is news');
+ const r=a.save(build(['White'],['Yellow'],['Green']));
+ assert.ok(r.conflict,'the next save reports a conflict');assert.deepEqual(savedLabels(st.m.getItem(STORAGE_KEY)),['White','Black'],'and does not overwrite');
+ assert.deepEqual(a.reload().list.levels.map(l=>l.label),['White','Black']);assert.equal(a.state,'ok','Load adopts and clears the warning');
+});
+
+test('messages: a failed write says the latest changes are not stored and the older list returns on reload; blocked storage is unchanged',()=>{
+ const m=storageMessage('write-failed');
+ assert.match(m,/latest changes couldn’t be saved/);assert.match(m,/list last saved here comes back without them/);assert.match(m,/Export/);assert.match(m,/tries again/);
+ assert.doesNotMatch(m,/lost if you reload/,'a failed write does not claim the changes are lost on reload without saying the older list returns');
+ const u=storageMessage('unavailable');
+ assert.match(u,/latest changes are kept only on this page/);assert.match(u,/saved here earlier may come back/);assert.doesNotMatch(u,/tries again/,'unreadable storage does not promise a retry');
+ for(const msg of [m,u])assert.doesNotMatch(msg,/list lasts only|whole list|entire list/,'neither claims the whole list disappears');
+});
+
+test('page: one failed save warns, keeps editing, and the next change saves everything and says so',async()=>{
+ const p=await page({storage:'faulty'});
+ try{
+  p.addLevelUI('White');assert.deepEqual(p.saved().levels.map(l=>l.label),['White']);
+  p.fault.fail=1;p.addLevelUI('Yellow');
+  assert.equal(p.status(),'Added Yellow (level 2 of 2). Not saved in this browser: see the notice above.');
+  assert.equal(p.$('sp-storage').textContent,storageMessage('write-failed'));assert.ok(p.$('sp-storage').classList.contains('is-warn'));
+  assert.equal(p.levels().length,2,'the list on the page keeps the change');assert.deepEqual(p.saved().levels.map(l=>l.label),['White']);
+  p.addLevelUI('Green');
+  assert.equal(p.status(),'Added Green (level 3 of 3). Your earlier unsaved changes are now saved too.');
+  assert.deepEqual(p.saved().levels.map(l=>l.label),['White','Yellow','Green']);
+  assert.equal(p.$('sp-storage').textContent,storageMessage('ok'));assert.ok(!p.$('sp-storage').classList.contains('is-warn'));
+  // Continued failure stays warned on every change.
+  p.fault.always=true;p.addLevelUI('Blue');p.addLevelUI('Red');
+  assert.match(p.status(),/^Added Red .*Not saved in this browser/);assert.equal(p.$('sp-storage').textContent,storageMessage('write-failed'));
+  assert.equal(p.levels().length,5);assert.equal(p.saved().levels.length,3);
+ }finally{await p.done?.();}
+});
+
+test('page: another tab’s save after a failed write shows the conflict instead of replacing unsaved changes; Keep and Load both work',async()=>{
+ for(const choice of ['keep','load']){
+  const p=await page({storage:'faulty'});
+  try{
+   p.addLevelUI('White');p.fault.fail=1;p.addLevelUI('Yellow');
+   const other=createPlannerStore(()=>p.real);other.save(addLevel(other.load().list,'Black').list);
+   p.storageEvent(p.real.getItem(STORAGE_KEY));
+   assert.equal(p.shown(p.$('sp-conflict')),true,'conflict, not a silent adopt');
+   assert.deepEqual([...p.levels()].map(li=>li.querySelector('h3').textContent),['White','Yellow'],'unsaved changes stay on the page');
+   assert.match(p.status(),/while your latest changes here weren’t saved/);
+   p.addLevelUI('Green');
+   assert.match(p.status(),/Not saved yet: choose which version to keep above/);
+   assert.deepEqual(p.saved().levels.map(l=>l.label),['White','Black'],'nothing overwrites the other tab automatically');
+   if(choice==='keep'){
+    p.$('sp-conflict-keep').click();
+    assert.deepEqual(p.saved().levels.map(l=>l.label),['White','Yellow','Green']);assert.equal(p.status(),'Kept this tab’s version. It replaced the other one.');
+   }else{
+    p.$('sp-conflict-load').click();
+    assert.deepEqual([...p.levels()].map(li=>li.querySelector('h3').textContent),['White','Black']);
+   }
+   assert.equal(p.$('sp-storage').textContent,storageMessage('ok'),`${choice}: the warning clears once a version is stored`);
+  }finally{await p.done?.();}
+ }
+});
+
+test('store: unsaved changes stay marked through a later read failure, until a successful write or an adopted version',()=>{
+ const st=flaky(),reads={fail:0},src={getItem:k=>{if(reads.fail>0){reads.fail--;throw new Error('read');}return st.getItem(k);},setItem:(k,v)=>st.setItem(k,v),removeItem:k=>st.removeItem(k)};
+ const a=createPlannerStore(()=>src),b=createPlannerStore(()=>st.m);
+ a.load();a.save(build(['White']));assert.equal(a.unsaved,false);
+ st.f.fail=1;a.save(build(['White'],['Yellow']));assert.equal(a.unsaved,true);
+ // Load the other version fails to read: storage becomes unreadable, but the edits are still unsaved.
+ b.load();b.save(build(['White'],['Black']));reads.fail=1;
+ assert.equal(a.reload().list,null);assert.equal(a.state,'unavailable');assert.equal(a.unsaved,true);
+ // An explicit save that can't read is unsaved too, not forgotten.
+ assert.deepEqual(a.save(build(['White'],['Yellow'],['Green'])),{saved:false,memory:true});assert.equal(a.unsaved,true);
+ // Only adopting the stored version clears it.
+ assert.deepEqual(a.reload().list.levels.map(l=>l.label),['White','Black']);assert.equal(a.unsaved,false);assert.equal(a.state,'ok');
+});
+
+test('page: after a failed write and a failed read, another tab’s later save still shows the conflict and keeps the unsaved levels',async()=>{
+ // Case 1: Load the other version fails to read, then reads recover and another save arrives.
+ let p=await page({storage:'faulty'});
+ try{
+  p.addLevelUI('White');p.fault.fail=1;p.addLevelUI('Yellow');
+  let other=createPlannerStore(()=>p.real);other.save(addLevel(other.load().list,'Black').list);
+  p.storageEvent(p.real.getItem(STORAGE_KEY));assert.equal(p.shown(p.$('sp-conflict')),true);
+  p.fault.readFail=1;p.$('sp-conflict-load').click();
+  assert.equal(p.status(),'The other version couldn’t be read, so this tab’s list is kept.');
+  assert.equal(p.$('sp-storage').textContent,storageMessage('unavailable'),'the notice no longer promises a retry once storage can’t be read');
+  other=createPlannerStore(()=>p.real);other.save(addLevel(other.load().list,'Blue').list);
+  p.storageEvent(p.real.getItem(STORAGE_KEY));
+  assert.deepEqual([...p.levels()].map(li=>li.querySelector('h3').textContent),['White','Yellow'],'the unsaved levels are kept');
+  assert.equal(p.shown(p.$('sp-conflict')),true);assert.match(p.status(),/while your latest changes here weren’t saved/);
+  assert.deepEqual(p.saved().levels.map(l=>l.label),['White','Black','Blue'],'and the other tab is not overwritten');
+ }finally{await p.done?.();}
+ // Case 2: no conflict yet; a change whose save can't read, then another tab saves.
+ p=await page({storage:'faulty'});
+ try{
+  p.addLevelUI('White');p.fault.fail=1;p.addLevelUI('Yellow');
+  p.fault.readFail=1;p.addLevelUI('Green');
+  assert.equal(p.$('sp-storage').textContent,storageMessage('unavailable'));
+  const other=createPlannerStore(()=>p.real);other.save(addLevel(other.load().list,'Black').list);
+  p.storageEvent(p.real.getItem(STORAGE_KEY));
+  assert.equal(p.shown(p.$('sp-conflict')),true,'not adopted silently');
+  assert.deepEqual([...p.levels()].map(li=>li.querySelector('h3').textContent),['White','Yellow','Green']);
+  p.$('sp-conflict-load').click();
+  assert.deepEqual([...p.levels()].map(li=>li.querySelector('h3').textContent),['White','Black'],'an explicit Load still adopts');
+ }finally{await p.done?.();}
+ // Case 3: a tab with no changes of its own still adopts another tab's save as before.
+ p=await page({storage:'faulty'});
+ try{
+  const other=createPlannerStore(()=>p.real);other.save(addLevel(other.load().list,'Red').list);
+  p.storageEvent(p.real.getItem(STORAGE_KEY));
+  assert.equal(p.shown(p.$('sp-conflict')),false);assert.deepEqual([...p.levels()].map(li=>li.querySelector('h3').textContent),['Red']);
  }finally{await p.done?.();}
 });
