@@ -82,11 +82,6 @@
  </div>
  </div>
  <div id="community-resources-pane" hidden><div class="container">
-    <section class="community-starters" aria-labelledby="community-starters-title">
-      <h2 id="community-starters-title">A good place to start</h2>
-      <p>Explore a question about forms, technique or competitions.</p>
-      <div id="community-guides" class="community-guide-grid" aria-live="polite"><p>Loading discussion guides…</p></div>
-    </section>
 
     <div class="preview-layout">
       <aside aria-label="Resource categories">
@@ -95,6 +90,7 @@
       </aside>
       <section aria-labelledby="examples-title">
         <h2 id="examples-title">Learning resources</h2>
+        <form class="toolbar" id="resources-search" role="search"><label for="resources-q">Search learning resources</label><div class="search-bar"><svg class="icon " aria-hidden="true" focusable="false"><use href="/assets/icons.svg#search"></use></svg><input type="search" id="resources-q" maxlength="80" autocomplete="off"></div><button type="button" class="btn btn-secondary btn-sm resources-clear" id="resources-clear" hidden>Show all resources</button></form>
         <p class="results-summary" id="community-summary" aria-live="polite"></p>
         <div id="community-feed"></div>
         <div class="notice notice-warn">
@@ -103,6 +99,12 @@
       </section>
     </div>
 
+
+    <section class="community-starters" aria-labelledby="community-starters-title">
+      <h2 id="community-starters-title">Discussion guides</h2>
+      <p>Explore a question about forms, technique or competitions.</p>
+      <div id="community-guides" class="community-guide-grid" aria-live="polite"><p>Loading discussion guides…</p></div>
+    </section>
  </div></div>
 </main>
 

@@ -28,13 +28,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 19 (school planner recovers from a failed save): published.** PR 43 merged as `main` `1e017ac`. Codex verified it in production: main CI succeeded, 194 live checks passed and the source matched.
 - **Batch 21 (header Log out): published.** PR 44 merged as `main` `bc4c677`. Codex verified it in production: the source files match exactly, and the live member header shows Log out.
 - **Batch 20 (no tool credits on public pages): published.** PR 45 merged as `main` `10a5496`. Codex verified it in production: the 72 changed public paths match (including the old catalog now answering 404), 246/246 live checks pass, the live print wording is clean, and the header Log out is visible.
-- **Batch 22 (compare two forms):** on `feat/form-comparison-2026-11-18`, cut from `10a5496`. Passed Codex's browser review; ready for root's release. Scope: item 42.
+- **Batch 22 (compare two forms): published.** PR 46 merged as `main` `aed2905`. Codex verified it live: main CI passed, the 10 changed public files match, and the live Forms → Compare link works with Taegeuk Il Jang and Chon-Ji cards and no errors.
+- **Batch 23 (search and shareable filters for learning resources):** on `feat/community-resource-search-2026-11-18`, cut from `aed2905`. Passed Codex's browser review; ready for root's release. Scope: item 43.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 22:** implemented locally and browser-reviewed by Codex, awaiting release.
+- **Batch 23:** implemented locally and browser-reviewed by Codex, awaiting release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -71,7 +72,8 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
-| 42 | No way to look at two forms side by side | The library shows one card per form; choosing between two meant switching pages. All the facts already exist: `data/forms.json` and each lesson's study poses and reference count, which the companions state. | P3 feature | Batch 22 |
+| 43 | Community learning resources had no search, and the category couldn't be shared | The resources view (`community.html?view=resources`) kept its category in a page variable, so it wasn't in the address, wasn't shareable and wasn't restored by Back. It also had no search, unlike the discussions pane. | P3 usability | Batch 23 |
+| 42 | No way to look at two forms side by side | The library shows one card per form; choosing between two meant switching pages. All the facts already exist: `data/forms.json` and each lesson's study poses and reference count, which the companions state. | P3 feature | Published (PR 46) |
 | 41 | No visible Log out | The owner reported "I can't find a logout button". A signed-in member's header showed only My profile (`js/site.js`, member mode); the only Log out was `#btn-logout` inside `profile.html`. | P2 usability | Published (PR 44) |
 | 40 | Public pages credited the tools used to make the voice and texture | At the owner's request, which reached Codex. Found by Codex and checked by scan: all 23 lesson pages had a `.voice-credit` paragraph ("Voice instructions generated with ElevenLabs using the stock Sarah voice."); all 23 read and print companions repeated it, from `VOICE` in `scripts/build-companions.mjs`; all 23 public narration manifests carried `provider`/`voice`/`model`; the public `data/narration/catalog.json` (read by no page) held the full generation record; and a comment in `js/animation/avatar.js` named the texture tool. | P2 owner request | Published (PR 45) |
 | 39 | After one failed save the planner never retries in that visit, and the notice misdescribes reload | Code path: a throwing `setItem` (for example a full origin quota) sets `state = 'unavailable'` (`js/lib/school-planner.js:287`), so every later `save()`/`replace()` returns memory-only. The notice says the list lasts only until reload, but a reload shows the last saved, older list. Low likelihood (a valid list is at most about 105 KB). | P3 | Published (PR 43) |
@@ -1520,4 +1522,58 @@ With the previous substring search, both tests fail. The full suite passes 673/6
       - at 1280×900 the hero is 193.5 px, the thumbnails 190 px, all facts end at 869 px and the links sit near 915 px (before, only "Style" began near 980 px);
       - at 320 px there's no overflow, the thumbnails keep their natural 16:9 ratio, and the four tool controls are 44 px;
       - Codex independently ran all 11 comparison tests, which passed.
+- **Not tested:** a real screen reader and Safari.
+
+## Batch 23 — search and shareable filters for learning resources (item 43)
+
+### Change (`community.html`, `js/pages/community.js` resources part only, new `js/lib/community-resources.js`)
+- **Search:** a "Search learning resources" field. Every typed word must appear in a resource's title, body, kind or tags, compared with the catalogue's `normalize()`, as in the library and discussions searches.
+- **Category in the address:** `?view=resources&category=<slug>` (for example `forms-curriculum`), with the search in `&q=`.
+  - A category click adds a history entry, typing replaces it, and Back/Forward restore both.
+  - An unknown category in a shared link shows everything and says so. With a search active it says all categories are searched.
+- **Typing before the data arrives:** only the address changes. The first render, with every category and its count, waits until the resources have loaded, and the typed search, focus and address are kept.
+  - **Review fix (root):** an early render had built an All-only category list that never got rebuilt.
+- **Buttons:** the category buttons are built once and then updated in place, with `aria-pressed` and counts that follow the search, so focus stays on them.
+- **Summary:** "3 of 10 resources in Competitions match "guide"."; the plain count with no filter.
+- **Clearing:** an empty state for searches with no match. **Show all resources** clears both filters and returns focus to the search field.
+- **Unchanged:**
+  - the discussions view: `forum.js` still handles it, and the resources code fetches and listens only in the resources view;
+  - the public, stateless guide read and the age rules;
+  - the card markup.
+- **Not added:** a copy button for now; the address is shareable.
+
+### Tests (`tests/community-resources.test.mjs`, 9, real `community.js` on the real `community.html` and `data/community.json`)
+- slugs, address state (unknown category, long search clipped) and the all-word search on the real posts;
+- the default view with counts;
+- a category click: the address, the same button keeping focus, `aria-pressed`, and Back restoring category and search;
+- typing: the address, matching titles, the summary and counts;
+- no match, then clearing;
+- an unknown category, with and without a search;
+- typing while the data fetch is held back: the address updates, no partial category list is built, and on arrival every category appears with search-aware counts, the search text and focus kept;
+- the discussions view: no resources fetch, and typing does nothing there.
+- **Seven spot mutants caught:** rendering before the data arrives, plus:
+  - buttons rebuilt (focus lost);
+  - no address update;
+  - no Back restore;
+  - search ignoring kind and tags;
+  - any word instead of every word;
+  - Clear not returning focus.
+- **Full suite on this branch:** 729/729 (`npm run check`).
+
+### Known limits
+- **Browser review** (Codex, native Chrome, synthetic local data):
+  - **Typing while the data was held back:** "print read" updated the address and built no partial category buttons. After release, all 5 category buttons showed the right search counts, the field kept its text and focus, and there was one companion result.
+  - **Passed:** the category filter, the empty state, keyboard Enter and focus, Back/Forward, and Clear (back to 10 resources, focus in search); 0 errors.
+  - **Review fix (field):** `#resources-q` was a tiny unstyled 185.5×23.5 px input on desktop. It now reuses the site's `search-bar` (search icon, full available width, the existing focus ring), with a scoped minimum height of 44 px.
+  - **Review fix (grammar):** the summary said "1 of 10 resources match…"; it now says "1 of 10 resources matches…" when one is shown.
+  - **Review fix (phone order, real public page):** at 390 px the three discussion-guide cards above the resources grew to 873 px, so `#resources-q` sat at y=1623, nearly two screens down, even for a shared filtered link.
+    - The guide section ("A good place to start", now headed **Discussion guides**) moved below the resources, filters and list in the resources pane. Its IDs, public guide reading and links are unchanged, and so is the discussions pane.
+    - The search wrapper measured 46 px but the input itself 34 px, so `#resources-q` now has a scoped 44 px minimum height too.
+    - **Re-measured by Codex:**
+      - at 390 px with the page at the top, the search input is at y=709, 44 px high and 308 px wide (it was at y=1623), and the discussion guides are below the resource feed;
+      - at 320, 390, 820 and 1280 px the input is 44 px, full available width, with no horizontal overflow;
+      - an unknown category with `q=print` says all categories are searched and "3 of 10 resources match";
+      - "print read" gives one companion with the singular "matches";
+      - 0 console errors;
+      - Codex independently ran the 9 resource tests, which passed.
 - **Not tested:** a real screen reader and Safari.
