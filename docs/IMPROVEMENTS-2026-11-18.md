@@ -4,13 +4,18 @@ This file tracks the extended improvement session that started from `main` at `d
 
 - **Batch 1 (learner foundations): published.** PR 24 merged as `main` `62d5ac5`. Codex verified it live: all 47 public files match source, security headers match, development paths return 404, the live Start here page has its 10 sections, and "Koryeo" finds Koryo. All 480 checks and the browser review passed: 9 widths, the 769–900 px header without wrapping, and native cross-tab sign-in, sign-out and token refresh with focus kept.
 - **Batch 2 (technique finder): published.** PR 25 merged as `main` `fde815c`. Codex verified it live: 47/47 public files byte-match, headers match, development paths return 404, the live finder works, and all 503 checks passed.
-- **Batch 3 (public Community reading):** on `improve/community-public-reading-2026-11-18`, cut from `fde815c`. Uncommitted, awaiting Codex review.
+- **Batch 3 (public Community reading): published.** PR 26 merged as `main` `47bee71`. Codex verified it live:
+  - 7/7 public scripts and config byte-match, headers match, and development paths return 404;
+  - the live resources view loads 3 guides with no account-library script;
+  - an existing signed-in teen moderator still has moderation but no composer;
+  - no errors, and all 527 checks passed.
+- **Batch 4 (keyboard and focus continuity):** on `improve/navigation-continuity-2026-11-18`, cut from `47bee71`. Uncommitted, awaiting Codex review.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 3:** implemented locally, uncommitted, awaiting Codex review.
+- **Batch 4:** implemented locally, uncommitted, awaiting Codex review.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -40,9 +45,12 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 19 | Korean pose names exist for Taegeuk Il Jang only | The 22 data-driven lessons carry no Korean terms (0 of 688 actions), and Taegeuk Il Jang's mapping is marked draft in its data file. The finder states this coverage. | P3 content | Open; needs sourced terms |
 | 20 | Optional search of spoken instructions | Narration cues line up one-to-one with poses in all 23 lessons (about 47 KB). Searching them would help ("chamber", "knee") but is noisy by default. Candidate: an opt-in "also search spoken instructions". | P3 feature | Open |
 | 21 | Stance indexing in the technique finder | The finder indexes only the techniques named in pose labels, not stances. The 22 data-driven lessons record a `stance` per sequence entry (walking, back, horse, front, crane, rear-foot, low, closed, fixed, parallel, cross, wide-parallel, cat), but Taegeuk Il Jang has stance only in description text. Adding stances needs source-backed stance names per style and a Taegeuk Il Jang mapping. Do not derive them from description prose. | P3 feature | Open; needs sourced stance terms |
-| 22 | Community started the account service in a known under-13 tab | `forum.js` `connect()` and `community.js` `loadGuides()` called `getAccountService()` without checking this tab's age screen. That started the SDK client, which can restore a stored session (for example someone else's on a shared device) and offer reporting, submissions, posting or moderation. My learning, lesson help (page and widget), profile and sign-in already guarded this. | P1 privacy/policy | Batch 3 |
+| 22 | Community started the account service in a known under-13 tab | `forum.js` `connect()` and `community.js` `loadGuides()` called `getAccountService()` without checking this tab's age screen. That started the SDK client, which can restore a stored session (for example someone else's on a shared device) and offer reporting, submissions, posting or moderation. My learning, lesson help (page and widget), profile and sign-in already guarded this. | P1 privacy/policy | Published (PR 26) |
 | 23 | Header account link in a known under-13 tab | `site.js` shows "My profile" whenever a session is stored, including in an under-13 tab; the profile page then shows the public guidance. Harmless, but an owner/UX decision. Batch 3 deliberately leaves the header unchanged. | P3 UX | Open (owner decision) |
 | 24 | Signed-out eligible visitors start the account service to read Community | Needed today to notice a sign-in. A lazier start (read publicly, start the client on a session-key `storage` event) changes sign-in timing and needs its own review. | P3 | Open |
+| 25 | Events: Show more and background renders lose keyboard focus | Reproduced live by Codex after batch 2: with 24 of 164 events shown, Show more rendered 48 cards but focus became `<body>`, and the next Tab reached the first existing card, not the first new one. In code, `render()` rebuilt every card and every select's options on filter changes, the one-minute ticker, tab visibility and Back/Forward. A focused card control or an open select could be replaced by the timer; that case was not reproduced live. | P2 accessibility | Batch 4 |
+| 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Batch 4 |
+| 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Open (next content batch) |
 
 ## Batch 1 — learner foundations (published, PR 24)
 
@@ -259,3 +267,81 @@ Run it with `node /private/tmp/tkdflow-community-public-fixture.mjs --port 8931`
 - I used no browser. Real back/forward-cache behaviour, the layout and focus need Codex QA with the fixture.
 - The age screen is per tab (sessionStorage). A new tab is unscreened, as documented in `account-age-policy.md`.
 - **Withdrawing an editorial guide** needs two steps. A successful live feed already excludes hidden or rejected rows, but if the live read fails the page falls back to the guides bundled in `data/forum.json`, which stay publicly readable. So withdrawing a guide also means removing it from that file.
+
+## Batch 4 — keyboard and focus continuity (Events, Community)
+
+### Shared helper: `js/lib/focus-keep.js`
+- Re-creatable controls carry a stable `data-fk` key.
+- **`keepFocus(container, update)`** is synchronous. If focus was inside `container` and the update removed the focused element, it puts focus back on:
+  - the same element, if it was re-attached (for example the preserved reply form), else
+  - the element with the same key (with its text caret), else
+  - the caller's bounded fallback.
+
+  Focus that was elsewhere, or that survived, is never moved, so background updates never steal focus.
+- **`focusTarget()`** is used only for explicit actions. It focuses with `preventScroll`, gives headings `tabindex="-1"`, and scrolls only when asked, honouring reduced motion.
+
+### Events (`js/pages/events.js`)
+- **Cards** are cached per event and reused while their status and registration state are unchanged. A reconcile step removes, adds and reorders only what changed, and never moves a card that is already in place (moving a focused node drops focus).
+- **Select options** are updated in place (label and `disabled`) and only rebuilt when the set of values changes, which happens on first load only.
+- **Show more** is one persistent button. After it, focus moves to the first newly shown card's title, without scrolling; the summary already announces the new count.
+- **Both result branches** (cards and the empty state) run inside `keepFocus`. When a focused card leaves the list, for example at a status boundary under a filter or down to no results, focus goes to the card now at its position, else to the results summary.
+- **Unchanged:** filters, URL, history and the advanced-filter state.
+
+### Community (`js/pages/forum.js`, `community.html`)
+- **Keys:** category buttons, topic links and Read buttons, the detail heading, Back, Copy, Report, reply Report buttons and the reply text box.
+- **Opening a discussion** (link or Read button) focuses its heading (`#topic-detail-title`, `tabindex="-1"`, which labels the panel). It scrolls the panel into view below the sticky header (`scroll-margin-top`), smoothly or instantly under reduced motion.
+- **"← All topics"** returns focus to the link or button that opened the discussion, else to the results summary.
+- **No focus moves on:** deep links (`?topic=`, including uppercase), Back/Forward and background refreshes.
+- **The detail panel** is built synchronously, including a preserved reply draft (text, focus and caret restored before any await). Only the replies area changes after replies load, so a later response never moves focus. A focused control that is rebuilt later (a reply's Report button) falls back synchronously to the heading.
+- **Category clicks and refreshes** keep focus on the same category button or topic; a focused topic that disappears falls back to the results summary.
+- **Help route:** a line under the Community guidelines points to public lesson answers and to private lesson questions for members aged 13 and over with a confirmed account and completed profile. It says private questions are not published. No posting rights change.
+- **CSS** (`css/preview.css`): `scroll-margin-top` for event cards, discussion cards, the summaries and the topic heading, plus visible focus outlines for the heading and summaries.
+
+### Tests (no browser; real page modules)
+- **`tests/helpers/mini-dom.mjs`:** a test-only DOM in which removing or moving a focused element drops focus to `<body>`, as browsers do.
+- **`tests/events-focus.test.mjs`** (7 tests) runs the real `events.js` with local data, a controllable clock and the page's own ticker callback. It covers:
+  - Show more focus, without scrolling;
+  - the ticker keeping the focused control and the card and option nodes;
+  - in-place option updates;
+  - a status change re-keying focus into the rebuilt card;
+  - a card leaving the results, and the last result leaving (focus to the summary, but never taken from the search box);
+  - Back/Forward.
+- **`tests/community-focus.test.mjs`** (11 tests) runs the real `forum.js`. Public mode uses a fake fetch; account mode substitutes `account-service.js` through a module loader hook in that test process only. It covers:
+  - heading focus with reduced motion;
+  - return to the opener;
+  - category focus;
+  - refresh keeping focus, or never taking it;
+  - the summary fallback;
+  - deep links;
+  - the focused heading surviving a rebuild;
+  - the Report-button fallback with no delayed steal;
+  - draft text, focus and caret restored before replies load;
+  - an unkeyed draft checkbox;
+  - the help-route copy.
+- **`tests/focus-keep.test.mjs`** (4 tests) covers caret restore when focusing moves the caret, the no-steal rules, a one-time synchronous fallback, and scrolling only on request with reduced motion.
+- **Assertions** on DOM nodes are identity checks, so a failure never formats a whole document tree.
+- **Mutation checks** (25 s cap per run; a timeout counts as detected) confirmed a failure without each of these:
+  - restore;
+  - same-element restore;
+  - caret restore;
+  - heading focus, origin return and heading key;
+  - the panel, summary and list fallbacks;
+  - category focus;
+  - Show more focus;
+  - card and option reuse;
+  - reduced motion.
+
+  One survivor is equivalent: the "only when lost" guard, because updates are synchronous.
+- **Updated:** two batch 3 structural assertions, for the new detail code.
+
+### QA fixture (outside the repo)
+`/private/tmp/tkdflow-navigation-fixture.mjs` serves the real pages with a labelled toolbar on Events and Community:
+- a live focus readout;
+- "Schedule background refresh in 2 s" (place focus first, then it runs the page's own background update);
+- on Community: an eligible adult (reply form), public reading, and slow replies (3 s), with fake account and public modules, so there is no Supabase traffic.
+
+Run it with `node /private/tmp/tkdflow-navigation-fixture.mjs --port 8941`.
+
+### Known limits
+- I used no browser. Real screen-reader announcements, smooth scrolling under the sticky header, and an open native select during the ticker need Codex QA.
+- The test DOM models focus loss on removal and moving, but not every browser quirk; helper tests cover caret jumps separately.

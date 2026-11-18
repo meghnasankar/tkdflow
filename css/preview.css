@@ -122,3 +122,7 @@
 
 .empty-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
 .major-shortcuts a { display:inline-flex; align-items:center; gap:6px; }
+/* Keyboard continuity: focused cards, results and the opened discussion stay
+   clear of the sticky header when the browser scrolls them into view. */
+.event-card,.discussion-card,#events-summary,#forum-summary,.topic-detail h2 { scroll-margin-top:90px; }
+.topic-detail h2:focus-visible,#events-summary:focus-visible,#forum-summary:focus-visible { outline:3px solid var(--red);outline-offset:3px; }
