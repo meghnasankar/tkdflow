@@ -279,6 +279,23 @@
       "noindex": true,
       "title": "My learning — TKDflow",
       "description": "Your private saved taekwondo forms and lesson study positions."
+    },
+    {
+      "file": "lesson-faq.html",
+      "key": "forms",
+      "path": "/lesson-faq.html",
+      "sitemap": true,
+      "title": "Lesson questions & answers — TKDflow",
+      "description": "Answers from TKDflow community moderators to common questions about the taekwondo form lessons, linked to the poses they explain."
+    },
+    {
+      "file": "lesson-help.html",
+      "key": "forms",
+      "path": "/lesson-help.html",
+      "sitemap": false,
+      "noindex": true,
+      "title": "My lesson questions — TKDflow",
+      "description": "Your private lesson questions, their review status and moderator replies."
     }
   ]
 }
