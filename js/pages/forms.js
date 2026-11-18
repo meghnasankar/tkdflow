@@ -1,7 +1,7 @@
 /* forms.html controller — one state object drives search, style tabs,
    belt/difficulty/lesson filters, sorting, counts and the URL. */
 import {
-  ORGS, LEVELS, SORTS, applyState, facetCounts, stateFromParams, stateToParams, isDefaultState, DEFAULT_STATE,
+  ORGS, LEVELS, SORTS, applyState, facetCounts, stateFromParams, stateToParams, isDefaultState, DEFAULT_STATE, ranksBySearch,
 } from '../lib/catalog.js';
 import {getLearningService,learningMessage} from '../lib/learning-service.js';
 import {saveFormButton} from '../lib/learning-ui.js';
@@ -104,20 +104,25 @@ function renderFilters() {
 function renderResults() {
   const results = applyState(forms, state);
   const grid = $('forms-grid');
+  // The default order ranks by name match while searching; say so in the sort control too.
+  const defaultSort = [...$('sort').children].find((o) => o.value === DEFAULT_STATE.sort);
+  if (defaultSort) defaultSort.textContent = ranksBySearch(state) ? 'Closest name match, then curriculum' : SORTS.find((s) => s.id === DEFAULT_STATE.sort).label;
   if (!forms.length) {
     $('results-summary').textContent = 'Showing 0 of 0 forms.';
     showEmpty(grid, 'The forms catalogue is empty right now. Please check back later.');
     return;
   }
   $('results-summary').textContent = `Showing ${results.length} of ${forms.length} forms` +
-    (state.q.trim() ? ` matching “${state.q.trim()}”` : '') + '.';
+    (state.q.trim() ? ` matching “${state.q.trim()}”` : '') + (ranksBySearch(state) && results.length > 1 ? ', closest name matches first' : '') + '.';
   if (!results.length) {
     showEmpty(grid, 'No forms match these filters.',
       h('button', { type: 'button', class: 'btn btn-secondary btn-sm', on: { click: clearAll } }, 'Clear search and filters'),
       state.q.trim() ? h('a', { class: 'btn btn-secondary btn-sm', href: `/techniques.html?q=${encodeURIComponent(state.q.trim())}` }, 'Search lesson poses for this technique') : null);
     return;
   }
-  if (state.sort !== 'curriculum') {
+  // Series groups only for the plain curriculum view: a ranked search or a chosen
+  // sort is shown flat, in exactly the order applyState returns.
+  if (state.sort !== 'curriculum' || ranksBySearch(state)) {
     replaceChildren(grid, h('div', { class: 'forms-grid' }, ...results.map(card)));
     return;
   }

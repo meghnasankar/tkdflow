@@ -26,6 +26,8 @@
   color: var(--gray-600); font-weight: 700; margin-bottom: 6px;
 }
 .radio-list { display: flex; flex-direction: column; gap: 2px; }
+.filter-note { margin: 8px 0 0; font-size: .8rem; line-height: 1.45; color: var(--gray-600); }
+.filter-note a { color: var(--red-dark); font-weight: 600; text-decoration: underline; }
 .radio-list label, .check {
   display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: var(--radius-sm);
   font-size: 0.9rem; color: var(--gray-800); cursor: pointer; min-height: 36px;
