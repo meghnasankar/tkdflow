@@ -15,13 +15,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 6 (age-aware header): published.** PR 30 merged as `main` `dc05c83` (CI success). Codex verified 5/5 source files, headers and development 404s, and a normal member's UI live.
 - **Batch 7 (saved-learning keyboard focus): published.** PR 31 merged as `main` `57fd990`. Codex verified 6/6 public files, headers and development 404s, plus the live tabs in native Chrome.
 - **Batch 8 (opt-in search of spoken instructions): published.** PR 32 merged as `main` `16260de`. Codex verified it live: 7/7 public files, security headers and development 404s; Koryo "throat" shows the 4 exact instructions; no account SDK loads.
-- **Batch 9 (full spoken instruction in Study view):** on `improve/study-caption-readability-2026-11-18`, cut from `16260de`. Uncommitted, awaiting Codex browser geometry and zoom review. Scope: item 31.
+- **Batch 9 (full spoken instruction in Study view): published.** PR 33 merged as `main` `d77f81b`. Codex verified it live: 2/2 public files, headers and development 404s; real Chrome at 320×700 shows the caption at 47/47 and a 253 px canvas with the full body, controls visible without scrolling, and no errors.
+- **Batch 10 (My school’s forms, a private organizer):** on `improve/school-form-planner-2026-11-18`, cut from `d77f81b`. Passed Codex's browser, print and download review in real Chrome; uncommitted, ready for root's release. Scope: item 32.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 9:** implemented locally, uncommitted, awaiting Codex review.
+- **Batch 10:** implemented locally and browser-reviewed by Codex, uncommitted, awaiting release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -58,7 +59,8 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
-| 31 | Study view cut off long spoken instructions | Reproduced by Codex in real Chrome at 320×700, Study view, Taebaek pose 10: the 130-character instruction needs 3 lines but was clamped to 2 (`clientHeight` 31 vs `scrollHeight` 47). Short landscape clamped to 1 line. The full text was only in the DOM for screen readers. | P2 readability | Batch 9 |
+| 32 | No place to keep a school’s own order of forms | Schools use different belt names and orders, and the library’s belt filter is only a colour family. Learners had no private way to write down their own school’s list of levels and forms and print it. | P2 feature | Batch 10 |
+| 31 | Study view cut off long spoken instructions | Reproduced by Codex in real Chrome at 320×700, Study view, Taebaek pose 10: the 130-character instruction needs 3 lines but was clamped to 2 (`clientHeight` 31 vs `scrollHeight` 47). Short landscape clamped to 1 line. The full text was only in the DOM for screen readers. | P2 readability | Published (PR 33) |
 | 30 | Taebaek movement 14: the 180° right turn is shown as one stage | DTaF (physical p.58, printed p.52), root-verified: 14-1 is a closed stance facing Ma (back) and 14-2 faces Da2, so the turn is 90° then 90°. The site turns all 180° into pose 23 and none into pose 24; the final heading is the same. The school source gives a single 180°. A metadata-only split was modelled offline (pose 23 faces 180, pose 24 turns right 90°; narration timing still validates). Labels would need `cue.turn` updates, and pose 24's spoken text and audio don't mention the second turn. Details: `/private/tmp/tkdflow-taebaek14-followup.md`. | P3 content accuracy | Blocked (Meghna: source choice and any audio change) |
 | 29 | Saved-learning controls lose keyboard focus while saving | Reproduced by Codex in a real browser with the synthetic fixture (account mode, 3 s server). (1) Library: keyboard Unsave on Taegeuk Il Jang rebuilt the button natively `disabled`, focus became `<body>` and stayed there after confirmation. (2) My learning, Saved: Unsave on the middle card (Chon-Ji) removed the card and focus became `<body>`. (3) Lesson widget: Mark as practised, same as (1). All real backend traffic was 0. | P2 accessibility | Batch 7 |
 
@@ -690,3 +692,121 @@ Measured on Taebaek pose 10, the longest instruction (130 characters). Before th
 - The canvas height varies a little more between poses (1, 2 or 3 caption lines), and the avatar is re-framed, as it already was between 1- and 2-line poses. No line-height reserve was added.
 - At 568×320 the canvas is at its minimum (80 px) with the longest instruction. A longer future instruction, or larger text, there would make the card scroll rather than shrink the canvas further.
 - There is no fixed content-length limit. Longer future instructions take more lines; the canvas gives up space down to its minimum (`min(140px, 25svh)`), and beyond that the card scrolls.
+
+## Batch 10 — My school’s forms, a private organizer (item 32)
+
+### What it is
+- **`/school-forms.html`** (new; registered in `layout/pages.json`, so it is in the sitemap), with `css/planner.css`, `js/lib/school-planner.js` (model, validation, storage) and `js/pages/school-planner.js` (page).
+- **Content:**
+  - It starts **empty**: no templates, sample schools or suggested orders.
+  - The visitor adds their own belt or level names, in their order, and for each level adds TKDflow lessons (any of the 23, grouped by style) or **their own form name**. Their own names are shown as plain text labelled "Your entry · no TKDflow lesson", with no link and no guessed match to a lesson.
+  - Lesson entries are stored by lesson id only. Their names and links come from `data/forms.json`, the page's only request.
+- **Copy:** one short invitation, plus one line saying the list is saved only in this browser, isn't part of the account and is separate from saved forms and progress. A hint asks for belt or level names only, not people's names or personal details. There are no personal-data fields and no reviewer or author banners.
+- **Discoverability:**
+  - a line in the library hero;
+  - Start here ("Keep your school’s order");
+  - a Community learning resource, with a new `clipboard` icon in `assets/icons.svg` (+ `icons.js`, `community.js`);
+  - the shared footer.
+  - Not in the top navigation, and not in lesson content.
+
+### Editing, focus and Undo
+- **Controls:** native buttons, inputs and selects only.
+  - Levels and forms have Move up, Move down and Remove. Names carry context through `aria-labelledby` (for example "Remove Koryo"), and the level is the description.
+  - The first and last Move buttons are `aria-disabled` and stay focusable; pressing them changes nothing.
+- **Focus:**
+  - After a move, focus stays on the moved item.
+  - After a removal, focus goes to the item now in that place, else the previous one. Otherwise, for forms, it goes to the level's lesson choice; for levels, to the level name field.
+  - Rebuilds keep focus through `keepFocus`.
+- **Drafts:** typing or choices not yet submitted in any level (a rename, an own form name, a chosen lesson) are carried across every rebuild, whether add, move, remove, Undo or loading another tab's version. Only the submitted field is cleared.
+- **Rename:** commits on Enter or on leaving the field, and updates in place without a rebuild.
+- **Undo:** offered for the latest removal only. It **re-inserts** the item into the current list at its old position (clamped) and never restores an older copy of the whole list, so later edits can't be lost. Any other change retires it, and if Undo was focused, focus goes to the status message.
+- **Clearing:** Clear the list asks first, with in-page buttons, and says an exported copy can be imported again.
+
+### Saving, other tabs, export and import
+- **Saving:**
+  - `localStorage` key `tkdflow.schoolForms.v1`, `{version:1, rev, levels}`.
+  - **Blocked or full storage:** the page works in memory and says the list lasts only until the page is left or reloaded, with Export to keep a copy.
+  - **Unreadable data:** left untouched until the visitor changes something, and the page says so.
+- **Other tabs:**
+  - Every save re-reads storage first. If another tab saved since, nothing is written and a notice offers **Load the other version** or **Keep this tab’s version** (which also keeps a rename still being typed). Focus stays where the visitor is working.
+  - A `storage` event while idle loads the other tab's version, with focus kept. While anything is being typed or an import preview is open, it shows the same notice instead of replacing anything.
+- **Export:** a `Blob` download of `tkdflow-school-forms.json`, `{app, version, levels:[{label, forms:[{lesson}|{name}]}]}`. It contains no ids, dates or anything about the visitor.
+- **Import:**
+  - A file over **192 KB** is refused before it is read. That cap is above the largest valid export: 30 levels × 12 own names of 60 four-byte characters is 105,396 bytes, as root measured and as tested through the page's real file-size path.
+  - Validation is strict, with plain reasons that never repeat file content. Objects are rebuilt from known fields only, ids are never imported, and unknown lessons are refused.
+  - A preview with counts and the literal names comes first, then **Replace** or **Cancel**. An import never merges.
+- **Text:** NFC; control characters, direction or isolate marks and unpaired surrogate halves are removed; whitespace is collapsed; at most 60 characters (code points). Everything is inserted as text, and links come only from validated lesson ids.
+- **Print:** `window.print()` with print CSS. It shows a title, the numbered levels and their forms, with lesson URLs as text; controls and notices are hidden.
+
+### Tests
+- `tests/school-planner.test.mjs` (21). It covers:
+  - the model;
+  - Undo re-insertion with later edits kept;
+  - export and import round trip;
+  - the worst-case export re-importing for emoji, quote, backslash, accented and ASCII text;
+  - hostile imports (prototype keys, markup, wrong app or version, over the caps, unknown lessons);
+  - the store (blocked, quota, corrupt, two-tab conflict, replace, reload).
+- It also has **10 page-level tests** that run the real page module on the real `school-forms.html` markup in the mini DOM, covering:
+  - the empty default;
+  - keyboard add with focus kept;
+  - lesson links versus literal own names;
+  - moves and edges;
+  - remove focus and Undo;
+  - drafts surviving add, move, remove, Undo and loading another version;
+  - import (oversize before read, malformed, preview, Cancel, Replace, the largest list through the byte check);
+  - export, print and clear;
+  - blocked and corrupt storage;
+  - idle and typing cross-tab changes, a held save, Keep and Load;
+  - a focused Undo retired by an outside change;
+  - lesson-list failure and Try again focus.
+- **19 bounded mutants, all killed:**
+  - Undo surviving later edits;
+  - a snapshot Undo;
+  - typing replaced by another tab;
+  - a save overwriting a newer save;
+  - corrupt data overwritten on load;
+  - an unknown lesson imported;
+  - an own name rendered as a link;
+  - no pre-read size check;
+  - import without preview;
+  - no `keepFocus`;
+  - no Remove fallback;
+  - natively disabled edges;
+  - direction marks kept;
+  - lone surrogates kept;
+  - a byte cap below a valid export;
+  - drafts dropped on rebuild;
+  - imported extra keys kept;
+  - a missing memory-only notice;
+  - no Retry focus handoff.
+- Found and fixed while building: control-character removal ran before whitespace collapsing, so "Yellow↵belt" became "Yellowbelt". The editor had also written the regex's direction marks as literal invisible characters into the source; the regex now uses ASCII `\u` escapes, and a scan of the checkout finds no bidi characters.
+- `npm run check`: 633/633. `git diff --check`: clean.
+
+### Browser QA (Codex, real Chrome, synthetic lists only)
+Codex used `/private/tmp/tkdflow-school-planner-fixture.mjs` (outside the repo; real `localStorage` by default, `?qa-storage=blocked` or `?qa-storage=corrupt`, a fake account service and a guard on backend requests). Every list was one Codex made up for the test.
+- **Editing:** added 2 levels, a Taegeuk Il Jang lesson and an own name containing markup, which showed as literal text with no HTML or link. Another level's unsubmitted draft was kept across add, move, remove and Undo. Keyboard focus after reordering, and the fallback after removal, were correct.
+- **Two real tabs:** a conflict kept the draft. Keep this tab's version and Load the other version both worked, and focused the status and the list heading.
+- **Export:** a 305-byte file was actually downloaded.
+- **Import:**
+  - The extension's file API was blocked and no permission was changed; the native OS file picker worked.
+  - An invalid lesson file was rejected and the current list was unchanged.
+  - The real exported file previewed, and both Cancel and Replace worked.
+  - A 105,396-byte Unicode file previewed as 30 levels and 360 forms and was accepted by the size check; Codex cancelled it, and the list was unchanged.
+- **Print:** native Print preview was 1 page with 3 levels, 2 forms and the lesson URL, and no editing controls.
+- **Layout:** 320, 390, 820 and 1280 px, no horizontal overflow.
+- **Storage:**
+  - Blocked storage: editing worked in memory, with the export notice.
+  - Corrupt fixture: 0 writes until Add, then 1 write; the real stored list was untouched.
+  - Clear: Cancel kept the list; confirming emptied it and focused the add-level field.
+- 0 console errors and 0 real backend requests. Root's 21 targeted tests passed, and the full 633/633 passed.
+
+### Known limits
+- **Not tested:**
+  - a real screen reader (names and announcements are checked only in the mini DOM);
+  - the download in Safari or on iOS (only Chrome downloaded a file);
+  - real school lists, since only Codex's own synthetic lists were used;
+  - committing or printing the largest Unicode list, which was previewed and then cancelled.
+- Input `maxlength="60"` counts UTF-16 units, so a field holds about 30 emoji, while the model and import allow 60 code points.
+- `localStorage` has no transactions. Two tabs saving in the same instant could still race in the moment between the re-read and the write, a far smaller window than before. Different devices or browsers never sync, by design; use Export and Import.
+- Undo covers only the latest removal, in memory, and is gone after reload. Import replaces and never merges.
+- The organizer needs `data/forms.json` to open. If it fails, a Try again message is shown and nothing is lost.

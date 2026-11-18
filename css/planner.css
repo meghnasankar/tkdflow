@@ -1,0 +1,64 @@
+/* My school's forms: private, browser-only organizer. */
+.sp-main { padding-top: 28px; }
+.sp-intro { display: grid; gap: 8px; margin-bottom: 12px; color: var(--gray-600); line-height: 1.6; }
+.sp-intro a, .sp-nojs a { color: var(--red-dark); font-weight: 600; text-decoration: underline; }
+.sp-storage { font-size: .88rem; color: var(--gray-600); margin-bottom: 16px; }
+.sp-storage.is-warn { padding: 10px 14px; border-left: 3px solid var(--gold); background: var(--gold-light); color: #713F12; border-radius: var(--radius-sm); }
+.sp-conflict, .sp-clear-confirm, .sp-preview { margin: 0 0 16px; }
+.sp-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.sp-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; }
+.sp-row input, .sp-row select { flex: 1 1 12em; min-width: 0; min-height: 44px; padding: 8px 10px; border: 1px solid var(--gray-300); border-radius: var(--radius-sm); background: var(--white); font: inherit; color: var(--navy); }
+.sp-row .btn { min-height: 44px; }
+.sp-add-level { padding: 16px; margin-bottom: 12px; border: 1px solid var(--gray-200); border-radius: var(--radius); background: var(--gray-50); }
+.sp-add-level label, .sp-level label, .sp-import label { display: block; font-weight: 700; font-size: .88rem; color: var(--navy); margin-bottom: 4px; }
+.sp-status-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; min-height: 44px; margin-bottom: 8px; }
+.sp-status { color: var(--navy); font-weight: 600; }
+.sp-status:focus, .sp-list h2:focus, .sp-level h3:focus, .sp-preview h3:focus, .sp-conflict p:focus, .sp-clear-confirm p:focus { outline: 3px solid var(--red); outline-offset: 2px; }
+
+.sp-list h2, .sp-tools h2 { font-size: clamp(1.2rem, 3vw, 1.45rem); margin: 8px 0 8px; }
+.sp-empty { color: var(--gray-600); }
+.sp-levels { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; counter-reset: sp-level; }
+.sp-level { padding: 14px 16px; border: 1px solid var(--gray-200); border-radius: var(--radius); background: var(--white); overflow-wrap: anywhere; counter-increment: sp-level; }
+.sp-level-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.sp-level h3 { flex: 1 1 10em; min-width: 0; margin: 0; font-size: 1.1rem; color: var(--navy); }
+.sp-level h3::before { content: counter(sp-level) ". "; color: var(--gray-600); }
+.sp-buttons { display: flex; flex-wrap: wrap; gap: 6px; }
+.sp-buttons .btn { min-height: 40px; padding: 6px 12px; }
+.btn[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+.sp-rename { margin: 10px 0 4px; }
+.sp-forms { display: grid; gap: 6px; margin: 10px 0 6px; padding-left: 1.4em; }
+.sp-form { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; padding: 4px 0; border-bottom: 1px dashed var(--gray-200); }
+.sp-form-name { flex: 1 1 12em; min-width: 0; }
+.sp-form-name a { color: var(--red-dark); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+.sp-form-meta { font-size: .82rem; color: var(--gray-600); }
+.sp-forms-empty { color: var(--gray-600); font-size: .9rem; margin: 8px 0; }
+.sp-add-form { display: grid; gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--gray-100); }
+.sp-error { color: var(--red-dark); font-size: .88rem; font-weight: 600; }
+
+.sp-tools { margin-top: 28px; }
+.sp-import { margin-top: 14px; }
+.sp-import input { display: block; max-width: 100%; min-height: 44px; }
+.sp-hint { font-size: .85rem; color: var(--gray-600); margin-top: 4px; }
+.sp-preview-list { margin: 8px 0 0; padding-left: 1.4em; display: grid; gap: 4px; overflow-wrap: anywhere; }
+.sp-preview-list ul { margin: 2px 0 0; padding-left: 1.2em; }
+.sp-print-note, .sp-print-url, .sp-print-title { display: none; }
+
+@media (max-width: 480px) {
+  .sp-add-level, .sp-level { padding: 12px; }
+  .sp-buttons { width: 100%; }
+}
+
+@media print {
+  header, footer, .skip-link, .page-hero, .sp-intro, .sp-storage, .sp-conflict, .sp-add-level, .sp-status-row,
+  .sp-empty, .sp-tools, .sp-rename, .sp-add-form, .sp-buttons, .sp-forms-empty, .sp-error, .sp-nojs { display: none !important; }
+  body { background: #fff; color: #000; }
+  .sp-main { padding: 0; max-width: none; }
+  .sp-list h2 { margin-top: 0; }
+  .sp-level { border: 1px solid #999; break-inside: avoid; padding: 8px 12px; }
+  .sp-level h3, .sp-level h3::before, .sp-form-meta { color: #000; }
+  .sp-form { border-color: #ccc; }
+  .sp-form-name a { color: #000; text-decoration: none; }
+  .sp-print-url { display: inline; font-size: .8rem; }
+  .sp-print-note { display: block; margin-top: 16px; font-size: .8rem; }
+  .sp-print-title { display: block; font-size: 1.4rem; font-weight: 800; margin-bottom: 4px; }
+}

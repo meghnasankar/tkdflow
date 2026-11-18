@@ -42,6 +42,14 @@
       "description": "Every TKDflow form lesson as plain text to read or print: study poses, count labels, turns, kihap and spoken instructions, each linked to the paused lesson."
     },
     {
+      "file": "school-forms.html",
+      "key": "forms",
+      "path": "/school-forms.html",
+      "sitemap": true,
+      "title": "My school’s forms — TKDflow",
+      "description": "Write down your own school’s belt or level names in your order, add the forms for each and print the list. Saved only in your browser; no account needed."
+    },
+    {
       "file": "companions/taegeuk-1.html",
       "key": "forms",
       "path": "/companions/taegeuk-1.html",

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<!-- layout:head -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My school’s forms — TKDflow</title>
+<meta name="description" content="Write down your own school’s belt or level names in your order, add the forms for each and print the list. Saved only in your browser; no account needed.">
+<link rel="canonical" href="https://tkdflow.com/school-forms.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TKDflow">
+<meta property="og:title" content="My school’s forms — TKDflow">
+<meta property="og:description" content="Write down your own school’s belt or level names in your order, add the forms for each and print the list. Saved only in your browser; no account needed.">
+<meta property="og:url" content="https://tkdflow.com/school-forms.html">
+<meta property="og:image" content="https://tkdflow.com/assets/og-animation-v2.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="TKDflow: Learn the forms. Step by step. The full-body animated black-belt character performs a side kick.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://tkdflow.com/assets/og-animation-v2.png">
+<meta name="twitter:image:alt" content="TKDflow: Learn the forms. Step by step. The full-body animated black-belt character performs a side kick.">
+<meta name="theme-color" content="#0D1B2A">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="stylesheet" href="/css/fonts.css">
+<link rel="stylesheet" href="/styles.css">
+<script type="module" src="/js/site.js"></script>
+<!-- /layout:head -->
+<link rel="stylesheet" href="/css/content.css">
+<link rel="stylesheet" href="/css/planner.css">
+<script type="module" src="/js/pages/school-planner.js"></script>
+</head><body data-page="forms">
+<!-- layout:header -->
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="navbar">
+  <div class="container">
+    <a href="/" class="navbar-logo" data-nav="home">
+      <span class="logo-icon" aria-hidden="true">道</span>
+      <span>TKDflow</span><span class="kr" lang="ko">태권도 플로우</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+      <span class="sr-only">Open menu</span><span class="nav-toggle-bars" aria-hidden="true"></span>
+    </button>
+    <nav class="site-nav" aria-label="Main">
+      <ul class="nav-links" id="site-nav">
+        <li><a href="/" data-nav="home">Home</a></li>
+        <li><a href="/forms.html" data-nav="forms" class="active" aria-current="page">Forms Library</a></li>
+        <li><a href="/community.html" data-nav="community">Community</a></li>
+        <li><a href="/competitions.html" data-nav="events">Events</a></li>
+        <li class="nav-account" id="nav-account"><a href="/auth.html" class="btn btn-secondary btn-sm nav-account-link">Account</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<!-- /layout:header -->
+<main id="main" tabindex="-1">
+ <div class="page-hero"><div class="container"><p class="section-label on-dark">Forms library</p><h1>My school’s forms</h1><p>Write down your school’s belt or level names in your own order, add the forms for each, and print the list.</p></div></div>
+
+ <div class="container content-narrow sp-main">
+  <p class="sp-nojs" id="sp-nojs">This organizer needs JavaScript. You can still browse every form in the <a href="/forms.html">forms library</a>.</p>
+  <p class="sp-loading" id="sp-loading" role="status" hidden>Loading the lesson list…</p>
+  <div class="status-panel status-error" id="sp-load-error" role="alert" hidden>
+   <p>The list of TKDflow lessons couldn’t load, so the organizer can’t open yet.</p>
+   <p><button type="button" class="btn btn-secondary btn-sm" id="sp-load-retry">Try again</button></p>
+  </div>
+
+  <div class="sp-app" id="sp-app" hidden>
+   <div class="sp-intro">
+    <p>Schools teach forms in different orders and under different belt names. Add your school’s own names in your order, then the forms for each. Use belt or level names only: please don’t add people’s names or other personal details.</p>
+    <p>This list is saved only in this browser on this device. It isn’t part of your account and it is separate from <a href="/learning.html">saved forms and progress</a>. Use Export to keep a copy or move it to another device.</p>
+   </div>
+   <p class="sp-storage" id="sp-storage"></p>
+
+   <div class="notice notice-warn sp-conflict" id="sp-conflict" hidden>
+    <p id="sp-conflict-text" tabindex="-1">This list was changed in another tab or window. Choose which version to keep.</p>
+    <p class="sp-actions"><button type="button" class="btn btn-secondary btn-sm" id="sp-conflict-load">Load the other version</button> <button type="button" class="btn btn-secondary btn-sm" id="sp-conflict-keep">Keep this tab’s version</button></p>
+   </div>
+
+   <form class="sp-add-level" id="sp-add-level">
+    <label for="sp-level-name">Belt or level name</label>
+    <div class="sp-row"><input type="text" id="sp-level-name" maxlength="60" autocomplete="off" placeholder="For example: Yellow belt"><button type="submit" class="btn btn-primary btn-sm">Add level</button></div>
+   </form>
+
+   <div class="sp-status-row"><p class="sp-status" id="sp-status" role="status" tabindex="-1"></p><button type="button" class="btn btn-secondary btn-sm sp-undo" id="sp-undo" hidden>Undo</button></div>
+
+   <section class="sp-list" aria-labelledby="sp-list-title">
+    <p class="sp-print-title">My school’s forms</p>
+    <h2 id="sp-list-title" tabindex="-1">Your list</h2>
+    <p class="sp-empty" id="sp-empty">No levels yet. Add your first belt or level above.</p>
+    <ol class="sp-levels" id="sp-levels"></ol>
+   </section>
+
+   <section class="sp-tools" aria-labelledby="sp-tools-title">
+    <h2 id="sp-tools-title">Print, export or import</h2>
+    <p class="sp-actions"><button type="button" class="btn btn-secondary btn-sm" id="sp-print">Print this list</button> <button type="button" class="btn btn-secondary btn-sm" id="sp-export">Export a copy (.json)</button> <button type="button" class="btn btn-secondary btn-sm" id="sp-clear">Clear the list</button></p>
+    <div class="notice notice-warn sp-clear-confirm" id="sp-clear-confirm" hidden>
+     <p id="sp-clear-text" tabindex="-1"></p>
+     <p class="sp-actions"><button type="button" class="btn btn-secondary btn-sm" id="sp-clear-yes">Clear the list</button> <button type="button" class="btn btn-secondary btn-sm" id="sp-clear-no">Keep it</button></p>
+    </div>
+    <div class="sp-import">
+     <label for="sp-import-file">Import a copy you exported earlier</label>
+     <input type="file" id="sp-import-file" accept=".json,application/json">
+     <p class="sp-hint">Importing shows the file’s list first; your current list is only replaced if you choose Replace.</p>
+    </div>
+    <section class="notice notice-info sp-preview" id="sp-preview" aria-labelledby="sp-preview-title" hidden>
+     <h3 id="sp-preview-title" tabindex="-1">Replace your list?</h3>
+     <p id="sp-preview-text"></p>
+     <ol class="sp-preview-list" id="sp-preview-list"></ol>
+     <p class="sp-actions"><button type="button" class="btn btn-primary btn-sm" id="sp-preview-replace">Replace my list</button> <button type="button" class="btn btn-secondary btn-sm" id="sp-preview-cancel">Cancel</button></p>
+    </section>
+   </section>
+   <p class="sp-print-note">Printed from tkdflow.com.</p>
+  </div>
+ </div>
+</main>
+<!-- layout:footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <p class="logo">TKDflow<span>.</span></p>
+        <p>A free taekwondo learning resource created by Meghna Sankar from her training and research.</p>
+      </div>
+      <div class="footer-col">
+        <h2>Learn</h2>
+        <ul>
+          <li><a href="/start-here.html">Start here</a></li>
+          <li><a href="/forms.html">Forms library</a></li>
+          <li><a href="/techniques.html">Find a technique</a></li>
+          <li><a href="/companions.html">Read and print companions</a></li>
+          <li><a href="/school-forms.html">My school’s forms</a></li>
+          <li><a href="/learning.html">Saved forms &amp; progress</a></li>
+          <li><a href="/lesson-faq.html">Lesson questions &amp; answers</a></li>
+          <li><a href="/taegeuk-1.html">Taegeuk Il Jang lesson</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>Community</h2>
+        <ul>
+          <li><a href="/community.html">Discussions</a></li>
+          <li><a href="/community.html?view=resources">Learning resources</a></li>
+          <li><a href="/competitions.html">Events</a></li>
+          <li><a href="/first-tournament.html">First tournament guide</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>About</h2>
+        <ul>
+          <li><a href="/about.html">About &amp; project status</a></li>
+          <li><a href="/founder.html">Meet Meghna</a></li>
+          <li><a href="/about.html#privacy">Privacy</a></li>
+          <li><a href="/about.html#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-current-year>2026</span> TKDflow</span>
+      <span>Free to use · No ads</span>
+    </div>
+  </div>
+</footer>
+<!-- /layout:footer -->
+</body>
+</html>
