@@ -11,6 +11,7 @@ import { validateForms } from '../lib/validators.js';
 import { BELT_FAMILIES } from '../lib/belts.js';
 import { loadInto, showEmpty } from '../lib/data.js';
 import { h, replaceChildren, safeGradient, safeClass, BADGE_CLASSES } from '../lib/dom.js';
+import { setHidden } from '../lib/focus-keep.js';
 
 const $ = (id) => document.getElementById(id);
 let forms = [];
@@ -178,7 +179,8 @@ function setupControls() {
 
 setupControls();
 $('forms-learning-retry').addEventListener('click',()=>learning.retry());
-learning.subscribe(snapshot=>{learningState=snapshot;$('forms-learning-status').textContent=learningMessage(snapshot);$('forms-learning-retry').hidden=!snapshot.error;render();});
+// A focused Retry that is hidden once its retry starts hands focus to the status message.
+learning.subscribe(snapshot=>{learningState=snapshot;$('forms-learning-status').textContent=learningMessage(snapshot);setHidden($('forms-learning-retry'),!snapshot.error,$('forms-learning-status'));render();});
 loadInto($('forms-grid'), '/data/forms.json', {
   title: 'The forms library could not be loaded.',
   validate: validateForms,

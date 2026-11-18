@@ -500,6 +500,8 @@ p  { color: var(--gray-600); }
 .save-form.is-saved .icon { fill:var(--red-light); }
 .form-card-footer { flex-wrap:wrap; gap:8px; }
 .reset-learning { font-size:.85rem; margin-top:6px; }
+/* Busy while a change is saving: still focusable, visibly unavailable (matches .btn[aria-disabled]). */
+.reset-learning[aria-disabled="true"] { opacity:.6; cursor:not-allowed; text-decoration:none; }
 .lesson-learning { padding:16px 20px; border:1px solid var(--gray-200); border-radius:var(--radius); margin-top:24px; background:var(--white); }
 .lesson-learning > p { margin:4px 0; }
 .lesson-study .lesson-learning { display:none; }

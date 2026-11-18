@@ -66,3 +66,21 @@ export function focusTarget(el,{scroll=false,scrollTarget=el}={}){
  if(scroll)scrollTarget?.scrollIntoView?.({block:'start',behavior:reducedMotion()?'auto':'smooth'});
  return true;
 }
+
+/** Hide or show `el`. If hiding it would drop keyboard focus that is inside it
+ *  (e.g. a Retry button that just did its job), move focus synchronously to
+ *  `fallback`, usually the nearby status message. Focus anywhere else is never
+ *  touched. */
+export function setHidden(el,hidden,fallback,doc=globalThis.document){
+ const had=Boolean(hidden)&&!el.hidden&&el.contains(doc.activeElement);
+ el.hidden=Boolean(hidden);
+ if(had&&fallback)focusTarget(fallback);
+}
+
+/** Natively disable or enable a control, handing its focus to `fallback` in
+ *  the same way if it was focused when it became disabled. */
+export function setDisabled(el,disabled,fallback,doc=globalThis.document){
+ const had=Boolean(disabled)&&!el.disabled&&doc.activeElement===el;
+ el.disabled=Boolean(disabled);
+ if(had&&fallback)focusTarget(fallback);
+}
