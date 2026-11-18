@@ -4,7 +4,7 @@
     2026,
     2027
   ],
-  "note": "440 listings from official federation and organizer calendars for 2026–2027. Coverage includes published international, national and regional events, courses and camps; it is not a complete inventory of every local or unannounced event worldwide. Dates TBA means an organizer has announced the edition without final dates. Confirm details on the official event page before travel or entry.",
+  "note": "441 listings from official federation and organizer calendars for 2026–2027. Coverage includes published international, national and regional events, courses and camps; it is not a complete inventory of every local or unannounced event worldwide. Dates TBA means an organizer has announced the edition without final dates. Confirm details on the official event page before travel or entry.",
   "events": [
     {
       "id": "itfv-10961",
@@ -3275,7 +3275,34 @@
       "sourceTitle": "2026 ATU National Championships information packet",
       "lastChecked": "2026-11-16",
       "registrationDeadline": null,
-      "notes": "Gas South Convention Center; May 22 demonstration competition and May 23 individual competition. No official 2027 edition/date announcement was located."
+      "notes": "Gas South Convention Center; May 22 demonstration competition and May 23 individual competition. The 2027 edition is listed separately."
+    },
+    {
+      "id": "atu-atu-national-championships-2027",
+      "name": "ATU National Championships",
+      "year": 2027,
+      "dateStatus": "tba",
+      "start": null,
+      "end": null,
+      "timezone": "America/New_York",
+      "timezoneEstimated": true,
+      "location": "Duluth, GA, United States",
+      "country": "United States",
+      "countryCode": "US",
+      "region": "North America",
+      "organization": "ATU",
+      "style": "wt",
+      "level": "national",
+      "kind": "Championship",
+      "eventTypes": [],
+      "major": true,
+      "status": "scheduled",
+      "source": "https://www.joinatu.com/",
+      "eventUrl": "https://www.joinatu.com/",
+      "sourceTitle": "American Taekwondo United official homepage — 2027 National Championships announcement",
+      "lastChecked": "2026-11-18",
+      "registrationDeadline": null,
+      "notes": "ATU's official homepage announces the 2027 National Championships at the Gas South Convention Center in Duluth, Georgia. Dates are pending confirmation because the official pages disagree: the announcement says May 28–29, 2027, the countdown says the championships start May 27, 2027, and the linked event schedule still shows the 2026 event."
     },
     {
       "id": "itfv-10161",

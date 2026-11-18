@@ -29,13 +29,14 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 21 (header Log out): published.** PR 44 merged as `main` `bc4c677`. Codex verified it in production: the source files match exactly, and the live member header shows Log out.
 - **Batch 20 (no tool credits on public pages): published.** PR 45 merged as `main` `10a5496`. Codex verified it in production: the 72 changed public paths match (including the old catalog now answering 404), 246/246 live checks pass, the live print wording is clean, and the header Log out is visible.
 - **Batch 22 (compare two forms): published.** PR 46 merged as `main` `aed2905`. Codex verified it live: main CI passed, the 10 changed public files match, and the live Forms → Compare link works with Taegeuk Il Jang and Chon-Ji cards and no errors.
-- **Batch 23 (search and shareable filters for learning resources):** on `feat/community-resource-search-2026-11-18`, cut from `aed2905`. Passed Codex's browser review; ready for root's release. Scope: item 43.
+- **Batch 23 (search and shareable filters for learning resources): published.** PR 47 merged as `main` `ac23656`. Codex verified it live: main CI passed, the 5 changed public files match, the live query "print read" shows 1 result, the search input is 44 px, the discussion guides are below the resources, and there were 0 errors.
+- **Batch 24 (2027 ATU National Championships, dates TBA):** on `content/atu-2027-announcement-2026-11-18`, cut from `ac23656`. Passed Codex's browser review; ready for root's release. Scope: item 44.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 23:** implemented locally and browser-reviewed by Codex, awaiting release.
+- **Batch 24:** implemented locally and browser-reviewed by Codex, awaiting release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -72,7 +73,8 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
-| 43 | Community learning resources had no search, and the category couldn't be shared | The resources view (`community.html?view=resources`) kept its category in a page variable, so it wasn't in the address, wasn't shareable and wasn't restored by Back. It also had no search, unlike the discussions pane. | P3 usability | Batch 23 |
+| 44 | The 2027 ATU National Championships wasn't listed, and the 2026 note said no 2027 announcement existed | Codex rechecked the official sources on 18 November (evidence: root's `atu-announcement-source.json`). `https://www.joinatu.com/` announces the 2027 National Championships at the Gas South Convention Center, Duluth, Georgia. Its main announcement says May 28–29, 2027, but its countdown says May 27, 2027, and the linked `/event-schedule` still shows 2026 (May 22–23). | P3 content | Batch 24 |
+| 43 | Community learning resources had no search, and the category couldn't be shared | The resources view (`community.html?view=resources`) kept its category in a page variable, so it wasn't in the address, wasn't shareable and wasn't restored by Back. It also had no search, unlike the discussions pane. | P3 usability | Published (PR 47) |
 | 42 | No way to look at two forms side by side | The library shows one card per form; choosing between two meant switching pages. All the facts already exist: `data/forms.json` and each lesson's study poses and reference count, which the companions state. | P3 feature | Published (PR 46) |
 | 41 | No visible Log out | The owner reported "I can't find a logout button". A signed-in member's header showed only My profile (`js/site.js`, member mode); the only Log out was `#btn-logout` inside `profile.html`. | P2 usability | Published (PR 44) |
 | 40 | Public pages credited the tools used to make the voice and texture | At the owner's request, which reached Codex. Found by Codex and checked by scan: all 23 lesson pages had a `.voice-credit` paragraph ("Voice instructions generated with ElevenLabs using the stock Sarah voice."); all 23 read and print companions repeated it, from `VOICE` in `scripts/build-companions.mjs`; all 23 public narration manifests carried `provider`/`voice`/`model`; the public `data/narration/catalog.json` (read by no page) held the full generation record; and a comment in `js/animation/avatar.js` named the texture tool. | P2 owner request | Published (PR 45) |
@@ -1576,4 +1578,38 @@ With the previous substring search, both tests fail. The full suite passes 673/6
       - "print read" gives one companion with the singular "matches";
       - 0 console errors;
       - Codex independently ran the 9 resource tests, which passed.
+- **Not tested:** a real screen reader and Safari.
+
+## Batch 24 — 2027 ATU National Championships, dates TBA (item 44)
+
+### Change (`data/competitions.json` only)
+- **New listing:** `atu-atu-national-championships-2027`.
+  - **Dates:** `dateStatus: "tba"`, with `start`/`end` null and year 2027.
+  - **Place:** Duluth, GA, United States, on `America/New_York` time, marked `timezoneEstimated` because it comes from the location, as for 2026.
+  - **Classification:** national, Championship, `major: true`, scheduled.
+  - **Source:** the official homepage as both `source` and `eventUrl`, `lastChecked` 2026-11-18.
+  - **`eventTypes: []`:** the page lists competition events, but alongside 2026 schedule links, so none are claimed.
+  - **Notes:** the 2027 edition is announced at the Gas South Convention Center, and its dates are pending confirmation because the official pages disagree (May 28–29 versus May 27, with the schedule still showing 2026).
+- **2026 record:** its dates are unchanged. Its stale sentence "No official 2027 edition/date announcement was located." is replaced with "The 2027 edition is listed separately."
+- **Coverage note:** "441 listings…". `lastReviewed` stays 2026-11-16; only this record was rechecked.
+- **Calendar export:** none for this listing. `canExportEvent` already requires confirmed dates.
+
+### Tests (`tests/events.test.mjs`, +2)
+- **The new listing:**
+  - it passes the record rules, has TBA dates and is "announced";
+  - it can't be exported to a calendar;
+  - the source host is official;
+  - the notes name both conflicting dates and "pending confirmation", and no event types are claimed;
+  - it's found under ATU 2027, Dates TBA, a "duluth ATU" search and the major filter, but not under May 2027.
+- **The 2026 record:** dates unchanged, and the stale sentence is gone.
+- **Coverage note:** its count equals the number of listings, a consistency check rather than a fixed snapshot.
+- **Full suite on this branch:** 731/731 (`npm run check`); the coverage count matches the 441 listings.
+
+### Known limits
+- The dates will need updating once ATU's pages agree. Root verified that the existing weekly events review (Sundays, 19:00 Eastern) is active and keeps TBA announcements and source conflicts under review, so no new automation or updater code was added.
+- **Browser review** (Codex, the local events page on this branch):
+  - **Filtered by ATU, 2027, major and all statuses:** exactly one ATU National Championships card. It shows MAJOR EVENT, Duluth, 2027 dates TBA, the source-conflict note and "Checked Nov 18", and links to the official `https://www.joinatu.com/`.
+  - **No calendar export:** no buttons, download or calendar link on the card.
+  - 0 console errors.
+  - Codex independently ran the events tests, which passed 20/20.
 - **Not tested:** a real screen reader and Safari.
