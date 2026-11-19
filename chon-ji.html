@@ -67,7 +67,7 @@
 
       </div>
       <h1>Chon-Ji <span class="kr-title" lang="ko">천지</span></h1>
-      <p>The very first ITF pattern, meaning Heaven and Earth. Contains 19 movements and is the gateway to the ITF curriculum. Study the source-based sequence with the full-body 3D character, fixed camera views, slow playback and frame controls. Combination counts are split into separate study poses.</p>
+      <p>The very first ITF pattern, meaning Heaven and Earth. Contains 19 movements and is the gateway to the ITF curriculum. Study the source-based sequence with the full-body 3D character, a camera you can turn to any side, slow playback and frame controls. Combination counts are split into separate study poses.</p>
       <p class="hero-jump"><a class="btn btn-primary btn-sm" href="#player">Jump to the player</a></p>
     </div>
   </div>
@@ -79,14 +79,23 @@
         <h2 class="sr-only" id="player-title">Animation player</h2>
         <div class="lesson-view-toolbar">
           <div><span class="lesson-render-label">3D study lesson</span><div class="lesson-actions"><button type="button" class="lesson-voice-toggle" id="voice-toggle" aria-pressed="true" aria-controls="lesson-audio" disabled>Voice on</button><button type="button" class="lesson-effects-toggle" id="effects-toggle" aria-pressed="true" aria-controls="lesson-effects" disabled>Effects on</button><button type="button" class="lesson-study-toggle" id="study-view" aria-pressed="false">Study view</button></div></div>
-          <div class="lesson-view-switch" role="group" aria-label="Camera view">
-            <button type="button" data-lesson-view="front" aria-pressed="false">Front</button>
-            <button type="button" data-lesson-view="back" aria-pressed="false">Back</button>
-            <button type="button" data-lesson-view="side" aria-pressed="false">Left</button>
-            <button type="button" data-lesson-view="other-side" aria-pressed="false">Right</button>
-            <button type="button" data-lesson-view="three-quarter" aria-label="Three-quarter view" aria-pressed="true">3/4</button>
+          <div class="lesson-camera">
+            <div class="lesson-focus-switch" role="group" aria-label="Camera focus">
+              <button type="button" data-lesson-focus="whole" aria-pressed="true">Whole body</button>
+              <button type="button" data-lesson-focus="arms" aria-pressed="false">Armwork</button>
+              <button type="button" data-lesson-focus="feet" aria-pressed="false">Footwork</button>
+            </div>
+            <div class="lesson-camera-pad" role="group" aria-label="Move the camera">
+              <button type="button" data-camera="left" aria-label="Move camera left" title="Move camera left (A)"><svg class="camera-orbit" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M19 15.5a7.5 7 0 0 0-13.6-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M2.2 9.6l6.4.6-3.6 5.1z" fill="currentColor"/></svg></button>
+              <button type="button" data-camera="right" aria-label="Move camera right" title="Move camera right (D)"><svg class="camera-orbit" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><g transform="matrix(-1 0 0 1 24 0)"><path d="M19 15.5a7.5 7 0 0 0-13.6-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M2.2 9.6l6.4.6-3.6 5.1z" fill="currentColor"/></g></svg></button>
+              <button type="button" data-camera="up" aria-label="Raise camera" title="Raise camera (W)"><span aria-hidden="true">↑</span></button>
+              <button type="button" data-camera="down" aria-label="Lower camera" title="Lower camera (S)"><span aria-hidden="true">↓</span></button>
+              <button type="button" data-camera="out" aria-label="Zoom out" title="Zoom out (-)"><span aria-hidden="true">⊖</span></button>
+              <button type="button" data-camera="in" aria-label="Zoom in" title="Zoom in (+)"><span aria-hidden="true">⊕</span></button>
+              <button type="button" data-camera="reset" aria-label="Reset camera" title="Reset camera (0)">Reset</button>
+            </div>
           </div>
-          <p class="lesson-view-note">Views are fixed to the starting stance. Directions use the performer’s left and right.</p>
+          <p class="lesson-view-note">Drag the view, or use the camera buttons, to look from any side. The camera stays put when the performer turns. Directions use the performer’s left and right.</p>
         </div>
         <div class="canvas-wrap">
           <canvas id="lesson-canvas" width="640" height="640" role="img" aria-label="3D character showing the selected pose"></canvas>
@@ -126,13 +135,14 @@
           </label>
         </div>
 
-        <p class="player-keys" id="player-keys">Keys (with the player selected): <kbd>←</kbd> <kbd>→</kbd> step one frame (Shift for a pose), <kbd>Home</kbd> <kbd>End</kbd> first/last pose, <kbd>Space</kbd> or <kbd>K</kbd> play/pause, <kbd>R</kbd> replay the current move once.</p>
+        <p class="player-keys" id="player-keys">Keys (with the player selected): <kbd>←</kbd> <kbd>→</kbd> step one frame (Shift for a pose), <kbd>Home</kbd> <kbd>End</kbd> first/last pose, <kbd>Space</kbd> or <kbd>K</kbd> play/pause, <kbd>R</kbd> replay the current move once. Camera: <kbd>A</kbd> <kbd>D</kbd> move around (Shift for the next side), <kbd>W</kbd> <kbd>S</kbd> raise or lower, <kbd>+</kbd> <kbd>-</kbd> zoom, <kbd>0</kbd> reset, <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> whole body, armwork or footwork.</p>
         </div>
 
         <audio id="lesson-effects" preload="auto" aria-hidden="true"></audio>
         <audio id="lesson-audio" preload="auto" aria-hidden="true"></audio>
         <span class="sr-only" id="voice-status" role="status"></span>
         <span class="sr-only" id="replay-status" role="status"></span>
+        <span class="sr-only" id="camera-status" role="status"></span>
         <div class="pose-share">
           <p class="pose-share-note">Pose numbers count the animation’s poses, not the form’s movements.</p>
           <div class="pose-share-actions">

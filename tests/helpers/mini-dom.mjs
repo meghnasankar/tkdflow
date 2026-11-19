@@ -33,6 +33,7 @@ export class MiniNode extends Target{
  get firstChild(){return this.childNodes[0]||null;}
  get lastChild(){return this.childNodes.at(-1)||null;}
  get children(){return this.childNodes.filter(n=>n instanceof MiniElement);}
+ get firstElementChild(){return this.children[0]||null;}
  get textContent(){return this.childNodes.map(n=>n.textContent).join('');}
  set textContent(v){this.replaceChildren(String(v));}
  contains(node){for(let n=node;n;n=n.parentNode)if(n===this)return true;return false;}

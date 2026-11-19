@@ -35,14 +35,15 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 31 (Log out is reported only when it's proven): published.** PR 50 merged as `main` `d634ce8`. Codex verified it in production: main CI passed, the 5 changed source files match, security headers and private-path 404s pass, and the live signed-in header shows Log out with 0 errors.
 - **Batch 26 (Community Refresh recovery and an honest submissions limit): published.** PR 51 merged as `main` `00d1366`. Codex verified it in production: main CI passed, the 6 changed source files match, security headers and private-path 404s pass, and the public resources view has 0 errors.
 - **Batches 27 and 30 (unsent reply drafts, and a session recheck after Back/Forward): published.** PR 52 merged as `main` `b4c97e2`. Codex verified it in production: main CI passed, the 3 source files checked match, and security headers and private-path 404s pass.
-- **Batches 28 and 29 (Taekwondo words explained, and one compact Forms tool row):** on `content/glossary-and-forms-tools-2026-11-18`, cut from `b4c97e2`. Codex's browser review passed on 18 November (results in each batch's Known limits); awaiting root's release. Scope: items 49 and 50.
+- **Batches 28 and 29 (Taekwondo words explained, and one compact Forms tool row): published.** PR 53 merged as `main` `17278e9`. Root reported main CI run 44394381798 passing, 779 tests and 256 live checks. Codex's browser review results are in each batch's section. Scope: items 49 and 50.
+- **Batch 35 (a free lesson camera with Whole body, Armwork and Footwork):** on `feat/lesson-viewer-3d-2026-11-19`, cut from `17278e9`. Codex's review passed on 19 November (results in the batch section); awaiting root's release. Scope: item 58.
 - **Closeout:** batches 32, 33A and 34 are prepared but not published, and 33B isn't implemented. See "Closeout — prepared, not published" at the end.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batches 28 and 29:** implemented locally and browser-reviewed by Codex; awaiting root's release.
+- **Batch 35:** implemented locally and reviewed by Codex; awaiting root's release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -79,6 +80,7 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
+| 58 | The lesson camera offered only five fixed views | All 23 lessons used `js/animation/lesson-view.js` with Front, Back, Left, Right and 3/4 buttons, each fitted only for its own direction. There was no way to turn freely, zoom or move in on the arms or feet. | P2 learning | Batch 35 |
 | 53 | A Community page restored by Back/Forward kept a signed-out member's private controls | A read-only audit with the real pinned SDK (2.119.0) and the real connection code, offline and synthetic, found the gap: a sign-out made in another tab while this page sat in the back/forward cache wasn't noticed on restore. `pageShown` rechecked only under-13 tabs, and the SDK's visibility recovery returns without any event when the stored session is gone. The composer, Your submissions and the moderation queue stayed. An account switch was noticed. This is synthetic SDK evidence only; it hasn't been shown in a real browser, which may evict the cached page instead. No production leak is claimed. | P2 privacy | Published (PR 52) |
 | 52 | Profile Log out could report a sign-out it hadn't proved | `js/pages/profile.js` passed `stillSignedIn: () => hasStoredSession()`, which returns false when storage can't be read, so `logout()` treated unreadable storage as a verified sign-out and the page redirected home. Its auth listener said "You have been signed out" on any null session, even with a stored copy still present. Password recovery used the same weak proof for "signed out". Codex reproduced both profile cases in native Chrome with the synthetic fixture (`/private/tmp/tkdflow-profile-logout-fixture.mjs`). No live account was affected. | P2 accuracy | Published (PR 50) |
 | 50 | The Forms library hero stacked three separate tool lines | Below the three primary buttons, `forms.html` had three `<p class="hero-companions">` lines (companions, school order, compare), each a full-width line, pushing the summary and style tabs down. Codex measured the hero before the change at 699/624/420/443 px high at 320/390/768/1280 px, with the style tabs at y=676/601/445/468 and no overflow (`/private/tmp/tkdflow-forms-tools-before.json`). | P3 layout | Batch 29 |
@@ -2093,3 +2095,148 @@ The work below stays in the backlog. None of it is on this branch, and none of i
   - **Result:** no stale profile was reproduced.
   - **Not tested:** Safari, which could use `/private/tmp/tkdflow-bfcache-native-baseline-fixture.mjs` later.
 - **Known test flake, not fixed:** batch 21's header Log out test "a sign-out already sent before Back/Forward…" failed once under load.
+
+## Batch 35 — a free lesson camera with three focus options (item 58)
+
+### Change (one shared implementation for all 23 lessons)
+- **New `js/animation/camera-rig.js`** (pure math, no renderer):
+  - **Angles:** azimuth around the performer (0 in front of the starting stance, 90 on the performer's left), a tilt from level to 70°, and zoom from 0.75× to 2.5×.
+  - **Position, not turns:** the camera follows where the performer stands, never the way they face.
+  - **Default:** front-left, 18° up, as the old 3/4 view.
+- **Framing without zoom pumping:**
+  - **Whole body and Armwork:** for each lesson, one distance per focus and screen shape fits every sampled point of the whole form from every allowed angle (5° steps, 3.5% margin). Turning, tilting and playback never change it. Only zoom, a focus change or a new screen shape does.
+  - **Whole body** includes the head, both hands, both feet and every joint, kicks included.
+  - **Armwork** covers the head, shoulders, elbows, wrists, hands and the pelvis.
+  - **A per-angle table** is built once per focus (about 30 ms for the longest form in Node), so a resize is a lookup.
+- **Footwork follows both knees and feet, kicks included** (root review: it must not hide the kicking foot).
+  - It looks from 0.25 s before to 0.75 s after the current lesson time and fits those leg points from any angle.
+  - It backs out quickly (80 ms easing) and moves back in slowly (450 ms), and it's never wider than one steady whole-lesson framing of the legs.
+  - Its distance depends only on lesson time, so orbiting never changes it.
+  - **With reduced motion,** it holds that steady framing instead.
+  - **Safety net for jumps (root review, 19 Nov):** easing alone could clip a foot. Root found this after Next, a list pick or a seek from a low stance straight to a kick (Taegeuk Sa Jang pose 4 → 7: the first frame reached 1.089 of the frame edge at a 0.85 aspect).
+    - **The check:** after easing, every Footwork frame checks with a conservative any-angle bound that the current pose's knees and feet fit at the current aim and distance.
+    - **If they might not,** the camera moves straight out to the goal's aim, at the larger of the current and goal distances. Moving back along the view axis only widens the view, so nothing is clipped.
+    - **Also covered:** choosing Footwork from another focus, a screen-shape change (which reframes at once), and `at()`.
+    - **Steady playback still eases:** across all 23 lessons at 60 fps the net moved the camera on at most 4 frames per lesson (≤0.05%). The largest per-frame distance change was about 0.1 m.
+- **Easing:** key and button moves ease (about 0.3 s) by the short way round, with no overshoot. Drag and pinch follow the pointer at once. Reduced motion snaps every change.
+- **New `js/animation/camera-input.js`:**
+  - **Drag:** the full canvas width turns the camera 180°, and the full height tilts it 90°. Dragging right moves the camera left, as if grabbing the scene.
+  - **Zoom:** two-finger pinch, or Ctrl/Cmd with the wheel (a trackpad pinch). A plain wheel still scrolls the page.
+  - **Phones:** `touch-action: pan-y`, so sideways drags turn the camera and vertical swipes scroll. Study view takes every direction.
+  - **Ending a drag:** a cancelled touch, a lost capture or a window blur ends it.
+- **Keys** (with the player selected; never with Ctrl, Cmd or Alt, in fields or during IME):
+  - A and D move around 15°, and Shift with A or D goes to the next named side;
+  - W and S raise or lower;
+  - + and - zoom;
+  - 0 resets;
+  - 1, 2 and 3 choose Whole body, Armwork or Footwork.
+  - They don't overlap the playback keys (arrows, Home, End, Space, K and R).
+- **Lesson pages (all 23):**
+  - **Focus group:** the five view buttons are replaced by "Camera focus" (Whole body, Armwork, Footwork; `aria-pressed`).
+  - **Camera buttons, so dragging is never required:** "Move the camera" has seven labelled buttons (left and right go to the next named side; raise; lower; zoom out; zoom in; Reset).
+  - **Status:** a polite `camera-status` line announces the camera once it settles ("Camera back-left, slightly above. Armwork."). Drags in progress aren't read out.
+  - **Text:** the key hint, the view note and the hero sentence are updated.
+  - **If the 3D view fails,** the camera controls are disabled.
+- **`js/animation/lesson-view.js`:**
+  - uses the rig and attaches the input;
+  - exposes `camera` to the page;
+  - keeps `setView(name)` presets for the QA lab;
+  - writes `data-azimuth`, `data-elevation`, `data-zoom`, `data-focus`, `data-camera-distance` and a direction name in `data-view` for review.
+- **Start here and the homepage** describe the new controls.
+- **Layout:** at 320 px the toolbar rows may shrink inside the card. The Voice/Effects/Study row already overflowed the card by 6 px at 320 px on `main`; it now wraps its label below 360 px.
+
+### Framing compared with before
+- **Default Whole body,** measured as figure size against the old fixed 3/4 fit, across all 23 lessons:
+  - desktop-shaped canvas (1.74): 91–101%, median about 96%;
+  - phone-shaped canvas (0.85): 83–101%, median about 95%.
+- **Why it's smaller in some lessons:** the drop comes from front kicks seen side-on, which a fixed 3/4 view never had to fit. It isn't caused by the 70° tilt; each tilt from 0° to 70° needs about the same distance. Zoom goes up to 2.5×.
+- **Footwork:** typically about 0.5–0.6× the Whole body distance during steps and stances, widening to at most about 1.06× at high kicks.
+
+### Tests (`tests/lesson-camera.test.mjs`, new, 19; `tests/start-here.test.mjs` updated)
+- **Whole body, all 23 lessons:**
+  - samples offset from the rig's own grid (in-between frames);
+  - 24 azimuths × 6 tilts × 2 screen shapes;
+  - every joint, hand and foot stays on screen.
+- **Footwork, all 23 lessons,** played at 60 fps (frames checked every 1/30 s) at two screen shapes:
+  - both knees and feet of the current frame stay on screen from five angles;
+  - the median distance is under 0.75× Whole body;
+  - the peak is under 1.1×.
+- **Footwork jumps, all 23 lessons, at two screen shapes:**
+  - settled at every other pose, then jumping 1 or 3 ahead, 1 or 4 back, to the first pose and to the last pose;
+  - a seek while playing;
+  - 2,000+ jumps in all.
+  - The first frame and the settled frame are each checked from six angles.
+- **Footwork, focus and shape changes:** chosen from Whole body or Armwork at each of Taegeuk Sa Jang's kicks, then resized to 0.5, 2.4 and 0.85; a rotate-and-jump together; and a direct `at()`.
+- **Steady playback:** safety snaps stay at or under 1% of frames.
+- **Armwork:** on screen from every tested angle, and under 0.75× Whole body.
+- **Rig behaviour:**
+  - no pumping while orbiting, including Footwork;
+  - reduced motion gives steady Footwork with every kick in frame;
+  - easing takes the short way round with no overshoot, and stops asking for frames once settled;
+  - focus changes move in steadily;
+  - drag and pinch are immediate;
+  - the limits hold, and the next-side steps go 90, 135, 180, −135 and back 45, 0, −45, −90;
+  - the labels read as expected;
+  - a new screen shape reframes at once.
+- **Input:**
+  - the key map and its exclusions, and no overlap with the playback keys;
+  - drag direction and scale, pointer capture, and right-click ignored;
+  - a plain wheel left alone, while Ctrl+wheel zooms;
+  - pinch;
+  - cancel, lost capture and blur;
+  - detach removes every listener.
+- **The real `js/pages/lesson-player.js` page,** with only the WebGL view and the account widgets substituted:
+  - camera keys move the camera, while arrows still step a frame;
+  - the time slider and Ctrl keep their keys;
+  - the focus and camera buttons work, and `aria-pressed` follows;
+  - the announcement arrives after settling, and drags aren't announced;
+  - a 3D failure disables all 10 camera controls.
+- **Markup:** all 23 pages have the focus group, the seven labelled buttons with real keys, the status line, the key hint and the note.
+- **Spot mutants caught (12):**
+  - distance depending on angle;
+  - no Footwork cap;
+  - Footwork zoom-out slowed to 600 ms with no look window;
+  - zoom-out slowed to 5 s;
+  - Footwork need cut by 20%;
+  - drag sign flipped;
+  - the wheel always zooming;
+  - Shift taking letters;
+  - the page ignoring camera keys;
+  - no disabling on error;
+  - drags announced;
+  - a focus change keeping the zoom.
+- **After the jump fix, one bounded mutant:** removing the per-frame safety check fails both new jump tests (Taegeuk Il Jang pose 15 → 16 reached 1.455; Armwork → Footwork reached 1.321).
+- **Survived (stated plainly):**
+  - with the look-ahead removed, or the zoom-out slowed to 900 ms, every tested frame stays in view, because the any-angle bound is already conservative. The look-ahead is kept so the camera widens before a kick rather than during it.
+  - **Helper:** `tests/helpers/mini-dom.mjs` gains `firstElementChild`.
+- **Full suite:** 798/798 (`npm run check`), and `git diff --check` is clean.
+
+### Browser check (Claude, in-app browser on root's local preview, port 8899)
+- **Taegeuk Yi Jang:** a drag turned the camera, with the distance unchanged.
+- **Koryo:** Shift+D twice, W and 2 gave back-left, 28° and Armwork. The status read "Camera back-left, slightly above. Armwork.", and 3 switched to Footwork.
+- **Taegeuk Sa Jang:**
+  - Footwork held both feet through the left side kick (pose 9) and the right front kick (pose 7);
+  - at the knifehand block (pose 4) it moved in to 3.06 against 4.83 for Whole body.
+- **Layout:** at 320 px wide there's no page overflow. The focus and camera rows sit inside the card, with 32–48 px buttons that are 40 px high.
+- **Console:** no errors from the camera. The two 401 resource errors per page load come from account reads on the local preview and also appear without any camera action.
+
+### Codex review (19 November)
+- **Tests:** `tests/lesson-camera.test.mjs` passed 19/19 when Codex ran it independently (28.85 s), and `git diff --check` is clean.
+- **All 23 lessons linked from the library (native Chrome):**
+  - each loaded the connected 3D canvas;
+  - each switched between Armwork, Footwork and Whole body with keyboard activation.
+- **Focus buttons with a mouse:** a click works once the page has settled. A first click during the browser's smooth auto-scroll was unreliable in automation, with no JavaScript error; Enter and a settled click work.
+- **Mouse drag:** azimuth 50 → 18.6 and tilt 18 → 7.9, with the distance unchanged at 4.622 and the lesson time still 0.
+- **Keys:** A, D, W and 2 changed the camera. ArrowRight advanced the time by 0.033 s without turning it. The time slider kept the A key.
+- **Emulated real touch:** a pinch zoomed from 1× to 1.67×, and Reset restored it. Touch emulation was switched off afterwards.
+- **Keyboard focus:** Armwork showed a 3 px solid blue outline.
+- **Study view:** at 320×780, 390×844, 768×1024, 1280×800, 844×390 and 640×320 there was no horizontal overflow, and every camera control was on screen.
+  - At 640×320 the canvas is 64 px high and the playback container ends at y = 321.5, so the card's existing scrolling applies there.
+  - Not every text was checked at that size: the real buttons with long captions weren't checked, so this makes no claim that all text fits.
+- **Evidence:** root's `camera-route-checks.json` in the session outputs.
+
+### Known limits
+- **Not tested:** a physical phone, Safari or a screen reader.
+- **Short landscape Study view (640×320):** the camera rows leave a 64 px canvas. The card scrolls to its playback controls; long captions at that size aren't verified.
+- **Focus buttons during smooth auto-scroll:** a first mouse click could be missed in automation. A settled click and Enter work.
+- **Mesh and motion are unchanged here.** The avatar and motion improvement is the next stage.
