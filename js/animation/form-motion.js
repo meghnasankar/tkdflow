@@ -2,6 +2,7 @@
    Geometry and timing are illustrative; source counts remain separate from poses. */
 import {BODY,clamp,add,sub,scale,norm,rotY,rotX,solveTwoBone,softArmTarget,minimumJerk} from './motion-math.js';
 import {IMPACT,isDeliberate,driveStart} from './technique-timing.js';
+const GROUNDED=.075;   // an ankle this low has its foot on the floor (ankle height is 0.07)
 const sides=['left','right'],sign=s=>s==='left'?1:-1,other=s=>s==='left'?'right':'left';
 const mix=(a,b,u)=>a+(b-a)*u,mix3=(a,b,u)=>a.map((v,i)=>mix(v,b[i],u));
 const phase=(u,a=0,b=1)=>minimumJerk((u-a)/(b-a));
@@ -342,6 +343,8 @@ export function createFormMotion(form){
    if(bend){const raised=bend.side,support=other(raised);after.pelvis=add(before.feet[support].pos,rotY([sign(raised)*.04,.94,0],yaw));after.feet=structuredClone(before.feet);after.feet[raised]={pos:add(after.pelvis,rotY([sign(raised)*.11,-.37,.02],yaw)),yaw,pitch:0};}
    const rawTurn=g&&!part?yawDelta(before.yaw,after.yaw):(entry.turn??yawDelta(before.yaw,after.yaw));
    const dyaw=Math.abs(yawDelta(before.yaw+rawTurn,after.yaw))<1?rawTurn:rawTurn+yawDelta(before.yaw+rawTurn,after.yaw);
+   // A foot that ends this move on the floor stands flat: kick, bend and stance plans clone the previous feet, and must not inherit a kick's pitch.
+   for(const side of sides)if(after.feet[side].pos[1]<=GROUNDED)after.feet[side].pitch=0;
    if(entry.footAction==='jump-back'){const current=scale(add(after.feet.left.pos,after.feet.right.pos),.5),target=add(before.pelvis,rotY([0,0,.40],180)),shift=sub(target,current);shift[1]=0;for(const side of sides)after.feet[side].pos=add(after.feet[side].pos,shift);after.pelvis=add(after.pelvis,shift);}
    const footStages=!kick?orderedFootStages(before,after,entry,entryStart,plans.at(-1)):null;
    const duration=entry.duration||entry.tempo==='slow'||entry.slow?Math.max(entry.duration||5,Math.abs(dyaw)/60):Math.max(kick?3.2:footStages?Math.max(3,(footStages.length-1)*2.3):3,Math.abs(dyaw)/60);
@@ -382,7 +385,9 @@ export function createFormMotion(form){
    }else if(/close-then-step/.test(p.entry?.footAction||'')&&side===p.moving){
     const gathered=add(a.feet[other(side)].pos,rotY([sign(side)*.06,0,0],a.yaw));pos=u<.4?mix3(f.pos,gathered,phase(u,0,.4)):mix3(gathered,end.pos,phase(u,.4,impact));pos[1]+=.065*arc(q);
    }else{pos=mix3(f.pos,end.pos,q);if(side===p.moving&&p.step)pos[1]+=.065*arc(q);}
-   state.feet[side]={pos,yaw:fyaw,pitch:mix(f.pitch||0,end.pitch||0,q)};
+   // A foot coming down from a kick finishes flattening as it reaches the floor, not after it has landed.
+   const landing=f.pos[1]>.15&&end.pos[1]<=GROUNDED,pitchDone=landing?Math.max(q,clamp((f.pos[1]-pos[1])/Math.max(1e-6,f.pos[1]-end.pos[1]),0,1)):q;
+   state.feet[side]={pos,yaw:fyaw,pitch:mix(f.pitch||0,end.pitch||0,pitchDone)};
   }
   if(p.footStages){const mid=scale(add(state.feet.left.pos,state.feet.right.pos),.5),startOffset=sub(a.pelvis,scale(add(a.feet.left.pos,a.feet.right.pos),.5)),endOffset=sub(b.pelvis,scale(add(b.feet.left.pos,b.feet.right.pos),.5));for(const c of [0,2])state.pelvis[c]=mid[c]+mix(startOffset[c],endOffset[c],q);}
   if(p.returning){state.pelvis[0]=mix(a.pelvis[0],(state.feet.left.pos[0]+state.feet.right.pos[0])/2,q);state.pelvis[2]=mix(a.pelvis[2],(state.feet.left.pos[2]+state.feet.right.pos[2])/2,q);}
