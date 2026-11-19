@@ -31,6 +31,11 @@
 .vg-context { margin: 0; padding: 6px 10px; border-left: 3px solid var(--gold); background: var(--gold-light); color: #713F12; font-size: .86rem; line-height: 1.5; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
 .vg-prompts { list-style: disc; margin: 0; padding-left: 1.15em; display: grid; gap: 5px; color: var(--gray-600); line-height: 1.55; font-size: .92rem; }
 .vg-prompts strong { color: var(--navy); font-variant-numeric: tabular-nums; margin-right: 2px; }
+/* A time-stamped note is one link to that moment of the video: the time reads as the link, the note stays readable. */
+.vg-at { color: inherit; text-decoration: none; }
+.vg-at .vg-at-time { color: var(--red-dark); text-decoration: underline; text-underline-offset: 2px; }
+.vg-at:hover .vg-at-time, .vg-at:focus-visible .vg-at-time { text-decoration-thickness: 2px; }
+.vg-at:hover { color: var(--navy); }
 .vg-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: auto 0 0; padding-top: 8px; }
 .vg-onsite { font-size: .9rem; }
 .vg-more { color: var(--gray-600); }
