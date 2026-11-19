@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<!-- layout:head -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Referee practice: score sparring exchanges in 3D — TKDflow</title>
+<meta name="description" content="Watch sparring exchanges in a 3D arena and decide the points and penalties under World Taekwondo’s November 2026 rules and AAU Taekwondo’s youth and Grassroot profiles, with the official who decides and the article for each call.">
+<link rel="canonical" href="https://tkdflow.com/referee.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TKDflow">
+<meta property="og:title" content="Referee practice: score sparring exchanges in 3D — TKDflow">
+<meta property="og:description" content="Watch sparring exchanges in a 3D arena and decide the points and penalties under World Taekwondo’s November 2026 rules and AAU Taekwondo’s youth and Grassroot profiles, with the official who decides and the article for each call.">
+<meta property="og:url" content="https://tkdflow.com/referee.html">
+<meta property="og:image" content="https://tkdflow.com/assets/og-animation-v2.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="TKDflow: Learn the forms. Step by step. The full-body animated black-belt character performs a side kick.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://tkdflow.com/assets/og-animation-v2.png">
+<meta name="twitter:image:alt" content="TKDflow: Learn the forms. Step by step. The full-body animated black-belt character performs a side kick.">
+<meta name="theme-color" content="#0D1B2A">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="stylesheet" href="/css/fonts.css">
+<link rel="stylesheet" href="/styles.css">
+<script type="module" src="/js/site.js"></script>
+<!-- /layout:head -->
+<link rel="stylesheet" href="/css/content.css">
+<link rel="stylesheet" href="/css/referee.css">
+<script type="module" src="/js/pages/referee.js"></script>
+</head><body data-page="events">
+<!-- layout:header -->
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="navbar">
+  <div class="container">
+    <a href="/" class="navbar-logo" data-nav="home">
+      <span class="logo-icon" aria-hidden="true">道</span>
+      <span>TKDflow</span><span class="kr" lang="ko">태권도 플로우</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+      <span class="sr-only">Open menu</span><span class="nav-toggle-bars" aria-hidden="true"></span>
+    </button>
+    <nav class="site-nav" aria-label="Main">
+      <ul class="nav-links" id="site-nav">
+        <li><a href="/" data-nav="home">Home</a></li>
+        <li><a href="/forms.html" data-nav="forms">Forms Library</a></li>
+        <li><a href="/community.html" data-nav="community">Community</a></li>
+        <li><a href="/competitions.html" data-nav="events" class="active" aria-current="page">Events</a></li>
+        <li class="nav-account" id="nav-account"><a href="/auth.html" class="btn btn-secondary btn-sm nav-account-link">Account</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<!-- /layout:header -->
+<main id="main" tabindex="-1">
+ <div class="page-hero"><div class="container"><p class="section-label on-dark">Competitions</p><h1>Referee practice</h1><p>Watch an exchange in a 3D sparring arena, decide what the scoreboard should show, and see which official decides it and which rule says so. Scenarios use World Taekwondo’s rules in force from 1 November 2026 and two AAU Taekwondo profiles, each named on screen.</p></div></div>
+
+ <div class="container content-wide rf-main">
+  <p class="rf-disclaimer"><strong>Practice only.</strong> This is not referee certification or an official interpretation, and TKDflow is not affiliated with World Taekwondo or AAU Taekwondo. Real events follow the current official rules and the referees on the day. New to the rules? Read the <a href="/referee-guide.html">referee guide</a> first. <a href="#rf-courses">Where to train as a referee</a>.</p>
+
+  <div class="rf-layout">
+   <nav class="rf-list" aria-label="Scenarios">
+    <h2 class="rf-list-title">Scenarios <span class="rf-progress" id="rf-progress"></span></h2>
+    <ol id="rf-scenarios" class="rf-scenarios"></ol>
+   </nav>
+
+   <section class="rf-stage" aria-labelledby="rf-title">
+    <div class="rf-head" id="rf-head">
+     <p class="rf-profile" id="rf-profile"></p>
+     <h2 id="rf-title" tabindex="-1">Loading the arena…</h2>
+    </div>
+    <div class="rf-viewer">
+     <canvas id="rf-canvas" class="rf-canvas" aria-describedby="rf-steps-title" role="img" aria-label="3D sparring arena: Chung in blue protectors and Hong in red."></canvas>
+     <div class="rf-overlay" aria-hidden="true">
+      <span class="rf-clock" id="rf-clock"></span>
+      <span class="rf-time" id="rf-time"></span>
+     </div>
+     <p class="rf-status" id="rf-status" role="status"></p>
+    </div>
+    <div class="rf-controls" role="group" aria-label="Playback">
+     <button type="button" class="btn btn-primary btn-sm" id="rf-play">Play</button>
+     <button type="button" class="btn btn-secondary btn-sm" id="rf-replay">Replay</button>
+     <span class="rf-speed"><label for="rf-speed">Speed</label>
+      <select id="rf-speed"><option value="1">1×</option><option value="0.5">0.5×</option><option value="0.25" selected>0.25×</option></select>
+     </span>
+     <span class="rf-scrub"><label for="rf-scrub" class="sr-only">Time in the exchange</label><input type="range" id="rf-scrub" min="0" max="1000" value="0"></span>
+     <span class="rf-views" role="group" aria-label="Camera">
+      <button type="button" class="btn btn-ghost btn-sm" data-view="side">Side</button>
+      <button type="button" class="btn btn-ghost btn-sm" data-view="referee">Referee</button>
+      <button type="button" class="btn btn-ghost btn-sm" data-view="above">Above</button>
+     </span>
+     <span class="rf-views" role="group" aria-label="Zoom">
+      <button type="button" class="btn btn-ghost btn-sm" data-zoom="in">Zoom in</button>
+      <button type="button" class="btn btn-ghost btn-sm" data-zoom="out">Zoom out</button>
+      <button type="button" class="btn btn-ghost btn-sm" data-zoom="reset">Reset view</button>
+     </span>
+    </div>
+    <p class="rf-hint">Drag the arena to look from any side, or use the camera buttons; pinch, scroll or use Zoom in and Zoom out to look closer, and Reset view to start again. The gold flash marks the moment of contact.</p>
+
+    <div class="rf-evidence" aria-labelledby="rf-evidence-title">
+     <h3 id="rf-evidence-title">What the officials have</h3>
+     <dl>
+      <dt>Round clock at the moment</dt><dd id="rf-ev-clock"></dd>
+      <dt>Sensors (PSS)</dt><dd id="rf-ev-pss"></dd>
+      <dt>Judges</dt><dd id="rf-ev-judges"></dd>
+     </dl>
+    </div>
+
+    <div class="rf-steps">
+     <h3 id="rf-steps-title">What happens</h3>
+     <ol id="rf-steps"></ol>
+    </div>
+
+    <fieldset class="rf-question">
+     <legend>What should the scoreboard show?</legend>
+     <div id="rf-options" class="rf-options"></div>
+    </fieldset>
+    <div class="rf-feedback" id="rf-feedback" aria-live="polite" hidden></div>
+    <p class="rf-nav"><button type="button" class="btn btn-secondary btn-sm" id="rf-next">Next scenario</button></p>
+   </section>
+  </div>
+
+  <section class="content-section" id="rf-profiles" aria-labelledby="rf-profiles-title">
+   <h2 id="rf-profiles-title">The three rule profiles</h2>
+   <ul class="rf-profile-list">
+    <li><strong>World Taekwondo, in force from 1 November 2026.</strong> Points: 1 for a valid punch to the trunk protector, 2 for a trunk kick, 3 for a head kick; a valid turning kick doubles them to 4 or 6. The PSS sensors decide whether a kick lands with enough impact; judges validate punches and add the turning points; the centre referee declares Gam-jeom penalties, each worth 1 point to the opponent. Only crossing the boundary line, falling down and running away or avoiding (and a rejected technical review) give 2 points in a round’s last 10 seconds. <a href="https://www.taekwondobond.nl/wp-content/uploads/WT-Competition-Rules-and-Interpretation-November-1-2026.pdf" rel="noopener">WT Competition Rules and Interpretation (PDF)</a> · <a href="https://www.worldtaekwondo.org/inside/documents/rar/list" rel="noopener">WT rules directory</a></li>
+    <li><strong>AAU Taekwondo youth safety rules, effective 1 November 2026</strong> (Olympic-style sparring, all belts aged 5–11 and colour belts aged 12–17): head contact must be light and controlled; a light head kick scores 3, and a turning kick to the head gets no extra points. <a href="https://drive.google.com/file/d/1POLryUPZUwdIX03Texak8eYgY9vKfxx2/view?usp=sharing" rel="noopener">AAU Taekwondo Rules Handbook (Article 22)</a></li>
+    <li><strong>AAU Taekwondo Grassroot divisions, effective 1 November 2026</strong>: no head contact at any age or rank. A kick that touches the head is a misconduct penalty against the kicker; a head kick that misses may get a verbal warning. <a href="https://drive.google.com/file/d/1POLryUPZUwdIX03Texak8eYgY9vKfxx2/view?usp=sharing" rel="noopener">AAU Taekwondo Rules Handbook (Article 23)</a> · <a href="https://aausports.org/taekwondo/" rel="noopener">AAU Taekwondo</a></li>
+   </ul>
+  </section>
+
+  <section class="content-section" id="rf-courses" aria-labelledby="rf-courses-title">
+   <h2 id="rf-courses-title">Training as a referee</h2>
+   <p>Referees qualify through their organization’s own courses, seminars and supervised events. These scenarios can help you practise reading exchanges, but they don’t count toward any qualification. The <a href="/referee-guide.html">referee guide</a> covers the rules behind them.</p>
+   <ul class="rf-course-list">
+    <li><a href="https://www.usatkd.org/usatkd-university-kyorugi-referee-courses" rel="noopener">USA Taekwondo University: kyorugi referee courses</a>: the course path from foundations to centre-referee procedures, alongside events, camps and seminars.</li>
+    <li><a href="https://aausports.org/taekwondo/" rel="noopener">AAU Taekwondo</a>: current rules, clinics and officials’ registration.</li>
+    <li><a href="https://www.worldtaekwondo.org/inside/documents/rar/list" rel="noopener">World Taekwondo rules and regulations</a>: the current competition rules.</li>
+   </ul>
+  </section>
+  <noscript><p class="rf-noscript">The 3D arena needs JavaScript. The rule profiles and course links above work without it.</p></noscript>
+ </div>
+</main>
+<!-- layout:footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <p class="logo">TKDflow<span>.</span></p>
+        <p>A free taekwondo learning resource created by Meghna Sankar from her training and research.</p>
+      </div>
+      <div class="footer-col">
+        <h2>Learn</h2>
+        <ul>
+          <li><a href="/start-here.html">Start here</a></li>
+          <li><a href="/history.html">History of taekwondo</a></li>
+          <li><a href="/forms.html">Forms library</a></li>
+          <li><a href="/techniques.html">Find a technique</a></li>
+          <li><a href="/companions.html">Read and print companions</a></li>
+          <li><a href="/school-forms.html">My school’s forms</a></li>
+          <li><a href="/learning.html">Saved forms &amp; progress</a></li>
+          <li><a href="/lesson-faq.html">Lesson questions &amp; answers</a></li>
+          <li><a href="/taegeuk-1.html">Taegeuk Il Jang lesson</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>Community</h2>
+        <ul>
+          <li><a href="/community.html">Discussions</a></li>
+          <li><a href="/community.html?view=resources">Learning resources</a></li>
+          <li><a href="/competitions.html">Events</a></li>
+          <li><a href="/first-tournament.html">First tournament guide</a></li>
+          <li><a href="/referee-guide.html">Referee guide</a></li>
+          <li><a href="/referee.html">Referee practice</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>About</h2>
+        <ul>
+          <li><a href="/about.html">About &amp; project status</a></li>
+          <li><a href="/founder.html">Meet Meghna</a></li>
+          <li><a href="/about.html#privacy">Privacy</a></li>
+          <li><a href="/about.html#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-current-year>2026</span> TKDflow</span>
+      <span>Free to use · No ads</span>
+    </div>
+  </div>
+</footer>
+<!-- /layout:footer -->
+</body></html>
