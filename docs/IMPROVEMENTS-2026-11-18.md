@@ -85,6 +85,7 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
+| 70 | Gallery time stamps were plain text, and filter choices couldn't be shared | The ten verified moments in the gallery's notes were text, so learners had to find each moment by hand. The filter choice was lost on reload, couldn't be shared, and Back didn't return to it. About's privacy notice described saved forms but not the separate referee-practice results. | P3 learning | Batch 46 |
 | 69 | Two staged moves still dragged a foot, and staged footwork could float | Batch 39 left Won-Hyo 27 (land, then turn: the standing foot was dragged 7.8 cm round its ankle while the kicking foot landed) and Yul-Gok 36 (jump back: the support foot slid 2.7 cm as it took off and landed). The same stage code also let a planted foot finish its turn on the floor (Taegeuk Pal Jang 11) and lifted both feet at once in non-jump staged moves (Won-Hyo 27 and Taegeuk Pal Jang 16, 45 frames each). | P1 animation | Batch 47 |
 | 68 | CI used movable action tags on the deprecated Node 20 runtime | `.github/workflows/check.yml` used `actions/checkout@v4` and `actions/setup-node@v4`, which run on Node 20 and produce GitHub's Node 20 deprecation notices. Version tags can also be moved. | P3 maintenance | Batch 45 |
 | 67 | Referee practice felt like a long article, not a practice tool | On desktop, the arena, the evidence and the answers sat one under another, so learners scrolled between watching and answering. On a 390 × 844 phone, the answers were several screens below the fighters. Saved progress was raw JSON read straight from localStorage, with no validation. The page never said where progress was kept, and there was no way to reset it. | P2 learning | Batch 44 |
@@ -3040,3 +3041,61 @@ The three under 2 cm (Sipjin 33 and 36, and Jitae's return to ready) are within 
 - **Geometry, not technique review:** an instructor should still look at Won-Hyo 27's staging.
 - **Jump-back timing:** the 20–80% window is a fixed fraction of the move.
 - **Not in this batch:** the 14 relocations above are backlogged pending a decision on the movement source.
+
+## Batch 46 — gallery deep links, shareable filters, and the practice-storage notice (item 70)
+
+### Change
+- **Deep links (`videos.html`):**
+  - **Each verified moment is one link to its video at that second** (`…watch?v=<id>&t=<seconds>s`), `rel="noopener"`:
+    - Taegeuk Il Jang: 9:25 (565 s), 11:35 (695 s), 15:44 (944 s).
+    - Taegeuk Pal Jang: 3:54 (234 s), 13:14 (794 s).
+    - Koryo: 3:06 (186 s), 4:05 (245 s), 6:51 (411 s).
+    - Songahm 1: 2:20 (140 s).
+    - The Tokyo 2020 final: 2:54 (174 s).
+  - **One clear name per link:** the link is the time followed by the note, and a visually hidden suffix names the video, for example "9:25 Turning into a walking stance and low block: pivot on the supporting foot. (opens Taegeuk Il Jang on YouTube at 9:25)". The time reads as the underlined link, and the note stays readable.
+  - **Notes without a verified time stay plain text:** Chon-Ji, Dakar, and the untimed notes.
+  - **Unchanged:** the video sources, the notes' wording and the cards.
+- **Shareable filters (`js/pages/videos.js`):**
+  - The choice is kept as `?kind=form|sparring` and `?tradition=wt|itf|ata`.
+  - Only these fixed values are read. Unknown, empty or differently cased values mean "all". A repeated parameter uses its first value, and the address is rewritten with just that value. Other parameters in the address are kept.
+  - Each choice is a `pushState` history entry, so Back and Forward step through choices and `popstate` restores the view. Reloading or opening a shared link restores it too. A link with an unknown value is tidied to what is shown with `replaceState`, adding no history entry. "Show all videos" clears both.
+  - Without JavaScript, the filter bar stays hidden and every card shows. Nothing is stored and there are no new scripts or requests.
+- **About privacy notice:** "Services and browser storage" adds: "Referee practice keeps only your scenario answer results in this browser; you can reset them on the practice page, and they are not uploaded to an account." The date stays 19 November 2026. Account and age policy are unchanged.
+
+### Tests (`tests/videos.test.mjs`, now 9)
+- **Deep links:** every verified moment (10, matching a table from the source notes) is exactly one link opening its video at that second. Its name includes the time, the topic and the video. There are no unlinked or plain time stamps, and every second falls inside its video.
+- **Filters:**
+  - The filter buttons are exactly the allowed values.
+  - Valid values are read; unknown, wrong-case, empty, prototype-key and repeated values are rejected.
+  - An address with an unknown value is tidied, other parameters are kept, and "Show all" clears both.
+  - All 12 combinations round-trip through the address.
+  - Reload, `pushState`, `popstate` and the tidy step are wired. There's no storage or fetch, and the fallback without the script still applies.
+- **About:** the exact sentence in "Services and browser storage", and the 19 November 2026 date.
+- **Full suite:** 861/861 in the overlay (based on `a8c7fe6`), `git diff --check` is clean, and the layout is in sync.
+
+### Browser check (overlay, port 8928)
+- **Unknown value:** opening `?kind=xyz&tradition=ata&utm=test` showed Songahm 1 only, with ATA pressed. The address was tidied to `?utm=test&tradition=ata` without a new history entry.
+- **Clicks and history:**
+  - Clicking Tradition "All", then Sparring, gave `?utm=test`, then `?utm=test&kind=sparring`.
+  - Back restored "all", then ATA, with the right buttons pressed. Forward twice restored Sparring.
+  - A reload kept Sparring, and its Tokyo moment linked to `&t=174s` with its full name.
+- **Phone (375 × 812):** `?kind=form&tradition=wt` showed 3 of 7. The linked notes wrap cleanly with the times underlined, and there's no overflow.
+
+### Root QA (19 November, scratch: passed)
+- **Focused tests:** 45.
+- **Filters in the real page:**
+  - A valid ITF + forms link shows one card, and Sparring + ITF shows the empty state.
+  - Back and Forward restore both selections, and a reload keeps the empty selection.
+  - "Show all videos" clears the filters and focuses "All".
+  - Invalid values are tidied while unrelated parameters and the hash are kept.
+- **Deep links:** all 10 open the correct source video at the correct second.
+- **Phone (390 × 844):** the WT + forms view fits with no overflow.
+- **Evidence:** the `batch-46-gallery-usability` artifact directory.
+- **Comment correction (from root's review):** `filtersFromSearch` reads the first value of a repeated parameter, and the address is then rewritten without the repeats. The code comment and the docs now say exactly that; behaviour and tests are unchanged.
+
+### Integration (19 November)
+- **Applied:** on `feat/gallery-learning-links-2026-11-19` from main `dd274f8` (Batch 47 published), using the six-file allowlist. The five product and test files were copied from the frozen overlay; all were unchanged on main since its base, `a8c7fe6`. The docs were reconciled: row 70 goes above row 69, and this section follows Batch 47, keeping all its notes and root QA. The checks below were run after these notes were added.
+
+### Known limits
+- **Moment links open YouTube in the same tab,** like the watch buttons.
+- **The filter state is in the address only.** Nothing is saved between visits unless the link is kept.

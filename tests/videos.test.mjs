@@ -4,7 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync, existsSync} from 'node:fs';
-import {matches, countText, thumbFailed} from '../js/pages/videos.js';
+import {matches, countText, thumbFailed, OPTIONS, filtersFromSearch, searchWithFilters} from '../js/pages/videos.js';
 
 const read = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const html = read('videos.html'), main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
@@ -46,9 +46,9 @@ test('seven curated videos, each shown with its publisher’s thumbnail, origina
     const prompts = c.body.slice(c.body.indexOf('<ul class="vg-prompts" aria-label="Watch for">'), c.body.indexOf('</ul>'));
     const items = prompts.match(/<li>/g) || [];
     assert.ok(items.length >= 2 && items.length <= 3, `${c.id}: 2–3 short notes`);
-    for (const li of prompts.split('<li>').slice(1)) assert.ok(li.replace(/<[^>]+>/g, '').length < 120, `${c.id}: concise note`);
+    for (const li of prompts.split('<li>').slice(1)) assert.ok(li.replace(/<span class="sr-only">[^<]*<\/span>/g, '').replace(/<[^>]+>/g, '').length < 120, `${c.id}: concise note`);
     assert.doesNotMatch(prompts.replace(/<[^>]+>/g, ''), /[“”"]/, `${c.id}: paraphrased, not quoted`);
-    for (const [, t] of prompts.matchAll(/<strong>(\d+:\d\d)<\/strong>/g)) assert.ok(seconds(t) < seconds(v.time), `${c.id}: ${t} is inside the video`);
+    for (const [, t] of prompts.matchAll(/<strong class="vg-at-time">(\d+:\d\d)<\/strong>/g)) assert.ok(seconds(t) < seconds(v.time), `${c.id}: ${t} is inside the video`);
   }
 });
 
@@ -121,4 +121,66 @@ test('the gallery is easy to find, and About says where its preview images come 
   assert.match(main, /<a href="\/history\.html">short history of taekwondo<\/a>/);
   const about = read('about.html');
   assert.match(about, /The preview images on the <a href="\/videos\.html">video gallery<\/a> are supplied by YouTube, and watching a linked video opens YouTube, under YouTube’s own privacy practices\./);
+});
+
+/* The verified moments, each with the time and topic it is written for (from the source notes). */
+const MOMENTS = {
+  'taegeuk-1': [['9:25', 565, /walking stance and low block/], ['11:35', 695, /front stance and low block/], ['15:44', 944, /front kick folds back/]],
+  'taegeuk-8': [['3:54', 234, /double jumping kick/], ['13:14', 794, /jumping front kick/]],
+  'koryo': [['3:06', 186, /ready position/], ['4:05', 245, /same leg/], ['6:51', 411, /palm blocks/]],
+  'songahm-1': [['2:20', 140, /named one at a time/]],
+  'tokyo-2020': [['2:54', 174, /Round 1/]],
+  'chon-ji': [], 'dakar-2026': []
+};
+
+test('every verified time stamp opens its video at that second, as one clearly named link', () => {
+  const names = {'taegeuk-1': 'Taegeuk Il Jang', 'taegeuk-8': 'Taegeuk Pal Jang', 'koryo': 'Koryo', 'songahm-1': 'Songahm 1', 'tokyo-2020': 'the Tokyo 2020 final'};
+  let total = 0;
+  for (const c of cards) {
+    const v = VERIFIED[c.id], prompts = c.body.slice(c.body.indexOf('<ul class="vg-prompts"'), c.body.indexOf('</ul>'));
+    const links = [...prompts.matchAll(/<li><a class="vg-at" href="([^"]+)" rel="noopener"><strong class="vg-at-time">(\d+:\d\d)<\/strong> ([^<]+)<span class="sr-only"> \(opens ([^)]+) on YouTube at (\d+:\d\d)\)<\/span><\/a><\/li>/g)];
+    assert.equal(links.length, MOMENTS[c.id].length, `${c.id}: every time stamp is a link, and only those`);
+    assert.equal((prompts.match(/\d+:\d\d/g) || []).length, MOMENTS[c.id].length * 2, `${c.id}: no unlinked time stamps`);
+    links.forEach(([, href, time, topic, video, again], i) => {
+      const [want, secs, about] = MOMENTS[c.id][i];
+      assert.equal(time, want); assert.equal(again, want, 'the hidden part repeats the same time');
+      assert.equal(href, `https://www.youtube.com/watch?v=${v.yt}&amp;t=${secs}s`, `${c.id} ${want}: opens at exactly ${secs} s`);
+      assert.equal(secs, seconds(want)); assert.ok(secs < seconds(v.time), 'inside the video');
+      assert.match(topic, about, `${c.id} ${want}: the link names its topic`); assert.equal(video, names[c.id], 'and its video');
+      total++;
+    });
+  }
+  assert.equal(total, 10, 'ten verified moments');
+  assert.doesNotMatch(main, /<strong>\d+:\d\d<\/strong>/, 'no plain time stamps left');
+  const css = read('css/videos.css');
+  assert.match(css, /\.vg-at \.vg-at-time \{ color: var\(--red-dark\); text-decoration: underline;/);
+});
+
+test('filter choices are kept in the address: shareable, restored on reload and by Back/Forward, and validated', () => {
+  const chips = [...main.matchAll(/data-filter="(\w+)" data-value="(\w+)"/g)].map(m => [m[1], m[2]]);
+  for (const key of Object.keys(OPTIONS)) assert.deepEqual(chips.filter(c => c[0] === key).map(c => c[1]), [...OPTIONS[key]], `${key}: the buttons are exactly the allowed values`);
+  assert.deepEqual(filtersFromSearch(''), {kind: 'all', tradition: 'all'});
+  assert.deepEqual(filtersFromSearch('?kind=sparring&tradition=itf'), {kind: 'sparring', tradition: 'itf'});
+  for (const bad of ['?kind=xyz', '?kind=ALL', '?kind=form%20', '?tradition=kukkiwon', '?kind=&tradition=', '?kind=__proto__', '?kind=all&tradition=all']) {
+    const st = filtersFromSearch(bad); assert.ok(OPTIONS.kind.includes(st.kind) && OPTIONS.tradition.includes(st.tradition), bad);
+  }
+  assert.deepEqual(filtersFromSearch('?kind=xyz&tradition=ata'), {kind: 'all', tradition: 'ata'}, 'an unknown value is ignored; a valid one still applies');
+  assert.equal(searchWithFilters('?kind=xyz&tradition=ata', filtersFromSearch('?kind=xyz&tradition=ata')), '?tradition=ata', 'the address is tidied to what is shown');
+  assert.equal(searchWithFilters('?utm_source=x', {kind: 'form', tradition: 'all'}), '?utm_source=x&kind=form', 'other parameters are kept');
+  assert.equal(searchWithFilters('?kind=form&tradition=wt', {kind: 'all', tradition: 'all'}), '', 'Show all clears both');
+  for (const kind of OPTIONS.kind) for (const tradition of OPTIONS.tradition) assert.deepEqual(filtersFromSearch(searchWithFilters('', {kind, tradition})), {kind, tradition}, `${kind}/${tradition} round-trips`);
+  const js = read('js/pages/videos.js');
+  assert.match(js, /const state = filtersFromSearch\(location\.search\)/, 'reload restores the choice');
+  assert.match(js, /history\[replace \? 'replaceState' : 'pushState'\]\(\{vg: \{\.\.\.state\}\}, '', location\.pathname \+ search \+ location\.hash\)/, 'each change is a history entry');
+  assert.match(js, /addEventListener\('popstate', \(\) => \{ Object\.assign\(state, filtersFromSearch\(location\.search\)\); render\(\); \}\);/, 'Back and Forward restore it');
+  assert.match(js, /box\.hidden = false; render\(\); go\(true\);/);
+  assert.doesNotMatch(js, /localStorage|sessionStorage|document\.cookie|fetch\(/, 'nothing stored or sent');
+  // Without the script: the filter bar stays hidden and every card shows, whatever the address says.
+  assert.match(main, /<div class="vg-filters" id="vg-filters" hidden>/); assert.doesNotMatch(main, /<li class="vg-card"[^>]*hidden/);
+});
+
+test('About says referee practice results stay in this browser', () => {
+  const about = read('about.html');
+  assert.match(about, /<h3>Services and browser storage<\/h3>[\s\S]*?Referee practice keeps only your scenario answer results in this browser; you can reset them on the practice page, and they are not uploaded to an account\./);
+  assert.match(about, /<p>Last updated: 19 November 2026\.<\/p>/);
 });
