@@ -85,6 +85,7 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
+| 64 | No way to learn or practise how sparring is officiated | Parents, athletes and new referees met 1/2/3/4/6 points, Gam-jeom, the PSS and "Kal-yeo" at their first tournament with no plain explanation. The scoring and penalty rules changed again on 1 November 2026, and summaries online often double every penalty in the last ten seconds or mix up what the PSS, the judges and the centre referee each decide. | P2 content | Batch 41 |
 | 63 | No history of taekwondo on the site | Learners met three traditions (WT/Kukkiwon, ITF, ATA) without the dates behind them. Origin stories online often present one organization's account, or an unbroken ancient lineage, as settled. | P2 content | Batch 40 |
 | 62 | Feet slid on the floor: pivots drifted and steps dragged before lifting | Codex's motion audit and a heel-and-ball contact scan of all 22 data-driven lessons at 30 fps on the published motion: 100.1 m of floor slip in total. Turning support feet blended ankle position and yaw separately, so the ball wandered up to 48 cm mid-turn although it was the same point at both ends. Steps lifted on `sin²`, which is flat at the start, so the foot travelled about 6 cm along the floor before it was 1 cm up. Footwork-sequence steps, kick supports that move, and returns to ready slid without lifting. | P2 accuracy | Batch 39 |
 | 61 | The lesson character was a simple procedural figure | `js/animation/avatar.js` built the character from spheres, cylinders and two generated garments: blob hands with sliding knuckle spheres (no fingers or thumb, so fists, knife-hands and spear-hands all looked alike), oval feet, and a collar and belt floating on the chest. The motion data already carried open hands, wrist roll, foot pitch and knee frames the figure couldn't show. | P1 learning | Batch 38 |
@@ -2520,3 +2521,163 @@ The work below stays in the backlog. None of it is on this branch, and none of i
 - **Browser, at desktop width and a real 390×844:** no horizontal overflow; both photos load; all 11 timeline entries show; the anchor headings clear the header; the source and licence credits are visible.
 - **Source:** the primary Kukkiwon page was rechecked live for the modern-history narrative.
 - **CI:** Batch 39's main CI has also passed.
+
+## Batch 41 — referee guide and 3D referee practice (item 64)
+
+### Change
+- **New page `/referee-guide.html`**: a sourced, plain-language guide to officiating sparring. Every rule statement names its edition, article and printed page. It links to the matching practice scenario.
+  - **Who decides what:** the PSS, the judges, the centre referee, the Review Jury and the technical assistant (WT Art. 12.2.3, 13, 20.3.2).
+  - **How a bout runs:** WT Art. 7 and 10.1–10.4.7.
+  - **What scores:** permitted techniques and areas (Art. 11) and the Art. 12.3 table of 1, 2, 3, 4 and 6 points, each with who decides it.
+  - **Penalties (Gam-jeom):** the Art. 14 acts with their Explanations (printed pp. 37–40). An ordinary Gam-jeom gives the opponent 1 point. In the last ten seconds only the cases the rules list give 2; there is no blanket doubling.
+  - **Commands:** Art. 10.4, and Art. 18 Explanation #2.
+  - **Stoppages, knock-downs and reviews:** Art. 17–19 and Art. 21, the IVR and the technical card. The guide says plainly that it gives no medical or return-to-play advice.
+  - **AAU youth and Grassroot divisions:** AAU Art. 9, 11, 22 and 23, compared in a table. A note under the table lists the two WT rules that don't carry over to youth safety divisions: there's no 8-count for any head kick (one strong enough to need it is excessive; strong trunk kicks keep the standard knock-down procedure, AAU Art. 22.3.7 and 22.3.9, p. 60), and there's no fall exception after a turning kick to the head (Gam-jeom for falling, Art. 22.4.3–22.4.4, p. 60). The WT fall-exception row and the WT count rule both link to this note.
+  - **Becoming a referee:** WT Art. 20.3.1 and real clinic routes: USATKD University's kyorugi referee courses, AAU Taekwondo, and WT's rules directory.
+- **New page `/referee.html`**: watch an exchange in a 3D arena, choose what the scoreboard should show, then see the answer, who decides it and the article that says so.
+  - **Arena:** an octagonal mat (apothem 4.0 m) whose boundary line turns red when a foot crosses it. Two fighters built from the lesson avatar's detailed rig, each in a continuous trunk protector (hogu) worn over the jacket, plus a head protector on the head bone. The hogu is a moulded shell around the front, ribs and back, with armholes and dark binding along its top and bottom edges.
+  - **Playback:** play, pause, replay, a scrubber, speeds of 0.25× (the default), 0.5× and 1×, side, referee and overhead views, and drag/pinch orbit. A gold flash marks contact. The round clock is overlaid.
+  - **For each scenario:** the evidence the officials have (round clock, PSS, judges), a numbered text description that is enough to answer without the 3D view, and three or more answers. Feedback lists each award with who decided it and the citation, names the fighter (for example "Gam-jeom to Hong (red)"), and links the source rulebook.
+  - **Statements:** "Practice only": it is not certification or an official interpretation, and TKDflow is not affiliated with World Taekwondo or AAU Taekwondo. Progress is kept only in this browser (`localStorage`).
+- **Code:**
+  - `js/referee/rules.js`: three dated profiles, the citation strings, and `decide(profile, facts)`.
+  - `js/referee/fighter.js`: posing and contact geometry, including the trunk-protector shell. The arena draws that shell, the scoring maths tests against it, and the strikes aim at it.
+  - `js/referee/scenarios.js`: the 16 exchanges.
+  - `js/referee/framing.js`: camera framing. It fits each scenario's camera to both fighters across the whole exchange.
+  - `js/referee/arena.js`: the three.js scene, using the vendored three.js r187 and the lesson avatar's `avatar-core.js`.
+  - `js/pages/referee.js` and `css/referee.css`.
+  - There are no new accounts, database tables, permissions, credentials or third-party scripts. The pages run under the existing CSP.
+- **Profiles and sources:**
+  - **WT 2026:** WT Competition Rules and Interpretation, in force as of 1 November 2026 (the PDF hosted by the Dutch federation, plus WT's rules directory).
+  - **AAU youth:** light-contact safety rules for all belts aged 5–11 and colour belts aged 12–17.
+  - **AAU Grassroot:** no head contact.
+  - Both AAU profiles come from the AAU Taekwondo Competition Rules & Regulations Handbook, effective 11-01-2026, linked from AAU Taekwondo's Rules menu.
+- **Where to find it:** `layout/pages.json` (both pages, key `events`, in the sitemap), footer links "Referee guide" and "Referee practice", two Competitions posts in `data/community.json`, and a paragraph in `first-tournament.html`. The other pages change in the footer only (`sync-layout`).
+
+### Scenarios (16, deterministic; Chung is blue, Hong is red)
+| Profile | Scenario (clock) | Scoreboard and who decides |
+|---|---|---|
+| WT 2026 | Roundhouse kick to the trunk (0:42) | Blue +2, PSS |
+| WT 2026 | Roundhouse kick to the head (0:51) | Blue +3, PSS |
+| WT 2026 | Straight punch to the trunk (1:15) | Blue +1, PSS and judges |
+| WT 2026 | Back kick to the trunk (0:33) | Blue +4: 2 by the PSS, plus 2 turning points by the judges |
+| WT 2026 | Spinning kick to the head (0:58) | Blue +6: 3 by the PSS, plus 3 turning points by the judges |
+| WT 2026 | A light trunk kick the sensors don't register (0:47) | No points, and no turning bonus |
+| WT 2026 | A punch to the head (0:36) | Gam-jeom to Hong: Blue +1, referee |
+| WT 2026 | A punch to the head with 6 seconds left (0:06) | Still Blue +1: not one of the doubled cases |
+| WT 2026 | A kick to the thigh (1:04) | Gam-jeom to Hong: Blue +1, referee |
+| WT 2026 | Stepping over the boundary line (0:40) | Gam-jeom to Hong: Blue +1, referee |
+| WT 2026 | Stepping over the line with 8 seconds left (0:08) | Blue +2, referee (WT 14.4.1.1 / 12.3.5.1) |
+| WT 2026 | Pushed over the line (0:25) | Gam-jeom to Chung for the prolonged push: Red +1; Hong's crossing isn't penalised |
+| WT 2026 | A scoring back kick, then a fall (0:19) | Blue +4; the fall after a scoring turning kick isn't penalised |
+| AAU Grassroot | A kick that touches the head (0:30) | Gam-jeom to Chung: Red +1, referee |
+| AAU Grassroot | A head kick that misses (0:44) | No points; the referee may give a verbal warning |
+| AAU youth | A colour belt's light spinning kick to the head (0:50) | Blue +3, judges |
+
+### Tests (`tests/referee.test.mjs`, new, 14)
+- **Answers:** each scenario's answer matches a table written from the rule texts independently of `rules.js`. Exactly one option is correct, and every award cites an article and a printed page.
+- **Rules, profile by profile:**
+  - **WT points and who decides:** a punch needs the PSS and the judges, and there's no turning bonus without a PSS score. On a turning kick the PSS scores the kick and the judges add the turning points.
+  - **WT penalties:** ordinary Gam-jeom gives the opponent 1. In the last ten seconds, crossing the boundary, falling and avoiding give 2 (10 s doubles, 11 s doesn't). Pushing, attacks below the waist, hand-to-head and misconduct stay at 1. The two exceptions (the pushed-out fighter, and a fall after a scoring turning kick) are explained with their page citations rather than skipped.
+  - **AAU youth:** a light head kick scores 3, with no turning bonus to the head; a turning kick to the trunk still scores 4.
+  - **AAU Grassroot:** any head touch is misconduct (opponent +1), and a miss draws a verbal warning only.
+- **Geometry (measured at 60 fps):**
+  - Every contact lands on the stated scoring area at the stated moment, and nothing touches earlier:
+    - kicks and punches: 1.2 cm into it at the contact time;
+    - the light trunk kick the sensors don't register: 0.4 cm;
+    - the AAU light head contacts: 0.6 cm;
+    - the kick below the waist: 2.7 cm.
+  - Each strike is 70–108 cm away a quarter second earlier.
+  - The Grassroot miss passes 10.0 cm from the head.
+  - The boundary crossings come from the sole points: Hong (red), right foot, at 1.417 s (both boundary scenarios) and at 1.442 s when pushed, within 50 ms of the stated times. The other fighter stays inside.
+  - Both hands stay on the trunk protector for the whole prolonged push (0.9–1.9 s).
+  - The falling fighter is up at the kick and down by 2.15 s (pelvis 0.42 m).
+- **Fighters:** bone lengths stay constant, feet stay on or above the floor, the bodies never overlap, and every replay is deterministic in any order.
+- **Text alternative:** every scenario can be answered from its text alone. The clock, the PSS result and the judges' view are stated, and the last-ten-seconds scenarios say so in words.
+- **Page:** labelled controls, a live feedback region, the practice-only statement, the source links and the clinic routes.
+- **Guide:** covers the officiating basics with article and page references, avoids certification and medical advice, and links the practice scenarios. Both pages are linked from the footer, the tournament guide and Community.
+- **AAU youth rules:** they don't inherit WT's count or its fall exception.
+  - The same turning head kick and fall gives Blue +6 with no penalty under WT, but Blue +3 and Red +1 under AAU youth, cited to Art. 22.4.3–22.4.4, p. 60. In the last ten seconds that fall gives Red +2.
+  - `countAfter()` gives no count for a youth head kick (excessive, Art. 22.3.7) and the standard procedure for the trunk (Art. 22.3.9).
+  - Cases the sources here don't settle are refused rather than guessed.
+  - The WT fall scenario is now decided by the profile instead of being pre-cleared.
+  - The guide's note and both cross-links are checked.
+- **Trunk protector:**
+  - **Proportions:** 38–44 cm wide (widest at the chest), 31.5 cm tall at the front, lower at the armholes, with a flat front.
+  - **Drawn shell matches the scoring surface:** every drawn vertex, placed as the arena places it, lies within 2 mm of the scoring surface in all scenario poses.
+  - **The real jacket stays inside:** the shipped avatar is skinned on the CPU and the jacket's torso vertices checked at 0.1 s steps through every exchange (356,283 positions over 1,024 frames). The worst is 1.2 mm, and the front panel is 2.07 cm over the jacket.
+  - **The test catches the old problem:** checked the same way, the old ellipsoid had 162,481 of those jacket positions outside it, so the test fails on the old gear.
+- **Page:**
+  - Zoom in, Zoom out and Reset view buttons.
+  - The heading can take focus, with header clearance.
+  - The first scenario names Hong's red trunk protector, and "blue-and-red" appears nowhere.
+- **Camera framing:** both whole fighters stay in the picture at zoom 1, with a margin.
+  - **Landmarks:** at every 1/30 s of all 16 scenarios, every landmark (soles, ankles, knees, hands, head and trunk protectors) stays within 0.9 of the picture edges. This holds for the default view, every preset, and an orbit sweep (every 30° of azimuth at elevations of 2°, 16°, 40° and 70°).
+  - **Real meshes:** the shipped avatar is skinned on the CPU (skin, dobok, belt, hair, plus the drawn hogu) at 0.4 s steps, contact, the end and the fall. Seen from the default, side, referee and overhead views, no vertex passes 0.97 of the picture edge; the worst is 0.898.
+  - **Catches the old bug:** the same check on the old camera (4.6 m from the midpoint of the pelvises) finds crops, so the test fails on it.
+  - **Arena wiring:** the arena uses this framing, the presets and Reset view return to zoom 1, and zooming out stays inside the fog.
+- **Full suite:** 844/844 (`npm run check` on `feat/referee-training-2026-11-19` from main `c97965e`), and `git diff --check` is clean (rerun after the review fixes below). History, the footer and Batch 39's motion files are unchanged apart from the two footer links.
+
+### Browser check (Claude, release preview on port 8899)
+- **Desktop:**
+  - The 0:08 boundary scenario plays in real time: the crossing is at 1.60 s at 0.25× and the clip ends at 3.20 s.
+  - Answering "Blue +2" gives Correct, with the referee as decider and the WT 14.4.1.1 / 12.3.5.1 citations. From overhead, the red line marks Hong's crossing.
+  - No console errors.
+- **Phone (375 × 812):**
+  - Neither page scrolls sideways.
+  - The arena is 343 × 193 and loads. From the side, the spinning kick meets the head protector at 1.50 s. From the referee's position, Hong's body hides the contact, as it would in a real ring, and orbiting shows it.
+  - The guide's three tables fit at 343 px.
+  - All 16 practice links in the guide open real scenarios.
+- **Fixes from this check:**
+  - Feedback now names the penalised fighter.
+  - On narrow screens, the evidence list stacks its labels above the answers.
+  - An unused helper was removed from the boundary test.
+
+### Review fixes (root's first simulator review, 19 November)
+- **Trunk protectors were buried in the jacket.** The ellipsoid gear (radii 19.5 × 21.5 × 17.5 cm, centred 3.5 cm forward) showed only red patches and a blue oval through the dobok, as root's screenshot showed.
+  - **Measured:** ray-casting the skinned jacket on the posed rig showed why. The jacket is flat in front, about 16.5 cm ahead of the pelvis, about 17–19 cm to each side and wider at the lats. The ellipsoid tapered top and bottom, so only its middle band cleared the jacket.
+  - **Fitted:** height by height, with about 2 cm of clearance, a superellipse with a squarer front (exponent 6) and a rounder back (3.5), around an axis 4 cm in front of the pelvis. It runs from just above the belt (4.5 cm) to 36 cm at the front, 22 cm at the sides and 32 cm at the back.
+  - **Shared:** the shell is placed each frame with the scoring transform (pelvis, chest yaw, lean) instead of a rest-pose bone offset, and the strikes aim at it.
+  - **Solver fix:** a back kick then bounced between two poses: a near-horizontal leg turns its knee as the foot moves, so the heel overshoots. `landOn` now halves its steps after four passes (up to 48 passes, still deterministic). Every contact lands where it is meant to.
+- **Heading focus:** `rf-title` had no `tabindex`, so the focus call did nothing.
+  - It is now `tabindex="-1"`, focused with `preventScroll`, and its container is scrolled into view with `scroll-margin-top: 84px`, instantly when reduced motion is set.
+  - Checked at 375 × 812: Next scenario puts focus on the new heading, 15 px below the 69 px header.
+- **First scenario text:** "the blue-and-red scoring area of Hong's trunk protector" is now "Hong's red trunk protector".
+- **Zoom without pinching:** Zoom in (×1.25), Zoom out and Reset view (side view, 4.6 m) buttons, in a labelled group. The hint mentions them.
+- **AAU youth distinctions:** the handbook's printed p. 60 (Art. 22.3.7, 22.3.9 and 22.4.3–22.4.4) is added to the guide, the rules engine and the tests, as above. The guide still gives no medical or return-to-play instructions of its own.
+- **Browser (release preview, port 8899):**
+  - **Desktop:** both fighters wear a continuous hogu over the jacket, wrapping round the back, with armholes and binding. The roundhouse kick visibly meets Hong's red protector at 1.50 s, with the gold flash. Zoom in, the referee view and Reset view all work.
+  - **Phone (375 × 812):** the protectors read clearly, the zoom buttons wrap onto their own row, and Next scenario brings the new heading into view.
+  - **Console:** no errors from the page.
+
+### Review fix 2 (root, 19 November): the camera cropped a fighter's feet
+- **The problem:** the camera stood 4.6 m from the midpoint of the two pelvises, whatever the exchange. From the referee's angle (azimuth 35°, elevation 22°) the near fighter's feet left the picture. Root's independent projection found 20 cropped landmarks, the worst being the `wt-boundary` end at NDC y −1.096.
+  - **Reproduced:** on the shipped meshes, the old camera crops in 24 scenario/view/time combinations, the worst being `wt-boundary` at 3.20 s, referee view, y −1.125. Root's other example, `wt-trunk-kick` at rest, is among them.
+- **The fix, in `js/referee/framing.js`:**
+  - Each scenario gets one framing: both fighters' landmarks sampled every 1/30 s through the whole exchange, and the middle of their bounding box as the look-at point. The camera no longer follows the pelvises.
+  - For any azimuth and elevation, the camera stands just far enough back for every landmark to stay within 86% of the picture's half-width and half-height. Typical distances are 3.8 m side-on, 5.4–5.9 m from the referee's position and 2.8–3.3 m from overhead.
+  - The default view, the presets, Reset view and plain orbiting all use this zoom-1 distance. Pinch, the wheel and Zoom in/out change only a zoom factor (0.6–3), so only deliberate zooming in can crop.
+  - Motion, timing and scoring are unchanged.
+- **Small fix found during the check:** when the fighters finished loading, the page reloaded the scenario and reset a scrub made while loading back to 0 s. The arena now just redraws.
+- **Browser (port 8899):**
+  - At desktop width, from the referee's angle: Hong's (red's) right foot at the end of `wt-boundary` is in the picture with a margin, and the fall in `wt-turning-then-fall` is framed whole.
+  - At 375 × 812, from the referee's angle at 1.60 s of `wt-trunk-kick`: both fighters are whole, feet included.
+  - No console errors.
+- **Root confirmed:** the protector appearance is approved, heading focus settles 107 px below the top at desktop width, and the zoom and reset buttons work.
+
+### Root QA (19 November, final independent review: passed)
+- **Focused tests:** 43/43 (referee, site and history).
+- **Through the real interface:** all 16 correct answers give the right score, the official who decides it, and the source feedback. A deliberately wrong answer also explains the correct result.
+- **Camera:** an independent three.js projection checked 239,360 landmarks at 60 fps across all 16 scenes and eight view angles. There are no crops, and the worst NDC magnitude is 0.8554.
+- **Desktop:** at the end of the boundary scenario, from the referee's view, both fighters are whole.
+- **Phone (390 × 844):** Next scenario focuses the new title below the header, both fighters fit, and nothing overflows.
+- **Guide:** eight sections. All three tables fit at 358 px, and the AAU youth count and fall distinctions are present.
+- **Layout:** of the 66 existing HTML pages, all except the tournament guide have only footer changes. The tournament guide's two new links were reviewed. The motion and avatar files are unchanged.
+
+### Known limits
+- **Fighters:** they're posed from a small set of keyed stances and techniques on the lesson rig. There's no foot roll or weight shift beyond the keyed poses, and no physics.
+- **Contact:** shown geometrically. Sensor thresholds and impact force aren't modelled; the PSS result is part of each scenario's evidence.
+- **Protector fit:** the shell is fitted to the lesson character's jacket. The elbows in guard can touch its sides, as they do in real sparring. During the fall, one transient frame comes within 1.2 mm of the shell.
+- **AAU youth:** there is no paired youth turning-head-kick-and-fall scenario yet. The rule is in the engine, the guide and the tests, and the scenario could be added later.
+- **Rule coverage:** the scenarios cover common decisions only. They don't include knock-downs, the IVR or the technical card.
+- **Practice only:** this isn't certification or an official interpretation. Rulebooks change, and the on-screen edition dates say which ones were used.

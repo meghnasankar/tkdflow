@@ -109,6 +109,30 @@
       ]
     },
     {
+      "id": "referee-guide",
+      "category": "Competitions",
+      "kind": "Referee guide",
+      "title": "How sparring is refereed and scored",
+      "body": "Who decides what (sensors, judges, centre referee), how a bout runs, 1/2/3/4/6 scoring, Gam-jeom penalties and their exceptions, commands, reviews, and the AAU youth and Grassroot head-contact rules, each with its article and page.",
+      "url": "referee-guide.html",
+      "tags": [
+        "Sparring",
+        "Referees"
+      ]
+    },
+    {
+      "id": "referee-practice",
+      "category": "Competitions",
+      "kind": "Practice",
+      "title": "Referee practice in a 3D arena",
+      "body": "Watch 16 sparring exchanges and decide what the scoreboard should show under World Taekwondo’s November 2026 rules or AAU youth and Grassroot rules, then see which official decides it and why.",
+      "url": "referee.html",
+      "tags": [
+        "Sparring",
+        "Referees"
+      ]
+    },
+    {
       "id": "founder",
       "category": "About the project",
       "kind": "Founder story",

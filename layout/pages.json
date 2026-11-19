@@ -300,6 +300,22 @@
       "description": "Step-by-step checklists and plain explanations for a first USA Taekwondo, AAU Taekwondo or American Taekwondo United tournament, for forms and sparring."
     },
     {
+      "file": "referee.html",
+      "key": "events",
+      "path": "/referee.html",
+      "sitemap": true,
+      "title": "Referee practice: score sparring exchanges in 3D — TKDflow",
+      "description": "Watch sparring exchanges in a 3D arena and decide the points and penalties under World Taekwondo’s November 2026 rules and AAU Taekwondo’s youth and Grassroot profiles, with the official who decides and the article for each call."
+    },
+    {
+      "file": "referee-guide.html",
+      "key": "events",
+      "path": "/referee-guide.html",
+      "sitemap": true,
+      "title": "A practical guide to refereeing taekwondo sparring — TKDflow",
+      "description": "Who decides what, how a bout runs, what scores, Gam-jeom penalties and exceptions, commands, stoppages and video review under World Taekwondo’s November 2026 rules, plus AAU youth and Grassroot head-contact rules, with article and page references."
+    },
+    {
       "file": "about.html",
       "key": "about",
       "path": "/about.html",
