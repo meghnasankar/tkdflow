@@ -37,14 +37,18 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batches 27 and 30 (unsent reply drafts, and a session recheck after Back/Forward): published.** PR 52 merged as `main` `b4c97e2`. Codex verified it in production: main CI passed, the 3 source files checked match, and security headers and private-path 404s pass.
 - **Batches 28 and 29 (Taekwondo words explained, and one compact Forms tool row): published.** PR 53 merged as `main` `17278e9`. Root reported main CI run 44394381798 passing, 779 tests and 256 live checks. Codex's browser review results are in each batch's section. Scope: items 49 and 50.
 - **Batch 35 (a free lesson camera with Whole body, Armwork and Footwork): published.** PR 54 merged as `main` `0c90d64`. Root reported production serving all 32 changed files exactly as in source, security headers and private-path 404s passing, and the in-app browser preview passing. Scope: item 58.
-- **Batch 36 (camera focus transitions keep the body in frame):** on `fix/camera-focus-transitions-2026-11-19`, cut from `0c90d64`. Codex's review passed on 19 November (results in the batch section); awaiting root's release. Scope: item 59.
+- **Batch 36 (camera focus transitions keep the body in frame): published.** PR 55 merged as `main` `97f75f9`. Root reported:
+  - production source, security headers, private-path 404s and rapid-focus browser checks passing;
+  - main CI run 44467609454 succeeding.
+  - Scope: item 59.
+- **Batch 37 (grounded feet stand flat):** on `feat/detailed-avatar-2026-11-19`, cut from `97f75f9`. Codex's review passed on 19 November (results in the batch section); awaiting root's release. Scope: item 60.
 - **Closeout:** batches 32, 33A and 34 are prepared but not published, and 33B isn't implemented. See "Closeout — prepared, not published" at the end.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 36:** implemented locally and reviewed by Codex; awaiting root's release.
+- **Batch 37:** implemented locally and reviewed by Codex; awaiting root's release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -81,7 +85,8 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
-| 59 | A quick focus change could crop the head on its first frames | Root caught it live after PR 54: Armwork → Footwork → Whole body pressed quickly showed the head outside the canvas with Whole body selected. The aim and distance were still easing from the low Footwork view, and the safety net only protected Footwork's feet. Settled views fitted; the first transition frames didn't. | P2 learning | Batch 36 |
+| 60 | A foot standing on the floor could keep the previous kick's pitch | `js/animation/form-motion.js` cloned the feet from the previous pose into kick, bending-ready and kept-feet stance plans, and reset the supporting foot's yaw and position but not its pitch. A leg that had just kicked then stood on the floor with the toes tipped up 50° or 85°. A read-only scan of `97f75f9` by root found 10 held poses: Taegeuk Sa Jang 10, Taegeuk Pal Jang 5 and 28, Pyongwon 8 and 21, Jitae 31–33, and Songahm 3 5 and 27. Separately, a landing foot finished flattening up to 0.7 s after touching down (Won-Hyo 28, Joong-Gun 4, Taegeuk Pal Jang 17). The new detailed avatar's real feet made it visible; the current character receives the same values. | P2 accuracy | Batch 37 |
+| 59 | A quick focus change could crop the head on its first frames | Root caught it live after PR 54: Armwork → Footwork → Whole body pressed quickly showed the head outside the canvas with Whole body selected. The aim and distance were still easing from the low Footwork view, and the safety net only protected Footwork's feet. Settled views fitted; the first transition frames didn't. | P2 learning | Published (PR 55) |
 | 58 | The lesson camera offered only five fixed views | All 23 lessons used `js/animation/lesson-view.js` with Front, Back, Left, Right and 3/4 buttons, each fitted only for its own direction. There was no way to turn freely, zoom or move in on the arms or feet. | P2 learning | Published (PR 54) |
 | 53 | A Community page restored by Back/Forward kept a signed-out member's private controls | A read-only audit with the real pinned SDK (2.119.0) and the real connection code, offline and synthetic, found the gap: a sign-out made in another tab while this page sat in the back/forward cache wasn't noticed on restore. `pageShown` rechecked only under-13 tabs, and the SDK's visibility recovery returns without any event when the stored session is gone. The composer, Your submissions and the moderation queue stayed. An account switch was noticed. This is synthetic SDK evidence only; it hasn't been shown in a real browser, which may evict the cached page instead. No production leak is claimed. | P2 privacy | Published (PR 52) |
 | 52 | Profile Log out could report a sign-out it hadn't proved | `js/pages/profile.js` passed `stillSignedIn: () => hasStoredSession()`, which returns false when storage can't be read, so `logout()` treated unreadable storage as a verified sign-out and the page redirected home. Its auth listener said "You have been signed out" on any null session, even with a stored copy still present. Password recovery used the same weak proof for "signed out". Codex reproduced both profile cases in native Chrome with the synthetic fixture (`/private/tmp/tkdflow-profile-logout-fixture.mjs`). No live account was affected. | P2 accuracy | Published (PR 50) |
@@ -2278,3 +2283,40 @@ The work below stays in the backlog. None of it is on this branch, and none of i
 
 ### Known limits
 - **Not tested:** a physical phone, Safari or a screen reader.
+
+## Batch 37 — grounded feet stand flat (item 60)
+
+### Change (`js/animation/form-motion.js` only)
+- **A foot that ends a move on the floor gets pitch 0** (its ankle at or below 7.5 cm, the 7 cm ankle height plus a margin). This applies to kick plans (the supporting foot), bending-ready and every plan that keeps the previous feet.
+- **A foot coming down from a kick** finishes flattening as it reaches the floor: its pitch progress is at least as far as its descent. It no longer lands with the toes up and flattens afterwards.
+- **Unchanged:**
+  - **Feet in the air:** a front kick keeps −50° and a side kick −85° at the kick, and in-between frames still ease.
+  - **Everything else:** across all 82,997 frames of the 22 data-driven lessons, sampled at 30 fps, nothing changes except foot pitch (4,714 values). Foot and joint positions, timing, chapters, the 728 poses, counts and narration are identical. Taegeuk Il Jang uses its own motion file and is untouched.
+- **Read-only audit after the fix:** zero frames, in any lesson, where a foot on the floor is pitched more than 5°.
+- **Pyongwon thumbnail** (`assets/forms/pyongwon.webp`, `data/form-thumbnails.json`): it shows pose 8, one of the corrected poses, so the existing thumbnail test caught the changed pose.
+  - **How it was re-rendered:** by the documented thumbnail studio process (`docs/form-thumbnails.md`), with the unchanged renderer and avatar.
+  - **What changed in the image:** the supporting right foot now stands flat instead of tipped up.
+  - **Manifest record:** only Pyongwon's changed: its new pose fingerprint, render proof (bounds 353/752/124/834, 77,800 pixels), 17,918 bytes and image hash.
+  - **The other 22 thumbnails** rendered in the same session reproduced their recorded bounds and pixel counts exactly, and their files are untouched.
+
+### Tests (`tests/foot-pitch.test.mjs`, new, 3; `tests/form-thumbnails.test.mjs` passes with the new Pyongwon record)
+- **All 23 lessons, every frame at 30 fps:** a foot on the floor is never pitched more than 5° (more than 100,000 grounded feet checked).
+- **Consecutive opposite-leg kicks:** root's 10 flagged held poses stand flat on the floor. In Taegeuk Sa Jang 9 → 10, the left leg side-kicks at −85°, then supports the right side kick at 0°.
+- **Kicks and landings:** the front kick keeps −50° and the side kick −85° in the air. Won-Hyo 28, Joong-Gun 4 and Taegeuk Pal Jang 17 land flat, within 5° at touchdown.
+- **Against the unpatched file:** all 3 tests fail.
+- **Full suite:** 805/805 (`npm run check`), and `git diff --check` is clean.
+
+### Codex review (19 November)
+- **The release lesson player, current character:**
+  - Taegeuk Sa Jang pose 10 in Whole body and Footwork;
+  - Jitae pose 31 in Whole body;
+  - at desktop and at a real 390×844 size.
+  - The supporting feet stand flat, and the whole character fits.
+- **Independent before/after comparison** of 29,815 sampled frames and pose endpoints across all 23 forms:
+  - all pose state other than foot pitch, plus the chapters and duration, is identical;
+  - the largest pitch on a grounded foot is 0.557°.
+- **Evidence:** root's `support-foot-independent-review.json` in the session outputs.
+
+### Known limits
+- **The scan finds geometry, not technique.** It isn't an instructor's check of foot technique.
+- **The detailed avatar** (the new mesh, the fitted feet and the side-kick foot frame) stays in scratch for further review and isn't part of this batch.

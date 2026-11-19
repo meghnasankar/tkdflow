@@ -399,7 +399,7 @@
       "referenceCounts": [
         6
       ],
-      "sourcePoseSha256": "3953ee9f892386565a8c6236cecd281006e4c831f30fb20cba35d6ca86949494",
+      "sourcePoseSha256": "501e440c5a34aa848e292f75c4c78442ef888b209feeee80e32585785eadf1be",
       "theme": "plain",
       "cameraAngle": 60,
       "series": "BLACK BELT FORM",
@@ -408,19 +408,19 @@
       "meaning": "A Vast Plain",
       "name": "Pyongwon",
       "alt": "Pyongwon: the lesson character performing left turning side kick.",
-      "bytes": 17962,
-      "assetSha256": "fb3db158a85e791d709aebf5039c695e6caaf4c84f2a3f7993b7ab3e57b9e6b3",
+      "bytes": 17918,
+      "assetSha256": "a5ed86f8cb701c70d4134b235e7d4e4b74f5dd2abcaf1716e4cb2101586744d2",
       "renderProof": {
         "alphaBounds": {
-          "bottom": 835,
-          "count": 78206,
-          "left": 355,
+          "bottom": 834,
+          "count": 77800,
+          "left": 353,
           "right": 752,
           "top": 124
         },
         "cameraAngle": 60,
         "id": "pyongwon",
-        "poseHash": "3953ee9f892386565a8c6236cecd281006e4c831f30fb20cba35d6ca86949494"
+        "poseHash": "501e440c5a34aa848e292f75c4c78442ef888b209feeee80e32585785eadf1be"
       }
     },
     {
