@@ -7,6 +7,27 @@ const sides=['left','right'],sign=s=>s==='left'?1:-1,other=s=>s==='left'?'right'
 const mix=(a,b,u)=>a+(b-a)*u,mix3=(a,b,u)=>a.map((v,i)=>mix(v,b[i],u));
 const phase=(u,a=0,b=1)=>minimumJerk((u-a)/(b-a));
 const arc=u=>Math.sin(Math.PI*clamp(u,0,1))**2;
+/* A step leaves the floor before it travels and is set down after it arrives: the foot rises over the first 35% of the
+   step, moves across between 12% and 88%, and comes down over the last 35%. By the time it starts to travel it is
+   already about 1.5 cm up, so it never slides along the floor; the end points and the step's timing are unchanged. */
+const STEP_LIFT=.065;
+function stepPath(from,to,local){
+ if(local<=0)return {pos:[...from],across:0};if(local>=1)return {pos:[...to],across:1};
+ const across=phase(local,.12,.88),pos=mix3(from,to,across);
+ pos[1]+=STEP_LIFT*Math.min(phase(local,0,.35),1-phase(local,.65,1));
+ return {pos,across};
+}
+/* The floor points of a foot (heel and ball on the sole, relative to the ankle along the foot). A grounded foot that
+   turns keeps whichever of them stays put between the move's two ends (the ball for a pivot on the ball), and its
+   ankle swings round that point, instead of the ankle and the turn being blended separately. */
+const SOLE={ball:[0,0,BODY.ballOffset],heel:[0,0,-.06]};
+function travels(from,to){return Math.min(...Object.values(SOLE).map(l=>{const a=add(from.pos,rotY(l,from.yaw)),b=add(to.pos,rotY(l,to.yaw));return Math.hypot(b[0]-a[0],b[2]-a[2]);}))>.03;}
+function anchoredFoot(from,to,q,yaw){
+ if(q<=0)return [...from.pos];if(q>=1)return [...to.pos];   // the move's end points exactly
+ let best=null;
+ for(const local of Object.values(SOLE)){const a=add(from.pos,rotY(local,from.yaw)),b=add(to.pos,rotY(local,to.yaw)),d=Math.hypot(b[0]-a[0],b[2]-a[2]);if(!best||d<best.d)best={local,a,b,d};}
+ const pos=sub(mix3(best.a,best.b,q),rotY(best.local,yaw));pos[1]=mix(from.pos[1],to.pos[1],q);return pos;
+}
 const yawDelta=(a,b)=>((b-a+540)%360)-180;
 function movingFoot(entry){
  if(Object.hasOwn(entry,'movingFoot'))return entry.movingFoot;
@@ -388,32 +409,88 @@ export function createFormMotion(form){
  POSES.push({name:'Return to ready',korean:'',desc:'Return to the ready position. This closing transition is illustrative.',official:null,dir:'↑',kihap:false});
  const CHAPTERS=plans.map(({index,start,at,duration=0})=>({index,start,at,duration})),DURATION=at+.8;
  function indexAtTime(t){for(let i=1;i<plans.length;i++){if(t<plans[i].start)return i-1;if(t<=plans[i].at)return i;}return plans.length-1;}
- function stateAtTime(raw,durationScale=1){
+ function stateAtTime(raw,durationScale=1,legacy=false){
   const t=clamp(raw,0,DURATION),index=indexAtTime(t),p=plans[index];if(index===0)return p.after;
   const u=clamp((t-p.start)/p.duration,0,1),deliberate=isDeliberate(p),impact=deliberate?1:IMPACT,drive=driveStart(p.duration,durationScale,!!p.kick,impact),q=phase(u,0,impact),a=p.before,b=p.after;
   const state={yaw:a.yaw+p.dyaw*q,chestYaw:(a.chestYaw??a.yaw)+(p.dyaw+yawDelta((a.chestYaw??a.yaw)+p.dyaw,b.chestYaw??b.yaw))*q,pelvis:mix3(a.pelvis,b.pelvis,q),feet:{},lean:mix(a.lean||0,b.lean||0,q),headYaw:mix(a.headYaw||0,b.headYaw||0,q)};
-  for(const side of sides){
-   const f=a.feet[side],end=b.feet[side],footTurn=Math.abs(p.dyaw)>=270?p.dyaw+yawDelta(f.yaw+p.dyaw,end.yaw):yawDelta(f.yaw,end.yaw),fyaw=f.yaw+footTurn*q;
-   let pos;
-   if(p.footStages){const n=p.footStages.length-1,x=clamp(u/impact,0,1)*n,j=Math.min(n-1,Math.floor(x)),local=x-j,v=phase(local),from=p.footStages[j][side],to=p.footStages[j+1][side];
-    if(from.pos[1]>.15&&to.pos[1]<.15){const chamber=add(state.pelvis,rotY([sign(side)*.10,-.24,.15],state.yaw));pos=local<.38?mix3(from.pos,chamber,phase(local,0,.38)):mix3(chamber,to.pos,phase(local,.38,1));}
-    else pos=mix3(from.pos,to.pos,v);
-    if(Math.hypot(...sub(from.pos,to.pos))>.01)pos[1]+=.065*arc(v);
-   }
-   else if(p.returning){const v=phase(u,side==='right'?0:.45,side==='right'?.55:1);pos=mix3(f.pos,end.pos,v);pos[1]+=.065*arc(v);}
-   else if(p.kick&&side===p.moving){
-    const chamber=add(state.pelvis,rotY([sign(side)*.095,-.24,.14],p.kickYaw));
-    pos=u<drive?mix3(f.pos,chamber,phase(u,0,drive)):mix3(chamber,end.pos,phase(u,drive,impact));
-    if(p.kick.type.includes('roundhouse'))pos=add(pos,rotY([sign(side)*.10*arc(q),0,0],p.kickYaw));
-    if(p.kick.type==='crescent-kick')pos=add(pos,rotY([sign(side)*.23*Math.sin(Math.PI*phase(u,drive,impact)),.12*arc(q),0],p.kickYaw));
-   }else if(f.pos[1]>.15&&end.pos[1]<.15){
-    const chamber=add(state.pelvis,rotY([sign(side)*.10,-.24,.15],state.yaw));pos=u<.38?mix3(f.pos,chamber,phase(u,0,.38)):mix3(chamber,end.pos,phase(u,.38,impact));
-   }else if(/close-then-step/.test(p.entry?.footAction||'')&&side===p.moving){
-    const gathered=add(a.feet[other(side)].pos,rotY([sign(side)*.06,0,0],a.yaw));pos=u<.4?mix3(f.pos,gathered,phase(u,0,.4)):mix3(gathered,end.pos,phase(u,.4,impact));pos[1]+=.065*arc(q);
-   }else{pos=mix3(f.pos,end.pos,q);if(side===p.moving&&p.step)pos[1]+=.065*arc(q);}
-   // A foot coming down from a kick finishes flattening as it reaches the floor, not after it has landed.
-   const landing=f.pos[1]>.15&&end.pos[1]<=GROUNDED,pitchDone=landing?Math.max(q,clamp((f.pos[1]-pos[1])/Math.max(1e-6,f.pos[1]-end.pos[1]),0,1)):q;
-   state.feet[side]={pos,yaw:fyaw,pitch:mix(f.pitch||0,end.pitch||0,pitchDone)};
+  if(legacy){
+   // The published foot paths (Batch 38), used only to carry the knee bend planes along the timeline, so every
+   // held pose keeps exactly its published joints while the shown frames use the planted and lifted paths below.
+    for(const side of sides){
+     const f=a.feet[side],end=b.feet[side],footTurn=Math.abs(p.dyaw)>=270?p.dyaw+yawDelta(f.yaw+p.dyaw,end.yaw):yawDelta(f.yaw,end.yaw),fyaw=f.yaw+footTurn*q;
+     let pos;
+     if(p.footStages){const n=p.footStages.length-1,x=clamp(u/impact,0,1)*n,j=Math.min(n-1,Math.floor(x)),local=x-j,v=phase(local),from=p.footStages[j][side],to=p.footStages[j+1][side];
+      if(from.pos[1]>.15&&to.pos[1]<.15){const chamber=add(state.pelvis,rotY([sign(side)*.10,-.24,.15],state.yaw));pos=local<.38?mix3(from.pos,chamber,phase(local,0,.38)):mix3(chamber,to.pos,phase(local,.38,1));}
+      else pos=mix3(from.pos,to.pos,v);
+      if(Math.hypot(...sub(from.pos,to.pos))>.01)pos[1]+=.065*arc(v);
+     }
+     else if(p.returning){const v=phase(u,side==='right'?0:.45,side==='right'?.55:1);pos=mix3(f.pos,end.pos,v);pos[1]+=.065*arc(v);}
+     else if(p.kick&&side===p.moving){
+      const chamber=add(state.pelvis,rotY([sign(side)*.095,-.24,.14],p.kickYaw));
+      pos=u<drive?mix3(f.pos,chamber,phase(u,0,drive)):mix3(chamber,end.pos,phase(u,drive,impact));
+      if(p.kick.type.includes('roundhouse'))pos=add(pos,rotY([sign(side)*.10*arc(q),0,0],p.kickYaw));
+      if(p.kick.type==='crescent-kick')pos=add(pos,rotY([sign(side)*.23*Math.sin(Math.PI*phase(u,drive,impact)),.12*arc(q),0],p.kickYaw));
+     }else if(f.pos[1]>.15&&end.pos[1]<.15){
+      const chamber=add(state.pelvis,rotY([sign(side)*.10,-.24,.15],state.yaw));pos=u<.38?mix3(f.pos,chamber,phase(u,0,.38)):mix3(chamber,end.pos,phase(u,.38,impact));
+     }else if(/close-then-step/.test(p.entry?.footAction||'')&&side===p.moving){
+      const gathered=add(a.feet[other(side)].pos,rotY([sign(side)*.06,0,0],a.yaw));pos=u<.4?mix3(f.pos,gathered,phase(u,0,.4)):mix3(gathered,end.pos,phase(u,.4,impact));pos[1]+=.065*arc(q);
+     }else{pos=mix3(f.pos,end.pos,q);if(side===p.moving&&p.step)pos[1]+=.065*arc(q);}
+     // A foot coming down from a kick finishes flattening as it reaches the floor, not after it has landed.
+     const landing=f.pos[1]>.15&&end.pos[1]<=GROUNDED,pitchDone=landing?Math.max(q,clamp((f.pos[1]-pos[1])/Math.max(1e-6,f.pos[1]-end.pos[1]),0,1)):q;
+     state.feet[side]={pos,yaw:fyaw,pitch:mix(f.pitch||0,end.pitch||0,pitchDone)};
+    }
+  }else{
+    const slide=/^slide-/.test(p.entry?.footAction||''),supportStep=!!p.kick&&p.support&&travels(a.feet[p.support],b.feet[p.support])&&a.feet[p.support].pos[1]<=GROUNDED&&b.feet[p.support].pos[1]<=GROUNDED;
+    for(const side of sides){
+     let kickPhase=null;
+     const f=a.feet[side],end=b.feet[side],footTurn=Math.abs(p.dyaw)>=270?p.dyaw+yawDelta(f.yaw+p.dyaw,end.yaw):yawDelta(f.yaw,end.yaw);let fyaw=f.yaw+footTurn*q;
+     let pos;
+     if(p.footStages){const n=p.footStages.length-1,x=clamp(u/impact,0,1)*n,j=Math.min(n-1,Math.floor(x)),local=x-j,v=phase(local),from=p.footStages[j][side],to=p.footStages[j+1][side];
+      if(from.pos[1]>.15&&to.pos[1]<.15){const chamber=add(state.pelvis,rotY([sign(side)*.10,-.24,.15],state.yaw));pos=local<.38?mix3(from.pos,chamber,phase(local,0,.38)):mix3(chamber,to.pos,phase(local,.38,1));}
+      else if(Math.hypot(...sub(from.pos,to.pos))>.01)pos=stepPath(from.pos,to.pos,local).pos;
+      else pos=mix3(from.pos,to.pos,v);
+     }
+     else if(p.returning){
+      // Each foot returns in its own window; it turns in the air with its step (or, if it only turns, on its ball).
+      const a0=side==='right'?0:.45,a1=side==='right'?.55:1,local=clamp((u-a0)/(a1-a0),0,1);
+      if(travels(f,end)){const step=stepPath(f.pos,end.pos,local);pos=step.pos;fyaw=f.yaw+footTurn*step.across;}
+      else{fyaw=f.yaw+footTurn*phase(local);pos=anchoredFoot(f,end,phase(local),fyaw);}
+     }
+     else if(p.kick&&side===p.moving){
+      const chamber=add(state.pelvis,rotY([sign(side)*.095,-.24,.14],p.kickYaw)),lift=supportStep?drive*.5:0;
+      // The kicking foot rises before it travels to the chamber, and on the way back reaches its spot before it is set
+      // down (vertical and horizontal phases offset by 15%), so it never skims the floor.
+      const along=(from,to,v,h)=>{const r=mix3(from,to,h);r[1]=mix(from[1],to[1],v);return r;};
+      pos=u<drive?(u<lift?[...f.pos]:along(f.pos,chamber,phase(u,lift,drive),phase(u,lift+.15*(drive-lift),drive))):along(chamber,end.pos,phase(u,drive,impact),phase(u,drive,impact-.15*(impact-drive)));
+      // ...and turns only once it is clear of the floor (smoothly over the first 4 cm), not pivoting on its ankle.
+      // Its turn and the roundhouse/crescent sweeps start only as it clears the floor.
+      const clear=f.pos[1]<=GROUNDED&&u<drive?phase((pos[1]-f.pos[1])/.06):1;
+      kickPhase=phase(u,lift,impact);fyaw=f.yaw+footTurn*kickPhase*clear;   // on the kick's own clock (from when it starts)
+      if(p.kick.type.includes('roundhouse'))pos=add(pos,rotY([sign(side)*.10*arc(kickPhase),0,0],p.kickYaw));
+      if(p.kick.type==='crescent-kick')pos=add(pos,rotY([sign(side)*.23*Math.sin(Math.PI*phase(u,drive,impact)),.12*arc(kickPhase),0],p.kickYaw));
+     }else if(f.pos[1]>.15&&end.pos[1]<.15){
+      const chamber=add(state.pelvis,rotY([sign(side)*.10,-.24,.15],state.yaw));pos=u<.38?mix3(f.pos,chamber,phase(u,0,.38)):mix3(chamber,end.pos,phase(u,.38,impact));
+     }else if(/close-then-step/.test(p.entry?.footAction||'')&&side===p.moving){
+      // One continuous lifted step through the gathered point: it rises before it travels, stays up past the gather,
+    // and turns in the air.
+    const gathered=add(a.feet[other(side)].pos,rotY([sign(side)*.06,0,0],a.yaw)),L=clamp(u/impact,0,1);
+    pos=u<.4?mix3(f.pos,gathered,phase(u,.04,.4)):mix3(gathered,end.pos,phase(u,.4,impact*.94));
+    pos[1]+=STEP_LIFT*Math.min(phase(L,0,.12),1-phase(L,.88,1));fyaw=f.yaw+footTurn*phase(u,.04,impact*.94);
+     }else if(p.kick&&supportStep&&side!==p.moving){
+      // A support foot that moves in a kick plan (an advance or a closing step) steps first, before the kick chamber.
+      const step=stepPath(f.pos,end.pos,clamp(u/(drive*.5),0,1));pos=step.pos;fyaw=f.yaw+footTurn*step.across;
+     }else if(side===p.moving&&slide){
+      pos=mix3(f.pos,end.pos,q);   // the source's deliberate slide (shift or extend the front foot) stays on the floor
+     }else if(side===p.moving&&(p.step||travels(f,end))&&Math.hypot(...sub(f.pos,end.pos))>.01){
+      const step=stepPath(f.pos,end.pos,clamp(u/impact,0,1));pos=step.pos;fyaw=f.yaw+footTurn*step.across;   // the foot turns in the air, not on the floor
+     }else if(f.pos[1]<=GROUNDED&&end.pos[1]<=GROUNDED)pos=anchoredFoot(f,end,q,fyaw);
+     else pos=mix3(f.pos,end.pos,q);
+     // A foot coming down from a kick finishes flattening as it reaches the floor, not after it has landed.
+     const landing=f.pos[1]>.15&&end.pos[1]<=GROUNDED;let pitchDone=landing?Math.max(q,clamp((f.pos[1]-pos[1])/Math.max(1e-6,f.pos[1]-end.pos[1]),0,1)):q;
+     // A kicking foot keeps its floor pitch until it is clear of the floor (3 cm), so it doesn't rock and creep on its heel.
+     if(kickPhase!==null)pitchDone=kickPhase*(f.pos[1]<=GROUNDED&&u<drive?phase((pos[1]-f.pos[1])/.06):1);
+     state.feet[side]={pos,yaw:fyaw,pitch:mix(f.pitch||0,end.pitch||0,pitchDone)};
+    }
   }
   if(p.footStages){const mid=scale(add(state.feet.left.pos,state.feet.right.pos),.5),startOffset=sub(a.pelvis,scale(add(a.feet.left.pos,a.feet.right.pos),.5)),endOffset=sub(b.pelvis,scale(add(b.feet.left.pos,b.feet.right.pos),.5));for(const c of [0,2])state.pelvis[c]=mid[c]+mix(startOffset[c],endOffset[c],q);}
   if(p.returning){state.pelvis[0]=mix(a.pelvis[0],(state.feet.left.pos[0]+state.feet.right.pos[0])/2,q);state.pelvis[2]=mix(a.pelvis[2],(state.feet.left.pos[2]+state.feet.right.pos[2])/2,q);}
@@ -426,7 +503,7 @@ export function createFormMotion(form){
  // and overhead/cross-body paths, rather than switching poles at a threshold.
  const frameRate=90;
  function buildPlanes(scales=[]){const table=[];let previous=null;
-  for(let n=0;n<=Math.ceil(DURATION*frameRate);n++){const t=Math.min(DURATION,n/frameRate),scale=scales[indexAtTime(t)]||1,p=solve(stateAtTime(t,scale),t,previous,true);table.push(p._planes);previous=p._planes;}
+  for(let n=0;n<=Math.ceil(DURATION*frameRate);n++){const t=Math.min(DURATION,n/frameRate),scale=scales[indexAtTime(t)]||1,p=solve(stateAtTime(t,scale,true),t,previous,true);table.push(p._planes);previous=p._planes;}
   return table;
  }
  const frames=buildPlanes();
