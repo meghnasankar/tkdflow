@@ -7,7 +7,7 @@ from mathutils.bvhtree import BVHTree
 from mathutils import Vector, Matrix
 out = sys.argv[sys.argv.index('--') + 1]; os.makedirs(out, exist_ok=True)
 SCALE = 1.10                     # 1.64 m base → about 1.80 m, the runtime character's head height
-SKIN = (0.22, 0.095, 0.05)       # linear colour of a warm medium-brown skin, close to the runtime's sRGB #b68162
+SKIN = (0.22, 0.095, 0.05)       # linear colour of a warm medium-brown skin (Blender preview only; the runtime colour is COLOURS.skin in js/animation/avatar-core.js)
 CLOTH = (0.86, 0.85, 0.82); BLACK = (0.012, 0.014, 0.018); HAIR = (0.008, 0.006, 0.007); GOLD = (0.80, 0.58, 0.20)
 
 # Start from an empty scene that only borrows the base mesh data.

@@ -3158,3 +3158,55 @@ The three under 2 cm (Sipjin 33 and 36, and Jitae's return to ready) are within 
   - 29/29 focused history and site checks pass.
   - Desktop DOM captions are clean, with no overflow.
 - **Frozen for root to commit and publish:** three files (`history.html`, `tests/history.test.mjs`, this document).
+
+## Batch 54 — avatar appearance and sleeve weights (no motion changes)
+
+### Change
+- **Sleeve weights** (`tools/avatar/repair-sleeve-weights.mjs`, run on the published asset `814b1ca7`):
+  - The underside of each sleeve now follows the arm like the outer sleeve, instead of being left behind with the chest and shoulder.
+  - The result is smoothed across neighbouring vertices around every changed one, so no two neighbours differ sharply in weight. Without this, an edge at the back of the armpit stretched almost 20× in Taegeuk 1's first move.
+  - Only skin weights change.
+- **Shoulder helper** (`js/animation/avatar-core.js`): it takes half of the upper arm's swing but none of its roll, so the cloth shared with the chest isn't wrung when an arm rolls.
+- **Face** (`tools/avatar/refine-face.mjs`, run on the sleeve-repaired asset `d63f5a42`):
+  - The lower face is narrowed toward the midline for a slimmer, softer oval: up to 7% at the jaw and chin, at most 2.9 mm, on 882 skin vertices.
+  - It fades out at the eyes, at the neck, toward the back of the head and at the outer contour by the ears, so the eyes, brows, hair and collar are unchanged.
+  - A generic face; no photograph or texture.
+- **Skin colour:** `#b68162` → `#c4957a`, the same warm hue, modestly lighter (`avatar-core.js`, and the fallback avatar in `avatar.js`).
+- **Asset:** `assets/animation/avatar-v2.{bin,json}` `814b1ca7` → `6a3e56d2`.
+- **Derived assets regenerated:** all 23 form thumbnails with their manifest `bytes`, `assetSha256` and `renderProof` (every source pose hash unchanged), the social card SVG's embedded Taegeuk 4 thumbnail, `og-animation-v2.png` and `og-image.png`, and `docs/social-card-render.json`.
+- **Not in this batch:** lesson motion, chambers, body clearance and the upper-arm roll cap (Batch 48, still in review). The roll cap flipped the upper arm near straight-up positions, so it's left out.
+
+### Measured (published → Batch 54; 3,572 frames, all 23 forms)
+| Measure | Published | Batch 54 |
+|---|---|---|
+| Inside-out sleeve triangles | 277,654 | 163,035 (−41%) |
+| Frames with a sleeve ≥ 18 inside-out triangles | 2,602 | 2,865 |
+| Sleeve vertices inside the torso | 158,370 | 158,325 |
+
+The extreme Keumgang 88.5 shoulder still tears without the Batch 48 motion work.
+
+### Checks
+- **Full suite:** 863/863 (`npm run check` on main `09ebdfb` plus this batch), including the bone-flip and cloth-edge review tests, with no limit changed. `git diff --check` is clean.
+- **Visual:** Keumgang 88.5 az30 and Won-Hyo 97.74 az210 against the published avatar; face front and three-quarter.
+- **Allowlist:** 36 files. The local `node_modules` link used for testing is not part of the batch.
+
+### Root review (19 November)
+- **Keumgang 88.5 az30:** on the Batch 54 lab (port 9053) it's improved compared with the large tears on the published avatar (port 9047), but shoulder folds remain.
+- **Face:** subtle and generic, with warmer, fairer skin.
+- **Approved** for integration into `fix/avatar-garment-and-face-2026-11-19` from main `09ebdfb` with the exact 36-file allowlist. Batch 48's motion and clearance files are not included.
+
+### Integration (19 November)
+- Copied the 36 allowlist files from the scratch checkout and verified each byte for byte. No Batch 48 motion, clearance or referee files. Release checks below.
+- **Release checkout checks:** full suite 863/863 (`npm run check` on `fix/avatar-garment-and-face-2026-11-19` from main `09ebdfb`). `git diff --check` is clean and the layout is in sync.
+
+### Root QA (19 November, release checkout: passed)
+- **Focused checks:** 57 (detailed avatar, camera, thumbnails, referee).
+- **Desktop (8899):** Study view renders the connected detailed rig, and the controls work.
+- **Phone (390 × 844):**
+  - All three focus modes work, with `scrollWidth` 390.
+  - Whole body, head and feet are visible, and the controls fit.
+- **Independent binary scope proof** (`/tmp/tkdflow-root54-asset-scope.json`):
+  - Bones, topology, hand rules and metadata are unchanged except the checksum.
+  - Only cloth weights and 882 face x-positions change (at most 2.86 mm).
+  - No motion source changes.
+- **Frozen** for root to commit and publish.
