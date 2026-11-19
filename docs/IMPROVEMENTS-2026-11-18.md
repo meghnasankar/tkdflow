@@ -85,6 +85,7 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
+| 66 | Fixed-view wording and hard-to-find learning pages | A public-site audit after Batches 40–42. The 22 data-driven lessons, 23 lesson descriptions, the home page and a Community post still promised "camera views" from the fixed-view era, and lessons mentioned "camera labels" that only screen readers hear. Outside the footer, the history page was linked from one page, the video gallery from two, and the referee guide and practice from three, mostly each other. | P3 consistency | Batch 43 |
 | 65 | No guided way to learn from video | Learners were left to search YouTube, where the results mix official, independent and mislabelled uploads, and auto-translated captions often get techniques and history wrong. Nothing said who published a video, which rules a match was fought under, or what to look for. | P2 content | Batch 42 |
 | 64 | No way to learn or practise how sparring is officiated | Parents, athletes and new referees met 1/2/3/4/6 points, Gam-jeom, the PSS and "Kal-yeo" at their first tournament with no plain explanation. The scoring and penalty rules changed again on 1 November 2026, and summaries online often double every penalty in the last ten seconds or mix up what the PSS, the judges and the centre referee each decide. | P2 content | Batch 41 |
 | 63 | No history of taekwondo on the site | Learners met three traditions (WT/Kukkiwon, ITF, ATA) without the dates behind them. Origin stories online often present one organization's account, or an unbroken ancient lineage, as settled. | P2 content | Batch 40 |
@@ -2750,3 +2751,69 @@ The work below stays in the backlog. None of it is on this branch, and none of i
 - The thumbnails come from YouTube and the videos open on YouTube; About says so.
 - Time stamps rely on the source notes and transcripts. Root sampled parts of each video, not every minute.
 - Publishers can rename videos or change thumbnails; the cards show the titles as of 19 November 2026.
+
+## Batch 43 — consistent camera wording and links to the new learning pages (item 66)
+
+### Audit (19 November, the public site after Batch 42)
+- **Fixed-view wording:**
+  - The 22 data-driven lessons said "Use the camera views and slow playback…".
+  - All 23 lesson descriptions ended "…slow playback and camera views".
+  - The home "Study a form" card and the Community "forms" post also said "camera views".
+  - The 22 lessons said "Camera labels refer to the starting stance", but the direction labels exist only in the screen-reader camera status.
+  - The player and Start here already describe the turnable camera correctly. A forum guide's "two camera views" means two viewpoints, which is still accurate, so it is unchanged.
+- **Stick-figure imagery: none found on the public site.**
+  - Every lesson thumbnail (`assets/forms/*.webp`) and the social images (`og-animation-v2.png`, and `og-image.png` with `social-card.svg` at the legacy address, pinned by `tests/site.test.mjs`) show the current full-body 3D character.
+  - The inline SVGs are interface icons.
+  - The procedural avatar appears only if the detailed model fails to load.
+- **Links to the new pages, from page content outside the header and footer:**
+
+| Page | Before |
+|---|---|
+| History | 1 (the gallery) |
+| Video gallery | 2 (About, History) |
+| Referee guide | 3 (the tournament guide, referee practice, the gallery) |
+| Referee practice | 3 (the same three) |
+
+  For comparison, Start here had 31 and Find a technique 28.
+
+### Change
+- **Lessons (22 pages):**
+  - "Turn the camera to any side and slow the playback to study stance, target height and movement paths."
+  - "Camera directions, such as front or left side, are measured from the starting stance." These are the words the camera announces.
+- **Descriptions (23, `layout/pages.json`, synced into the meta tags):** "…slow playback and a camera you can turn to any side".
+- **Home:**
+  - The "Study a form" card says "a camera you can turn to any side" and adds "Watch the video gallery →".
+  - The Events card adds "Referee practice →".
+- **Start here:**
+  - The styles section ends: "For how these organizations came about, read the short history of taekwondo. To see each style performed, open the video gallery."
+  - The tournament section adds: "To understand sparring scores and penalties, read the referee guide and try the 3D referee practice."
+- **Forms library:** the hero tools list adds "Video gallery" and "History of taekwondo".
+- **Events:** the first-tournament notice adds "Learning how sparring is scored? Read the referee guide or try the 3D referee practice."
+- **Community:** the "forms" post says "a camera you can turn to any side".
+- **Not changed:** account permissions, the age policy, founder facts, About, the lesson player, the motion, referee and gallery code, and the CSP.
+
+### Tests (`tests/consistency.test.mjs`, new, 2)
+- **Camera wording:** no public page, page description or Community post says "camera views" or "Camera labels". All 23 descriptions say "a camera you can turn to any side". The 22 data-driven lessons carry both new sentences, and their direction words match those in `camera-rig.js`. Home uses the new wording.
+- **Links:** History, the video gallery, the referee guide and referee practice each have at least three in-content links, from the named hub pages, at the stated places.
+- Both tests fail on the Batch 42 tree (it still has "camera views", and History has one in-content link).
+- **Full suite:** 852/852 in the overlay, and `git diff --check` is clean.
+- **Integrated (19 November):** applied on `feat/site-consistency-2026-11-19` from main `9f3c1ed` (Batch 42 published) using the 31-file allowlist; the patch applied with no fuzz, and the changed files are exactly the allowlist. `npm run check` passes 852/852, `git diff --check` is clean and the layout is in sync. On the release preview (port 8899), the new sentences and links appear on Start here, Home, Events and the Koryo lesson (including its meta description), with no console errors.
+
+### Browser check (overlay preview, port 8925)
+- **Start here:** both new sentences appear in the styles and tournament sections.
+- **Home:** the cards show "Watch the video gallery →" and "Referee practice →".
+- **Events:** the notice shows the referee links.
+- **Forms library:** the tools list shows "Video gallery" and "History of taekwondo".
+- **Koryo lesson:** shows both new camera sentences.
+- No horizontal overflow on desktop or at 375 px, where the forms tools wrap onto three lines.
+
+### Root QA (19 November, independent review: passed)
+- **Focused checks:** 38 (consistency, site and contrast tests).
+- **Phone (390 × 844):** the forms library tools fit with no overflow, and the video gallery link opens the gallery. The home card links fit.
+- **Desktop:** Start here has all four new in-content links, and Events has both referee links.
+- **Koryo:** the camera guidance matches the player.
+- **Overflow:** none on any of these pages.
+- **Evidence:** `outputs/tkdflow-ten-hour-session-2026-11-18/batch-43-site-consistency`.
+
+### Known limits
+- The audit looked for wording, imagery and links. It didn't review page layouts beyond the edited spots.
