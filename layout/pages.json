@@ -309,7 +309,7 @@
     },
     {
       "file": "referee.html",
-      "key": "events",
+      "key": "referee",
       "path": "/referee.html",
       "sitemap": true,
       "title": "Referee practice: score sparring exchanges in 3D — TKDflow",
@@ -317,7 +317,7 @@
     },
     {
       "file": "referee-guide.html",
-      "key": "events",
+      "key": "referee",
       "path": "/referee-guide.html",
       "sitemap": true,
       "title": "A practical guide to refereeing taekwondo sparring — TKDflow",

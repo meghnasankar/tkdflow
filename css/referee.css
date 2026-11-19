@@ -2,6 +2,8 @@
    description), progress kept in this browser, all scenarios below, and an optional focus mode. The arena canvas
    is always 16:9, the shape the camera framing (js/referee/framing.js) fits both whole fighters into. */
 .rf-main { max-width: 1240px; }
+/* The guide's first action, under its title: straight to the 3D practice arena. */
+.rg-hero-action { margin: 18px 0 0; }
 .rf-disclaimer { margin: 0 0 20px; padding: 12px 16px; border-left: 3px solid var(--gold); background: var(--gold-light); color: #713F12; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; line-height: 1.6; }
 .rf-disclaimer a, .rf-profile-list a, .rf-course-list a, .rf-source a { color: var(--red-dark); font-weight: 600; text-decoration: underline; }
 

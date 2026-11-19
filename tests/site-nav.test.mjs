@@ -102,18 +102,20 @@ test('signup switched off or accounts disabled change the visible links',()=>{
  document.body.dataset.page='home';renderAccountNav();
 });
 
-test('narrow desktop (769–900px) keeps nav and account labels on one line without touching other layouts',async()=>{
+test('narrow desktop (861–1160px) keeps nav and account labels on one line without touching other layouts',async()=>{
  const {readFileSync}=await import('node:fs');
  const css=readFileSync(new URL('../styles.css',import.meta.url),'utf8');
- const start=css.indexOf('@media (min-width: 769px) and (max-width: 900px) {');
+ const start=css.indexOf('@media (min-width: 861px) and (max-width: 1160px) {');
  assert.ok(start>0,'a narrow-desktop header rule exists');
  const block=css.slice(start,css.indexOf('\n}\n',start));
  assert.match(block,/\.navbar-logo \.kr \{ display: none; \}/,'the decorative Korean logotype gives way first');
  assert.match(block,/\.nav-links a:not\(\.btn\) \{[^}]*white-space: nowrap/);
  assert.match(block,/\.nav-account \.btn \{[^}]*white-space: nowrap/);
  assert.doesNotMatch(block,/grid|\.container|nav-toggle|\.nav-links \{|display: flex/,'only header spacing changes; grids and the mobile menu are untouched');
- const mobile=css.slice(css.indexOf('@media (max-width: 768px) {'));
- assert.match(mobile,/\.nav-toggle \{ display: inline-flex;/,'the mobile menu still takes over at 768px and below');
+ const mobile=css.slice(css.indexOf('@media (max-width: 860px) {'));
+ assert.match(mobile,/\.nav-toggle \{ display: inline-flex;/,'the menu takes over at 860px and below');
+ // The script closes an open menu when the window widens past the same edge.
+ assert.match(readFileSync(new URL('../js/site.js',import.meta.url),'utf8'),/matchMedia\('\(min-width: 861px\)'\)/);
 });
 
 test('account links resolve to the site root from nested pages such as /companions/…, in every mode',()=>{
