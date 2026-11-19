@@ -90,7 +90,21 @@ const targets={
 const openTypes=new Set(['knifehand-block','double-knifehand-block','twin-knifehand-block','knifehand-strike','knifehand-inward-strike','knifehand-outward-strike','knifehand-low-block','knifehand-high-block','inside-knifehand-block','spearhand','palm-block','palm-strike','upward-palm-block','hooking-block','reverse-knifehand-block','pressing-block','throat-strike','ridgehand-strike','low-spearhand','downward-palm-block','pushing-block','swallow-strike','knifehand-side-block','arc-hand-strike','knee-break','low-upturned-spearhand','grasp-chamber','knifehand-low-opening-block']);
 const compoundTypes=new Set(['double-knifehand-block','twin-knifehand-block','double-knifehand-low-block','twin-forearm-block','scissor-block','cross-low-block','knifehand-cross-low-block','double-uppercut','mountain-block','diamond-block','diamond-middle-block','opening-block','low-opening-block','knifehand-low-opening-block','assisted-block','twin-vertical-punch','x-rising-block','u-shape-block','double-punch','double-low-block','twin-low-block','wedging-block','large-hinge','swallow-strike','covered-ready','tongmilgi','assisted-high-side-block','double-side-elbow','bull-block','palm-assisted-outside-block','opening-mountain-block','rock-pushing','ridgehand-opening-block','fork-punch','assisted-backfist','ridgehand-guard','diamond-front-punch','assisted-inside-block']);
 export const SUPPORTED_TECHNIQUES=Object.freeze([...Object.keys(targets),...compoundTypes,'front-kick','side-kick','turning-side-kick','roundhouse-kick','crescent-kick','knee-strike','jump-front-kick','jump-side-kick','double-front-kick','bending-ready','ready']);
-function neutral(){return {hands:{left:[.085,.08,.21],right:[-.085,.08,.21]},open:{left:0,right:0},roll:{left:0,right:0}};}
+function neutral(){return {hands:{left:[.085,.08,.21],right:[-.085,.08,.21]},open:{left:0,right:0},roll:{left:0,right:0},shape:{left:null,right:null}};}
+/* Which open hand a technique uses, for the character's fingers: knife-hand (sonnal) by default; spear-hand,
+   palm and ridge-hand where the technique says so. The other hand of an assisted, target, elbow, spear or
+   covered technique is a supporting palm; the second hand of a double, twin or guarding knife-hand block is a
+   knife-hand. Ready stances: both pushing hands of tongmilgi are knife-hands; a covering or overlapped hand is a
+   palm. Shape only changes the fingers; positions and timing come from the same data as before. */
+function handShapeFor(type,primary){
+ if(type==='swallow-strike'||type==='tongmilgi')return 'knife';
+ if(type==='covered-ready')return 'palm';
+ if(!primary)return /knifehand|^twin|^double|opening/.test(type)&&!/assisted|palm|spear/.test(type)?'knife':'palm';
+ if(type.includes('spear'))return 'spear';
+ if(type.includes('palm')||type==='rock-pushing'||type==='target-grab')return 'palm';
+ if(type.includes('ridgehand'))return 'ridge';
+ return 'knife';
+}
 function armTargets(actions,bodyHeading=0){
  const state=neutral(),activeSides=new Set(actions.filter(a=>!a.type.includes('kick')&&!['knee-strike','bending-ready','ready'].includes(a.type)).flatMap(a=>a.side==='both'?sides:[a.side]));
  for(const action of actions){
@@ -185,13 +199,24 @@ function armTargets(actions,bodyHeading=0){
   if(type==='backfist'&&action.height==='middle')state.hands[side][1]=.30;
   if(action.height==='low')state.hands[side][1]=Math.min(.10,state.hands[side][1]);
   if(action.handShape==='open')state.open[side]=1;
+  for(const v of sides)if(state.open[v]>=1&&!state.shape[v])state.shape[v]=handShapeFor(type,v===side);
   if(action.heading!==undefined)for(const hand of action.side==='both'?sides:[side]){const shoulder=[sign(hand)*BODY.shoulderOffset[0],BODY.shoulderOffset[1],0];state.hands[hand]=add(shoulder,rotY(sub(state.hands[hand],shoulder),action.heading-bodyHeading));}
  }
  return state;
 }
+/* An open hand that changes technique (ridge-hand to knife-hand, say) blends between the two hand shapes on the same
+   phase as the arm, rather than switching at one frame: `shapeFrom` and `shapeMix` say how far it has gone. The
+   blend depends only on the phase, so seeking and frame stepping give the same fingers; a hand that opens from or
+   closes to a fist keeps one shape (the fist blend is `open`). */
+function shapeBlend(a,b,u){
+ const shape={},shapeFrom={},shapeMix={};
+ for(const s of sides){const to=(b.open[s]>0?b.shape?.[s]:a.shape?.[s])??null,from=a.open[s]>0&&b.open[s]>0?(a.shape?.[s]??null):to;shape[s]=to;shapeFrom[s]=from;shapeMix[s]=from===to?1:u;}
+ return {shape,shapeFrom,shapeMix};
+}
 function mixArms(a,b,u){return {
  hands:Object.fromEntries(sides.map(s=>[s,sphericalHand(a.hands[s],b.hands[s],u,s)])),
  open:Object.fromEntries(sides.map(s=>[s,mix(a.open[s],b.open[s],u)])),
+ ...shapeBlend(a,b,u),
  roll:Object.fromEntries(sides.map(s=>[s,mix(a.roll[s],b.roll[s],u)])),
 };}
 function chamber(actions,bodyHeading){
@@ -213,9 +238,9 @@ function chamber(actions,bodyHeading){
 const initial=(ready='parallel')=>{
  ready=typeof ready==='object'?ready.stance:ready;
  const p={yaw:0,pelvis:[0,1,0],feet:{left:{pos:[.15,.07,0],yaw:0,pitch:0},right:{pos:[-.15,.07,0],yaw:0,pitch:0}},...neutral(),lean:0};
- if(ready.startsWith('closed')){p.feet.left.pos[0]=.035;p.feet.right.pos[0]=-.035;p.hands.left=[.025,ready==='closed-A'?.52:.12,.22];p.hands.right=[-.025,ready==='closed-A'?.52:.12,.22];p.open.left=1;}
- if(ready==='tongmilgi'){p.hands.left=[.04,.43,.25];p.hands.right=[-.04,.43,.25];p.open.left=p.open.right=1;}
- if(ready==='overlapped-hands-closed'){p.feet.left.pos[0]=.035;p.feet.right.pos[0]=-.035;p.hands.left=[.02,.05,.22];p.hands.right=[-.02,.05,.22];p.open.left=p.open.right=1;}
+ if(ready.startsWith('closed')){p.feet.left.pos[0]=.035;p.feet.right.pos[0]=-.035;p.hands.left=[.025,ready==='closed-A'?.52:.12,.22];p.hands.right=[-.025,ready==='closed-A'?.52:.12,.22];p.open.left=1;p.shape.left='palm';}
+ if(ready==='tongmilgi'){p.hands.left=[.04,.43,.25];p.hands.right=[-.04,.43,.25];p.open.left=p.open.right=1;p.shape.left=p.shape.right='knife';}
+ if(ready==='overlapped-hands-closed'){p.feet.left.pos[0]=.035;p.feet.right.pos[0]=-.035;p.hands.left=[.02,.05,.22];p.hands.right=[-.02,.05,.22];p.open.left=p.open.right=1;p.shape.left=p.shape.right='palm';}
  return p;
 };
 function stanceFeet(before,entry,yaw){
@@ -283,7 +308,7 @@ function orderedFootStages(before,after,entry,entryStart,previousPlan){
  return stages;
 }
 function solve(state,t,planes=null,build=false){
- const {yaw,feet,hands,open,roll,lean=0}=state,chestYaw=state.chestYaw??yaw,pelvis=[...state.pelvis];
+ const {yaw,feet,hands,open,roll,shape={},shapeFrom={},shapeMix={},lean=0}=state,chestYaw=state.chestYaw??yaw,pelvis=[...state.pelvis];
  // Keep support knees softly bent instead of hitting the straight-leg IK limit.
  for(const side of sides){const h=add(pelvis,rotY([sign(side)*BODY.hipOffset[0],BODY.hipOffset[1],0],yaw)),f=feet[side].pos,horizontal=Math.hypot(f[0]-h[0],f[2]-h[2]),cap=f[1]+Math.sqrt(Math.max(.012,.852**2-horizontal**2))-BODY.hipOffset[1];pelvis[1]=smoothMin(pelvis[1],cap);}
  const world=p=>add(pelvis,rotY(rotX(p,lean),chestYaw)),arms={},legs={};
@@ -301,7 +326,8 @@ function solve(state,t,planes=null,build=false){
   const shoulder=world([sx*BODY.shoulderOffset[0],BODY.shoulderOffset[1],0]);
   const target=softArmTarget(shoulder,world(hands[side]),BODY.upperArm,BODY.forearm),direction=norm(rotY(sub(target,shoulder),-chestYaw)),elbowBend=rotY(bendFor(side+'-arm',direction,[sx,0,0]),chestYaw);
   const arm=solveTwoBone(shoulder,target,BODY.upperArm,BODY.forearm,add(shoulder,scale(elbowBend,.6)));
-  arms[side]={shoulder,elbow:arm.joint,wrist:arm.end,open:open[side],roll:roll[side]};
+  arms[side]={shoulder,elbow:arm.joint,wrist:arm.end,open:open[side],roll:roll[side],shape:shape[side]??null};
+  if(shapeMix[side]<1)Object.assign(arms[side],{shapeFrom:shapeFrom[side]??null,shapeMix:shapeMix[side]});   // only while changing shape
  }
  return {t,pelvis,yaw,chestYaw,lean,headYaw:state.headYaw||0,breath:0,arms,legs,_planes:nextPlanes};
 }
@@ -336,9 +362,9 @@ export function createFormMotion(form){
     const height=(kick.height||kick.level)==='low'?-.40:knee?-.12:.10;
     after.feet[moving]={pos:add(after.pelvis,rotY([s*.095,height,knee?.30:.80],kickYaw)),yaw:kickYaw+(side?s*90:round?s*65:0),pitch:side?-85:round?-10:-50};
     after.yaw=kick.heading!==undefined?yaw:yaw+(side?-s*70:round?-s*40:0);after.lean=side?-5:-2;
-    if(kick.type==='crescent-kick'){const target=other(moving);after.hands[target]=[-s*.02,.31,.48];after.open[target]=1;}
+    if(kick.type==='crescent-kick'){const target=other(moving);after.hands[target]=[-s*.02,.31,.48];after.open[target]=1;after.shape[target]='palm';}
    }
-   if(kick?.keepHands){after.hands=structuredClone(before.hands);after.open={...before.open};after.roll={...before.roll};}
+   if(kick?.keepHands){after.hands=structuredClone(before.hands);after.open={...before.open};after.roll={...before.roll};after.shape={...before.shape};}
    const bend=actions.find(a=>a.type==='bending-ready');
    if(bend){const raised=bend.side,support=other(raised);after.pelvis=add(before.feet[support].pos,rotY([sign(raised)*.04,.94,0],yaw));after.feet=structuredClone(before.feet);after.feet[raised]={pos:add(after.pelvis,rotY([sign(raised)*.11,-.37,.02],yaw)),yaw,pitch:0};}
    const rawTurn=g&&!part?yawDelta(before.yaw,after.yaw):(entry.turn??yawDelta(before.yaw,after.yaw));
@@ -392,7 +418,7 @@ export function createFormMotion(form){
   if(p.footStages){const mid=scale(add(state.feet.left.pos,state.feet.right.pos),.5),startOffset=sub(a.pelvis,scale(add(a.feet.left.pos,a.feet.right.pos),.5)),endOffset=sub(b.pelvis,scale(add(b.feet.left.pos,b.feet.right.pos),.5));for(const c of [0,2])state.pelvis[c]=mid[c]+mix(startOffset[c],endOffset[c],q);}
   if(p.returning){state.pelvis[0]=mix(a.pelvis[0],(state.feet.left.pos[0]+state.feet.right.pos[0])/2,q);state.pelvis[2]=mix(a.pelvis[2],(state.feet.left.pos[2]+state.feet.right.pos[2])/2,q);}
   if(p.kick?.type.startsWith('jump-')||p.kick?.airborne||p.entry?.footAction==='jump-back'||p.entry?.travel==='hop'&&!p.kick){const lift=.15*arc(q);state.pelvis[1]+=lift;for(const s of sides)state.feet[s].pos[1]+=lift;}
-  const mid=chamber(p.actions,b.yaw),prepare=deliberate?.4:drive,arms=p.kick?.keepHands?{hands:structuredClone(a.hands),open:{...a.open},roll:{...a.roll}}:p.returning?mixArms(a,b,q):u<prepare?mixArms(a,mid,phase(u,0,prepare)):mixArms(mid,b,phase(u,prepare,impact));
+  const mid=chamber(p.actions,b.yaw),prepare=deliberate?.4:drive,arms=p.kick?.keepHands?{hands:structuredClone(a.hands),open:{...a.open},roll:{...a.roll},shape:{...a.shape}}:p.returning?mixArms(a,b,q):u<prepare?mixArms(a,mid,phase(u,0,prepare)):mixArms(mid,b,phase(u,prepare,impact));
   Object.assign(state,arms);return state;
  }
  // Rotation-minimizing joint planes are prepared on the same deterministic

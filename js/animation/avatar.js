@@ -1,10 +1,13 @@
-/* A connected skinned 3D avatar with a locally modeled Indian girl face.
-   The existing texture atlas supplies cotton texture only. No photograph
-   is placed on the face and no head images are swapped during playback. */
+/* The lesson character. createAvatar() loads the detailed skinned avatar
+   (assets/animation/avatar-v2.*, posed by avatar-core.js); if that asset is
+   missing, truncated or fails to decode, it shows the procedural avatar below
+   instead, so a lesson never plays without its character. No photograph is
+   placed on either face and no head images are swapped during playback. */
 import * as THREE from '../../vendor/three/three.module.js';
 import { BODY } from './motion-math.js';
 import { MEDIA } from './media.js';
 import { buildGarmentGeometry } from './avatar-geometry.js';
+import { createAvatarCore } from './avatar-core.js';
 const RAD=Math.PI/180;
 const material=(colour,roughness=.8)=>new THREE.MeshStandardMaterial({color:colour,roughness});
 function mesh(geo,mat){const m=new THREE.Mesh(geo,mat);m.castShadow=true;m.receiveShadow=true;return m;}
@@ -90,7 +93,8 @@ export function buildHairGeometry(){
  for(let r=0;r<rings;r++)for(let c=0;c<sides;c++){const a=r*(sides+1)+c,b=a+sides+1;indices.push(a,a+1,b,a+1,b+1,b);}
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));g.setIndex(indices);g.computeVertexNormals();return g;
 }
-export function createAvatar({onReady,onError}={}){
+/* The procedural avatar: the fallback when the detailed asset can't be used. */
+export function createProceduralAvatar({onReady,onError}={}){
  const root=new THREE.Group();root.name='connected-meghna-avatar';let rig=null;
  Promise.all([asset(MEDIA.character.src),asset(MEDIA.emblem.src)]).then(([atlas,emblem])=>{
   const cloth=material(0xf3f2ef,.88);cloth.map=uniformTexture(atlas);cloth.map.anisotropy=4;
@@ -183,4 +187,29 @@ export function createAvatar({onReady,onError}={}){
   root.updateMatrixWorld(true);rig.skeleton.update();
  }
  return {root,applyPose,get ready(){return !!rig;}};
+}
+
+const CORE=createAvatarCore(THREE);
+/* Load and validate the detailed avatar (same-origin assets only). Rejects on any fetch, length, checksum or decode problem. */
+export async function loadDetailedAvatar({load=src=>globalThis.fetch(src),image=asset}={}){
+ const get=async(src,kind)=>{const r=await load(src);if(!r.ok)throw new Error(`avatar asset ${src}: ${r.status}`);return r[kind]();};
+ const [meta,buffer,emblem]=await Promise.all([get(MEDIA.avatar.json,'json'),get(MEDIA.avatar.bin,'arrayBuffer'),image(MEDIA.emblem.src).catch(()=>null)]);
+ const av=CORE.buildAvatar(meta,buffer,{beltName:MEDIA.character.beltName,emblem});
+ return {av,apply:CORE.createPoser(av)};
+}
+/* The lesson character: the detailed avatar, or the procedural one if the detailed asset can't be used.
+   Same contract as before: {root, applyPose, ready}; onReady once either is showing, onError only if neither can be. */
+export function createAvatar({onReady,onError,load,image}={}){
+ const root=new THREE.Group();root.name='meghna-avatar';let current=null;
+ const ready=(model,applyPose,userData)=>{current={applyPose};Object.assign(root.userData,userData,{model});onReady?.();};
+ const fallback=reason=>{
+  root.userData.fallbackReason=String(reason?.message||reason);
+  const p=createProceduralAvatar({onReady(){ready('procedural-fallback',pose=>p.applyPose(pose),p.root.userData);},onError});root.add(p.root);
+ };
+ loadDetailedAvatar({load,image}).then(({av,apply})=>{
+  root.add(av.root);
+  // The detailed face has no mouth rig yet, so the kihap cue changes nothing on it.
+  ready('detailed-v2',pose=>apply(pose),{source:MEDIA.avatar.bin,faceSource:'modeled-features-no-photo',rig:'connected-skinned-3d',vertices:av.meta.groups.reduce((s,g)=>s+g.vertices,0),triangles:av.meta.groups.reduce((s,g)=>s+g.triangles,0)});
+ }).catch(fallback);
+ return {root,applyPose(pose){current?.applyPose(pose);},get ready(){return !!current;}};
 }
