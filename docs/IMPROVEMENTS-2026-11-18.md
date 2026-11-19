@@ -36,14 +36,15 @@ This file tracks the extended improvement session that started from `main` at `d
 - **Batch 26 (Community Refresh recovery and an honest submissions limit): published.** PR 51 merged as `main` `00d1366`. Codex verified it in production: main CI passed, the 6 changed source files match, security headers and private-path 404s pass, and the public resources view has 0 errors.
 - **Batches 27 and 30 (unsent reply drafts, and a session recheck after Back/Forward): published.** PR 52 merged as `main` `b4c97e2`. Codex verified it in production: main CI passed, the 3 source files checked match, and security headers and private-path 404s pass.
 - **Batches 28 and 29 (Taekwondo words explained, and one compact Forms tool row): published.** PR 53 merged as `main` `17278e9`. Root reported main CI run 44394381798 passing, 779 tests and 256 live checks. Codex's browser review results are in each batch's section. Scope: items 49 and 50.
-- **Batch 35 (a free lesson camera with Whole body, Armwork and Footwork):** on `feat/lesson-viewer-3d-2026-11-19`, cut from `17278e9`. Codex's review passed on 19 November (results in the batch section); awaiting root's release. Scope: item 58.
+- **Batch 35 (a free lesson camera with Whole body, Armwork and Footwork): published.** PR 54 merged as `main` `0c90d64`. Root reported production serving all 32 changed files exactly as in source, security headers and private-path 404s passing, and the in-app browser preview passing. Scope: item 58.
+- **Batch 36 (camera focus transitions keep the body in frame):** on `fix/camera-focus-transitions-2026-11-19`, cut from `0c90d64`. Codex's review passed on 19 November (results in the batch section); awaiting root's release. Scope: item 59.
 - **Closeout:** batches 32, 33A and 34 are prepared but not published, and 33B isn't implemented. See "Closeout — prepared, not published" at the end.
 
 Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md`) record history; their blockers are not assumed current unless re-checked below.
 
 **Status values:**
 - **Published:** live on `main` and verified.
-- **Batch 35:** implemented locally and reviewed by Codex; awaiting root's release.
+- **Batch 36:** implemented locally and reviewed by Codex; awaiting root's release.
 - **Open:** not started.
 - **Verify:** needs browser or live measurement before it counts as reproduced.
 - **Blocked:** needs an owner decision, an account or a cloud change.
@@ -80,7 +81,8 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
-| 58 | The lesson camera offered only five fixed views | All 23 lessons used `js/animation/lesson-view.js` with Front, Back, Left, Right and 3/4 buttons, each fitted only for its own direction. There was no way to turn freely, zoom or move in on the arms or feet. | P2 learning | Batch 35 |
+| 59 | A quick focus change could crop the head on its first frames | Root caught it live after PR 54: Armwork → Footwork → Whole body pressed quickly showed the head outside the canvas with Whole body selected. The aim and distance were still easing from the low Footwork view, and the safety net only protected Footwork's feet. Settled views fitted; the first transition frames didn't. | P2 learning | Batch 36 |
+| 58 | The lesson camera offered only five fixed views | All 23 lessons used `js/animation/lesson-view.js` with Front, Back, Left, Right and 3/4 buttons, each fitted only for its own direction. There was no way to turn freely, zoom or move in on the arms or feet. | P2 learning | Published (PR 54) |
 | 53 | A Community page restored by Back/Forward kept a signed-out member's private controls | A read-only audit with the real pinned SDK (2.119.0) and the real connection code, offline and synthetic, found the gap: a sign-out made in another tab while this page sat in the back/forward cache wasn't noticed on restore. `pageShown` rechecked only under-13 tabs, and the SDK's visibility recovery returns without any event when the stored session is gone. The composer, Your submissions and the moderation queue stayed. An account switch was noticed. This is synthetic SDK evidence only; it hasn't been shown in a real browser, which may evict the cached page instead. No production leak is claimed. | P2 privacy | Published (PR 52) |
 | 52 | Profile Log out could report a sign-out it hadn't proved | `js/pages/profile.js` passed `stillSignedIn: () => hasStoredSession()`, which returns false when storage can't be read, so `logout()` treated unreadable storage as a verified sign-out and the page redirected home. Its auth listener said "You have been signed out" on any null session, even with a stored copy still present. Password recovery used the same weak proof for "signed out". Codex reproduced both profile cases in native Chrome with the synthetic fixture (`/private/tmp/tkdflow-profile-logout-fixture.mjs`). No live account was affected. | P2 accuracy | Published (PR 50) |
 | 50 | The Forms library hero stacked three separate tool lines | Below the three primary buttons, `forms.html` had three `<p class="hero-companions">` lines (companions, school order, compare), each a full-width line, pushing the summary and style tabs down. Codex measured the hero before the change at 699/624/420/443 px high at 320/390/768/1280 px, with the style tabs at y=676/601/445/468 and no overflow (`/private/tmp/tkdflow-forms-tools-before.json`). | P3 layout | Batch 29 |
@@ -2240,3 +2242,39 @@ The work below stays in the backlog. None of it is on this branch, and none of i
 - **Short landscape Study view (640×320):** the camera rows leave a 64 px canvas. The card scrolls to its playback controls; long captions at that size aren't verified.
 - **Focus buttons during smooth auto-scroll:** a first mouse click could be missed in automation. A settled click and Enter work.
 - **Mesh and motion are unchanged here.** The avatar and motion improvement is the next stage.
+
+## Batch 36 — camera focus transitions keep the body in frame (item 59)
+
+### Change (`js/animation/camera-rig.js`)
+- **One exact framing guard for every focus** replaces the Footwork-only safety net.
+  - **When it runs:** after each easing step, and after each drag, pinch or resize.
+  - **What it checks:** the current pose's points for the active focus (Whole body: head, hands, feet and joints; Armwork: head and arms; Footwork: knees and feet), projected at the current angle, the current (possibly still-easing) aim and the screen shape.
+  - **What it does:** if any point would fall outside the frame (with a 5 cm pad), the camera moves straight back along its current line of sight by exactly enough. It doesn't snap the aim or zoom out further than needed.
+  - Because it's exact for the view on screen, it never moves the camera in settled Whole body or Armwork, so the body stays as large as before.
+- **A manual zoom-in past 1× is left to crop,** as the learner asked. A focus change still resets zoom to 1×, so the guard applies again.
+- **Shared points:** `focusPoints(pose)` now supplies the per-pose points both for the whole-lesson fit and for the guard.
+- **Resize:** a new screen shape keeps the larger of the current and new distances and then eases in, instead of cutting.
+- **Unchanged:** Footwork's look-ahead and its easing rates, the keys, the buttons and the pages.
+
+### Tests (`tests/lesson-camera.test.mjs`, now 23)
+- **All 23 lessons, two screen shapes:** six focus changes each (Armwork → Footwork, Footwork → Whole body, Armwork → Whole body, Whole body → Armwork, Footwork → Armwork, Whole body → Footwork). Every one of the first 30 frames (first frame, while easing and settled) keeps the new focus's points on screen; more than 8,000 frames are checked.
+- **Rapid presses** in six lessons (all three styles), at two screen shapes and three times each: Armwork → Footwork → Whole body → Armwork → Whole body → Footwork → Whole body, 0–3 frames apart. Each frame is checked, then Whole body from five angles.
+- **Resizing mid-transition:** to 0.5, 2.4, 0.85 and 1.3 for five focus pairs. A 2.5× manual zoom still crops Whole body and isn't undone, and the next focus change resets zoom and is framed.
+- **Exactness:** in steady Whole body and Armwork (6 lessons, playback and three angles), the guard never moves the camera.
+- **Existing tests:** the Footwork playback test now counts guard pushes (at most 1% of frames). The jump, focus, resize, keys, pointer and page tests pass unchanged.
+- **One bounded check:** restricting the guard to Footwork, as before, fails the new transition and rapid-press tests. Taegeuk Il Jang Footwork → Whole body reached 1.624 of the frame edge on its first frame, the head leaving the canvas as root saw. With no guard at all, Armwork → Footwork reached 1.372.
+- **Full suite:** 802/802 (`npm run check`), and `git diff --check` is clean.
+
+### Codex review (19 November)
+- **Tests:** `tests/lesson-camera.test.mjs` passed 23/23 when Codex ran it independently (37.9 s), and `git diff --check` is clean.
+- **Rapid focus keys in native Chrome,** in the order 2, 3, 1, 2, 1, 3, 1, on:
+  - Taegeuk Il Jang at the ready position;
+  - Taegeuk Sa Jang pose 7 (front kick);
+  - Koryo, Chon-Ji and Songahm 3.
+  - The immediate screenshots show no head crop.
+- **Phone size:** Songahm 3 at a real 390×844 inner size, with rapid focus switches. The full head and body are visible in Whole body.
+- **Evidence:** root's `camera-focus-corrected-local.jpg` and `camera-focus-corrected-phone.jpg` in the session outputs.
+- The browser viewport was reset afterwards.
+
+### Known limits
+- **Not tested:** a physical phone, Safari or a screen reader.
