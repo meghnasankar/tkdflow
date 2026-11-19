@@ -22,22 +22,25 @@ export const wrap=a=>{const w=((a+180)%360+360)%360-180;return w===-180?180:w;};
           framing when reduced motion is on. */
 export function framingPoints(sample,duration,step=.1){
  const sets={whole:new Map(),arms:new Map(),feet:new Map()};
- const put=(names,o,v)=>{const p=[v[0]-o[0],v[1],v[2]-o[2]],key=p.map(x=>Math.round(x/CELL)).join();for(const n of names)if(!sets[n].has(key))sets[n].set(key,p);};
+ const put=(name,p)=>{const key=p.map(x=>Math.round(x/CELL)).join();if(!sets[name].has(key))sets[name].set(key,p);};
  for(let t=0;t<=duration+1e-9;t+=step){
-  const p=sample(Math.min(t,duration)),o=p.pelvis;
-  put(['whole','arms'],o,p.pelvis);put(['whole','arms'],o,[p.pelvis[0],p.pelvis[1]+.80,p.pelvis[2]]);
-  for(const side of ['left','right']){
-   const a=p.arms[side],l=p.legs[side];
-   for(const v of [a.shoulder,a.elbow,a.wrist])put(['whole','arms'],o,v);
-   const d=[a.wrist[0]-a.elbow[0],a.wrist[1]-a.elbow[1],a.wrist[2]-a.elbow[2]],n=Math.hypot(...d)||1;
-   put(['whole','arms'],o,[a.wrist[0]+d[0]/n*.10,a.wrist[1]+d[1]/n*.10,a.wrist[2]+d[2]/n*.10]);
-   put(['whole'],o,l.hip);
-  }
-  for(const v of legPoints(p))put(['whole','feet'],[0,0,0],v);
+  const f=focusPoints(sample(Math.min(t,duration)));
+  for(const name of ['whole','arms','feet'])for(const p of f[name])put(name,p);
  }
  const out={};
  for(const [name,map] of Object.entries(sets)){const pts=[...map.values()];let lo=Infinity,hi=-Infinity;for(const p of pts){lo=Math.min(lo,p[1]);hi=Math.max(hi,p[1]);}out[name]={points:pts,targetY:(lo+hi)/2};}
  return out;
+}
+
+/** One pose's points for each focus, relative to the performer's floor position. */
+export function focusPoints(p){
+ const o=p.pelvis,rel=v=>[v[0]-o[0],v[1],v[2]-o[2]],upper=[rel(o),[0,o[1]+.80,0]];
+ for(const side of ['left','right']){
+  const a=p.arms[side],d=[a.wrist[0]-a.elbow[0],a.wrist[1]-a.elbow[1],a.wrist[2]-a.elbow[2]],n=Math.hypot(...d)||1;
+  upper.push(rel(a.shoulder),rel(a.elbow),rel(a.wrist),rel([a.wrist[0]+d[0]/n*.10,a.wrist[1]+d[1]/n*.10,a.wrist[2]+d[2]/n*.10]));
+ }
+ const legs=legPoints(p);
+ return {whole:[...upper,rel(p.legs.left.hip),rel(p.legs.right.hip),...legs],arms:upper,feet:legs};
 }
 
 /** Both knees, ankles and foot corners, relative to the performer's floor position. */
@@ -133,18 +136,26 @@ export function createCameraRig({framing,aspect=1,reducedMotion=()=>false,sample
  const goalDistance=()=>(following()?followGoal().distance:fitFor(goal.focus))/goal.zoom;
  const goalAim=()=>following()?followGoal().targetY:framing[goal.focus].targetY;
  const now={azimuth:goal.azimuth,elevation:goal.elevation,distance:goalDistance(),targetY:goalAim()};
- let last=null,safetySnaps=0;
- /* Footwork safety net, checked on every frame after easing: if this frame's knees and feet might not fit
-    at the current aim and distance (a jump to another pose, a seek, a focus change), move straight out to the
-    goal's aim at the larger of the two distances. Moving back along the view axis only widens the view, so
-    nothing is clipped; in steady playback the look-ahead means this rarely fires. */
+ let last=null,framingPushes=0;
+ /* Framing guard for every focus, run after each easing step and each drag, pinch or resize.
+    It projects this frame's points for the focus (Whole body: head, hands, feet and joints; Armwork:
+    head and arms; Footwork: knees and feet) at the current angle, aim and screen shape. If any would
+    fall outside the frame, the camera moves straight back along its current line of sight by exactly
+    enough. Moving back along the view axis only widens the view, so a focus change, a jump to another
+    pose or a resize can't crop the body while the aim is still easing. A manual zoom-in past 1× is a
+    deliberate crop and is left alone. */
+ const GUARD_PAD=.05;
  function keepInFrame(){
-  if(!following())return;
-  const need=followNeed(legPoints(sample(clamp(time,0,duration))),now.targetY,shape)/goal.zoom;
-  if(need<=now.distance+1e-9)return;
-  const aim=goalAim(),far=Math.max(now.distance,goalDistance());
-  if(Math.abs(aim-now.targetY)>.002||far-now.distance>.002)safetySnaps++;
-  now.targetY=aim;now.distance=far;
+  if(!sample||goal.zoom>1+1e-9)return;
+  const pts=focusPoints(sample(clamp(time,0,duration)))[goal.focus],{back,right,up}=basis(now.azimuth,now.elevation);
+  let need=0;
+  for(const p of pts){
+   const x=p[0],y=p[1]-now.targetY,z=p[2],depth=x*back[0]+y*back[1]+z*back[2];
+   need=Math.max(need,depth+(Math.abs(x*right[0]+z*right[2])+GUARD_PAD)/(TAN*shape),depth+(Math.abs(x*up[0]+y*up[1]+z*up[2])+GUARD_PAD)/TAN);
+  }
+  if(need<=now.distance)return;
+  if(need-now.distance>.002)framingPushes++;
+  now.distance=need;
  }
  function snap(){now.azimuth=goal.azimuth;now.elevation=goal.elevation;now.distance=goalDistance();now.targetY=goalAim();}
  function settle(){if(reducedMotion())snap();}
@@ -152,8 +163,8 @@ export function createCameraRig({framing,aspect=1,reducedMotion=()=>false,sample
   get state(){return {azimuth:goal.azimuth,elevation:goal.elevation,zoom:goal.zoom,focus:goal.focus,distance:goalDistance()};},
   get current(){return {...now};},
   get aspect(){return shape;},
-  /** How many times Footwork had to step straight out (by more than 2 mm) to keep the feet in frame. */
-  get safetySnaps(){return safetySnaps;},
+  /** How many times the framing guard moved the camera back (by more than 2 mm). */
+  get framingPushes(){return framingPushes;},
   /* Keys and buttons ease to the new angle. */
   turn(deg){goal.azimuth=wrap(goal.azimuth+deg);settle();},
   /* Next multiple of 45° in that direction, so steps land on named sides. */
@@ -166,10 +177,10 @@ export function createCameraRig({framing,aspect=1,reducedMotion=()=>false,sample
   reset(){Object.assign(goal,{azimuth:DEFAULT_CAMERA.azimuth,elevation:DEFAULT_CAMERA.elevation,zoom:DEFAULT_CAMERA.zoom});settle();},
   preset(name){const p=PRESETS[name];if(!p)return false;Object.assign(goal,p,{zoom:1});snap();return true;},
   /* Dragging and pinching follow the pointer directly. */
-  drag(dAz,dEl){goal.azimuth=wrap(goal.azimuth+dAz);goal.elevation=clamp(goal.elevation+dEl,LIMITS.minElevation,LIMITS.maxElevation);now.azimuth=goal.azimuth;now.elevation=goal.elevation;},
-  pinch(f){goal.zoom=clamp(goal.zoom*f,LIMITS.minZoom,LIMITS.maxZoom);now.distance=goalDistance();},
+  drag(dAz,dEl){goal.azimuth=wrap(goal.azimuth+dAz);goal.elevation=clamp(goal.elevation+dEl,LIMITS.minElevation,LIMITS.maxElevation);now.azimuth=goal.azimuth;now.elevation=goal.elevation;keepInFrame();},
+  pinch(f){goal.zoom=clamp(goal.zoom*f,LIMITS.minZoom,LIMITS.maxZoom);now.distance=goalDistance();keepInFrame();},
   /* A new screen shape reframes at once rather than drifting. */
-  setAspect(a){if(!(a>0))return;shape=a;now.distance=goalDistance();if(following())now.targetY=goalAim();},
+  setAspect(a){if(!(a>0))return;shape=a;now.distance=Math.max(now.distance,goalDistance());keepInFrame();},
   /** Advance easing; returns true while still moving. */
   /** Advance easing at this clock time (ms), for this lesson time (s); returns true while still moving. */
   update(ms,lessonTime=time){

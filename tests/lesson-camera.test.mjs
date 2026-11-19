@@ -6,7 +6,7 @@ import {readFileSync} from 'node:fs';
 import {register} from 'node:module';
 import {installDom,settle} from './helpers/mini-dom.mjs';
 import {parseInto} from './helpers/mini-html.mjs';
-import {createCameraRig,framingPoints,basis,wrap,LIMITS,DEFAULT_CAMERA,FOV} from '../js/animation/camera-rig.js';
+import {createCameraRig,framingPoints,focusPoints,basis,wrap,LIMITS,DEFAULT_CAMERA,FOV} from '../js/animation/camera-rig.js';
 import {cameraKeyAction,applyCameraAction,attachCameraInput,BUTTON_ACTIONS,TURN_STEP} from '../js/animation/camera-input.js';
 import {playerKeyAction} from '../js/lib/lesson-nav.js';
 import {createFormMotion} from '../js/animation/form-motion.js';
@@ -85,7 +85,7 @@ test('Footwork follows both feet through every kick: in all 23 lessons, played a
      const worst=worstOnScreen(rig,legs);assert.ok(worst<=1,`${id} t=${t.toFixed(2)} az ${az} el ${el} aspect ${aspect}: a foot leaves the frame (${worst.toFixed(3)})`);
     }
    }
-   assert.ok(rig.safetySnaps<=frame*.01,`${id}: steady playback eases rather than snapping (${rig.safetySnaps} snaps in ${frame} frames)`);
+   assert.ok(rig.framingPushes<=frame*.01,`${id}: steady playback eases; the framing guard rarely steps in (${rig.framingPushes} pushes in ${frame} frames)`);
    ratios.sort((a,b)=>a-b);
    assert.ok(ratios[Math.floor(ratios.length/2)]<.75,`${id}: Footwork is usually much closer than Whole body (median ${ratios[Math.floor(ratios.length/2)].toFixed(2)})`);
    assert.ok(ratios.at(-1)<=1.1,`${id}: at a high kick Footwork is at most a little wider than Whole body, aimed lower (${ratios.at(-1).toFixed(2)})`);
@@ -132,6 +132,76 @@ test('Footwork never clips a foot when chosen from Whole body or Armwork, or whe
  const rig=footRig(m,2);rig.__m=m;const ms=settleAt(rig,m.CHAPTERS[3].at);rig.setAspect(.5);rig.update(ms+16,kicks[0]);
  framed(rig,kicks[0],'rotate a phone to portrait and jump to a kick together');
  assert.equal(rig.at(kicks[1]),rig);framed(rig,kicks[1],'a direct jump without easing (at)');
+});
+
+/* Every focus, every frame of a change: the current pose's points for the active focus stay on screen. */
+const focusNow=(m,t,focus)=>focusPoints(m.poseAtTime(t))[focus];
+function frames(rig,m,t,focus,where,ms,count=40,angles=[[rig.current.azimuth,rig.current.elevation]]){
+ const seen=[];
+ for(let k=1;k<=count;k++){
+  rig.update(ms+16*k,t);
+  for(const [az,el] of angles){rig.drag(wrap(az-rig.current.azimuth),el-rig.current.elevation);const w=worstOnScreen(rig,focusNow(m,t,focus));seen.push(w);
+   assert.ok(w<=1,`${where}, frame ${k}${angles.length>1?` at ${az}/${el}`:''}: ${focus} leaves the frame (${w.toFixed(3)})`);}
+ }
+ return seen;
+}
+test('every focus change keeps its own body parts in frame on the first frame, while easing and once settled, in all 23 lessons',()=>{
+ const order=[['arms','feet'],['feet','whole'],['arms','whole'],['whole','arms'],['feet','arms'],['whole','feet']];
+ let checked=0;
+ for(const [id,m] of motions){
+  const framing=framingPoints(m.poseAtTime,m.DURATION),at=m.CHAPTERS.map(c=>c.at??c.start);
+  for(const aspect of [.85,2]){
+   const rig=createCameraRig({framing,aspect,sample:m.poseAtTime,duration:m.DURATION});
+   for(const [i,[from,to]] of order.entries()){
+    const t=at[(i*7+3)%at.length];rig.setFocus(from);let ms=settleAt(rig,t,i*1e5);
+    rig.setFocus(to);const seen=frames(rig,m,t,to,`${id} ${from} → ${to} at ${t.toFixed(2)} s, aspect ${aspect}`,ms,30);checked+=seen.length;
+   }
+  }
+ }
+ assert.ok(checked>8000,`many transition frames checked (${checked})`);
+});
+
+test('rapid focus presses (Armwork → Footwork → Whole body within a few frames) never crop the head, hands or feet, from any angle',()=>{
+ for(const [id,m] of motions.filter(([id])=>['taegeuk-1','taegeuk-4','koryo','chon-ji','songahm-2','sipjin'].includes(id))){
+  const framing=framingPoints(m.poseAtTime,m.DURATION),at=m.CHAPTERS.map(c=>c.at??c.start);
+  for(const aspect of [.85,1.74]){
+   const rig=createCameraRig({framing,aspect,sample:m.poseAtTime,duration:m.DURATION});
+   for(const t of [at[0],at[Math.floor(at.length/3)],at[Math.floor(2*at.length/3)]]){
+    rig.setFocus('arms');let ms=settleAt(rig,t);
+    for(const [focus,gap] of [['feet',2],['whole',1],['arms',3],['whole',2],['feet',1],['whole',0]]){
+     rig.setFocus(focus);
+     for(let k=0;k<=gap;k++){ms+=16;rig.update(ms,t);const w=worstOnScreen(rig,focusNow(m,t,focus));assert.ok(w<=1,`${id} rapid → ${focus} at ${t.toFixed(2)} s aspect ${aspect}: ${w.toFixed(3)}`);}
+    }
+    frames(rig,m,t,'whole',`${id} after rapid presses`,ms,30,[[0,0],[50,18],[120,45],[-150,70],[-80,10]]);
+   }
+  }
+ }
+});
+
+test('resizing during a focus change keeps every focus framed, and a manual zoom-in is still allowed to crop',()=>{
+ const m=motions.find(([id])=>id==='taegeuk-4')[1],framing=framingPoints(m.poseAtTime,m.DURATION),t=m.CHAPTERS[6].at??m.CHAPTERS[6].start;
+ for(const [from,to] of [['arms','whole'],['feet','whole'],['whole','arms'],['feet','arms'],['arms','feet']]){
+  const rig=createCameraRig({framing,aspect:2,sample:m.poseAtTime,duration:m.DURATION});rig.setFocus(from);let ms=settleAt(rig,t);
+  rig.setFocus(to);rig.update(ms+16,t);
+  for(const [k,aspect] of [.5,2.4,.85,1.3].entries()){rig.setAspect(aspect);assert.ok(worstOnScreen(rig,focusNow(m,t,to))<=1,`${from} → ${to}, resized to ${aspect}`);rig.update(ms+32+16*k,t);assert.ok(worstOnScreen(rig,focusNow(m,t,to))<=1);}
+ }
+ const rig=createCameraRig({framing,aspect:1,sample:m.poseAtTime,duration:m.DURATION});settleAt(rig,t);
+ rig.zoomBy(2.5);let ms=2e5;for(let k=0;k<60;k++)rig.update(ms+=16,t);
+ assert.ok(worstOnScreen(rig,focusNow(m,t,'whole'))>1,'zoomed in 2.5×, Whole body is cropped as the learner asked');
+ assert.ok(Math.abs(rig.current.distance-rig.state.distance)<.01,'the guard does not undo a manual zoom');
+ rig.setFocus('feet');rig.update(ms+16,t);assert.equal(rig.state.zoom,1,'a focus change resets zoom');assert.ok(worstOnScreen(rig,focusNow(m,t,'feet'))<=1);
+});
+
+test('the guard is exact for the current view: in steady Whole body and Armwork it never moves the camera, so the body stays as large as before',()=>{
+ for(const [id,m] of motions.filter(([id],i)=>i%4===0)){
+  const framing=framingPoints(m.poseAtTime,m.DURATION);
+  for(const focus of ['whole','arms']){
+   const rig=createCameraRig({framing,aspect:1.74,sample:m.poseAtTime,duration:m.DURATION});rig.setFocus(focus);settleAt(rig,0);
+   const d=rig.current.distance;let ms=1e6;
+   for(let t=0;t<m.DURATION;t+=.25){ms+=16;rig.update(ms,t);for(const az of [0,90,200]){rig.drag(wrap(az-rig.current.azimuth),0);assert.equal(rig.current.distance,d,`${id} ${focus} kept its steady distance`);}}
+   assert.equal(rig.framingPushes,0,`${id} ${focus}: no pushes in steady framing`);
+  }
+ }
 });
 
 test('Footwork never pumps while orbiting, and with reduced motion holds one steady framing that includes every kick',()=>{
