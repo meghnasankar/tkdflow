@@ -85,6 +85,7 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
+| 65 | No guided way to learn from video | Learners were left to search YouTube, where the results mix official, independent and mislabelled uploads, and auto-translated captions often get techniques and history wrong. Nothing said who published a video, which rules a match was fought under, or what to look for. | P2 content | Batch 42 |
 | 64 | No way to learn or practise how sparring is officiated | Parents, athletes and new referees met 1/2/3/4/6 points, Gam-jeom, the PSS and "Kal-yeo" at their first tournament with no plain explanation. The scoring and penalty rules changed again on 1 November 2026, and summaries online often double every penalty in the last ten seconds or mix up what the PSS, the judges and the centre referee each decide. | P2 content | Batch 41 |
 | 63 | No history of taekwondo on the site | Learners met three traditions (WT/Kukkiwon, ITF, ATA) without the dates behind them. Origin stories online often present one organization's account, or an unbroken ancient lineage, as settled. | P2 content | Batch 40 |
 | 62 | Feet slid on the floor: pivots drifted and steps dragged before lifting | Codex's motion audit and a heel-and-ball contact scan of all 22 data-driven lessons at 30 fps on the published motion: 100.1 m of floor slip in total. Turning support feet blended ankle position and yaw separately, so the ball wandered up to 48 cm mid-turn although it was the same point at both ends. Steps lifted on `sin²`, which is flat at the start, so the foot travelled about 6 cm along the floor before it was 1 cm up. Footwork-sequence steps, kick supports that move, and returns to ready slid without lifting. | P2 accuracy | Batch 39 |
@@ -2681,3 +2682,71 @@ The work below stays in the backlog. None of it is on this branch, and none of i
 - **AAU youth:** there is no paired youth turning-head-kick-and-fall scenario yet. The rule is in the engine, the guide and the tests, and the scenario could be added later.
 - **Rule coverage:** the scenarios cover common decisions only. They don't include knock-downs, the IVR or the technical card.
 - **Practice only:** this isn't certification or an official interpretation. Rulebooks change, and the on-screen edition dates say which ones were used.
+
+## Batch 42 — a visual video gallery (item 65)
+
+### Change
+- **New page `/videos.html`, "Watch and learn"** (`layout/pages.json` key `forms`, in the sitemap), with `css/videos.css` and `js/pages/videos.js`.
+- **Seven reviewed videos, shown as a visual gallery.** Each card has:
+  - the publisher's own YouTube thumbnail (the page's `og:image`, `i.ytimg.com/vi/<id>/maxresdefault.jpg`), with a running-time badge;
+  - type and tradition tags, and a plain-language heading;
+  - the video's original title (the Kukkiwon titles in Korean with their English) and an accurate publisher label;
+  - two or three concise "Watch for" notes;
+  - a red "Watch on YouTube" button, and a link to the matching TKDflow page.
+- **Thumbnails:** loaded remotely with `width="1280" height="720" loading="lazy" decoding="async" referrerpolicy="no-referrer" alt=""`. The thumbnail is also a mouse shortcut to the video, but it is `aria-hidden` and `tabindex="-1"`, so keyboard and screen-reader users get the one real link: "Watch on YouTube", named after the video for screen readers.
+- **If a thumbnail can't load:** it is hidden, and the 16:9 frame shows a navy play panel with the running time. This also happens when YouTube serves its small grey placeholder (width under 320 px). Without JavaScript the panel sits under the image. The watch link works either way.
+
+| Card | Original title | Publisher label | Time | Context | Onward |
+|---|---|---|---|---|---|
+| Taegeuk 1 (`__4pltpaPJo`) | 유급자 품새 교육 \| 태극 1장 (Color Belt Poomsae Education \| Taegeuk 1 Jang) | Kukkiwon, official channel | 21:11 | — | Taegeuk Il Jang lesson |
+| Taegeuk 8 (`djVVT-fnZkw`) | 유급자 품새 교육 \| 태극 8장 (Color Belt Poomsae Education \| Taegeuk 8 Jang) | Kukkiwon, official channel | 17:55 | — | Taegeuk Pal Jang lesson |
+| Koryo (`mGa60JDtWmg`) | KORYO | Kukkiwon, official channel | 22:04 | — | Koryo lesson |
+| Chon-Ji (`EZGF16nVOlU`) | Chon-Ji Tul (천지틀) - Performed by Master Pak Chung Song 박충성 | ITF HQ channel, linked from the Czech Taekwon-Do ITF federation | 0:48 | — | Chon-Ji lesson |
+| Songahm 1 (`wJG2mmTkFOk`) | Songahm 1 - White Belt Form | ATA Martial Arts Master T, independent instructor | 7:56 | — | Songahm 1 lesson |
+| Tokyo 2020 (`p4N1jaCAB3U`) | Taekwondo Mens +80kg Gold Medal bout \| Tokyo 2020 Replays | Olympics, official channel | 26:28 | Held in 2021 under the rules of the time, so the scoring differs from today's. | Referee guide |
+| Dakar 2026 (`9h6tDY4GB54`) | Jordan Win a THRILLER! \| Taekwondo Mixed Team Final #Dakar2026 | Olympics, official channel | 10:38 | A mixed-team format with substitutions, shown as edited highlights. | Referee practice |
+
+- **Titles:** the original titles come from each page's `og:title` (root's `research/gallery-thumbnail-sources.json`), with decorative emoji left out. Correction: the first draft gave the Tokyo title as "Men's"; the published title is "Mens".
+- **Time stamps in the notes:** Taegeuk 1 at 9:25, 11:35 and 15:44; Taegeuk 8 at 3:54 and 13:14; Koryo at 3:06, 4:05 and 6:51; Songahm 1 from 2:20; Tokyo's round 1 at 2:54. The Dakar card has none.
+- **Shorter copy:** the long hosting, affiliation and review note and the repeated caption warnings are removed. Only Tokyo and Dakar carry a brief context line. Master T's actual channel name is kept and labelled as an independent instructor, with nothing implying ATA endorsement.
+- **Security policy:** `img-src` is now `'self' data: https://i.ytimg.com`. Every other directive is unchanged: script, style, font and connect sources, `frame-ancestors 'none'`, `object-src 'none'`, no `frame-src`, no iframes, and no new scripts. `tests/site.test.mjs` pins the full directive map.
+- **About:** the public-lessons privacy paragraph keeps its self-hosted fonts, animations, audio and scripts sentence and adds one: "The preview images on the video gallery are supplied by YouTube, and watching a linked video opens YouTube, under YouTube's own privacy practices." There is no consent flow or banner.
+- **Filters:**
+  - **Show:** All, Forms or Sparring. **Tradition:** All, WT/Kukkiwon, ITF or ATA.
+  - Each is a labelled group of `aria-pressed` buttons, with a polite live count.
+  - A combination with no matches offers "Show all videos". Without JavaScript the filter bar stays hidden and every card shows.
+- **Where to find it:** a "Video gallery" footer link after "History of taekwondo", one sentence in the history page's Watch section, the link from About, and a link back to the history page. Every other page changes in its footer only.
+
+### Tests (`tests/videos.test.mjs`, new, 6; `tests/site.test.mjs` CSP map updated)
+- **Seven cards, as published:** exactly seven, against a table written from the source notes and `og:` data (id, original title, publisher, running time, type, tradition). Each card's thumbnail markup and URL, its one "Watch on YouTube" action, and its onward page are checked. Notes are two or three, under 120 characters each, with no quotation marks, and every time stamp falls inside the video.
+- **Labels and copy:** the ITF HQ and Czech federation label. Master T is labelled an independent instructor and never official. Only Tokyo and Dakar carry context, in their exact brief wording. The Dakar card has no time stamp other than its running time. The long note and caption warnings are absent.
+- **Outside requests:** seven `i.ytimg.com` images, all lazy-loaded with no referrer. No iframe, embed or extra script. External hosts are limited to i.ytimg.com, youtube.com and taekwondo.cz. YouTube appears in the CSP once, in `img-src`, with the other directives intact. No other page loads an outside image.
+- **Thumbnail failure:** `thumbFailed` treats a broken image or YouTube's 120 px placeholder as failed and an image still loading as not failed. The handler is wired, and the frame keeps its size, colour and play glyph.
+- **Filters and links:** the counts for every combination, the empty state, the manifest, sitemap, footer and history links, and About's privacy sentence.
+- **Full suite:** 850/850 (`npm run check` on `feat/video-gallery-2026-11-19` from main `8c7002e`), and `git diff --check` is clean. The published referee and guide pages change by their footer line only; the motion, avatar and referee scripts are unchanged.
+
+### Browser check (Claude)
+- **Release preview (port 8899, restarted by root, enforcing the new policy):**
+  - The policy reads `img-src 'self' data: https://i.ytimg.com` with every other directive unchanged.
+  - All seven thumbnails load at 1280 px with `no-referrer`, and i.ytimg.com is the only outside host contacted.
+  - About shows the new sentence.
+- **Same branch on a temporary server (port 8924, now stopped):**
+  - **Desktop (1280 × 900):** a three-column visual grid with no overflow or console errors.
+  - **Failure test:** pointing two cards at a missing thumbnail and a non-existent video got YouTube's 120 px placeholder. Both were hidden, the navy play panel with the running time showed instead, and "Watch on YouTube" still pointed at the right video.
+  - **Phone (375 × 812):** filtering to Sparring shows two cards ("Showing 2 of 7 videos."), with no overflow, full-width thumbnails, the brief Tokyo context, and the watch button above the referee-guide link.
+- **First version (link-only cards, before root's review):** the filters (Forms with ATA gives Songahm 1 only; Sparring with ITF gives the empty state and reset) and the 375 px layout were checked on 8899 and the scratch overlay.
+
+### Release correction
+- **About:** the privacy notice's "Last updated" date changes from 17 to 19 November 2026, because this release adds the YouTube preview-image sentence to that notice.
+
+### Root QA (19 November, independent: passed)
+- **Filters:** all 12 combinations of type and tradition passed.
+- **Thumbnails:** all seven actual thumbnails loaded at 1280 px. With i.ytimg.com blocked, all seven showed usable fallback panels, and their original watch links still worked.
+- **Phone (390 × 844):** the layout fits with no horizontal overflow.
+- **Reviewed:** the privacy paragraph, the history-page link, and the CSP change (image host only).
+- **Checks:** root's focused checks passed 42/42, and the server tests 12/12.
+
+### Known limits
+- The thumbnails come from YouTube and the videos open on YouTube; About says so.
+- Time stamps rely on the source notes and transcripts. Root sampled parts of each video, not every minute.
+- Publishers can rename videos or change thumbnails; the cards show the titles as of 19 November 2026.

@@ -204,7 +204,7 @@ test('release guard: the deployment enforces a narrow CSP and never falls back t
     'script-src': ["'self'"],
     'style-src': ["'self'"],
     'font-src': ["'self'"],
-    'img-src': ["'self'", 'data:'],
+    'img-src': ["'self'", 'data:', 'https://i.ytimg.com'],   // video gallery thumbnails only (videos.html)
     'connect-src': ["'self'", 'https://*.supabase.co'],
     'frame-ancestors': ["'none'"],
     'base-uri': ["'self'"],

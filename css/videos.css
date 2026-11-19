@@ -1,0 +1,38 @@
+/* Video gallery: publishers' YouTube thumbnails with a Watch on YouTube action, short learning notes, and filters
+   by type and tradition. If a thumbnail can't load, its frame keeps a plain play panel and the watch link stays. */
+.vg-filters { display: grid; gap: 10px; margin-bottom: 22px; }
+.vg-filters[hidden], .vg-empty[hidden], .vg-card[hidden] { display: none; }
+.vg-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.vg-filter-label { min-width: 76px; font-weight: 700; color: var(--navy); font-size: .92rem; }
+.vg-chip { font: inherit; font-size: .9rem; font-weight: 600; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--gray-200, #dde3ea); background: white; color: var(--navy); cursor: pointer; min-height: 36px; }
+.vg-chip:hover { border-color: var(--navy); }
+.vg-chip[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: white; }
+.vg-count { margin: 2px 0 0; font-size: .9rem; color: var(--gray-600); }
+.vg-empty { padding: 14px 16px; border: 1px dashed var(--gray-200, #dde3ea); border-radius: var(--radius-sm); color: var(--gray-600); }
+.vg-reset { font: inherit; font-weight: 600; color: var(--red-dark); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+.vg-main { max-width: 1120px; }
+.vg-grid { list-style: none; margin: 0 0 32px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 22px; }
+.vg-card { display: flex; flex-direction: column; background: white; border: 1px solid var(--gray-200, #dde3ea); border-radius: var(--radius-sm); overflow: hidden; min-width: 0; }
+/* The thumbnail frame: 16:9, with a navy play panel underneath that shows if the image is missing. */
+.vg-thumb { position: relative; display: block; aspect-ratio: 16 / 9; background: var(--navy, #0D1B2A); overflow: hidden; }
+.vg-thumb::before { content: ""; position: absolute; left: 50%; top: 50%; width: 64px; height: 44px; margin: -22px 0 0 -32px; border-radius: 12px; background: rgba(255,255,255,.16); }
+.vg-thumb::after { content: ""; position: absolute; left: 50%; top: 50%; margin: -10px 0 0 -6px; border-style: solid; border-width: 10px 0 10px 17px; border-color: transparent transparent transparent rgba(255,255,255,.9); }
+.vg-img { position: relative; z-index: 1; display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .2s ease; }
+.vg-img[hidden] { display: none; }
+.vg-card:hover .vg-img { transform: scale(1.02); }
+.vg-duration { position: absolute; z-index: 2; right: 8px; bottom: 8px; background: rgba(0,0,0,.78); color: white; font-size: .78rem; font-weight: 600; font-variant-numeric: tabular-nums; padding: 2px 6px; border-radius: 4px; }
+.vg-body { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px 16px; flex: 1; }
+.vg-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
+.vg-tag { font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--gray-600); background: var(--gray-100, #eef1f4); padding: 3px 8px; border-radius: 4px; }
+.vg-title { font-size: 1.1rem; line-height: 1.35; margin: 0; }
+.vg-meta { margin: 0; line-height: 1.5; font-size: .9rem; color: var(--navy); overflow-wrap: anywhere; }
+.vg-detail { display: block; color: var(--gray-600); margin-top: 2px; }
+.vg-detail a, .vg-onsite, .vg-more a { color: var(--red-dark); font-weight: 600; text-decoration: underline; }
+.vg-context { margin: 0; padding: 6px 10px; border-left: 3px solid var(--gold); background: var(--gold-light); color: #713F12; font-size: .86rem; line-height: 1.5; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+.vg-prompts { list-style: disc; margin: 0; padding-left: 1.15em; display: grid; gap: 5px; color: var(--gray-600); line-height: 1.55; font-size: .92rem; }
+.vg-prompts strong { color: var(--navy); font-variant-numeric: tabular-nums; margin-right: 2px; }
+.vg-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: auto 0 0; padding-top: 8px; }
+.vg-onsite { font-size: .9rem; }
+.vg-more { color: var(--gray-600); }
+@media (prefers-reduced-motion: reduce) { .vg-img { transition: none; } .vg-card:hover .vg-img { transform: none; } }
+@media print { .vg-filters, .vg-empty, .vg-thumb { display: none !important; } .vg-card[hidden] { display: flex; } }
