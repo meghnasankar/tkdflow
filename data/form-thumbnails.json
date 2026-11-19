@@ -545,11 +545,11 @@
       "series": "ITF PATTERN",
       "number": null,
       "trigram": null,
-      "meaning": "Founder of Korea",
+      "meaning": "Legendary founder",
       "name": "Dan-Gun",
       "alt": "Dan-Gun: the lesson character performing left twin forearm block.",
-      "bytes": 14386,
-      "assetSha256": "9daf17142865c8f71be87336b142a56d14aafdace4783411a3b66baecb1a736e",
+      "bytes": 14590,
+      "assetSha256": "e42ecca371df95b6eac4c3ebedc0c5301dc0c819cf2d64517a8f0271edec17f7",
       "renderProof": {
         "alphaBounds": {
           "bottom": 923,
