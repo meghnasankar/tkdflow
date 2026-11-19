@@ -22,6 +22,23 @@ function stepPath(from,to,local){
    ankle swings round that point, instead of the ankle and the turn being blended separately. */
 const SOLE={ball:[0,0,BODY.ballOffset],heel:[0,0,-.06]};
 function travels(from,to){return Math.min(...Object.values(SOLE).map(l=>{const a=add(from.pos,rotY(l,from.yaw)),b=add(to.pos,rotY(l,to.yaw));return Math.hypot(b[0]-a[0],b[2]-a[2]);}))>.03;}
+/* Staged footwork (land, then step or turn): each foot turns only in the stages where it lands or steps, by the share of
+   its total turn those stages need (the stage end points' yaws), so a foot that stays put in a stage is not dragged
+   round on the floor; a foot that only adjusts in place pivots on its ball or heel. After a landing, the body's turn
+   waits for the landing to finish. Totals are kept exactly, so every held pose is unchanged. */
+function stagePlan(p){
+ if(p._stage)return p._stage;
+ const S=p.footStages,n=S.length-1,feet={};
+ const landing=[];for(let j=0;j<n;j++)if(sides.some(s=>S[j][s].pos[1]>.15&&S[j+1][s].pos[1]<.15))landing.push(j);
+ const turnFrom=landing.length&&landing.at(-1)<n-1?landing.at(-1)+1:0;
+ for(const side of sides){
+  const f=p.before.feet[side],end=p.after.feet[side],total=Math.abs(p.dyaw)>=270?p.dyaw+yawDelta(f.yaw+p.dyaw,end.yaw):yawDelta(f.yaw,end.yaw),kinds=[],turns=[];
+  for(let j=0;j<n;j++){const a=S[j][side],b=S[j+1][side];kinds.push(a.pos[1]>.15&&b.pos[1]<.15?'land':travels(a,b)?'step':'planted');turns.push(yawDelta(a.yaw,b.yaw));}
+  const sum=turns.reduce((x,y)=>x+y,0);if(Math.abs(total-sum)>1e-9){let k=kinds.findIndex(x=>x!=='planted');if(k<0)k=n-1;turns[k]+=total-sum;}
+  feet[side]={kinds,turns};
+ }
+ return p._stage={n,turnFrom,feet};
+}
 function anchoredFoot(from,to,q,yaw){
  if(q<=0)return [...from.pos];if(q>=1)return [...to.pos];   // the move's end points exactly
  let best=null;
@@ -441,14 +458,20 @@ export function createFormMotion(form){
     }
   }else{
     const slide=/^slide-/.test(p.entry?.footAction||''),supportStep=!!p.kick&&p.support&&travels(a.feet[p.support],b.feet[p.support])&&a.feet[p.support].pos[1]<=GROUNDED&&b.feet[p.support].pos[1]<=GROUNDED;
+    const staged=p.footStages?stagePlan(p):null;
+    if(staged?.turnFrom){   // land first, then turn: the body's turn starts once the landing stage is done
+     const x=clamp(u/impact,0,1)*staged.n,yq=x<=staged.turnFrom?0:phase((x-staged.turnFrom)/(staged.n-staged.turnFrom));
+     state.yaw=a.yaw+p.dyaw*yq;state.chestYaw=(a.chestYaw??a.yaw)+(p.dyaw+yawDelta((a.chestYaw??a.yaw)+p.dyaw,b.chestYaw??b.yaw))*yq;
+    }
     for(const side of sides){
      let kickPhase=null;
      const f=a.feet[side],end=b.feet[side],footTurn=Math.abs(p.dyaw)>=270?p.dyaw+yawDelta(f.yaw+p.dyaw,end.yaw):yawDelta(f.yaw,end.yaw);let fyaw=f.yaw+footTurn*q;
      let pos;
-     if(p.footStages){const n=p.footStages.length-1,x=clamp(u/impact,0,1)*n,j=Math.min(n-1,Math.floor(x)),local=x-j,v=phase(local),from=p.footStages[j][side],to=p.footStages[j+1][side];
-      if(from.pos[1]>.15&&to.pos[1]<.15){const chamber=add(state.pelvis,rotY([sign(side)*.10,-.24,.15],state.yaw));pos=local<.38?mix3(from.pos,chamber,phase(local,0,.38)):mix3(chamber,to.pos,phase(local,.38,1));}
-      else if(Math.hypot(...sub(from.pos,to.pos))>.01)pos=stepPath(from.pos,to.pos,local).pos;
-      else pos=mix3(from.pos,to.pos,v);
+     if(p.footStages){const n=staged.n,x=clamp(u/impact,0,1)*n,j=Math.min(n-1,Math.floor(x)),local=x-j,v=phase(local),from=p.footStages[j][side],to=p.footStages[j+1][side];
+      const {kinds,turns}=staged.feet[side],done=turns.slice(0,j).reduce((s,t)=>s+t,0),y0=f.yaw+done,turn=turns[j];
+      if(kinds[j]==='land'){const chamber=add(state.pelvis,rotY([sign(side)*.10,-.24,.15],state.yaw));pos=local<.38?mix3(from.pos,chamber,phase(local,0,.38)):mix3(chamber,to.pos,phase(local,.38,1));fyaw=y0+turn*v;}
+      else if(kinds[j]==='step'){const step=stepPath(from.pos,to.pos,local);pos=step.pos;fyaw=y0+turn*step.across;}   // turns in the air
+      else{fyaw=y0+turn*v;pos=anchoredFoot({pos:from.pos,yaw:y0},{pos:to.pos,yaw:y0+turn},v,fyaw);}   // stays put: pivots on its ball or heel
      }
      else if(p.returning){
       // Each foot returns in its own window; it turns in the air with its step (or, if it only turns, on its ball).
@@ -483,6 +506,10 @@ export function createFormMotion(form){
       pos=mix3(f.pos,end.pos,q);   // the source's deliberate slide (shift or extend the front foot) stays on the floor
      }else if(side===p.moving&&(p.step||travels(f,end))&&Math.hypot(...sub(f.pos,end.pos))>.01){
       const step=stepPath(f.pos,end.pos,clamp(u/impact,0,1));pos=step.pos;fyaw=f.yaw+footTurn*step.across;   // the foot turns in the air, not on the floor
+     }else if(p.entry?.footAction==='jump-back'){
+      // A jump: this foot leaves the floor with the jump and travels and turns only while it is clear (20–80% of the
+      // jump, from about 5 cm up), instead of sliding as it takes off and lands.
+      const h=phase(q,.2,.8);pos=mix3(f.pos,end.pos,h);fyaw=f.yaw+footTurn*h;
      }else if(f.pos[1]<=GROUNDED&&end.pos[1]<=GROUNDED)pos=anchoredFoot(f,end,q,fyaw);
      else pos=mix3(f.pos,end.pos,q);
      // A foot coming down from a kick finishes flattening as it reaches the floor, not after it has landed.

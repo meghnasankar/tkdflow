@@ -85,6 +85,7 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
+| 69 | Two staged moves still dragged a foot, and staged footwork could float | Batch 39 left Won-Hyo 27 (land, then turn: the standing foot was dragged 7.8 cm round its ankle while the kicking foot landed) and Yul-Gok 36 (jump back: the support foot slid 2.7 cm as it took off and landed). The same stage code also let a planted foot finish its turn on the floor (Taegeuk Pal Jang 11) and lifted both feet at once in non-jump staged moves (Won-Hyo 27 and Taegeuk Pal Jang 16, 45 frames each). | P1 animation | Batch 47 |
 | 68 | CI used movable action tags on the deprecated Node 20 runtime | `.github/workflows/check.yml` used `actions/checkout@v4` and `actions/setup-node@v4`, which run on Node 20 and produce GitHub's Node 20 deprecation notices. Version tags can also be moved. | P3 maintenance | Batch 45 |
 | 67 | Referee practice felt like a long article, not a practice tool | On desktop, the arena, the evidence and the answers sat one under another, so learners scrolled between watching and answering. On a 390 × 844 phone, the answers were several screens below the fighters. Saved progress was raw JSON read straight from localStorage, with no validation. The page never said where progress was kept, and there was no way to reset it. | P2 learning | Batch 44 |
 | 66 | Fixed-view wording and hard-to-find learning pages | A public-site audit after Batches 40–42. The 22 data-driven lessons, 23 lesson descriptions, the home page and a Community post still promised "camera views" from the fixed-view era, and lessons mentioned "camera labels" that only screen readers hear. Outside the footer, the history page was linked from one page, the video gallery from two, and the referee guide and practice from three, mostly each other. | P3 consistency | Batch 43 |
@@ -2938,3 +2939,104 @@ The work below stays in the backlog. None of it is on this branch, and none of i
 - **Applied:** on `chore/current-ci-actions-2026-11-19` from main `0a905e2` (Batch 44 published). `.github/workflows/check.yml` and `tests/site.test.mjs` were copied from the frozen overlay; both were unchanged on main since the overlay's base, `9f82e45`. The docs were reconciled rather than replaced: row 68 goes above row 67, and this section follows Batch 44, whose notes and root QA are kept.
 - **Runner:** root reports the current GitHub-hosted runner is v2.338.2, above the v2.327.1 both actions need. The previous main CI log shows the baseline warning, Node 24 being forced for the Node 20 actions; it should be gone once these pins run.
 - **Checks on this branch:** `npm run check` 858/858, `git diff --check` clean, the layout in sync, and nothing staged. The YAML parses to the two pinned actions, `npm ci`, `npm run check`, `permissions: {contents: read}` and `timeout-minutes: 10`.
+
+## Batch 47 — staged moves land, then turn, and jumps travel in the air (item 69)
+
+### Audit (current motion, heel-and-ball contact at 30 fps)
+- **Won-Hyo 27 ("land, then turn left").**
+  - **Plan:** three foot stages. The kicking right foot comes down beside where it started, then the left foot steps round as the body turns from the kick's 250° to the 90° finish (a 200° turn, as the source endpoints give it).
+  - **Published:** each foot's yaw and the body's turn ran on the whole move's clock, so the planted left foot was turned about its ankle during the landing and slid 7.8 cm on its heel (96.47–97.8 s). The body was already sideways before the foot landed, and for 45 frames neither foot touched the floor.
+- **Yul-Gok 36 ("jump back").** The support (right) foot slid 2.7 cm on its ball: about 2 cm in the 0.3 s before take-off and 2 cm after landing. It travelled while the jump arc (`sin²`) was still within millimetres of the floor.
+- **The same stage code also changed three other staged plans:**
+  - **Taegeuk Yuk Jang 26** (support pivot, then step back and turn): only the stepping foot's turn timing differs.
+  - **Taegeuk Pal Jang 11** (cross in front, then step open): the crossing foot finished its last 12° on the floor (0.75 cm).
+  - **Taegeuk Pal Jang 16** (land, then step back and draw the front foot): both feet were off the floor for 45 frames mid-move.
+- **The 14 relocated support-foot moves:** reported separately below, for a source decision. They are not changed here.
+
+### Change (`js/animation/form-motion.js`, shown frames only)
+- **Staged footwork (`stagePlan`):**
+  - **Each foot turns only in the stages where it lands or steps.** Its share comes from the stages' own end-point yaws, so the move's total turn is kept exactly.
+  - **A foot that stays put in a stage** (sole points within 3 cm) pivots on its ball or heel instead of being lifted or dragged.
+  - **After a landing stage, the body's turn waits for the landing to finish,** then runs over the remaining stages. It is the same 200° turn to the same finish.
+  - **Arms are unchanged:** they still chamber and then strike on the move's clock, so in Won-Hyo 27 the forearm block arrives as the turn completes, not before it.
+- **Jump back:** the foot that isn't stepping leaves the floor with the jump and travels and turns only between 20% and 80% of the jump, when it is about 5 cm or more up.
+- **Unchanged:**
+  - every held pose, chapter, duration, count, narration and pose label;
+  - the knee and elbow plane table, which is built from the published (legacy) paths, so held-pose knees are untouched;
+  - the deliberate slides;
+  - Taegeuk Il Jang (its own motion file);
+  - the lesson data and the reference endpoints.
+
+### Measured (prototype against main `0a905e2`)
+
+| Plan | Slip before | Slip after | Both feet off the floor (frames) |
+|---|---|---|---|
+| Won-Hyo 27 | left 7.83 cm, right 1.30 cm | left 0, right 0.28 cm | 45 → 0 |
+| Yul-Gok 36 | right 2.74 cm | 0 | 40 → 40 (the intended jump) |
+| Taegeuk Yuk Jang 26 | right 0.35 cm | 0 | 0 → 0 |
+| Taegeuk Pal Jang 11 | left 0.75 cm | 0 | 0 → 0 |
+| Taegeuk Pal Jang 16 | right 0.75 cm | 0.66 cm | 45 → 0 |
+
+- **What changed:** exactly these five plans. Taegeuk Yuk Jang 22 differs only by floating-point rounding (at most 5×10⁻¹⁶ m).
+- **Held endpoints:** all 1,456 chapter start and end poses, and all chapter timing, durations and pose labels in the 22 data-driven lessons, are identical. Seeking in random order gives the same frames as playing in order.
+- **Continuity at 60 fps** (knees, ankles, elbows, wrists):
+  - **Won-Hyo 27:** peak joint speed 1.97 → 1.94 m/s; peak acceleration 8.2 → 9.4 m/s² (the limit is 18). Its knee and elbow bend planes turn at most 3.3° and 3.4° per frame.
+  - **The other four:** unchanged.
+- **Coordination (Won-Hyo 27):**
+  - **Before:** the body was 46% through its turn at u 0.40, before the kicking foot had landed, and 99% at u 0.75, while the block was still 18 cm from its finish.
+  - **Prototype:** the body holds still until u 0.45, turns from u 0.45 to 0.84, and the block (chambered until about u 0.65) finishes at the same moment as the turn.
+
+### Tests
+- **`tests/foot-contact.test.mjs`:**
+  - The `KNOWN` exemption for Won-Hyo 27 and Yul-Gok 36 is removed, so every lifted foot in all 22 lessons now meets the 1.5 cm limit.
+  - **New test:**
+    - Won-Hyo 27 doesn't turn before the kicking foot lands (within 1°), its standing foot slips less than 1 mm through the landing, it completes the source's 200° turn, and never has both feet off the floor.
+    - Yul-Gok 36's right foot doesn't travel while its sole is within 4 cm of the floor.
+    - Every staged non-kick, non-jump plan in all 22 lessons keeps a foot on the floor.
+  - Both the tightened test and the new test fail on the published motion (Won-Hyo 27 slides 7.8 cm). The other foot-contact tests pass on both.
+- **`tests/helpers/motion-digests.json`:** transit digests re-recorded for Taegeuk Yuk Jang, Taegeuk Pal Jang, Won-Hyo and Yul-Gok only. `held-pose-digests.json` is unchanged.
+- **Full suite:** 853/853 in the overlay (based on `9f82e45`), and `git diff --check` is clean. All 46 motion, foot, lesson and thumbnail tests pass, including the speed and acceleration limits.
+
+### Visual check (avatar lab on the overlay, port 9047, exact times)
+- **Won-Hyo 27, whole body, azimuth 30°:**
+  - 96.9 s: the leg comes down.
+  - 97.74 s: landed, still facing the kick direction, arms chambered.
+  - 98.4–98.9 s: the turn, with the left foot stepping round and the arms chambered and crossing.
+  - 99.35 s: nearly turned, the block executing.
+  - 100.5 s: the published back-stance guarding block.
+- **The same times in the release (lab on port 9031):** the body is already sideways at 97.74 s and faces the camera with both feet off the floor at 98.4 s.
+- **Yul-Gok 36, feet, side view:**
+  - 134.75 s: planted.
+  - 135.2 s: rising.
+  - 135.75 s: both clear.
+  - 136.45 s: coming down, turned.
+  - 137.35 s: the cross stance and backfist.
+- **Taegeuk Pal Jang 16 at 70.55 s:** one foot flat on the floor, the other lifting back.
+
+### Root QA (19 November, final scratch QA: passed)
+- **Focused tests:** 39 (motion, foot pitch, foot contact and thumbnails).
+- **Frames:** 83,011 sampled at 30 fps across the 22 data-driven forms. All 728 held endpoints, chapter timing and durations are identical, and reverse-order random seeks match.
+- **Changes:** 498 frames differ, in exactly the five plans.
+- **Visual samples:** Won-Hyo 27 (landing, turn and block), Yul-Gok 36 (mid-air), Taegeuk Yuk Jang 26 (pivot), Taegeuk Pal Jang 11 (crossing) and Taegeuk Pal Jang 16 (the step after landing).
+- **Out of scope:** the sleeve deformation seen while the left arm crosses the chest in Won-Hyo 27 is inherited from the published avatar and is tracked separately (Batch 48).
+
+### Integration (19 November)
+- **Applied:** on `fix/staged-footwork-2026-11-19` from main `ae33247` (Batch 45 published), using the four-file allowlist. The patch applied with no fuzz, and the changed files are exactly the allowlist and match the frozen overlay. The docs only add lines, after Batch 45. The checks below were run after these notes were added.
+
+### Relocated support feet: need a movement-source decision (not changed)
+The source endpoints keep the ankle in place while the foot turns, so the foot can only turn about its ankle, which drags the heel and ball. A faithful pivot keeps the ball (10 cm ahead of the ankle) or the heel (6 cm behind) still, and that moves the ankle by 2 × 10 cm × sin(θ/2) on the ball or 2 × 6 cm × sin(θ/2) on the heel. Planting these turns therefore means moving reference endpoints, which this batch doesn't do.
+
+| Moves | What the source says | Ankle shift for a ball / heel pivot | Assessment |
+|---|---|---|---|
+| Taegeuk Pal Jang plans 10 and 12, both feet | "Pivot weight … while both feet stay planted"; a 180° turn in place | 20 / 12 cm | A ball pivot on both feet is the faithful turn. It mirrors each foot about its ball and changes where the stance sits, so it needs new endpoints for these and later moves. |
+| Pyongwon 4, both feet | `travel: pivot`, a 180° turn into back stance | 20 / 12 cm | Same as above. |
+| Keumgang 8, 15, 25 and Taebaek 19, 26, the support foot | A slow crane stance (Keumgang: 10 s) | 12–14 / 7–8.5 cm | Single support while the other leg lifts: a ball pivot is natural but moves the standing foot 12–14 cm. A small authored heel-then-ball weight shift would be an invention. Needs a source decision. |
+| Yul-Gok 15, both feet | `travel: pivot`, a 45° turn in walking stance | 7.7 / 4.6 cm | A small ball pivot is faithful; the endpoint change is small (7.7 cm). A good first candidate if endpoint edits are approved. |
+| Sipjin 1, right foot | `footAction: stay`, a parallel stance, a bull block straight from ready | (5 cm sideways, no turn) | The feet shouldn't move. The model's ready stance is 5 cm narrower than its parallel stance. This is a model width inconsistency, not footwork, and fixing it means changing a held ready pose. |
+
+The three under 2 cm (Sipjin 33 and 36, and Jitae's return to ready) are within the existing tolerance.
+
+### Known limits
+- **Geometry, not technique review:** an instructor should still look at Won-Hyo 27's staging.
+- **Jump-back timing:** the 20–80% window is a fixed fraction of the move.
+- **Not in this batch:** the 14 relocations above are backlogged pending a decision on the movement source.
