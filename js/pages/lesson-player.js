@@ -8,6 +8,7 @@ import {loadJSON} from '../lib/data.js';
 import {narratedMotion,narrationProblem} from '../animation/narrated-motion.js';
 import {turnFact} from '../lib/technique-facts.js';
 import {createLessonAudio} from '../lib/lesson-audio.js';
+import {cameraKeyAction,applyCameraAction,BUTTON_ACTIONS} from '../animation/camera-input.js';
 export async function mountLesson({POSES,LESSON,MOTION}){
 let narration=null;
 try{narration=await loadJSON(`/data/narration/${LESSON.id}.json`,{timeoutMs:6000,validate:data=>narrationProblem(data,MOTION,LESSON.id)});MOTION=narratedMotion(MOTION,narration,LESSON.id);}catch{/* The visual study aid remains usable when recorded voice is unavailable. */}
@@ -29,7 +30,16 @@ let replaySelection=false;
 function requestFrame(){if(raf===null)raf=requestAnimationFrame(tick);}
 function tick(now){raf=null;const dt=lastNow?Math.min(.1,(now-lastNow)/1000):0;lastNow=now;const ready=voice.update({time:player.time,playing:player.playing,rate:player.rate});const effectsReady=effects.update({time:player.time,playing:player.playing,rate:player.rate});if(player.playing&&ready&&effectsReady)player.advance(dt);view?.draw(player.time);if(player.playing)requestFrame();else lastNow=0;}
 function settleCanvas(){view?.draw(player.time);}
-view=createLessonView(canvas,{motion:MOTION,requestFrame,onReady(){$('character-loading').hidden=true;},onError(){$('character-loading').hidden=true;canvas.hidden=true;$('lesson-fallback').hidden=false;}});
+view=createLessonView(canvas,{motion:MOTION,requestFrame,onCamera:cameraChanged,onReady(){$('character-loading').hidden=true;},onError(){$('character-loading').hidden=true;canvas.hidden=true;$('lesson-fallback').hidden=false;cameraControls().forEach(control=>{control.disabled=true;});}});
+/* ── camera: focus buttons, camera buttons and keys; announced once it settles ── */
+function cameraControls(){return document.querySelectorAll('[data-lesson-focus],[data-camera]');}
+let cameraNote=null;
+function cameraChanged(state,reason){
+ document.querySelectorAll('[data-lesson-focus]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lessonFocus===state.focus)));
+ if(reason==='drag')return;
+ clearTimeout(cameraNote);cameraNote=setTimeout(()=>{const el=$('camera-status');if(el&&view?.camera)el.textContent=view.camera.rig.label();},350);
+}
+function cameraAction(action){const cam=view?.camera;if(!cam||!applyCameraAction(cam.rig,action))return false;cam.changed('action');return true;}
 let studyScroll=0;
 function setStudy(on){if(on)studyScroll=scrollY;document.body.classList.toggle('lesson-study',on);$('study-view').setAttribute('aria-pressed',String(on));$('study-view').textContent=on?'Exit study view':'Study view';if(!on)window.scrollTo({top:studyScroll,behavior:'instant'});requestFrame();}
 /* ── status line: deep-link problems and copy results ── */
@@ -114,6 +124,8 @@ function togglePlayback(){if(!player.playing&&replaySelection&&indexForReplay())
 const keyboardPlayer={prev:()=>player.prev(),next:()=>player.next(),first:()=>player.first(),last:()=>player.last(),toggle:togglePlayback,replay:replayMove};
 
 function onRegionKey(e) {
+  const camera=cameraKeyAction(e);
+  if(camera&&cameraAction(camera)){e.preventDefault();return;}
   const native=['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)||e.target?.isContentEditable;
   if(!native&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!e.isComposing&&['ArrowLeft','ArrowRight'].includes(e.key)){
     e.preventDefault();if(e.shiftKey)player[e.key==='ArrowLeft'?'prev':'next']();else player.step(e.key==='ArrowLeft'?-1:1);return;
@@ -168,7 +180,8 @@ function init() {
   $('player-region').addEventListener('keydown', onRegionKey);
   $('frame-prev').addEventListener('click',()=>player.step(-1));
   $('frame-next').addEventListener('click',()=>player.step(1));
-  document.querySelectorAll('[data-lesson-view]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-lesson-view]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));view.setView(button.dataset.lessonView);}));
+  document.querySelectorAll('[data-lesson-focus]').forEach(button=>button.addEventListener('click',()=>cameraAction({type:'focus',focus:button.dataset.lessonFocus})));
+  document.querySelectorAll('[data-camera]').forEach(button=>button.addEventListener('click',()=>cameraAction(BUTTON_ACTIONS[button.dataset.camera])));
   $('study-view').addEventListener('click',()=>setStudy(!document.body.classList.contains('lesson-study')));
   effectsButton.addEventListener('click',()=>{const on=!effects.enabled;effects.setEnabled(on);effectsButton.textContent=on?'Effects on':'Effects off';effectsButton.setAttribute('aria-pressed',String(on));effects.update({time:player.time,playing:player.playing,rate:player.rate});requestFrame();});
   voiceButton.addEventListener('click',()=>{voiceOn=!voice.enabled;voice.setEnabled(voiceOn);voiceButton.textContent=voiceOn?'Voice on':'Voice off';voiceButton.setAttribute('aria-pressed',String(voiceOn));voice.update({time:player.time,playing:player.playing,rate:player.rate});requestFrame();});

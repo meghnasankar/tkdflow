@@ -111,9 +111,22 @@
 .voice-caption { color: var(--navy); font-size: .84rem; line-height: 1.4; margin-top: 5px; }
 .voice-caption:empty { display: none; }
 #lesson-audio, #lesson-effects { display: none; }
-.lesson-view-switch { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); padding: 4px; background: var(--navy); border-radius: 999px; }
-.lesson-view-switch button { min-height: 44px; min-width: 0; padding: 5px; border-radius: 999px; color: white; font-size: .8rem; font-weight: 700; }
-.lesson-view-switch button[aria-pressed="true"] { background: white; color: var(--navy); }
+.lesson-camera { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+/* Toolbar rows may shrink below their content's natural width, so nothing spills past the card at 320 px. */
+.lesson-view-toolbar > *, .lesson-camera > * { min-width: 0; }
+.lesson-focus-switch { flex: 1 1 250px; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); padding: 4px; background: var(--navy); border-radius: 999px; }
+.lesson-focus-switch button { min-height: 40px; min-width: 0; padding: 5px; border-radius: 999px; color: white; font-size: .8rem; font-weight: 700; }
+.lesson-focus-switch button[aria-pressed="true"] { background: white; color: var(--navy); }
+.lesson-camera-pad { flex: 1 1 250px; display: grid; grid-template-columns: repeat(6,minmax(0,1fr)) minmax(0,1.5fr); gap: 4px; }
+.lesson-camera-pad button { min-height: 40px; min-width: 0; padding: 0 4px; border: 1px solid var(--gray-300); border-radius: 9px; background: var(--gray-50); color: var(--navy); font-size: 1.05rem; font-weight: 700; line-height: 1; }
+.lesson-camera-pad [data-camera="reset"] { font-size: .78rem; }
+.lesson-camera-pad button:disabled, .lesson-focus-switch button:disabled { opacity: .55; }
+/* Dragging turns the camera. Sideways drags on a phone page turn it while vertical swipes still scroll; Study view takes every direction. */
+/* On the narrowest phones the label takes its own line so Voice, Effects and Study view fit. */
+@media (max-width: 360px) { .lesson-view-toolbar > div:first-child { flex-wrap: wrap; } }
+#lesson-canvas { touch-action: pan-y; cursor: grab; -webkit-user-select: none; user-select: none; }
+#lesson-canvas[data-dragging="true"] { cursor: grabbing; }
+.lesson-study #lesson-canvas { touch-action: none; }
 .canvas-wrap { position: relative; display: block; padding: 0; height: min(48svh, 360px); min-height: 200px; aspect-ratio: auto; background: #e8edf1; overflow: hidden; }
 #lesson-canvas { display: block; width: 100%; height: 100%; max-width: none; aspect-ratio: auto; border-radius: 0; }
 #lesson-canvas[hidden] { display: none; }
@@ -163,7 +176,7 @@
 @media(min-width:560px) and (max-height:560px){
  .lesson-study .lesson-view-toolbar { grid-template-columns: minmax(200px,.8fr) minmax(0,1fr); align-items: center; gap: 10px; }
  .lesson-study .lesson-actions { gap: 6px; }
- .lesson-study .lesson-view-switch button { min-height: 36px; }
+ .lesson-study .lesson-focus-switch button, .lesson-study .lesson-camera-pad button { min-height: 34px; }
  .lesson-study .lesson-study-toggle, .lesson-study .lesson-voice-toggle { min-height: 36px; padding: 5px 8px; }
  .lesson-study .move-info { padding: 4px 10px; }
  /* A lower canvas minimum (64 px at 320 px high) so the full caption and the controls fit the card. */

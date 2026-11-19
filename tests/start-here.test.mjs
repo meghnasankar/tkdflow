@@ -64,9 +64,12 @@ test('lesson tools described are the controls the lesson player actually has',()
  const speeds=[...lesson.matchAll(/<option value="[\d.]+"[^>]*>([\d.]+×)<\/option>/g)].map(m=>m[1]);
  assert.deepEqual(speeds,['0.25×','0.5×','1×']);
  assert.match(tools,new RegExp(speeds.map(s=>s.replace('.','\\.')).join(', ').replace(/, (?=[^,]*$)/,',? or ')));
- const views=[...lesson.matchAll(/data-lesson-view="[a-z-]+"[^>]*>([^<]+)</g)].map(m=>m[1]);
- assert.deepEqual(views,['Front','Back','Left','Right','3/4']);
- assert.ok(tools.includes(views.slice(0,4).join(', ')+' and 3/4'));
+ const focus=[...lesson.matchAll(/data-lesson-focus="[a-z]+"[^>]*>([^<]+)</g)].map(m=>m[1]);
+ assert.deepEqual(focus,['Whole body','Armwork','Footwork']);
+ assert.ok(tools.includes('1, 2 or 3 for '+focus.slice(0,2).join(', ')+' or '+focus[2]),'focus keys and names match the lesson');
+ const pad=[...lesson.matchAll(/data-camera="[a-z]+" aria-label="([^"]+)"/g)].map(m=>m[1]);
+ assert.deepEqual(pad,['Move camera left','Move camera right','Raise camera','Lower camera','Zoom out','Zoom in','Reset camera']);
+ assert.match(tools,/move left or right \(each press goes to the next side\), raise or lower, zoom out or in, and Reset/);
  const keys=[...lesson.match(/<p class="player-keys"[^]*?<\/p>/)[0].matchAll(/<kbd>([^<]+)<\/kbd>/g)].map(m=>m[1]);
  for(const k of keys)assert.ok(tools.includes(k),`key ${k} is explained`);
  for(const id of ['voice-toggle','effects-toggle','study-view','btn-copy-link','move-list'])assert.ok(lesson.includes(`id="${id}"`),`lesson control ${id}`);
@@ -74,13 +77,13 @@ test('lesson tools described are the controls the lesson player actually has',()
  assert.match(tools,/Press Escape/);
 });
 
-test('directions are explained relative to the starting stance, never as a mirror that tracks turns',()=>{
+test('directions are explained relative to the performer, never as a mirror that tracks turns',()=>{
  const reading=plain(section('sh-reading'));
  assert.match(reading,/performer’s own left and right/);
- assert.match(reading,/At the ready position, the Back view puts you behind the performer/);
+ assert.match(reading,/At the ready position, a camera behind the performer shows the form facing the way you would/);
  assert.match(reading,/does not mirror or follow the way they face/);
- assert.doesNotMatch(text,/faces the same way you do|their left is your left/,'no claim that Back view always matches the viewer');
- assert.match(read('taegeuk-1.html'),/Views are fixed to the starting stance\. Directions use the performer’s left and right\./,'matches the lesson’s own note');
+ assert.doesNotMatch(text,/faces the same way you do|their left is your left/,'no claim that a camera behind always matches the viewer');
+ assert.match(read('taegeuk-1.html'),/The camera stays put when the performer turns\. Directions use the performer’s left and right\./,'matches the lesson’s own note');
 });
 
 test('account, age and posting statements match the age policy',()=>{
