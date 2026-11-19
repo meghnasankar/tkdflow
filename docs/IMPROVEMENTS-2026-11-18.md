@@ -85,6 +85,7 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
+| 61 | The lesson character was a simple procedural figure | `js/animation/avatar.js` built the character from spheres, cylinders and two generated garments: blob hands with sliding knuckle spheres (no fingers or thumb, so fists, knife-hands and spear-hands all looked alike), oval feet, and a collar and belt floating on the chest. The motion data already carried open hands, wrist roll, foot pitch and knee frames the figure couldn't show. | P1 learning | Batch 38 |
 | 60 | A foot standing on the floor could keep the previous kick's pitch | `js/animation/form-motion.js` cloned the feet from the previous pose into kick, bending-ready and kept-feet stance plans, and reset the supporting foot's yaw and position but not its pitch. A leg that had just kicked then stood on the floor with the toes tipped up 50° or 85°. A read-only scan of `97f75f9` by root found 10 held poses: Taegeuk Sa Jang 10, Taegeuk Pal Jang 5 and 28, Pyongwon 8 and 21, Jitae 31–33, and Songahm 3 5 and 27. Separately, a landing foot finished flattening up to 0.7 s after touching down (Won-Hyo 28, Joong-Gun 4, Taegeuk Pal Jang 17). The new detailed avatar's real feet made it visible; the current character receives the same values. | P2 accuracy | Batch 37 |
 | 59 | A quick focus change could crop the head on its first frames | Root caught it live after PR 54: Armwork → Footwork → Whole body pressed quickly showed the head outside the canvas with Whole body selected. The aim and distance were still easing from the low Footwork view, and the safety net only protected Footwork's feet. Settled views fitted; the first transition frames didn't. | P2 learning | Published (PR 55) |
 | 58 | The lesson camera offered only five fixed views | All 23 lessons used `js/animation/lesson-view.js` with Front, Back, Left, Right and 3/4 buttons, each fitted only for its own direction. There was no way to turn freely, zoom or move in on the arms or feet. | P2 learning | Published (PR 54) |
@@ -2320,3 +2321,99 @@ The work below stays in the backlog. None of it is on this branch, and none of i
 ### Known limits
 - **The scan finds geometry, not technique.** It isn't an instructor's check of foot technique.
 - **The detailed avatar** (the new mesh, the fitted feet and the side-kick foot frame) stays in scratch for further review and isn't part of this batch.
+
+## Batch 38 — detailed lesson avatar (item 61)
+
+### Change
+- **A detailed, clothed character** (`assets/animation/avatar-v2.json` and `.bin`, 666,624 bytes raw, 483,666 bytes gzipped after the review fix below, 34,058 triangles, 50 bones), built from the CC0 Blender Studio Human Base Meshes v1.4.1. Only the head and neck, hands and feet are kept as skin; the rest is a fitted dobok with a flat black V collar cut into the jacket surface, a belt raycast onto the jacket with its knot and tails ("Sankar"; the emblem and two gold bars), hair, brows and eyes. No photograph is used. Provenance: `assets/animation/AVATAR-SOURCE.md`.
+- **`js/animation/avatar-core.js` (new)** builds the avatar from the binary and poses it from each lesson's own joint positions:
+  - upper arm, forearm, thigh and shin on the lesson's joints, turned by the same elbow-plane and knee frames the runtime uses;
+  - shoulder and elbow helper bones at half the joint's turn, so the sleeve folds round a raised or chambered arm instead of tearing into fins;
+  - feet at the lesson's yaw and pitch, corrected for the mesh foot's own rest heading and toe drop, with a uniform 8.9 mm lift for its deeper sole;
+  - side kicks: the smallest extra turn that points the sole along the shin, easing in as the foot rises and turns, so it never snaps;
+  - fingers from baked hand shapes (fist, knife-hand, spear-hand, palm, ridge-hand), blended by how open the hand is and, while an open hand changes technique, between the two shapes (review fix 2).
+- **Hand shapes, checked up close against the technique descriptions:**
+  - **Knife-hand:** fingers straight and closed together (the knuckles drawn in toward the middle finger, so no splay), thumb bent along the edge of the palm.
+  - **Spear-hand:** the knife-hand with the middle finger flexed so the fingertips line up.
+  - **Palm** (supporting, covering and pushing hands): fingers together, slightly bent.
+  - **Ridge-hand:** knife-hand fingers with the thumb tucked against the palm below the index knuckle (see the review fix).
+  - **Fist:** fingers folded, thumb lying across the index and middle fingers (see the review fix).
+  - The thumb's base no longer tears when it tucks: it follows its own chain joint to joint, and its pad follows the thumb's root bone.
+- **`js/animation/form-motion.js`:** each open hand now also carries a `shape` label (knife-hand by default; spear-hand, palm or ridge-hand where the technique says so; the supporting hand of an assisted, target or spear technique is a palm; Koryo's tongmilgi ready uses two knife-hands; covered and overlapped ready hands are palms). **Nothing else changes:** positions, angles, open, roll, timing, chapters, counts and narration are identical (`tests/helpers/motion-digests.json`, computed from the published motion at `79c4124`).
+- **`js/animation/avatar.js`:** `createAvatar()` keeps its contract (`root`, `applyPose`, `ready`, `onReady`, `onError`) and loads the detailed avatar. **If the asset fails** (network error, missing file, wrong length or checksum, bad JSON or ranges), it shows the earlier procedural avatar, now `createProceduralAvatar()`. `onError` fires only if neither can be shown. The detailed face has no mouth rig yet, so the kihap cue changes nothing on it.
+- **`js/animation/media.js`:** the asset's same-origin paths. It's the only network read in `js/animation/`; `tests/animation.test.mjs` now allows exactly that one `fetch` in `avatar.js`.
+- **Weighting fixes found by the new tests** (before integration):
+  - **belt cinch:** cloth under the belt band follows the torso only; a raised knee had lifted the band 2.9 cm off the waist;
+  - **feet:** everything below the ankle follows the foot alone; in back stances the heel had twisted 10–15° with the shin.
+- **Thumbnails and social image:** all 23 library thumbnails were re-rendered with the detailed avatar by the documented studio process (`docs/form-thumbnails.md`), with the same 23 poses and camera angles. Every pose fingerprint is unchanged except for the new `shape` field: with it removed, all 23 match the previous records. The social card (`assets/social-card.svg`) embeds the new Taegeuk Sa Jang thumbnail and was re-exported to `assets/og-animation-v2.png` and `assets/og-image.png`. `docs/social-card-render.json` records the SVG and PNG hashes.
+- **Build tools** (`tools/avatar/`, not deployed): the Blender scripts, the packaging script and a README describing the pipeline. `tools` is in `.vercelignore` and in the local preview server's private list (`scripts/serve.mjs`); the live checker now also probes it.
+
+### Tests (`tests/detailed-avatar.test.mjs`, new, 15 with the review fixes; `tests/animation.test.mjs`, `tests/site.test.mjs` and the thumbnail manifest updated)
+- **Asset:** within budget (at most 1 MB raw, 600 KB gzipped, 40,000 triangles); its length and checksum match; a truncated, altered, wrong-format or out-of-range asset is rejected before anything is built.
+- **Real skin weights:** every vertex sums to 1; torso cloth carries no arm weight (under 5% from smoothing); sleeves never follow the hips; the trousers' crotch seam never follows both legs; feet below the ankle follow the foot alone; no thumb vertex mixes the thumb tip and the palm; the collar shares its outline with the jacket.
+- **Feet, all 23 lessons, all 748 held poses (1,372 grounded feet):** soles within 0.07 mm of the floor (limit 12 mm), heel and ball within 3 mm of each other (limit 12 mm), heading within 0.02° (limit 8°); the ready stance at 0/90/180/270°; all 26 side kicks present the sole within 35° of the kick.
+- **Retargeting, all 23 lessons at 30 fps (85,151 frames):** shoulders, elbows, wrists, hips, knees and ankles land within 1 mm of the lesson's joints; no tracked bone turns more than 45° between frames.
+- **Hands, every held pose:** 1,186 closed hands are fists; every open hand has a technique shape (164 knife, 90 palm, 14 spear, 2 ridge), reaches out, has its fingers together and its thumb tucked.
+- **Cloth and trim in 9 review poses** (ready, punch, high block, front kick, knife-hand, double knife-hand block, kicks): no edge stretched more than 10× and longer than 3 cm; trim within 2 cm of the body surface (the knot, 3 cm deep by design, within 6 cm).
+- **Motion unchanged:** all 23 lessons sampled at 10 fps match the published motion's digests.
+- **Fallback:** with the real asset the lesson shows `detailed-v2`; on a network error, a missing file, a truncated or altered binary or bad JSON it shows `procedural-fallback`, which still poses (kihap included). It reports an error only when neither avatar can be shown.
+- **Social image:** the PNG and SVG match their recorded export hashes.
+- **Full suite:** 820/820 (`npm run check`, after both review fixes), and `git diff --check` is clean.
+
+### Browser check (Claude, in-app browser)
+- **Release preview (port 8899):** Taegeuk Sa Jang loads `avatar-v2.json` and `.bin` and no procedural atlas; the lesson plays with the camera, focus buttons and pose links. The only console line was a 401 resource error in that local preview session, which also appeared on its About page. It is specific to that local context: root did not reproduce it on the production About page.
+- **Fallback in the real browser:** an offline load and a truncated binary both give `procedural-fallback`; the normal load gives `detailed-v2`.
+- **Close-ups:** the knife-hand (Taegeuk Sam Jang 10–12), spear-hand with the supporting palm (Taegeuk Sa Jang 3 and 5), Koryo's tongmilgi ready, the chambered elbow and raised arm from behind, back-stance feet, and front and side kicks.
+
+### Review fix (19 November): ridge-hand thumb web and fist thumb
+- **Found by root:** in the ridge-hand (Sipjin 28 and 44) the thumb web showed a pointed flap on the right hand and a serrated lip on the left, and the fist read as an open loop from the thumb side. Fresh close-ups of the packaged asset confirmed both; the earlier review sheets predated the last re-bake but showed the same hand shapes.
+- **Causes:**
+  - **Ridge-hand:** the thumb curled into the palm's centre (99–102° at its first joint), so the web skin, which switches from the thumb's root bone to its first joint within 2–3 mm, folded over.
+  - **Rolled wrists** (150° in the ridge-hand poses): palm skin up to 9 cm from the wrist kept 11–47% forearm weight and twisted.
+  - **Fist:** the stiff thumb root made the thumb reach by bending, so its middle joint stood 2.4–3.8 cm off the fingers; the left solve also wrapped further than the right.
+- **Fixes** (shape and weights only; joint targets, lesson motion and timing are unchanged):
+  - the ridge-hand thumb tucks against the palm just below the index knuckle (first joint 44°);
+  - the thumb pad's weight fades out smoothly toward the knuckles instead of stopping at a hard edge;
+  - the palm takes forearm weight only in a band at the wrist;
+  - the fist thumb's middle joint rests against the thumb side of the folded index (root swing capped at 14°), its tip turns most of the way across the middle finger, and the left thumb mirrors the right.
+- **Measured on the real asset at every held pose of all 23 lessons** (skin edges round the thumb and palm, stretch against rest length):
+  - ridge-hand: worst 2.5× with 1 edge over 2.5× (Batch 38 as frozen: 5.8× with 52–57);
+  - knife-hand, spear-hand and palm: worst 2.75× with 3 edges;
+  - fist: worst 6.1× with at most 18 edges, a crease at the thumb web (frozen: 91 edges on the right hand); the thumb's middle joint at most 1.26 cm and its tip about 0.5 cm from the index and middle finger axes, i.e. resting on them (frozen: 2.3–3.8 cm).
+- **New test** (`tests/detailed-avatar.test.mjs`, now 14): open hands stay under 3× with at most 5 stretched edges; the fist stays under 6.5× with at most 25, its thumb's middle joint within 1.8 cm of the fingers and its tip within 2.2 cm. It fails on the frozen Batch 38 asset (the fist thumb 2.3 cm off the fingers; the ridge-hand 5.8×).
+- **Still visible:** from a low thumb-side angle, a narrow gap under the curled index finger (the curl itself, unchanged); the thumb no longer bows out.
+- **Asset:** 666,624 bytes raw, 483,666 bytes gzipped, 34,058 triangles. All 23 thumbnails were re-rendered (same poses, fingerprints and camera angles; new images and hashes), and the social card was re-embedded and re-exported.
+
+### Review fix 2 (19 November): fingers no longer jump when an open hand changes technique
+- **Found by root:** a scan of every finger joint in all 23 lessons at 30 fps found 3 one-frame jumps over 45°, all in Sipjin: 106.6 s and 110.2 s (`thumb2.L` about 103–116°) and 184.0 s (`thumb2.R`). In each, an already-open hand changed shape (ridge-hand to knife-hand, palm to ridge-hand) and `mixArms` switched the shape label at once. The earlier no-flip test tracked the hand bones but not the fingers.
+- **Fix:**
+  - `js/animation/form-motion.js`: while an open hand moves from one shape to another, the arm carries `shapeFrom` and `shapeMix` (0 → 1) alongside `shape`, on the same eased phase as the arm. They appear only while the change is under way (2,047 of 83,011 frames), so every held pose and its fingerprint is unchanged.
+  - `js/animation/avatar-core.js`: the two baked presets, and their knuckle offsets, are blended by `shapeMix` before the fist blend. The blend is computed from the time alone, so seeking and frame stepping give the same fingers.
+- **Unchanged, checked against the frozen source:**
+  - all 728 held poses of the 22 data-driven lessons are byte-identical;
+  - all 83,011 frames at 30 fps match apart from the two blend fields;
+  - chapters, durations, counts and narration are unchanged;
+  - the posed bones and skin at all 748 held poses are bit-identical (0 difference). The poser now skips slerping a preset to itself, because three's `slerp` re-normalises even at 1.
+  - So the 23 thumbnails and the social image are still exact and were not re-rendered.
+- **Tests** (`tests/detailed-avatar.test.mjs`, now 15):
+  - every finger and thumb joint of both hands in all 23 lessons turns less than 20° per frame at 30 fps (largest now 8.1°);
+  - the fingers join the hand bones in the 45° world-turn check;
+  - Sipjin's shape-changing stretch, sampled in order and then shuffled, gives identical fingers;
+  - held poses carry no blend.
+  - On the frozen source the new checks fail at Sipjin 106.6 s (`thumb2.L` 103°, `thumb1.L` 27°).
+
+### Root QA (19 November, independent final verification)
+- **Focused tests:** 30/30 passed (log: `/private/tmp/tkdflow-root-avatar38-tests-final2.log`).
+- **Finger scan:** every finger joint in all 23 lessons at 30 fps, with zero jumps over 45° in one frame. The largest is 8.08394° (Taegeuk Chil Jang, `thumb2.R`, 112.633 s).
+- **Shape blend in the real player:** Sipjin pose 28 replayed at 0.25× speed in Armwork and Study view shows the hands blending between shapes.
+- **Earlier reviews still valid:**
+  - all 23 lesson routes in all 3 focus modes;
+  - the phone check at 390×844;
+  - the blocked-model check, where the procedural fallback works with the pose and camera controls;
+  - the high-block front and back review and the phone side-kick review.
+
+### Known limits
+- **Simplified pieces:** no mouth or kihap expression; the hair is a sculpted cap and ponytail.
+- **The raised-arm armpit** still creases a little (no tears).
+- **The foot skin is low-poly** (about 54 vertices per foot); it reads correctly at lesson distance.
+- **Not changed here:** the motion audit's pivot drift and step-start foot slide are a separate motion batch.

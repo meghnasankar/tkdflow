@@ -59,6 +59,9 @@ test('approved artwork and vendored renderer are intact, and no photo is used on
  assert.match(readFileSync(new URL('../vendor/three/LICENSE',import.meta.url),'utf8'),/MIT/);
 });
 test('production animation has no media service calls, credentials or lab imports',()=>{
- for(const name of readdirSync(new URL('../js/animation/',import.meta.url))){const s=readFileSync(new URL('../js/animation/'+name,import.meta.url),'utf8');assert.doesNotMatch(s,/\bfetch\(|https?:\/\/|\blabs\/|\bAIza[\w-]{20,}|xi-api-key/);}
+ // The one network read is the detailed avatar's own same-origin asset (MEDIA.avatar), loaded in avatar.js.
+ for(const name of readdirSync(new URL('../js/animation/',import.meta.url))){const s=readFileSync(new URL('../js/animation/'+name,import.meta.url),'utf8');assert.doesNotMatch(s,/https?:\/\/|\blabs\/|\bAIza[\w-]{20,}|xi-api-key/);assert.equal((s.match(/\bfetch\(/g)||[]).length,name==='avatar.js'?1:0,name);}
+ assert.match(readFileSync(new URL('../js/animation/avatar.js',import.meta.url),'utf8'),/load=src=>globalThis\.fetch\(src\)/);
+ assert.match(readFileSync(new URL('../js/animation/media.js',import.meta.url),'utf8'),/avatar:\{json:'\/assets\/animation\/avatar-v2\.json',bin:'\/assets\/animation\/avatar-v2\.bin'\}/);
  const source=readFileSync(new URL('../js/pages/lesson-taegeuk-1.js',import.meta.url),'utf8');assert.doesNotMatch(source,/getContext\('2d'\)|lerpPose/);
 });

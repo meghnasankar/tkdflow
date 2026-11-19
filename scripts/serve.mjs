@@ -27,7 +27,7 @@ const TYPES = {
 
 /** Development-only top-level entries, mirroring .vercelignore. */
 const HIDDEN_TOP = new Set([
-  'node_modules', 'tests', 'scripts', 'layout', 'docs', 'supabase',
+  'node_modules', 'tests', 'scripts', 'tools', 'layout', 'docs', 'supabase',
   'package.json', 'package-lock.json', 'SETUP.md', 'CLAUDE.local.md', 'supabase-setup.sql', 'vercel.json',
 ]);
 

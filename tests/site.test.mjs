@@ -266,6 +266,11 @@ test('social preview image exists, is 1200×630 and is declared on every page', 
   assert.ok(pose, 'social card reuses the current animation thumbnail');
   assert.ok(Buffer.from(pose[1], 'base64').equals(readFileSync(join(ROOT, 'assets/forms/taegeuk-4.webp'))));
   assert.ok(png.equals(readFileSync(join(ROOT, 'assets/og-image.png'))), 'legacy image address also serves the updated character');
+  // The PNG is the recorded export of this exact SVG and thumbnail (a new character or thumbnail needs a re-export).
+  const render = JSON.parse(read('docs/social-card-render.json')), sha = b => createHash('sha256').update(b).digest('hex');
+  assert.equal(sha(readFileSync(join(ROOT, 'assets/social-card.svg'))), render.svgSha256, 'social-card.svg changed without a re-export');
+  assert.equal(sha(png), render.pngSha256, 'og-animation-v2.png is not the recorded export');
+  assert.equal(sha(readFileSync(join(ROOT, render.thumbnail))), render.thumbnailSha256);
   for (const p of pages) {
     assert.match(p.html, /<meta property="og:image" content="https:\/\/tkdflow\.com\/assets\/og-animation-v2\.png">/, p.file);
     assert.match(p.html, /<meta property="og:image:width" content="1200">/, p.file);
