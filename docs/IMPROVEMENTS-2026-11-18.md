@@ -85,6 +85,7 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
+| 62 | Feet slid on the floor: pivots drifted and steps dragged before lifting | Codex's motion audit and a heel-and-ball contact scan of all 22 data-driven lessons at 30 fps on the published motion: 100.1 m of floor slip in total. Turning support feet blended ankle position and yaw separately, so the ball wandered up to 48 cm mid-turn although it was the same point at both ends. Steps lifted on `sin²`, which is flat at the start, so the foot travelled about 6 cm along the floor before it was 1 cm up. Footwork-sequence steps, kick supports that move, and returns to ready slid without lifting. | P2 accuracy | Batch 39 |
 | 61 | The lesson character was a simple procedural figure | `js/animation/avatar.js` built the character from spheres, cylinders and two generated garments: blob hands with sliding knuckle spheres (no fingers or thumb, so fists, knife-hands and spear-hands all looked alike), oval feet, and a collar and belt floating on the chest. The motion data already carried open hands, wrist roll, foot pitch and knee frames the figure couldn't show. | P1 learning | Batch 38 |
 | 60 | A foot standing on the floor could keep the previous kick's pitch | `js/animation/form-motion.js` cloned the feet from the previous pose into kick, bending-ready and kept-feet stance plans, and reset the supporting foot's yaw and position but not its pitch. A leg that had just kicked then stood on the floor with the toes tipped up 50° or 85°. A read-only scan of `97f75f9` by root found 10 held poses: Taegeuk Sa Jang 10, Taegeuk Pal Jang 5 and 28, Pyongwon 8 and 21, Jitae 31–33, and Songahm 3 5 and 27. Separately, a landing foot finished flattening up to 0.7 s after touching down (Won-Hyo 28, Joong-Gun 4, Taegeuk Pal Jang 17). The new detailed avatar's real feet made it visible; the current character receives the same values. | P2 accuracy | Batch 37 |
 | 59 | A quick focus change could crop the head on its first frames | Root caught it live after PR 54: Armwork → Footwork → Whole body pressed quickly showed the head outside the canvas with Whole body selected. The aim and distance were still easing from the low Footwork view, and the safety net only protected Footwork's feet. Settled views fitted; the first transition frames didn't. | P2 learning | Published (PR 55) |
@@ -2417,3 +2418,59 @@ The work below stays in the backlog. None of it is on this branch, and none of i
 - **The raised-arm armpit** still creases a little (no tears).
 - **The foot skin is low-poly** (about 54 vertices per foot); it reads correctly at lesson distance.
 - **Not changed here:** the motion audit's pivot drift and step-start foot slide are a separate motion batch.
+
+## Batch 39 — planted pivots and lifted steps (item 62)
+
+### Change (`js/animation/form-motion.js` only)
+- **Planted pivots:** a grounded foot that turns keeps whichever floor point (ball or heel) is the same at both ends of the move, and its ankle swings round that point.
+- **Lifted steps:** a step rises over its first 35%, travels between 12% and 88%, and is set down over its last 35% (peak height unchanged, 6.5 cm). It is about 1.5 cm up before it travels, and it turns in the air.
+- **The same applies to:** footwork-sequence steps, the two-part close-then-step (now one continuous lifted step), returns to ready, and kick plans whose support foot moves (an advance or a closing step, taken before the kick chamber).
+- **Kicking feet:** they rise before they travel to the chamber, and on the way back reach their spot before they are set down. Their turn and toe pitch wait until they are clear of the floor, on the kick's own clock, and the roundhouse and crescent sweeps start from zero with the kick.
+- **Deliberate slides kept:** the source's `slide-left`/`slide-right` (shifting or extending the front foot, 21 moves in 7 lessons) now stay on the floor as the notes describe. The published motion lifted them 6.5 cm.
+- **Unchanged:**
+  - every held pose (all joints, angles, hand shapes), chapter and duration in all 23 lessons, pinned by `tests/helpers/held-pose-digests.json` taken from the published Batch 38 motion;
+  - counts and narration;
+  - Taegeuk Il Jang (its own motion file).
+  - The knee bend planes are still carried along the published foot paths, so the knees at every held pose are exactly as published. The thumbnails and social image are therefore unaffected.
+
+### Measured (heel-and-ball contact, all 22 data-driven lessons, 30 fps)
+- **Total floor slip:** 100.1 m published → 4.39 m. Of the 4.39 m, 3.2 m is the source's deliberate slides.
+- **Plans with more than 2 cm of slip:**
+
+  | Foot | Published | Batch 39 |
+  |---|---|---|
+  | Supports | 243 | 11 |
+  | Steps | 326 | 22 (all slides or the two named below) |
+  | Kick supports | 35 | 0 |
+  | Returns | 36 | 0 |
+  | Footwork-sequence steps | 7 | 0 |
+  | Kicking feet (worst) | 0.7 cm | 0.04 cm |
+- **The 11 supports over 2 cm** are feet the source endpoints themselves relocate without a step (14 foot-moves: Taegeuk Pal Jang's two "stay" 180° turns and Pyongwon's in-place 180° pivot keep the ankle fixed while the foot turns, and the Keumgang and Taebaek crane supports turn about the ankle). They slide no further than their endpoints require; planting them would mean moving reference endpoints.
+
+### Tests (`tests/foot-contact.test.mjs`, new, 4; `tests/helpers/foot-contact.mjs`; `held-pose-digests.json`; transit digests in `motion-digests.json` re-recorded)
+- **The measure itself:** a 35° roll onto the ball, a rock onto the heel and a 90° pivot on the ball measure 0 slip while the ankle moves; a pivot about the ankle and a 20 cm slide are caught; a lifted step is clean and the published `sin²` step is caught. Roles come from the plans (the moving and the planted foot of Taegeuk Yi Jang's first step).
+- **All 22 lessons, every plan and foot:**
+  - a planted foot slides at most 5 mm;
+  - a foot that leaves the floor slides at most 1.5 cm around its step;
+  - a foot the endpoints relocate without a step slides no further than they require, plus 1 cm;
+  - deliberate slides are exempt.
+- **Ball pivots:** every support that turns more than 20° on a ball that is the same at both ends keeps it within 3 mm through the turn (more than 50 turns).
+- **Endpoints:** every held pose, chapter and duration matches the published digest.
+- **Against the published motion:** both slip tests fail (Taegeuk Yi Jang's first step slides 2.9 cm; the ball pivots wander). The measure and endpoint tests pass.
+- **Existing smoothness limits still hold:** joint speed under 3 m/s and acceleration under 18 m/s², both throughout and in narrated execution. A first version broke them in two roundhouse lessons and was fixed before freezing.
+- **Full suite:** 824/824 (`npm run check` on `fix/natural-footwork-2026-11-19` from main `552a049`), and `git diff --check` is clean.
+
+### Browser check (Claude, avatar lab on this checkout's code)
+- **Taegeuk Yi Jang's 180° turning step (plan 3, 8.40–11.40 s), frames at 8.40, 9.10, 9.60, 10.10, 10.70 and 11.40 s, Footwork view:** the support foot turns in place, the stepping foot is clear of the floor in the middle of the step and is set down at its endpoint. The held pose at 11.40 s is the published one.
+- **Not yet seen in the release player:** the same lesson at 0.25× speed (root's review).
+
+### Root QA (19 November, independent checks)
+- **Focused tests:** 58/58. That is 22 foot-contact, foot-pitch and avatar tests, plus 36 form-lesson and technique-accuracy tests.
+- **Direct comparison against the published main (`552a049`):** all 728 held endpoints across the 22 data-driven forms, and every chapter and duration, are identical.
+- **Release player, Taegeuk Yi Jang pose 4** (the turning step), replayed at 0.25× in Footwork and Whole body: smooth, with the travelling foot lifted and the stance settled.
+- **Release player, Taegeuk Yuk Jang pose 9 (roundhouse kick):** under root review at the time of writing.
+
+### Known limits
+- **Two staged moves are not yet converted** and are named in the test: Won-Hyo 27 (land, then turn: the foot turns on the floor between stages, 7.8 cm) and Yul-Gok 36 (jump back, 2.7 cm).
+- **The relocations above** need source-endpoint decisions (pivot on the ball would shift the stance).
+- **Geometry, not technique:** an instructor should still review the footwork.
