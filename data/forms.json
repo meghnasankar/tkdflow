@@ -653,7 +653,7 @@
     "id": "dan-gun",
     "name": "Dan-Gun",
     "koreanName": "단군",
-    "meaning": "Founder of Korea",
+    "meaning": "Legendary founder",
     "organization": "ITF",
     "category": "itf",
     "series": "ITF Chang Hon Patterns",
@@ -676,7 +676,7 @@
       "badge-green",
       "badge-navy"
     ],
-    "description": "Named after the holy Dan-Gun, the founder of Korea in 2333 BC.",
+    "description": "Named after Dan-Gun (Dangun), the legendary founder of Gojoseon in Korean tradition.",
     "review": {
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."
@@ -756,7 +756,7 @@
       "badge-green",
       "badge-navy"
     ],
-    "description": "Named after the monk Won-Hyo who introduced Buddhism to the Silla Dynasty in 686 AD.",
+    "description": "Named after Wonhyo (617–686), a Buddhist monk and scholar of the Silla kingdom.",
     "review": {
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."

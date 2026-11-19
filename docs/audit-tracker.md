@@ -204,3 +204,14 @@ Staging school follow-up: 334 sourced schools installed; existing custom school 
 ## Production account activation — 2026-11-17
 
 The owner approved and requested publication. PR #13 merged and its school/privacy/assets release deployed. The production school migration preserved one profile and six legacy schools, installed 334 directory records and queued one private unlisted school. Production registration and member-initiated Google linking are enabled; anonymous sign-in remains off and email confirmation stays on. Google's external app is In production with basic identity scopes and the approved private support group contact. Six live backend/permission checks passed. This client release enables the reviewed original project; production owner email/Google smoke results and the confirmed school-reviewer role assignment will be recorded after the live flow. The personal support destination and private credentials remain out of source.
+
+## Form name history — 2026-11-19 (local, not live)
+
+Two ITF form introductions stated history inaccurately. Won-Hyo said the monk introduced Buddhism to Silla in 686 AD, which was his death year. It now reads "Named after Wonhyo (617–686), a Buddhist monk and scholar of the Silla kingdom." Dan-Gun stated "the founder of Korea in 2333 BC" as fact. It now reads "the legendary founder of Gojoseon in Korean tradition." The catalogue description (`data/forms.json`) and each lesson page's static intro were changed. Each lesson page also gained a labelled "Name history" source under its references:
+
+- Won-Hyo: Academy of Korean Studies, Encyclopedia of Korean Culture — https://encykorea.aks.ac.kr/Article/E0040908
+- Dan-Gun: National Museum of Korea, Dangun founding-myth video — https://modu.museum.go.kr/explore/video/20575
+
+Dan-Gun's short `meaning` label changed from "Founder of Korea" to "Legendary founder" in `data/forms.json` and in its record in `data/form-thumbnails.json`. Only `assets/forms/dan-gun.webp` was re-rendered with the existing thumbnail studio, limited to that one record. The source pose hash and measured character bounds are unchanged; the image's `bytes` and `assetSha256` are updated. The character in that image now matches the current lesson avatar. The other 22 thumbnails and the social card are untouched. Motion, counts and narration are unchanged.
+
+Root QA: both descriptions and source links were checked as accurate. 23/23 independent site checks passed, with no overflow in both lesson pages at 390 px phone width.
