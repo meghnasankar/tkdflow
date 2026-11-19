@@ -439,7 +439,10 @@ p  { color: var(--gray-600); }
   .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .section { padding: 56px 0; }
   .footer-grid { grid-template-columns: 1fr; }
-
+}
+/* The header menu: at 860px and below the links fold into the menu button (js/site.js closes it above that width).
+   Five section links and two account buttons need about 800px on one line, so the fold sits above that. */
+@media (max-width: 860px) {
   .nav-toggle { display: inline-flex; margin-left: auto; }
   .site-nav { position: static; width: 0; }
   .nav-links {
@@ -455,13 +458,13 @@ p  { color: var(--gray-600); }
   .nav-account .btn { flex: 1; min-height: 44px; }   /* comfortable touch targets in the mobile menu */
   .nav-logout-status { position: static; flex-basis: 100%; max-width: none; }
 }
-/* Narrow desktop (769–900px): the full header is shown but space is tight.
+/* Narrow desktop (861–1160px): the full header is shown but space is tight.
    Hide the decorative Korean logotype and trim padding so nav labels and
-   account buttons stay on one line. Mobile (≤768px) is unaffected. */
-@media (min-width: 769px) and (max-width: 900px) {
-  /* Signed-in members have six items (four links, My profile, Log out). These
-     sizes trim about 60px (an estimate) from the row, so it fits at 769px even
-     before the web fonts load. Labels stay visible. */
+   account buttons stay on one line. The menu (≤860px) is unaffected. */
+@media (min-width: 861px) and (max-width: 1160px) {
+  /* Signed-in members have seven items (five links, My profile, Log out): about
+     800px with these sizes, measured, so the row fits from 861px with room for
+     fallback fonts before the web fonts load. Labels stay visible. */
   .navbar-logo { font-size: 1.25rem; gap: 8px; }
   .navbar-logo .logo-icon { width: 34px; height: 34px; }
   .navbar-logo .kr { display: none; }

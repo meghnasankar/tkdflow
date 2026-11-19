@@ -180,6 +180,24 @@ test('the guide and the practice arena are easy to find: footer, tournament guid
   for (const file of ['referee.html', 'referee-guide.html']) assert.ok(pages.some(p => p.file === file && p.sitemap), file);
 });
 
+test('Referee training is a top-navigation section: one header link to the guide, which opens with the 3D practice action', () => {
+  const read = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
+  const header = read('layout/header.html'), links = [...header.matchAll(/<li><a href="([^"]+)" data-nav="([a-z-]+)">([^<]+)<\/a><\/li>/g)].map(m => [m[1], m[2], m[3]]);
+  assert.deepEqual(links.map(l => l[2]), ['Home', 'Forms Library', 'Community', 'Events', 'Referee training']);
+  assert.deepEqual(links.at(-1), ['/referee-guide.html', 'referee', 'Referee training']);
+  // Both referee pages belong to the section (marked current there, and only there); Events keeps its own pages.
+  const pages = JSON.parse(read('layout/pages.json')).pages;
+  assert.deepEqual(pages.filter(p => p.key === 'referee').map(p => p.file).sort(), ['referee-guide.html', 'referee.html']);
+  for (const p of pages) {
+    const html = read(p.file), nav = html.slice(html.indexOf('<nav class="site-nav"'), html.indexOf('</nav>', html.indexOf('<nav class="site-nav"')));
+    assert.equal((nav.match(/data-nav="referee"/g) || []).length, 1, p.file);
+    assert.equal(/<a href="\/referee-guide\.html" data-nav="referee" class="active" aria-current="page">/.test(nav), p.key === 'referee', p.file);
+    if (p.key === 'referee') assert.match(html, /<body data-page="referee">/, p.file);
+  }
+  const guide = read('referee-guide.html'), hero = guide.slice(guide.indexOf('<div class="page-hero">'), guide.indexOf('</div></div>', guide.indexOf('<div class="page-hero">')));
+  assert.match(hero, /<h1>[^<]+<\/h1>[\s\S]*<a class="btn btn-primary" href="\/referee\.html">Practise in the 3D arena<\/a>/);
+});
+
 test('AAU youth divisions don’t inherit WT’s count or its fall exception for turning kicks to the head', () => {
   const f = {attacker: 'blue', technique: 'turning-kick', target: 'head', contact: true, pss: true, judges: true, clock: 30, fall: {by: 'blue', afterScoringTurningKick: true, target: 'head'}};
   const wt = decide('wt-2026', f), youth = decide('aau-youth', f);

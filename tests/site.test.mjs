@@ -114,7 +114,7 @@ test('the mobile menu control is present on every page and styled to open', () =
     assert.match(p.html, /<script type="module" src="\/js\/site\.js"><\/script>/, p.file);
   }
   const css = read('styles.css');
-  const mobile = css.slice(css.indexOf('@media (max-width: 768px)'));
+  const mobile = css.slice(css.indexOf('@media (max-width: 860px)'));
   assert.match(mobile, /\.nav-links\.open\s*\{\s*display:\s*flex/);
   assert.match(mobile, /\.nav-toggle\s*\{\s*display:\s*inline-flex/);
 });

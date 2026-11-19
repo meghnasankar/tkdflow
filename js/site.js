@@ -32,7 +32,7 @@ export function initNav(root = document) {
   document.addEventListener('click', (e) => {
     if (toggle.getAttribute('aria-expanded') === 'true' && !e.target.closest('.navbar')) setOpen(false);
   });
-  const wide = window.matchMedia('(min-width: 769px)');
+  const wide = window.matchMedia('(min-width: 861px)');   // the header menu folds at 860px and below (styles.css)
   wide.addEventListener?.('change', (e) => { if (e.matches) setOpen(false); });
   return { setOpen };
 }

@@ -3099,3 +3099,42 @@ The three under 2 cm (Sipjin 33 and 36, and Jitae's return to ready) are within 
 ### Known limits
 - **Moment links open YouTube in the same tab,** like the watch buttons.
 - **The filter state is in the address only.** Nothing is saved between visits unless the link is kept.
+
+## Batch 51 — Referee training in the top navigation
+
+### Change
+- **Header:** a fifth section link, "Referee training", after Events in `layout/header.html`. It opens `/referee-guide.html`; the footer's guide and practice links are unchanged, so there is no second header entry.
+- **Section:** `referee.html` and `referee-guide.html` move from the Events key to a new `referee` key in `layout/pages.json` (and their `<body data-page>`), so the link is marked current, with `aria-current="page"`, on both the guide and the 3D practice. Events keeps the events listing and the first-tournament guide. `node scripts/sync-layout.mjs` restamped the header on every page.
+- **Onward action:** the guide now opens with "Practise in the 3D arena" (a primary button to `/referee.html`) under its title, as well as at the end and in the per-section practice links.
+- **Fit:** five links and the account buttons need about 800px on one row.
+  - The header menu now folds at 860px and below, instead of 768px. Only the nav rules moved; page grids keep their 768px breakpoint.
+  - The compact desktop header (no Korean logotype, tighter link padding, no wrapping) now covers 861–1160px, instead of 769–900px.
+  - `js/site.js` closes an open menu when the window widens past 861px, the same edge.
+
+### Tests
+- `tests/referee.test.mjs`, new test:
+  - the header has exactly these five links, in order, the last going to the guide;
+  - both referee pages carry the `referee` key;
+  - every page has one Referee training link, marked current only on those two;
+  - the guide's title is followed by the arena action.
+- `tests/site-nav.test.mjs` and `tests/site.test.mjs` follow the moved breakpoints, and also check that the script's `matchMedia` edge matches the CSS.
+
+### Browser check (release checkout, port 8899)
+- **Signed in (My profile and Log out):** one row with no overflow at 861, 900, 1024, 1160, 1161 and 1280px. The narrowest gap between the logo and the links is 58px, at 861px.
+  - Before the breakpoint change, it overflowed by 46px at 769px, and the labels wrapped onto three lines at 901–1024px.
+- **Guest (Log in and Join free):** one row at 861, 900, 1024 and 1280px.
+- **Phone (390 × 844):**
+  - The menu opens from the toggle, and "Referee training" is marked current.
+  - Links are 50px tall and the account buttons 44px, with no sideways overflow.
+  - Escape closes the menu and returns focus to the toggle.
+
+### Root QA (19 November, release checkout: passed)
+- **Focused checks:** 60 passed (`site-nav`, `referee`, `site` and `contrast` tests).
+- **Guest header:** fits at 900, 1024 and 1280px with no overflow.
+- **Phone (390 × 844):**
+  - The menu shows Referee training, and its link opens the guide.
+  - Escape closes the menu and returns focus to the toggle.
+- **Guide:** its hero button opens the arena, and Referee training stays current on both the guide and the practice page.
+- **Independent diff:** the 68 existing pages only gain the header link. The guide and practice page section change and the hero action were reviewed separately.
+- **Viewport:** reset after testing.
+- **Evidence:** the `batch-51-referee-navigation` artifact directory.
