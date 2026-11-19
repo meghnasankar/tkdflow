@@ -66,6 +66,14 @@
       "description": "Short, plain-English meanings for 12 Korean taekwondo terms from Kukkiwon’s terminology reference, such as Chagi, Makgi and Junbi-jase, with source pages and lesson examples where the forms have them."
     },
     {
+      "file": "history.html",
+      "key": "forms",
+      "path": "/history.html",
+      "sitemap": true,
+      "title": "A short history of taekwondo — TKDflow",
+      "description": "How modern taekwondo took shape, from the post-war Korean kwans to a national association, Kukkiwon, World Taekwondo, the ITF and the Olympic and Paralympic Games, with each date sourced to the organization that records it."
+    },
+    {
       "file": "companions/taegeuk-1.html",
       "key": "forms",
       "path": "/companions/taegeuk-1.html",

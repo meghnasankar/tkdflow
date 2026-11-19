@@ -85,6 +85,7 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
+| 63 | No history of taekwondo on the site | Learners met three traditions (WT/Kukkiwon, ITF, ATA) without the dates behind them. Origin stories online often present one organization's account, or an unbroken ancient lineage, as settled. | P2 content | Batch 40 |
 | 62 | Feet slid on the floor: pivots drifted and steps dragged before lifting | Codex's motion audit and a heel-and-ball contact scan of all 22 data-driven lessons at 30 fps on the published motion: 100.1 m of floor slip in total. Turning support feet blended ankle position and yaw separately, so the ball wandered up to 48 cm mid-turn although it was the same point at both ends. Steps lifted on `sin²`, which is flat at the start, so the foot travelled about 6 cm along the floor before it was 1 cm up. Footwork-sequence steps, kick supports that move, and returns to ready slid without lifting. | P2 accuracy | Batch 39 |
 | 61 | The lesson character was a simple procedural figure | `js/animation/avatar.js` built the character from spheres, cylinders and two generated garments: blob hands with sliding knuckle spheres (no fingers or thumb, so fists, knife-hands and spear-hands all looked alike), oval feet, and a collar and belt floating on the chest. The motion data already carried open hands, wrist roll, foot pitch and knee frames the figure couldn't show. | P1 learning | Batch 38 |
 | 60 | A foot standing on the floor could keep the previous kick's pitch | `js/animation/form-motion.js` cloned the feet from the previous pose into kick, bending-ready and kept-feet stance plans, and reset the supporting foot's yaw and position but not its pitch. A leg that had just kicked then stood on the floor with the toes tipped up 50° or 85°. A read-only scan of `97f75f9` by root found 10 held poses: Taegeuk Sa Jang 10, Taegeuk Pal Jang 5 and 28, Pyongwon 8 and 21, Jitae 31–33, and Songahm 3 5 and 27. Separately, a landing foot finished flattening up to 0.7 s after touching down (Won-Hyo 28, Joong-Gun 4, Taegeuk Pal Jang 17). The new detailed avatar's real feet made it visible; the current character receives the same values. | P2 accuracy | Batch 37 |
@@ -2474,3 +2475,48 @@ The work below stays in the backlog. None of it is on this branch, and none of i
 - **Two staged moves are not yet converted** and are named in the test: Won-Hyo 27 (land, then turn: the foot turns on the floor between stages, 7.8 cm) and Yul-Gok 36 (jump back, 2.7 cm).
 - **The relocations above** need source-endpoint decisions (pivot on the ball would shift the stance).
 - **Geometry, not technique:** an instructor should still review the footwork.
+
+## Batch 40 — a short, sourced history of taekwondo (item 63)
+
+### Change
+- **New page `/history.html`** (`layout/pages.json`, footer link "History of taekwondo", sitemap), with `css/history.css` and no scripts.
+- **How modern taekwondo took shape.** A short narrative before the timeline, summarised from Kukkiwon's History of Taekwondo. All prose drawn from that page is marked `data-source="kukkiwon-history"` and kept under its 200-word summary limit: 166 words in all, 113 of them in the three origins paragraphs, in TKDflow's own wording:
+  - **Roots:** Subak and Taekkyeon; judo, kendo and Tangsoo during the occupation.
+  - **The Five Kwans, 1946–1960:** in Kukkiwon's account, Taekkyeon-inspired kicking, and the name "Taekwondo" in use after the Korean War.
+  - **One association, 1961–1970:** the early-1960s national association unified dan tests and set poomsae; sparring became official at the 44th National Sports Festival in 1963; taekwondo spread to Asia, Europe and the United States.
+  - **Who does what:** Kukkiwon (1972, the World Taekwondo Headquarters) leads the martial art and its poomsae; World Taekwondo (1973) governs the international sport, including Olympic competition; the ITF (1966) teaches its own patterns.
+- **Timeline of 11 dated events**, each linking the record it comes from:
+  - **Kukkiwon:** its early-taekwondo period of the post-war kwans (1946–1960, a period rather than one founding year); the 1963 National Sports Festival; founded 30 November 1972.
+  - **ITF:** names "taekwondo" on 11 April 1955 (one attributed line); founded 22 March 1966 with General Choi Hong Hi named as founder; first World Championships in Montreal in 1974.
+  - **World Taekwondo:** founded 28 May 1973.
+  - **IOC:** demonstration sport at Seoul 1988 and Barcelona 1992, the 1994 decision, first medals at Sydney 2000.
+  - **IPC:** Para taekwondo's debut on 2 September 2021.
+- **Links onward:** the forms library, the beginner's guide, and World Taekwondo's official YouTube retrospective (a link).
+- **Photos** (`assets/history/`, 1200 px wide WebP):
+  - Kukkiwon's south gate: LucaPagani7, CC0 1.0, captioned as a 2026 view and not a 1972 photograph (155 KB);
+  - the Rio 2016 Olympic taekwondo arena from the stands: Henriquemarra01, CC BY-SA 4.0, with the change noted and the adapted image under the same licence, and no athletes identified (124 KB).
+  - Each has descriptive alternative text, and its credit appears in the caption and in the sources list.
+- **Statement:** TKDflow is independent and not affiliated with these organizations.
+- **Not included:** the names Korea Taesoodo Association (1961) and Korea Taekwondo Association (1965). Kukkiwon's History of Taekwondo page describes the early-1960s association without naming it, so the page doesn't name it either. A source that does would let them be added.
+- **Kept to the IOC's wording:** Kukkiwon's page also calls taekwondo an "official event" at Seoul 1988, while the IOC records it as a demonstration sport. The page uses the IOC's wording.
+
+### Tests (`tests/history.test.mjs`, new, 6)
+- The page is in the manifest, the sitemap and the footer.
+- **Timeline:** all 11 events are dated in order, each links its own record, and the ITF's 1955 date and founder are attributed to the ITF.
+- **Origins narrative:** it comes before the timeline and cites Kukkiwon's history. It covers the Five Kwans, 1946–1960, Taekkyeon, the national association, the unified dan tests, the 1963 festival and the spread overseas, and states the different roles of Kukkiwon and World Taekwondo. There's no caveat banner or lineage debate.
+- **Summary limit:** the marked Kukkiwon-derived passages total under 200 words, and the origins summary is 100–125 words in exactly three paragraphs. The roles paragraph cites its own founding and introduction sources.
+- **Photos:** licensed WebP files of the stated size, under 200 KB, with descriptive alternative text. Each credit has the author, source page, licence link, licence name and the change note. The 2026 photo is not passed off as archival, and the CC BY-SA adaptation keeps its licence.
+- **Self-contained:** same-origin images, no scripts or embeds, and external links only to the cited sources.
+- **Full suite:** 830/830 (`npm run check` on `feat/taekwondo-history-2026-11-19` from main `a1afe57`, with Batch 39's motion, tests and digests unchanged), and `git diff --check` is clean.
+
+### Browser check (Claude)
+- The overlay's own preview server (CSP enforced), at desktop width and 375 px: no console errors and no horizontal overflow.
+- Kukkiwon's two pages were re-read on 19 November 2026 for the narrative.
+- **Release preview (port 8899, this branch):** all 11 timeline events and the 1946–1960 period entry render; the footer link is present on the page; there's no inline script, no console error and no horizontal overflow.
+
+### Root QA (19 November, independent review)
+- **Focused tests:** 28/28 history and site tests.
+- **Layout:** compared outside the footer against HEAD, all 66 existing HTML pages have only the footer change.
+- **Browser, at desktop width and a real 390×844:** no horizontal overflow; both photos load; all 11 timeline entries show; the anchor headings clear the header; the source and licence credits are visible.
+- **Source:** the primary Kukkiwon page was rechecked live for the modern-history narrative.
+- **CI:** Batch 39's main CI has also passed.
