@@ -85,6 +85,7 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
+| 67 | Referee practice felt like a long article, not a practice tool | On desktop, the arena, the evidence and the answers sat one under another, so learners scrolled between watching and answering. On a 390 × 844 phone, the answers were several screens below the fighters. Saved progress was raw JSON read straight from localStorage, with no validation. The page never said where progress was kept, and there was no way to reset it. | P2 learning | Batch 44 |
 | 66 | Fixed-view wording and hard-to-find learning pages | A public-site audit after Batches 40–42. The 22 data-driven lessons, 23 lesson descriptions, the home page and a Community post still promised "camera views" from the fixed-view era, and lessons mentioned "camera labels" that only screen readers hear. Outside the footer, the history page was linked from one page, the video gallery from two, and the referee guide and practice from three, mostly each other. | P3 consistency | Batch 43 |
 | 65 | No guided way to learn from video | Learners were left to search YouTube, where the results mix official, independent and mislabelled uploads, and auto-translated captions often get techniques and history wrong. Nothing said who published a video, which rules a match was fought under, or what to look for. | P2 content | Batch 42 |
 | 64 | No way to learn or practise how sparring is officiated | Parents, athletes and new referees met 1/2/3/4/6 points, Gam-jeom, the PSS and "Kal-yeo" at their first tournament with no plain explanation. The scoring and penalty rules changed again on 1 November 2026, and summaries online often double every penalty in the last ten seconds or mix up what the PSS, the judges and the centre referee each decide. | P2 content | Batch 41 |
@@ -2817,3 +2818,77 @@ The work below stays in the backlog. None of it is on this branch, and none of i
 
 ### Known limits
 - The audit looked for wording, imagery and links. It didn't review page layouts beyond the edited spots.
+
+## Batch 44 — a referee Practice view (item 67)
+
+### Design
+- **Watch and call in one place.** Desktop: from 960 px, the arena sits on the left and a compact call panel on the right. The panel holds the evidence (round clock, PSS, judges), the question with its answers in a 2 × 2 grid, the feedback, the step-by-step text description, and Next. The arena column stays in view while you scroll, so the feedback and the citations can be read beside the replay.
+- **A scenario bar instead of a long list first.** The scenario's profile and title, Previous and Next, "Scenario n of 16" and Focus mode. All 16 scenarios follow below the practice area as a grid of tiles, numbered, with their profile, and marked ✓ or ✗ once answered.
+- **Phone in about one screen.** One column: the bar (arrow-only Previous and Next on phones, still named "Previous scenario" and "Next scenario"), the whole arena, playback with a full-width scrubber, one row of camera and zoom buttons, the evidence and the answers. The drag hint is hidden on phones.
+- **Optional focus mode, like the lesson Study view.** The practice area fills the window and the rest of the page is hidden, so keyboard focus stays in it. The arena is sized from the window height, keeping 16:9, so the whole arena and its controls fit together. The toggle reports `aria-pressed`. Escape or the toggle leaves, restoring the scroll position and returning focus to the toggle.
+- **Never cropped.** The canvas is 16:9 in every mode, the shape the Batch 41 camera framing fits both whole fighters into. No layout rule changes its height or aspect.
+- **Progress, kept in this browser and said so.**
+  - The line under the panel shows, for example, "1 of 2 answered correctly, 2 of 16 tried", followed by a note that changes with what storage actually did:
+    - "Saved in this browser only."
+    - "Some saved answers couldn't be read and were removed; the rest are saved in this browser only."
+    - "Earlier progress in this browser couldn't be read, so it was reset."
+    - "This browser isn't saving progress, so it lasts only until you leave the page."
+    - "Progress cleared from this browser."
+  - **Reset progress** opens an inline confirmation ("Clear your answers for all 16 scenarios from this browser? This can't be undone."), with focus on the safe choice, "Keep progress". Escape keeps the progress. A status message announces the outcome, and focus returns to the reset button, or to the scenario heading once there is nothing left to reset. The button is disabled when there is nothing to reset.
+- **The text description:** now "What happens, step by step", a disclosure in the panel. The canvas is described by its steps (`aria-describedby="rf-steps"`). The disclosure opens by itself if the 3D view can't load.
+
+### Change
+- `referee.html`: the practice section (bar, stage, panel, progress), and the scenario list moved below it. Every existing control id is kept.
+- `css/referee.css`: the two-column practice layout, the compact panel, the phone rules and focus mode.
+- `js/pages/referee.js`: Previous and Next, the count, focus mode, the reset confirmation, and progress through the new module. The rules, the feedback and the arena calls are unchanged.
+- `js/referee/progress.js` (new): `sanitize` keeps only the 16 known scenario ids with true/false results. `createProgress` reads, repairs, probes and writes storage and reports its status; `progressText` and `savedNote` give the labels. It uses the same storage key (`tkdflow.refereePractice.v1`) and stores only `{scenarioId: true|false}`, with nothing sent anywhere.
+- **Unchanged:** the rules engine, the scenarios, the fighters, the arena, the framing, the scoring and all 16 answers. There are no new requests, accounts or scripts.
+
+### Tests (`tests/referee-practice.test.mjs`, new, 6; `tests/referee.test.mjs` unchanged and passing)
+- **Validation:** known ids with booleans survive. Unknown ids, non-boolean values, arrays, numbers, strings, unreadable JSON and `__proto__`/`constructor` keys are dropped, with no prototype pollution.
+- **Recovery and honest labels:**
+  - **Healthy storage:** valid answers load, recording writes clean JSON, and invalid records never reach storage.
+  - **Damaged data:** partly unreadable data is repaired and rewritten; wholly unreadable data is cleared.
+  - **Blocked or missing storage:** the page works for the visit, and the label never claims saving.
+  - **A write that starts failing later:** the label changes at once.
+  - **Reset:** it clears storage, or only the current visit if storage refuses.
+- **Labels and privacy:** the exact label texts. There are no fetch, beacon, cookie, sessionStorage or Supabase calls in the practice code, and all storage goes through `progress.js`. Every scenario still has exactly one correct answer from the rules.
+- **Layout:** the practice parts appear in reading order, the scenario list comes after them, the desktop grid keeps the arena in view, the answers are a 2 × 2 grid, and the phone rules apply. The arrow-only buttons keep their full names.
+- **Framing:** every canvas rule keeps 16:9, no viewer rule sets a height, and focus mode sizes the arena by width from the window height.
+- **Focus mode and reset:** the toggle markup and `aria-pressed`, the hidden page parts, the fixed practice area, scroll restoration, and Escape (closing the confirmation first, then leaving focus mode and returning focus to the toggle). The labelled confirmation, focus on the safe choice, the status announcement, the disabled reset when there is nothing to reset, and no `window.confirm` or `alert`.
+- **3D fallback:** if the arena reports an error, or the browser has no WebGL, the step-by-step text opens by itself.
+- **Naming:** the progress method is `setResult`, not `record`, because `tests/age-nav.test.mjs` treats any `.record(` call in a page script as an age-eligibility writer, and that test is left unchanged.
+- **Full suite:** 856/856 in the overlay, `git diff --check` is clean, and the layout is in sync.
+
+### Browser check (Claude, overlay on port 8926)
+- **Desktop (1280 × 800):**
+  - The arena (814 × 458) sits beside the panel, with the evidence, the question and all four answers visible at once.
+  - Answering "Blue +2" in the trunk kick showed "Correct." beside the arena, and storage held only `{"wt-trunk-kick":true}`.
+- **Reset, by keyboard:**
+  - Enter opened the confirmation with focus on "Keep progress". Escape kept the progress ("Progress kept.") and returned focus to Reset.
+  - "Clear progress" removed the key, re-enabled the answers, cleared the ✓ marks, announced "Practice progress cleared from this browser.", disabled Reset and moved focus to the heading.
+- **Malformed storage:**
+  - Mixed data (`wt-punch: "yes"`, an unknown id) kept `wt-head-kick ✓` and `wt-boundary ✗` and rewrote storage cleanly.
+  - `{not json` was cleared, and the label explained what happened.
+- **Focus mode (desktop):** the header and footer are hidden and the arena is 878 × 494 (1.778). The playback controls end at 622 px and the answers at 347 px of 800. Escape returned focus to the toggle and the scroll position to 300 px.
+- **Phone (390 × 844), normal view:** the first layout left the second row of answers 40 px off-screen. With the arrow-only scenario buttons and one camera row, the heading, the whole arena, playback, camera, evidence and every answer fit, the answers ending at 792 px. There is no overflow.
+- **Phone, focus mode:** the arena is 366 px wide at 16:9, and everything through Next scenario fits in 844 px.
+
+### Root QA (19 November, independent: passed)
+- **Focused tests:** 33 (referee practice, referee and contrast).
+- **Desktop (1512 × 828):** the whole canvas and the decision controls are visible together.
+- **Phone (390 × 844), focus view, all 16 scenarios:** every camera control fits, there is no horizontal overflow, and every answer button's bottom edge falls between 702 and 771 px.
+- **Feedback:** the first correct answer showed the source feedback.
+- **Progress:** a reload keeps the result. Cancelling the reset, or pressing Escape, keeps it. Root confirmed clearing its own single test answer, and after a reload all 16 showed as untried.
+- **Focus mode:** Escape returns focus to the Focus mode toggle.
+- **Evidence:** screenshots and JSON in the `batch-44-referee-practice` artifact directory.
+
+- **On the integrated branch:** root's checks pass 56/56 (referee practice, referee, site and contrast). Root independently confirmed the exact six-file allowlist, that the product and test files are byte-identical to the reviewed scratch, and that the rules, scenarios, arena, fighters and framing are unchanged.
+
+### Integration (19 November)
+- **Applied:** on `feat/referee-practice-view-2026-11-19` from main `f1211ce` (Batch 43 published), using the six-file allowlist. The patch applied with no fuzz, the changed files are exactly the allowlist and each matches the frozen overlay, and the docs only add lines. The checks below were run after these notes were added.
+
+### Known limits
+- The practice view changes layout and progress handling only. There are no new scenarios, rules or scoring.
+- Progress is per browser and per device by design. No account sync.
+- Focus mode hides the rest of the page rather than using a modal dialog, matching the lesson Study view.
