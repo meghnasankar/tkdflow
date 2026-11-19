@@ -59,67 +59,93 @@
  <div class="container content-wide rf-main">
   <p class="rf-disclaimer"><strong>Practice only.</strong> This is not referee certification or an official interpretation, and TKDflow is not affiliated with World Taekwondo or AAU Taekwondo. Real events follow the current official rules and the referees on the day. New to the rules? Read the <a href="/referee-guide.html">referee guide</a> first. <a href="#rf-courses">Where to train as a referee</a>.</p>
 
-  <div class="rf-layout">
-   <nav class="rf-list" aria-label="Scenarios">
-    <h2 class="rf-list-title">Scenarios <span class="rf-progress" id="rf-progress"></span></h2>
-    <ol id="rf-scenarios" class="rf-scenarios"></ol>
-   </nav>
-
-   <section class="rf-stage" aria-labelledby="rf-title">
+  <section class="rf-practice" id="rf-practice" aria-labelledby="rf-title">
+   <div class="rf-bar">
     <div class="rf-head" id="rf-head">
      <p class="rf-profile" id="rf-profile"></p>
      <h2 id="rf-title" tabindex="-1">Loading the arena…</h2>
     </div>
-    <div class="rf-viewer">
-     <canvas id="rf-canvas" class="rf-canvas" aria-describedby="rf-steps-title" role="img" aria-label="3D sparring arena: Chung in blue protectors and Hong in red."></canvas>
-     <div class="rf-overlay" aria-hidden="true">
-      <span class="rf-clock" id="rf-clock"></span>
-      <span class="rf-time" id="rf-time"></span>
+    <div class="rf-bar-tools">
+     <div class="rf-stepper" role="group" aria-label="Scenarios">
+      <button type="button" class="btn btn-ghost btn-sm" id="rf-prev"><span aria-hidden="true">←</span><span class="rf-word"> Previous</span><span class="sr-only"> scenario</span></button>
+      <span class="rf-count" id="rf-count">Scenario 1 of 16</span>
+      <button type="button" class="btn btn-ghost btn-sm" id="rf-next-top"><span class="rf-word">Next</span><span class="sr-only"> scenario</span> <span aria-hidden="true">→</span></button>
      </div>
-     <p class="rf-status" id="rf-status" role="status"></p>
+     <button type="button" class="btn btn-secondary btn-sm rf-focus-toggle" id="rf-focus" aria-pressed="false">Focus mode</button>
     </div>
-    <div class="rf-controls" role="group" aria-label="Playback">
-     <button type="button" class="btn btn-primary btn-sm" id="rf-play">Play</button>
-     <button type="button" class="btn btn-secondary btn-sm" id="rf-replay">Replay</button>
-     <span class="rf-speed"><label for="rf-speed">Speed</label>
-      <select id="rf-speed"><option value="1">1×</option><option value="0.5">0.5×</option><option value="0.25" selected>0.25×</option></select>
-     </span>
-     <span class="rf-scrub"><label for="rf-scrub" class="sr-only">Time in the exchange</label><input type="range" id="rf-scrub" min="0" max="1000" value="0"></span>
-     <span class="rf-views" role="group" aria-label="Camera">
-      <button type="button" class="btn btn-ghost btn-sm" data-view="side">Side</button>
-      <button type="button" class="btn btn-ghost btn-sm" data-view="referee">Referee</button>
-      <button type="button" class="btn btn-ghost btn-sm" data-view="above">Above</button>
-     </span>
-     <span class="rf-views" role="group" aria-label="Zoom">
-      <button type="button" class="btn btn-ghost btn-sm" data-zoom="in">Zoom in</button>
-      <button type="button" class="btn btn-ghost btn-sm" data-zoom="out">Zoom out</button>
-      <button type="button" class="btn btn-ghost btn-sm" data-zoom="reset">Reset view</button>
-     </span>
-    </div>
-    <p class="rf-hint">Drag the arena to look from any side, or use the camera buttons; pinch, scroll or use Zoom in and Zoom out to look closer, and Reset view to start again. The gold flash marks the moment of contact.</p>
+   </div>
 
-    <div class="rf-evidence" aria-labelledby="rf-evidence-title">
-     <h3 id="rf-evidence-title">What the officials have</h3>
-     <dl>
-      <dt>Round clock at the moment</dt><dd id="rf-ev-clock"></dd>
-      <dt>Sensors (PSS)</dt><dd id="rf-ev-pss"></dd>
-      <dt>Judges</dt><dd id="rf-ev-judges"></dd>
-     </dl>
+   <div class="rf-play">
+    <div class="rf-stage">
+     <div class="rf-viewer">
+      <canvas id="rf-canvas" class="rf-canvas" aria-describedby="rf-steps" role="img" aria-label="3D sparring arena: Chung in blue protectors and Hong in red."></canvas>
+      <div class="rf-overlay" aria-hidden="true">
+       <span class="rf-clock" id="rf-clock"></span>
+       <span class="rf-time" id="rf-time"></span>
+      </div>
+      <p class="rf-status" id="rf-status" role="status"></p>
+     </div>
+     <div class="rf-controls" role="group" aria-label="Playback">
+      <button type="button" class="btn btn-primary btn-sm" id="rf-play">Play</button>
+      <button type="button" class="btn btn-secondary btn-sm" id="rf-replay">Replay</button>
+      <span class="rf-speed"><label for="rf-speed">Speed</label>
+       <select id="rf-speed"><option value="1">1×</option><option value="0.5">0.5×</option><option value="0.25" selected>0.25×</option></select>
+      </span>
+      <span class="rf-scrub"><label for="rf-scrub" class="sr-only">Time in the exchange</label><input type="range" id="rf-scrub" min="0" max="1000" value="0"></span>
+     </div>
+     <div class="rf-camera">
+      <span class="rf-views" role="group" aria-label="Camera">
+       <button type="button" class="btn btn-ghost btn-sm" data-view="side">Side</button>
+       <button type="button" class="btn btn-ghost btn-sm" data-view="referee">Referee</button>
+       <button type="button" class="btn btn-ghost btn-sm" data-view="above">Above</button>
+      </span>
+      <span class="rf-views" role="group" aria-label="Zoom">
+       <button type="button" class="btn btn-ghost btn-sm" data-zoom="in">Zoom in</button>
+       <button type="button" class="btn btn-ghost btn-sm" data-zoom="out">Zoom out</button>
+       <button type="button" class="btn btn-ghost btn-sm" data-zoom="reset">Reset view</button>
+      </span>
+     </div>
+     <p class="rf-hint">Drag the arena to look from any side, or use the camera buttons; pinch, scroll or use Zoom in and Zoom out to look closer, and Reset view to start again. The gold flash marks the moment of contact.</p>
     </div>
 
-    <div class="rf-steps">
-     <h3 id="rf-steps-title">What happens</h3>
-     <ol id="rf-steps"></ol>
+    <div class="rf-panel">
+     <div class="rf-evidence" aria-labelledby="rf-evidence-title">
+      <h3 id="rf-evidence-title">What the officials have</h3>
+      <dl>
+       <div><dt>Round clock</dt><dd id="rf-ev-clock"></dd></div>
+       <div><dt>Sensors (PSS)</dt><dd id="rf-ev-pss"></dd></div>
+       <div><dt>Judges</dt><dd id="rf-ev-judges"></dd></div>
+      </dl>
+     </div>
+     <fieldset class="rf-question">
+      <legend>What should the scoreboard show?</legend>
+      <div id="rf-options" class="rf-options"></div>
+     </fieldset>
+     <div class="rf-feedback" id="rf-feedback" aria-live="polite" hidden></div>
+     <details class="rf-steps" id="rf-steps-box">
+      <summary id="rf-steps-title">What happens, step by step</summary>
+      <ol id="rf-steps"></ol>
+     </details>
+     <p class="rf-nav"><button type="button" class="btn btn-secondary btn-sm" id="rf-next">Next scenario</button></p>
     </div>
+   </div>
 
-    <fieldset class="rf-question">
-     <legend>What should the scoreboard show?</legend>
-     <div id="rf-options" class="rf-options"></div>
-    </fieldset>
-    <div class="rf-feedback" id="rf-feedback" aria-live="polite" hidden></div>
-    <p class="rf-nav"><button type="button" class="btn btn-secondary btn-sm" id="rf-next">Next scenario</button></p>
-   </section>
-  </div>
+   <div class="rf-saved">
+    <p class="rf-saved-line"><span class="rf-progress" id="rf-progress"></span> <span class="rf-saved-note" id="rf-saved-note">Your practice progress is saved in this browser only.</span></p>
+    <button type="button" class="rf-reset" id="rf-reset" aria-controls="rf-confirm" aria-expanded="false">Reset progress</button>
+    <div class="rf-confirm" id="rf-confirm" role="group" aria-labelledby="rf-confirm-text" hidden>
+     <p id="rf-confirm-text">Clear your answers for all 16 scenarios from this browser? This can’t be undone.</p>
+     <button type="button" class="btn btn-primary btn-sm" id="rf-confirm-yes">Clear progress</button>
+     <button type="button" class="btn btn-secondary btn-sm" id="rf-confirm-no">Keep progress</button>
+    </div>
+    <p class="sr-only" id="rf-announce" role="status"></p>
+   </div>
+  </section>
+
+  <nav class="rf-list" aria-labelledby="rf-list-title">
+   <h2 class="rf-list-title" id="rf-list-title">All scenarios</h2>
+   <ol id="rf-scenarios" class="rf-scenarios"></ol>
+  </nav>
 
   <section class="content-section" id="rf-profiles" aria-labelledby="rf-profiles-title">
    <h2 id="rf-profiles-title">The three rule profiles</h2>
