@@ -91,13 +91,17 @@ test('the photos are the licensed files, sized for the page, with the credits th
     assert.ok(statSync(new URL('../' + p.file, import.meta.url)).size < 200_000, `${p.file} stays light`);
     assert.match(fig, /alt="[^"]{60,}"/, 'descriptive alternative text');
     for (const s of [p.author, `href="${p.page}"`, `href="${p.licence}"`, p.name]) assert.ok(fig.includes(s), `${p.file} credit has ${s}`);
-    assert.match(fig, /Resized and converted to WebP/);
+    assert.match(fig, /Adapted for this page/, 'a plain adaptation notice');
+    assert.doesNotMatch(fig.slice(fig.indexOf('<figcaption')), /resiz|convert|WebP/i, 'no file-processing details in the caption');
   }
   assert.match(figures[0], /present-day view, not a photograph from 1972/, 'the 2026 photo is not passed off as archival');
   assert.match(figures[1], /shared under the same licence/, 'the adapted CC BY-SA image keeps its licence');
   assert.doesNotMatch(figures[1], /alt="[^"]*\b(named|champion|gold medall?ist)\b/i, 'no athlete identification');
   // Same images credited again in the sources list.
   for (const p of photos) assert.ok(main.slice(main.indexOf('id="hi-sources"')).includes(`href="${p.page}"`));
+  const sources = main.slice(main.indexOf('id="hi-sources"'));
+  assert.match(sources, /CC BY-SA 4\.0<\/a>; adapted and shared under the same licence\./);
+  assert.doesNotMatch(sources, /resiz|converted to WebP/i);
 });
 
 test('the page is self-contained: same-origin images, no embeds or scripts of its own, external links only to sources', () => {

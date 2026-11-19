@@ -3138,3 +3138,23 @@ The three under 2 cm (Sipjin 33 and 36, and Jitae's return to ready) are within 
 - **Independent diff:** the 68 existing pages only gain the header link. The guide and practice page section change and the hero action were reviewed separately.
 - **Viewport:** reset after testing.
 - **Evidence:** the `batch-51-referee-navigation` artifact directory.
+
+## Batch 53 — plainer photo credits on the history page
+
+### Change
+- `history.html`: the two photo captions and the Rio entry in "Sources and photo credits" no longer describe file processing ("Resized and converted to WebP"). Author, source page, licence link and licence name are unchanged.
+  - Kukkiwon south gate (CC0 1.0): the caption ends "Adapted for this page."
+  - Rio 2016 arena (CC BY-SA 4.0): the caption ends "Adapted for this page and shared under the same licence." The sources list says "adapted and shared under the same licence."
+
+### Tests (`tests/history.test.mjs`)
+- Each caption has the plain adaptation notice, and no caption mentions resizing, conversion or WebP.
+- The sources list keeps the CC BY-SA adaptation and share-alike wording, without file-processing details.
+
+### Checks and status (19 November)
+- **Full suite:** 863/863 (`npm run check` on `chore/photo-credit-wording-2026-11-19` from main `4ad86f5`). `git diff --check` is clean and the layout is in sync.
+- **Root QA:** passed.
+  - All three public occurrences of the file-processing wording are removed.
+  - Original author, source and licence links are unchanged.
+  - 29/29 focused history and site checks pass.
+  - Desktop DOM captions are clean, with no overflow.
+- **Frozen for root to commit and publish:** three files (`history.html`, `tests/history.test.mjs`, this document).
