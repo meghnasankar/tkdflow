@@ -98,8 +98,8 @@ export function createProceduralAvatar({onReady,onError}={}){
  const root=new THREE.Group();root.name='connected-meghna-avatar';let rig=null;
  Promise.all([asset(MEDIA.character.src),asset(MEDIA.emblem.src)]).then(([atlas,emblem])=>{
   const cloth=material(0xf3f2ef,.88);cloth.map=uniformTexture(atlas);cloth.map.anisotropy=4;
-  const skin=material(0xb68162,.78),hair=material(0x181316,.72),black=material(0x12151b,.75);
-  skin.emissive.set(0xb68162);skin.emissiveIntensity=.035;
+  const skin=material(0xc4957a,.78),hair=material(0x181316,.72),black=material(0x12151b,.75);
+  skin.emissive.set(0xc4957a);skin.emissiveIntensity=.035;
   const bones=[];const bone=(name,parent,position)=>{const b=new THREE.Bone();b.name=name;b.position.set(...position);if(parent)parent.add(b);bones.push(b);return b;};
   const pelvis=bone('pelvis',null,[0,1,0]),chest=bone('chest',pelvis,[0,0,0]);root.add(pelvis);
   const arms={};for(const [side,sign]of [['left',1],['right',-1]]){const upper=bone(side+'-upper',chest,[sign*.19,.455,0]),lower=bone(side+'-forearm',upper,[sign*BODY.upperArm,0,0]),wrist=bone(side+'-wrist',lower,[sign*BODY.forearm,0,0]);arms[side]={upper,lower,wrist,sign};}

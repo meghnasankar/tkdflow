@@ -1,7 +1,7 @@
 {
  "note": "The PNG exported from social-card.svg (docs/social-preview.md). Re-export the PNG and update both hashes together whenever the SVG or its embedded thumbnail changes.",
- "svgSha256": "771b6c1c6e0263ea1e2671ac8e205c0ee66b7ce0822727a3fccf5775cee35a92",
- "pngSha256": "dae7d380310b3f258627d3558b9f19ae7f282d9b7edf906c29038f4ac79b353c",
+ "svgSha256": "6746ddbb35c0c461fa67ff0790ef6f1d79c94efc47c7e1055fe6df66a1c6ec2c",
+ "pngSha256": "f59a13d92ff25b66a26647c55fbe6d2f3017f191006cf6ee1226a9b6f1584967",
  "thumbnail": "assets/forms/taegeuk-4.webp",
- "thumbnailSha256": "452a918c996102caa182b14a50a9e5031a0c2c114b9ff1a4da1839476b53a3b7"
+ "thumbnailSha256": "90c7b5a27c8d852e8d098b0ca52ffb8346d422ec8a1db39cf64c9712309174e9"
 }

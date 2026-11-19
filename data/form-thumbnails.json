@@ -23,15 +23,15 @@
       "meaning": "Heaven & Light",
       "name": "Taegeuk Il Jang",
       "alt": "Taegeuk Il Jang: the lesson character performing left low block.",
-      "bytes": 14596,
-      "assetSha256": "6293dcadd0d464cddca6f51adfbb66c0e65cf3365b9a1e688cf46a1dae09670d",
+      "bytes": 14486,
+      "assetSha256": "58331a208416f355e4abcb3feed2f7804308443eb372fcdc94eabe8266457695",
       "renderProof": {
         "alphaBounds": {
-          "bottom": 921,
-          "count": 112047,
-          "left": 419,
+          "bottom": 920,
+          "count": 111483,
+          "left": 410,
           "right": 684,
-          "top": 99
+          "top": 101
         },
         "cameraAngle": 30,
         "id": "taegeuk-1",
@@ -58,15 +58,15 @@
       "meaning": "Lake & Joy",
       "name": "Taegeuk Yi Jang",
       "alt": "Taegeuk Yi Jang: the lesson character performing left high block.",
-      "bytes": 17124,
-      "assetSha256": "74da65ca147c24a1c4862f3c833065e53bb7b0b4b2f2c26ab28b688f6148c9db",
+      "bytes": 16764,
+      "assetSha256": "5a4c406e4bcd10275bce89d382b3ea2afbe333b38fc32575ba440e0999afe5ec",
       "renderProof": {
         "alphaBounds": {
-          "bottom": 929,
-          "count": 114974,
-          "left": 407,
+          "bottom": 928,
+          "count": 114485,
+          "left": 381,
           "right": 667,
-          "top": 83
+          "top": 84
         },
         "cameraAngle": 28,
         "id": "taegeuk-2",
@@ -93,15 +93,15 @@
       "meaning": "Fire & Sun",
       "name": "Taegeuk Sam Jang",
       "alt": "Taegeuk Sam Jang: the lesson character performing right knifehand strike.",
-      "bytes": 15404,
-      "assetSha256": "bee84163de57c334283c1ded5a184373852708e343e9243a10eae78853910e2b",
+      "bytes": 15312,
+      "assetSha256": "112d620ec844c0c9508e8e56e434c7d18c74931143ea7a10eff948fb19838c07",
       "renderProof": {
         "alphaBounds": {
-          "bottom": 904,
-          "count": 114489,
-          "left": 403,
-          "right": 701,
-          "top": 109
+          "bottom": 902,
+          "count": 114000,
+          "left": 389,
+          "right": 707,
+          "top": 110
         },
         "cameraAngle": 24,
         "id": "taegeuk-3",
@@ -128,14 +128,14 @@
       "meaning": "Thunder & Dignity",
       "name": "Taegeuk Sa Jang",
       "alt": "Taegeuk Sa Jang: the lesson character performing left side kick.",
-      "bytes": 14106,
-      "assetSha256": "452a918c996102caa182b14a50a9e5031a0c2c114b9ff1a4da1839476b53a3b7",
+      "bytes": 14632,
+      "assetSha256": "90c7b5a27c8d852e8d098b0ca52ffb8346d422ec8a1db39cf64c9712309174e9",
       "renderProof": {
         "alphaBounds": {
           "bottom": 855,
-          "count": 104687,
+          "count": 104349,
           "left": 344,
-          "right": 767,
+          "right": 766,
           "top": 112
         },
         "cameraAngle": 65,
@@ -163,13 +163,13 @@
       "meaning": "Wind & Gentleness",
       "name": "Taegeuk Oh Jang",
       "alt": "Taegeuk Oh Jang: the lesson character performing right elbow strike.",
-      "bytes": 17482,
-      "assetSha256": "cefd5770c3798a8413fdc11baefb882c962fff9bd46a617ec8cdcce887149f71",
+      "bytes": 17268,
+      "assetSha256": "a8285b75d5876471f31e3afbf4445cc50254b9023ba2ec84d6c2921d1ca788fa",
       "renderProof": {
         "alphaBounds": {
           "bottom": 917,
-          "count": 98180,
-          "left": 451,
+          "count": 96656,
+          "left": 462,
           "right": 700,
           "top": 113
         },
@@ -198,14 +198,14 @@
       "meaning": "Water & Softness",
       "name": "Taegeuk Yuk Jang",
       "alt": "Taegeuk Yuk Jang: the lesson character performing left roundhouse kick.",
-      "bytes": 17960,
-      "assetSha256": "3204c032f202d7001410198d590ca1badfc58db30214c00247ec27b4e356aa5a",
+      "bytes": 17828,
+      "assetSha256": "1f347b95ae0f5487221c0679d812319dbadf2226b96bacf443069f986f83e622",
       "renderProof": {
         "alphaBounds": {
           "bottom": 847,
-          "count": 97835,
+          "count": 97234,
           "left": 361,
-          "right": 746,
+          "right": 743,
           "top": 111
         },
         "cameraAngle": 60,
@@ -233,14 +233,14 @@
       "meaning": "Mountain & Stillness",
       "name": "Taegeuk Chil Jang",
       "alt": "Taegeuk Chil Jang: the lesson character performing left scissor block.",
-      "bytes": 15124,
-      "assetSha256": "77cd30b5307d622cdb2961bab271b6f97913f9b15e4e29cfe28b9869687d5063",
+      "bytes": 15010,
+      "assetSha256": "ae57cc7118492a06987c55b660257d6d54f0e5e9a966e29fdc2766a5a7fcec6c",
       "renderProof": {
         "alphaBounds": {
           "bottom": 920,
-          "count": 106769,
-          "left": 385,
-          "right": 662,
+          "count": 106550,
+          "left": 384,
+          "right": 661,
           "top": 110
         },
         "cameraAngle": 30,
@@ -268,15 +268,15 @@
       "meaning": "Earth & Infinity",
       "name": "Taegeuk Pal Jang",
       "alt": "Taegeuk Pal Jang: the lesson character performing right mountain block.",
-      "bytes": 16540,
-      "assetSha256": "90878b8abc3e3f783dabd08b26f6dc2bb0babc27214c1ecf7c0f34f55a660803",
+      "bytes": 16352,
+      "assetSha256": "b56473e3a4f1fc406fdb522894717ba7ff6e8aaf368ef3e1ab98fa848bb0cf42",
       "renderProof": {
         "alphaBounds": {
-          "bottom": 901,
-          "count": 125746,
-          "left": 398,
-          "right": 717,
-          "top": 116
+          "bottom": 899,
+          "count": 127772,
+          "left": 371,
+          "right": 727,
+          "top": 118
         },
         "cameraAngle": 35,
         "id": "taegeuk-8",
@@ -303,15 +303,15 @@
       "meaning": "The Goryeo Kingdom",
       "name": "Koryo",
       "alt": "Koryo: the lesson character performing right side kick.",
-      "bytes": 16206,
-      "assetSha256": "fef29aabae2dabb455812b3b1ab93af7c1a22393f9e658f99e47818c13dafa27",
+      "bytes": 16042,
+      "assetSha256": "634989f989797bd2cfa7fe9316c281be79c2d2c94f1b7be1f134944d2200361d",
       "renderProof": {
         "alphaBounds": {
-          "bottom": 850,
-          "count": 100385,
-          "left": 312,
-          "right": 759,
-          "top": 127
+          "bottom": 849,
+          "count": 98006,
+          "left": 315,
+          "right": 756,
+          "top": 129
         },
         "cameraAngle": 60,
         "id": "koryo",
@@ -338,12 +338,12 @@
       "meaning": "Diamond Mountain",
       "name": "Keumgang",
       "alt": "Keumgang: the lesson character performing left diamond block.",
-      "bytes": 15808,
-      "assetSha256": "e0b239a2d04dc5fc76f5cf6e7b9154c6146e52c991d5cad53aaa071120ad8553",
+      "bytes": 15562,
+      "assetSha256": "1535786c44e2244a13fd74d7813792a817993ed89924b81b347b256138817d7f",
       "renderProof": {
         "alphaBounds": {
           "bottom": 894,
-          "count": 93002,
+          "count": 93574,
           "left": 429,
           "right": 657,
           "top": 86
@@ -373,14 +373,14 @@
       "meaning": "Baekdu Mountain",
       "name": "Taebaek",
       "alt": "Taebaek: the lesson character performing left knifehand high block + right knifehand strike.",
-      "bytes": 16544,
-      "assetSha256": "438698c7cd050de6d2fe33afdb2a9e9d43be73f0ad7c61123cf1ee950218dc64",
+      "bytes": 16330,
+      "assetSha256": "a5d7daf868a1baba805ae9deeca47a74f20263ac9342693c3ca72a76cf255856",
       "renderProof": {
         "alphaBounds": {
-          "bottom": 917,
-          "count": 102352,
-          "left": 401,
-          "right": 673,
+          "bottom": 915,
+          "count": 100147,
+          "left": 389,
+          "right": 667,
           "top": 103
         },
         "cameraAngle": 30,
@@ -408,14 +408,14 @@
       "meaning": "A Vast Plain",
       "name": "Pyongwon",
       "alt": "Pyongwon: the lesson character performing left turning side kick.",
-      "bytes": 17824,
-      "assetSha256": "b992a4b9a73782ea22b20bf3ae4bbd7dcc609218fd6569001fa922c7f00a61d9",
+      "bytes": 17742,
+      "assetSha256": "b7fc305420152fe23a3fa43726c200a3e2b2e1e92e99ddf6507363da8e97eaa2",
       "renderProof": {
         "alphaBounds": {
           "bottom": 839,
-          "count": 95011,
+          "count": 94439,
           "left": 352,
-          "right": 767,
+          "right": 766,
           "top": 123
         },
         "cameraAngle": 60,
@@ -443,12 +443,12 @@
       "meaning": "Ten Perfections",
       "name": "Sipjin",
       "alt": "Sipjin: the lesson character performing rock pushing.",
-      "bytes": 15516,
-      "assetSha256": "71473aa16ec67fbe068760b41c4d799a7fddcb910ffc45e657de6242d79a8e68",
+      "bytes": 15200,
+      "assetSha256": "e59dc8ab401e1a86e7d8a4add900ccfebb7191f043a9df064b369bfa02f0ea34",
       "renderProof": {
         "alphaBounds": {
           "bottom": 915,
-          "count": 119861,
+          "count": 119691,
           "left": 357,
           "right": 665,
           "top": 105
@@ -478,15 +478,15 @@
       "meaning": "Life on Earth",
       "name": "Jitae",
       "alt": "Jitae: the lesson character performing diamond front punch.",
-      "bytes": 14938,
-      "assetSha256": "e341e22b5ff581a9786dd865894578a00d3d57dbf749c572b7b03a2086d582e5",
+      "bytes": 14644,
+      "assetSha256": "b7af1b73395fc22898eb5ba5bfb2067911fba82edcc4aac260e723acb1382599",
       "renderProof": {
         "alphaBounds": {
-          "bottom": 889,
-          "count": 112572,
-          "left": 339,
-          "right": 675,
-          "top": 106
+          "bottom": 896,
+          "count": 115352,
+          "left": 356,
+          "right": 680,
+          "top": 101
         },
         "cameraAngle": 30,
         "id": "jitae",
@@ -513,15 +513,15 @@
       "meaning": "Heaven & Earth",
       "name": "Chon-Ji",
       "alt": "Chon-Ji: the lesson character performing left low block.",
-      "bytes": 14324,
-      "assetSha256": "bbf12401405ef1fb1bd26d82815e6260e109a00f1d70dc91d46fa7577c44b5a8",
+      "bytes": 14278,
+      "assetSha256": "488cadf9ec09ed0cee42c598f4914f21283c5e69a7cef1aa6011d19859a6956a",
       "renderProof": {
         "alphaBounds": {
-          "bottom": 923,
-          "count": 118511,
-          "left": 422,
-          "right": 693,
-          "top": 100
+          "bottom": 922,
+          "count": 117504,
+          "left": 419,
+          "right": 697,
+          "top": 101
         },
         "cameraAngle": 25,
         "id": "chon-ji",
@@ -548,15 +548,15 @@
       "meaning": "Founder of Korea",
       "name": "Dan-Gun",
       "alt": "Dan-Gun: the lesson character performing left twin forearm block.",
-      "bytes": 14854,
-      "assetSha256": "3b20983810c349248caf64600a35da6d51699b5d915d14aa557cb6ba2fa722e9",
+      "bytes": 14386,
+      "assetSha256": "9daf17142865c8f71be87336b142a56d14aafdace4783411a3b66baecb1a736e",
       "renderProof": {
         "alphaBounds": {
-          "bottom": 924,
-          "count": 113567,
-          "left": 398,
-          "right": 733,
-          "top": 115
+          "bottom": 923,
+          "count": 113861,
+          "left": 375,
+          "right": 739,
+          "top": 116
         },
         "cameraAngle": 30,
         "id": "dan-gun",
@@ -583,12 +583,12 @@
       "meaning": "Ahn Chang-Ho",
       "name": "Do-San",
       "alt": "Do-San: the lesson character performing wedging block.",
-      "bytes": 15284,
-      "assetSha256": "db9daf88a3aa538a5a0c310436ffe79b171f3952a68e5e7b1f901c1a9c07778b",
+      "bytes": 14990,
+      "assetSha256": "3a4b194a31f2d1fb548b0f96cb374401f9a0653076226d3bfea629b2f07f6370",
       "renderProof": {
         "alphaBounds": {
           "bottom": 911,
-          "count": 107530,
+          "count": 108593,
           "left": 372,
           "right": 708,
           "top": 103
@@ -618,15 +618,15 @@
       "meaning": "Buddhist Monk",
       "name": "Won-Hyo",
       "alt": "Won-Hyo: the lesson character performing left bending ready.",
-      "bytes": 16262,
-      "assetSha256": "ad36da4254aa126a0d0feaefb91315c30c7538ef586edafe200354c6d8a485e9",
+      "bytes": 16058,
+      "assetSha256": "5716f4ff9987565f1c1e3b52d0e96818f418d3ca64bbb34e43009dd70d97ca49",
       "renderProof": {
         "alphaBounds": {
-          "bottom": 862,
-          "count": 101475,
-          "left": 385,
-          "right": 717,
-          "top": 104
+          "bottom": 860,
+          "count": 99132,
+          "left": 377,
+          "right": 720,
+          "top": 107
         },
         "cameraAngle": 30,
         "id": "won-hyo",
@@ -653,12 +653,12 @@
       "meaning": "Yi I, Confucian Scholar",
       "name": "Yul-Gok",
       "alt": "Yul-Gok: the lesson character performing right elbow strike.",
-      "bytes": 15854,
-      "assetSha256": "a0592445029ec2984481f9f085d3943d5c4c27a4a6173d25ccb4ea80580b6550",
+      "bytes": 15772,
+      "assetSha256": "00a631c66332f0088ecf88b8b41ec6b103583eda9b72739e06f99ef93dfe4ad5",
       "renderProof": {
         "alphaBounds": {
           "bottom": 887,
-          "count": 106858,
+          "count": 105911,
           "left": 434,
           "right": 686,
           "top": 107
@@ -688,12 +688,12 @@
       "meaning": "Ahn Joong-Gun",
       "name": "Joong-Gun",
       "alt": "Joong-Gun: the lesson character performing right u shape block.",
-      "bytes": 16254,
-      "assetSha256": "d60a4cb3731192ad03db082977fcab24402c91ea145ee5543add15f29498daa2",
+      "bytes": 16000,
+      "assetSha256": "884510576f5163ec5e2192240fecb653d4155f30e80f0bef38db823c636940be",
       "renderProof": {
         "alphaBounds": {
           "bottom": 906,
-          "count": 107984,
+          "count": 109458,
           "left": 374,
           "right": 667,
           "top": 105
@@ -723,12 +723,12 @@
       "meaning": "Pine tree & rock",
       "name": "Songahm 1",
       "alt": "Songahm 1: the lesson character performing right side kick.",
-      "bytes": 14174,
-      "assetSha256": "114e0293f19db74a331deb81fc83056e60c2578d2cfcc5d175d999fa91287504",
+      "bytes": 14014,
+      "assetSha256": "ae8ae6a0610add28d54a1faa677e619ee5aab4c7225c5d37de9053e1f3b1f25d",
       "renderProof": {
         "alphaBounds": {
           "bottom": 870,
-          "count": 114273,
+          "count": 113760,
           "left": 256,
           "right": 777,
           "top": 110
@@ -758,15 +758,15 @@
       "meaning": "Pine tree & rock",
       "name": "Songahm 2",
       "alt": "Songahm 2: the lesson character performing right roundhouse kick.",
-      "bytes": 14448,
-      "assetSha256": "b1b6443ec2e8c88edaf7407375cc1604bc9f2ea609fe1cf2e720d70c66c36962",
+      "bytes": 14512,
+      "assetSha256": "d17c85094633722272b0f1dd6fc47595adacc607d01d85cbe68d61cfa99f65b6",
       "renderProof": {
         "alphaBounds": {
           "bottom": 869,
-          "count": 100509,
-          "left": 290,
+          "count": 99240,
+          "left": 292,
           "right": 759,
-          "top": 125
+          "top": 126
         },
         "cameraAngle": 60,
         "id": "songahm-2",
@@ -793,12 +793,12 @@
       "meaning": "Pine tree & rock",
       "name": "Songahm 3",
       "alt": "Songahm 3: the lesson character performing right spearhand.",
-      "bytes": 15290,
-      "assetSha256": "9b2c9c34dbd3f8ad95de1e32cba3436277e2e7543a258c17b11cd5cefa4b3d08",
+      "bytes": 15116,
+      "assetSha256": "07524a03e1786dfabe4644141fce65731c7912e368c834a349817f1c0c0fb2fe",
       "renderProof": {
         "alphaBounds": {
           "bottom": 875,
-          "count": 113966,
+          "count": 112804,
           "left": 412,
           "right": 719,
           "top": 121

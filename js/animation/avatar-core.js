@@ -36,7 +36,7 @@ export const HAND_BONES = ['index1', 'index2', 'index3', 'middle1', 'middle2', '
 export function createAvatarCore(THREE) {
 const V = a => new THREE.Vector3(...a);
 const smooth = x => x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x);
-const COLOURS = {skin: [0xb68162, .62], cloth: [0xf3f2ef, .86], black: [0x12151b, .7], hair: [0x161214, .78], gold: [0xeac979, .4], sclera: [0xd8d0c6, .4], iris: [0x4a2a1a, .35], pupil: [0x070606, .3], brow: [0x2a1d1a, .85]};
+const COLOURS = {skin: [0xc4957a, .62], cloth: [0xf3f2ef, .86], black: [0x12151b, .7], hair: [0x161214, .78], gold: [0xeac979, .4], sclera: [0xd8d0c6, .4], iris: [0x4a2a1a, .35], pupil: [0x070606, .3], brow: [0x2a1d1a, .85]};
 // The character's belt texture, as on the procedural avatar: "Sankar" in gold on one tail; the emblem and two gold
 // bars on the other.
 function beltTexture(label, emblem) {
@@ -90,6 +90,11 @@ function frame(dir, side) {   // orthonormal basis: Y along dir, X toward `side`
   return new THREE.Matrix4().makeBasis(x, y, z);
 }
 const quatFromFrames = (f, f0) => new THREE.Quaternion().setFromRotationMatrix(f.clone().multiply(f0.clone().transpose()));
+/* A rotation's swing: what's left after removing its twist about the local +Y axis (q = swing · twist). */
+function swingOnly(q) {
+  const twist = new THREE.Quaternion(0, q.y, 0, q.w); if (twist.lengthSq() < 1e-12) return q.clone(); twist.normalize();
+  return q.clone().multiply(twist.invert());
+}
 function createPoser(av) {
   const R = av.rest, bonesMeta = av.meta.bones, rules = av.meta.handRules, sides = [['left', 'L'], ['right', 'R']], rest0 = {};
   const dir0 = n => R[n].tail.clone().sub(R[n].head);
@@ -130,10 +135,13 @@ function createPoser(av) {
       if (n.lengthSq() < 1e-6) n = r0.n0.clone().applyQuaternion(chestQ);      // a straight arm keeps the chest's frame
       set('upper.' + S, sh, quatFromFrames(frame(up, n), r0.upper)); set('fore.' + S, el, quatFromFrames(frame(lo, n), r0.fore));
       // Helper bones take half of the joint's turn (the Blender rig's half-strength copy rotation), so the jacket folds
-      // round a raised shoulder and a bent elbow instead of collapsing into fins.
+      // round a raised shoulder and a bent elbow instead of collapsing into fins. The shoulder helper takes half of the
+      // arm's swing but none of its roll about the upper arm (its rest frame is the upper arm's, so +Y is along the
+      // arm): the cloth round the shoulder, shared with the chest, isn't wrung when the arm rolls to cross the chest or
+      // turn a block, and the sleeve itself (weighted to the upper arm) rolls with the arm.
       if (R['shoulder.' + S]) {
         const restUp = R.chest.q.clone().invert().multiply(R['upper.' + S].q), actualUp = world.get('chest').quat.clone().invert().multiply(world.get('upper.' + S).quat);
-        derive('shoulder.' + S, new THREE.Quaternion().slerp(restUp.invert().multiply(actualUp), .5));
+        derive('shoulder.' + S, new THREE.Quaternion().slerp(swingOnly(restUp.invert().multiply(actualUp)), .5));
       }
       if (R['elbow.' + S]) {
         const restFore = R['upper.' + S].q.clone().invert().multiply(R['fore.' + S].q), actual = world.get('upper.' + S).quat.clone().invert().multiply(world.get('fore.' + S).quat);
