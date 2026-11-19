@@ -296,6 +296,15 @@ test('CI workflow runs the release checks with read-only permissions', () => {
   assert.match(yml, /run: npm ci/);
   assert.match(yml, /run: npm run check/);
   assert.match(yml, /persist-credentials: false/);
+  // Third-party actions are pinned to full commit SHAs with the release named in a comment (no movable tags).
+  const uses = [...yml.matchAll(/uses: ([^\s@]+)@(\S+)(?: # (v\d+\.\d+\.\d+))?/g)].map(m => ({action: m[1], ref: m[2], version: m[3]}));
+  assert.deepEqual(uses, [
+    {action: 'actions/checkout', ref: '3d3c42e5aac5ba805825da76410c181273ba90b1', version: 'v7.0.1'},
+    {action: 'actions/setup-node', ref: '949feb2413d6458794dcd2491c4babbbce0c15c1', version: 'v7.1.0'}
+  ]);
+  assert.match(yml, /cache: npm/); assert.match(yml, /timeout-minutes: 10/);
+  assert.match(yml, /^on:\n {2}push:\n {2}pull_request:\n/m, 'ordinary push and pull_request triggers only');
+  assert.doesNotMatch(yml, /pull_request_target|workflow_run|allow-unsafe-pr-checkout|package-manager-cache|registry-url/);
   assert.doesNotMatch(yml, /secrets\./, 'the check job needs no secrets');
   assert.ok(existsSync(join(ROOT, 'package-lock.json')), 'npm ci needs a lockfile');
 });

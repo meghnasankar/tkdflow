@@ -85,6 +85,7 @@ Older documents (`audit-tracker.md`, `RELEASE.md`, `site-usability-2026-11-17.md
 | 26 | Community: opening and closing a discussion, categories and refreshes lose focus | Codex observed live: opening a guide replaced the focused list link and left focus on `<body>`. The next Tab did reach "All topics", so it was usable, but the heading was not announced. In code, "All topics" removed itself; category buttons and the list were rebuilt on every click or refresh; and a preserved reply draft was re-attached after the replies loaded, losing its focus. | P2 accessibility | Published (PR 27) |
 | 27 | Printable lesson companions | Narration (748 cues, about 47 KB), pose names, count labels, turns and reference editions exist for all 23 lessons. Agreed direction: separate generated static pages with TKDflow's own narration verbatim. Held until batch 4 is reviewed. | P2 content | Published (PR 29) |
 | 28 | Community: the first session arriving removed focus from an opened guide's heading | Found live after PR 27: on a fresh signed-in load, a visitor who opened a bundled guide immediately had its heading focused. About 1 s later the session arrived, `applyConnection` called `clearPrivate()` and emptied the detail panel before `detail()` could keep focus, so focus fell to `<body>`. Reproduced in the real page harness with a deferred account service. | P2 accessibility | Published (PR 28) |
+| 68 | CI used movable action tags on the deprecated Node 20 runtime | `.github/workflows/check.yml` used `actions/checkout@v4` and `actions/setup-node@v4`, which run on Node 20 and produce GitHub's Node 20 deprecation notices. Version tags can also be moved. | P3 maintenance | Batch 45 |
 | 67 | Referee practice felt like a long article, not a practice tool | On desktop, the arena, the evidence and the answers sat one under another, so learners scrolled between watching and answering. On a 390 × 844 phone, the answers were several screens below the fighters. Saved progress was raw JSON read straight from localStorage, with no validation. The page never said where progress was kept, and there was no way to reset it. | P2 learning | Batch 44 |
 | 66 | Fixed-view wording and hard-to-find learning pages | A public-site audit after Batches 40–42. The 22 data-driven lessons, 23 lesson descriptions, the home page and a Community post still promised "camera views" from the fixed-view era, and lessons mentioned "camera labels" that only screen readers hear. Outside the footer, the history page was linked from one page, the video gallery from two, and the referee guide and practice from three, mostly each other. | P3 consistency | Batch 43 |
 | 65 | No guided way to learn from video | Learners were left to search YouTube, where the results mix official, independent and mislabelled uploads, and auto-translated captions often get techniques and history wrong. Nothing said who published a video, which rules a match was fought under, or what to look for. | P2 content | Batch 42 |
@@ -2892,3 +2893,48 @@ The work below stays in the backlog. None of it is on this branch, and none of i
 - The practice view changes layout and progress handling only. There are no new scenarios, rules or scoring.
 - Progress is per browser and per device by design. No account sync.
 - Focus mode hides the rest of the page rather than using a modal dialog, matching the lesson Study view.
+
+## Batch 45 — CI actions on Node 24, pinned to commits (item 68)
+
+### Change (`.github/workflows/check.yml` only)
+- `actions/checkout@v4` becomes `actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1`.
+- `actions/setup-node@v4` becomes `actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0`.
+- **Unchanged:** `permissions: contents: read`, `persist-credentials: false`, `node-version: 24`, `cache: npm`, `timeout-minutes: 10`, the `push` and `pull_request` triggers, the concurrency group, `npm ci` and `npm run check`. There are no new permissions, inputs, secrets or dependency changes.
+
+### Sources read (19 November 2026)
+- **The tags resolve to these commits** (GitHub API, git refs; both are lightweight tags pointing at commits): `actions/checkout` `refs/tags/v7.0.1` → `3d3c42e5aac5ba805825da76410c181273ba90b1`, and `actions/setup-node` `refs/tags/v7.1.0` → `949feb2413d6458794dcd2491c4babbbce0c15c1`.
+- **checkout, `action.yml` at the pinned commit:** runs on `node24`. `persist-credentials` remains (default true; we keep `false`). The new `allow-unsafe-pr-checkout` defaults to false and applies only to `pull_request_target` and `workflow_run`, which this workflow doesn't use.
+- **checkout, README at the pinned commit:**
+  - v7 refuses fork PR code under `pull_request_target`/`workflow_run` by default and moved to ES modules.
+  - v6 stores persisted credentials under `$RUNNER_TEMP`; this workflow doesn't persist them.
+  - v5 moved to node24 and needs Actions Runner v2.327.1 or later, which GitHub-hosted `ubuntu-latest` provides.
+- **checkout v7.0.1 release notes:** fixes only (the unsafe-PR check is skipped when the input is default, branch whitespace trimming, escaping for `--unset`) and dependency updates. https://github.com/actions/checkout/releases/tag/v7.0.1
+- **setup-node, `action.yml` at the pinned commit:** runs on `node24`. `cache` still supports `npm`. `package-manager-cache` (default true) only applies when `package.json` declares a package manager; the explicit `cache: npm` is unchanged.
+- **setup-node, README breaking changes:**
+  - v6 enables automatic npm caching when `packageManager`/`devEngines.packageManager` is npm, and removes `always-auth`, which isn't used here.
+  - v5 moved to node24 (runner v2.327.1 or later) and turned caching on by default.
+- **setup-node v7.0.0 release notes:** the move to ES modules, and the dummy `NODE_AUTH_TOKEN` export removed. This workflow uses neither `registry-url` nor `NODE_AUTH_TOKEN`.
+- **setup-node v7.1.0 release notes:** `mise.toml` support, absolute `node-version-file` paths, version validation with manifest-fetch retry, and dependency updates. https://github.com/actions/setup-node/releases/tag/v7.1.0
+
+### Tests (`tests/site.test.mjs`, the CI workflow test extended)
+- **Pins:** exactly two actions, pinned to these full SHAs, each with its version comment.
+- **Settings:** `cache: npm` and `timeout-minutes: 10`; `push` and `pull_request` are the only triggers.
+- **Absent:** `pull_request_target`, `workflow_run`, `allow-unsafe-pr-checkout`, `package-manager-cache` and `registry-url`.
+- **Kept from the existing test:** read-only permissions, no write permissions, Node 24, `npm ci`, `npm run check`, `persist-credentials: false` and no secrets.
+- **Full suite:** 852/852 locally (`npm run check`; the workflow itself can't run locally), and `git diff --check` is clean. The YAML parses, with the steps and `contents: read` as expected.
+
+### Known limits
+- Only GitHub Actions can confirm the change: the next CI run on the branch must pass without the Node 20 deprecation notice.
+- Pinned SHAs don't update themselves. Future upgrades need the same check of the release, `action.yml` and README.
+
+### Security options reviewed (unchanged in this workflow)
+- **`permissions: contents: read`:** the only token scope. There is no `write` permission and no secrets.
+- **`persist-credentials: false`:** the token isn't kept in the git config. In checkout v6 and later, credentials that are persisted go under `$RUNNER_TEMP`; here none are.
+- **`allow-unsafe-pr-checkout` (checkout v7) is not set.** Its default (false) refuses fork PR code under `pull_request_target`/`workflow_run`, triggers this workflow doesn't use.
+- **No `package-manager-cache` and no `registry-url`.** The explicit `cache: npm` stays, and there's no `NODE_AUTH_TOKEN`. setup-node's README recommends `package-manager-cache: false` for workflows with elevated privileges; this read-only job has none.
+- **Pinned commits:** movable tags are replaced, so a retagged release can't change what runs. The version comment names the release.
+
+### Integration (19 November)
+- **Applied:** on `chore/current-ci-actions-2026-11-19` from main `0a905e2` (Batch 44 published). `.github/workflows/check.yml` and `tests/site.test.mjs` were copied from the frozen overlay; both were unchanged on main since the overlay's base, `9f82e45`. The docs were reconciled rather than replaced: row 68 goes above row 67, and this section follows Batch 44, whose notes and root QA are kept.
+- **Runner:** root reports the current GitHub-hosted runner is v2.338.2, above the v2.327.1 both actions need. The previous main CI log shows the baseline warning, Node 24 being forced for the Node 20 actions; it should be gone once these pins run.
+- **Checks on this branch:** `npm run check` 858/858, `git diff --check` clean, the layout in sync, and nothing staged. The YAML parses to the two pinned actions, `npm ci`, `npm run check`, `permissions: {contents: read}` and `timeout-minutes: 10`.
