@@ -119,10 +119,10 @@ export function createChecklistStore(source=()=>globalThis.localStorage,{known=n
  };
 }
 export function storageMessage(state){
- if(state==='unavailable')return 'This browser isn’t letting the page use its storage right now, so your latest ticks are kept only on this page and are lost if you leave. Ticks saved here earlier may come back if the browser allows storage again. The checklist still works.';
- if(state==='write-failed')return 'Your latest ticks couldn’t be saved in this browser (it may be out of space). They’re still shown here, and the page tries again when you tick or untick an item. If you reload or leave now, the ticks last saved here come back without them.';
- if(state==='corrupt')return 'Saved ticks on this browser could not be read, so the checklist started empty. Ticking an item replaces the unreadable data.';
- if(state==='damaged')return 'The ticks saved in this browser became unreadable, so your latest tick wasn’t saved. Your ticks are still shown here; ticking or unticking an item replaces the unreadable data.';
- if(state==='unsaved')return 'Some of your latest ticks aren’t saved in this browser yet. They’re still shown here, and the page tries again when you tick or untick an item.';
- return 'Ticks are saved on this browser only.';
+ if(state==='unavailable')return 'This browser isn’t letting the page use its storage right now, so your latest checkmarks are kept only on this page and are lost if you leave. Checkmarks saved here earlier may come back if the browser allows storage again. The checklist still works.';
+ if(state==='write-failed')return 'Your latest checkmarks couldn’t be saved in this browser (it may be out of space). They’re still shown here, and the page tries again when you check or uncheck an item. If you reload or leave now, the checkmarks last saved here come back without them.';
+ if(state==='corrupt')return 'Saved checkmarks on this browser could not be read, so the checklist started empty. Checking an item replaces the unreadable data.';
+ if(state==='damaged')return 'The checkmarks saved in this browser became unreadable, so your latest checkmark wasn’t saved. Your checkmarks are still shown here; checking or unchecking an item replaces the unreadable data.';
+ if(state==='unsaved')return 'Some of your latest checkmarks aren’t saved in this browser yet. They’re still shown here, and the page tries again when you check or uncheck an item.';
+ return 'Checkmarks are saved on this browser only.';
 }

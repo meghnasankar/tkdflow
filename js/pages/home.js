@@ -45,7 +45,7 @@ async function events() {
     if (upcoming.length) {
       $('events-state').textContent = 'Available';
       $('events-state').className = 'feature-state available';
-      $('events-teaser').textContent = `${upcoming.length} upcoming or announced event${upcoming.length === 1 ? '' : 's'} listed, each with the organiser’s official page.`;
+      $('events-teaser').textContent = `${upcoming.length} upcoming or announced event${upcoming.length === 1 ? '' : 's'} listed, each with the organizer’s official page.`;
     }
   } catch { /* the static teaser text stays accurate */ }
 }

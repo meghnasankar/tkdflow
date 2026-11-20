@@ -95,7 +95,7 @@ test('homepage Explore section offers each learner task once, including the newe
 
 test('every page has language, title, description, canonical/robots and landmarks', () => {
   for (const p of pages) {
-    assert.match(p.html, /<html lang="en">/, p.file);
+    assert.match(p.html, /<html lang="en-US">/, p.file);
     assert.match(p.html, /<title>[^<]{10,}<\/title>/, p.file);
     assert.match(p.html, /<meta name="description" content="[^"]{20,}">/, p.file);
     assert.match(p.html, /<meta property="og:title"/, p.file);

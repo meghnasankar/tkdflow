@@ -58,9 +58,22 @@ export function publishedTopic(client,id){
  if(!/^[a-f\d]{8}(?:-[a-f\d]{4}){3}-[a-f\d]{12}$/i.test(id||''))return Promise.resolve({data:null,error:null});
  return bounded(()=>client.from('discussion_topics').select(TOPIC_COLUMNS).eq('id',id).eq('status','published').maybeSingle(),{label:'Discussion'});
 }
+/* Two seeded editorial guides were stored before the site used US spelling, and the seed
+   never rewrites existing rows. Only these exact phrases in these exact guides are shown
+   in US spelling; every other topic, field and member post is returned untouched. */
+export const GUIDE_WORDING=Object.freeze({
+ 'e3575f0d-d099-5f5b-8b54-86240a223faa':[['A belt colour alone','A belt color alone']],
+ 'dfe87518-ec3e-5013-9b2a-ab7fb3a6713e':[['practise with attention','practice with attention']],
+});
+export function guideWording(row){
+ const fixes=row?.editorial===true&&typeof row.body==='string'&&GUIDE_WORDING[String(row.id).toLowerCase()];
+ if(!fixes)return row;
+ const body=fixes.reduce((text,[from,to])=>text.replaceAll(from,to),row.body);
+ return body===row.body?row:{...row,body};
+}
 export function mergePublishedTopics(guides,rows){
  const reference=new Map(guides.map(t=>[t.id,t]));
- return rows.filter(t=>t.status==='published').map(t=>({...reference.get(t.id),...t}));
+ return rows.filter(t=>t.status==='published').map(t=>guideWording({...reference.get(t.id),...t}));
 }
 export function starterGuides(topics){
  const selected=[];for(const category of ['forms-discussion','technique-qa','competitions']){const topic=topics.find(t=>t.editorial&&t.category===category);if(topic)selected.push(topic);}

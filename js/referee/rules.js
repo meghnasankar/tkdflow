@@ -9,7 +9,7 @@ export const PROFILES = Object.freeze({
     headContact: 'scoring', turningHeadBonus: true
   },
   'aau-youth': {
-    id: 'aau-youth', name: 'AAU Taekwondo Olympic-style sparring, youth safety rules (all belts 5–11, colour belts 12–17), effective 1 November 2026', short: 'AAU youth',
+    id: 'aau-youth', name: 'AAU Taekwondo Olympic-style sparring, youth safety rules (all belts 5–11, color belts 12–17), effective 1 November 2026', short: 'AAU youth',
     source: {title: 'AAU Taekwondo Competition Rules & Regulations Handbook, effective 11-01-2026', url: 'https://drive.google.com/file/d/1POLryUPZUwdIX03Texak8eYgY9vKfxx2/view?usp=sharing', publisherNote: 'linked from AAU Taekwondo’s Rules menu: https://aausports.org/taekwondo/'},
     headContact: 'light', turningHeadBonus: false
   },
@@ -31,7 +31,7 @@ export const CITES = Object.freeze({
     gamjeom: 'WT Art. 12.3.5 and 14.3 (printed pp. 33, 37): the referee declares Gam-jeom, and each counts as one point for the opponent.',
     last10: 'WT Art. 12.3.5.1 (printed p. 33): in the last ten seconds of a round, Gam-jeom for crossing the boundary line, falling down, or running away/avoiding gives two points to the opponent. Other prohibited acts are not doubled.',
     boundary: 'WT Art. 14.4.1.1 and Explanation i (printed pp. 37, 39): Gam-jeom if any part of a foot crosses the boundary line; none if the crossing was caused by the opponent’s prohibited act.',
-    push: 'WT Art. 14.4.1.4 and Explanation iv (printed pp. 37, 40): one quick push followed by disengaging is permitted; pushing with prolonged contact or out of the boundary line is penalised.',
+    push: 'WT Art. 14.4.1.4 and Explanation iv (printed pp. 37, 40): one quick push followed by disengaging is permitted; pushing with prolonged contact or out of the boundary line is penalized.',
     fallAfterTurning: 'WT Art. 14, Explanation ii (printed p. 39): no penalty when a contestant who scored with a turning kick falls down.',
     count: 'WT Art. 17–18 and Art. 18 Explanation #2 (printed pp. 50–53): after a knock-down from a legitimate technique the referee counts, and counting to eight is compulsory.',
     handToHead: 'WT Art. 14.4.1.8 and Explanation viii (printed pp. 37, 40): hitting the opponent’s head with the hand is a prohibited act.',
@@ -40,7 +40,7 @@ export const CITES = Object.freeze({
   'aau-youth': {
     trunkKick: 'AAU Art. 9.3.2 (printed p. 42): two points for a valid kick to the trunk protector.',
     turning: 'AAU Art. 9.3.4 (printed p. 42): a valid turning kick to the trunk scores four points (2 from the PSS, 2 from the technical judge).',
-    headLight: 'AAU Art. 22.3 and 22.4.1–22.4.2 (printed pp. 59–60): for all belts aged 5–11 and colour belts aged 12–17, head contact must be light and controlled; a light-contact kick to the head scores three points, with no extra points for a turning kick to the head.',
+    headLight: 'AAU Art. 22.3 and 22.4.1–22.4.2 (printed pp. 59–60): for all belts aged 5–11 and color belts aged 12–17, head contact must be light and controlled; a light-contact kick to the head scores three points, with no extra points for a turning kick to the head.',
     fallAfterTurningHead: 'AAU Art. 22.4.3–22.4.4 (printed p. 60): in youth safety divisions, turning kicks to the head are not considered when deciding penalties related to falling; Gam-jeom for falling is given after a turning kick to the head.',
     headCount: 'AAU Art. 22.3.7 (printed p. 60): there are no 8-counts for any head kick, even a legal one; a head kick powerful enough to warrant an 8-count is excessive.',
     trunkCount: 'AAU Art. 22.3.9 (printed p. 60): strong kicks to the trunk follow the standard knock-down procedure.',
@@ -106,7 +106,7 @@ export function decide(profileId, facts) {
   if (facts.fall) {
     const {by, afterScoringTurningKick, target: ft, why} = facts.fall;
     if (!afterScoringTurningKick) gamjeom(by, 'fall', why || 'falling down');
-    else if (profileId === 'wt-2026') warnings.push({by: 'referee', label: 'No penalty', why: why || 'the contestant fell after scoring with a turning kick, so the fall is not penalised', cite: C.fallAfterTurning});
+    else if (profileId === 'wt-2026') warnings.push({by: 'referee', label: 'No penalty', why: why || 'the contestant fell after scoring with a turning kick, so the fall is not penalized', cite: C.fallAfterTurning});
     else if (profileId === 'aau-youth' && ft === 'head') gamjeom(by, 'fall', why || 'falling after a turning kick to the head, which youth safety rules do not exempt', C.fallAfterTurningHead);
     else throw new Error(`a fall after a turning kick to the ${ft} is not modelled for ${profileId}`);
   }

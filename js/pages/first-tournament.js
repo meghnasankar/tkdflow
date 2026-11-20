@@ -45,13 +45,13 @@ for(const li of items)li.querySelector('input').addEventListener('change',()=>{
  updateProgress();
 });
 $('ft-reset').addEventListener('click',()=>{
- if(!confirm(`Clear your ticks for ${contextLabel(ctx)}? Ticks for other views stay.`))return;
+ if(!confirm(`Clear your checkmarks for ${contextLabel(ctx)}? Checkmarks for other views stay.`))return;
  store.set(contextKey(ctx),[]);render();
 });
 $('ft-print').addEventListener('click',()=>window.print());
 $('ft-copy').addEventListener('click',async()=>{
  const url=`${location.origin}${location.pathname}${contextQuery(ctx)}#ft-checklist`;
- try{await navigator.clipboard.writeText(url);$('ft-copy-status').textContent='Link copied. It opens this organization and discipline; ticks are not shared.';}
+ try{await navigator.clipboard.writeText(url);$('ft-copy-status').textContent='Link copied. It opens this organization and discipline; checkmarks are not shared.';}
  catch{$('ft-copy-status').textContent=`Copy this link: ${url}`;}
 });
 window.addEventListener('popstate',()=>{ctx=parseContext(location.search);render();});

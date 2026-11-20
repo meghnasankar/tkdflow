@@ -12,7 +12,7 @@ import {canExportEvent,downloadEventCalendar} from '../lib/event-calendar.js';
 import {keepFocus,findKey,focusTarget} from '../lib/focus-keep.js';
 const $=id=>document.getElementById(id);
 const LABELS={style:{wt:'WT / Kukkiwon',itf:'ITF',ata:'ATA',open:'Open / all styles'},level:{local:'Local / regional',national:'National',international:'International',unspecified:'Level not specified'},type:{poomsae:'Poomsae',patterns:'Patterns / tul',sparring:'Sparring',para:'Para taekwondo',breaking:'Breaking','special-techniques':'Special techniques','power-test':'Power test'}};
-const STATUS={past:'Past',ongoing:'Happening now',upcoming:'Upcoming',announced:'Dates to be announced',cancelled:'Cancelled',postponed:'Postponed'};
+const STATUS={past:'Past',ongoing:'Happening now',upcoming:'Upcoming',announced:'Dates to be announced',cancelled:'Canceled',postponed:'Postponed'};
 const SELECT_KEYS=['year','organization','country','region','kind','style','level','type'];
 const ALL_LABELS={year:'All years',organization:'All organizations',country:'All countries',region:'All regions',kind:'All event formats',style:'All styles',level:'All levels',type:'All disciplines'};
 const FIELD_LABELS={year:'Year',organization:'Organization',country:'Country',region:'Region',kind:'Format',style:'Style',level:'Level',type:'Discipline',month:'Month',q:'Search',status:'Dates',major:'Major championships only'};

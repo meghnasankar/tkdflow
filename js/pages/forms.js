@@ -114,7 +114,7 @@ function renderResults() {
   if (defaultSort) defaultSort.textContent = ranksBySearch(state) ? 'Closest name match, then curriculum' : SORTS.find((s) => s.id === DEFAULT_STATE.sort).label;
   if (!forms.length) {
     $('results-summary').textContent = 'Showing 0 of 0 forms.';
-    showEmpty(grid, 'The forms catalogue is empty right now. Please check back later.');
+    showEmpty(grid, 'The forms catalog is empty right now. Please check back later.');
     return;
   }
   $('results-summary').textContent = `Showing ${results.length} of ${forms.length} forms` +
@@ -199,7 +199,7 @@ loadInto($('forms-grid'), '/data/forms.json', {
     loaded = true;
     const lessons = data.filter((f) => f.lessonUrl).length;
     const styles = new Set(data.map((f) => f.category)).size;
-    $('hero-summary').textContent = `${data.length} forms catalogued across ${styles} styles · ${lessons} interactive lesson${lessons === 1 ? '' : 's'} so far.`;
+    $('hero-summary').textContent = `${data.length} forms cataloged across ${styles} styles · ${lessons} interactive lesson${lessons === 1 ? '' : 's'} so far.`;
     render();
   },
 });

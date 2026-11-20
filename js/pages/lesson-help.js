@@ -199,7 +199,7 @@ async function submitFaq(e){
  if(problems){out.textContent=Object.values(problems).join(' ');return;}
  if(!$('faq-form-curated').checked){out.textContent='Confirm this answer was written for the public and contains no private details.';$('faq-form-curated').focus();return;}
  const live=editing?.status==='published';
- if(live&&!$('faq-form-live').checked){out.textContent='Tick “Update the public answer now” to change a published answer.';$('faq-form-live').focus();return;}
+ if(live&&!$('faq-form-live').checked){out.textContent='Check “Update the public answer now” to change a published answer.';$('faq-form-live').focus();return;}
  const payload={entry:editing?.id??null,lesson:f.lesson,pose:f.pose===''?null:Number(f.pose)-1,question:f.question.trim(),answer:f.answer.trim(),url:f.url,label:f.label,credit:f.credit,version:editing?.version??null,updatePublic:live};
  const key=`faq:${payload.entry||'new'}`,request=ids.for(key,payload);
  // Lock the whole editor and every list action until this save settles.

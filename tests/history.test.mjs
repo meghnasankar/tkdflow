@@ -95,12 +95,12 @@ test('the photos are the licensed files, sized for the page, with the credits th
     assert.doesNotMatch(fig.slice(fig.indexOf('<figcaption')), /resiz|convert|WebP/i, 'no file-processing details in the caption');
   }
   assert.match(figures[0], /present-day view, not a photograph from 1972/, 'the 2026 photo is not passed off as archival');
-  assert.match(figures[1], /shared under the same licence/, 'the adapted CC BY-SA image keeps its licence');
+  assert.match(figures[1], /shared under the same license/, 'the adapted CC BY-SA image keeps its licence');
   assert.doesNotMatch(figures[1], /alt="[^"]*\b(named|champion|gold medall?ist)\b/i, 'no athlete identification');
   // Same images credited again in the sources list.
   for (const p of photos) assert.ok(main.slice(main.indexOf('id="hi-sources"')).includes(`href="${p.page}"`));
   const sources = main.slice(main.indexOf('id="hi-sources"'));
-  assert.match(sources, /CC BY-SA 4\.0<\/a>; adapted and shared under the same licence\./);
+  assert.match(sources, /CC BY-SA 4\.0<\/a>; adapted and shared under the same license\./);
   assert.doesNotMatch(sources, /resiz|converted to WebP/i);
 });
 

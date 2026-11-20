@@ -10,7 +10,7 @@
     "meaning": "Heaven & Light",
     "organization": "WT",
     "category": "wt",
-    "series": "Taegeuk Series (Colour Belt)",
+    "series": "Taegeuk Series (Color Belt)",
     "seriesIcon": "☯️",
     "seriesHeader": "World Taekwondo (WT) / Kukkiwon Poomsae",
     "seriesDesc": "Kukkiwon poomsae, the forms used in World Taekwondo (WT) competition",
@@ -24,7 +24,7 @@
     "bgGradient": "linear-gradient(135deg,#0D1B2A,#1a3a5c)",
     "tags": [
       "WT",
-      "Colour Belt"
+      "Color Belt"
     ],
     "tagStyles": [
       "badge-navy",
@@ -56,7 +56,7 @@
     "meaning": "Lake & Joy",
     "organization": "WT",
     "category": "wt",
-    "series": "Taegeuk Series (Colour Belt)",
+    "series": "Taegeuk Series (Color Belt)",
     "seriesIcon": "☯️",
     "seriesHeader": "World Taekwondo (WT) / Kukkiwon Poomsae",
     "seriesDesc": "Kukkiwon poomsae, the forms used in World Taekwondo (WT) competition",
@@ -70,7 +70,7 @@
     "bgGradient": "linear-gradient(135deg,#0d1a0d,#1a3a1a)",
     "tags": [
       "WT",
-      "Colour Belt"
+      "Color Belt"
     ],
     "tagStyles": [
       "badge-navy",
@@ -100,7 +100,7 @@
     "meaning": "Fire & Sun",
     "organization": "WT",
     "category": "wt",
-    "series": "Taegeuk Series (Colour Belt)",
+    "series": "Taegeuk Series (Color Belt)",
     "seriesIcon": "☯️",
     "seriesHeader": "World Taekwondo (WT) / Kukkiwon Poomsae",
     "seriesDesc": "Kukkiwon poomsae, the forms used in World Taekwondo (WT) competition",
@@ -114,7 +114,7 @@
     "bgGradient": "linear-gradient(135deg,#1a0d2d,#2e1a4a)",
     "tags": [
       "WT",
-      "Colour Belt"
+      "Color Belt"
     ],
     "tagStyles": [
       "badge-navy",
@@ -144,7 +144,7 @@
     "meaning": "Thunder & Dignity",
     "organization": "WT",
     "category": "wt",
-    "series": "Taegeuk Series (Colour Belt)",
+    "series": "Taegeuk Series (Color Belt)",
     "seriesIcon": "☯️",
     "seriesHeader": "World Taekwondo (WT) / Kukkiwon Poomsae",
     "seriesDesc": "Kukkiwon poomsae, the forms used in World Taekwondo (WT) competition",
@@ -158,7 +158,7 @@
     "bgGradient": "linear-gradient(135deg,#1a1a0d,#3a3a1a)",
     "tags": [
       "WT",
-      "Colour Belt"
+      "Color Belt"
     ],
     "tagStyles": [
       "badge-navy",
@@ -188,7 +188,7 @@
     "meaning": "Wind & Gentleness",
     "organization": "WT",
     "category": "wt",
-    "series": "Taegeuk Series (Colour Belt)",
+    "series": "Taegeuk Series (Color Belt)",
     "seriesIcon": "☯️",
     "seriesHeader": "World Taekwondo (WT) / Kukkiwon Poomsae",
     "seriesDesc": "Kukkiwon poomsae, the forms used in World Taekwondo (WT) competition",
@@ -202,7 +202,7 @@
     "bgGradient": "linear-gradient(135deg,#0d1a2d,#1a2e4a)",
     "tags": [
       "WT",
-      "Colour Belt"
+      "Color Belt"
     ],
     "tagStyles": [
       "badge-navy",
@@ -232,7 +232,7 @@
     "meaning": "Water & Softness",
     "organization": "WT",
     "category": "wt",
-    "series": "Taegeuk Series (Colour Belt)",
+    "series": "Taegeuk Series (Color Belt)",
     "seriesIcon": "☯️",
     "seriesHeader": "World Taekwondo (WT) / Kukkiwon Poomsae",
     "seriesDesc": "Kukkiwon poomsae, the forms used in World Taekwondo (WT) competition",
@@ -246,7 +246,7 @@
     "bgGradient": "linear-gradient(135deg,#1a0d0d,#3d1a1a)",
     "tags": [
       "WT",
-      "Colour Belt"
+      "Color Belt"
     ],
     "tagStyles": [
       "badge-navy",
@@ -276,7 +276,7 @@
     "meaning": "Mountain & Stillness",
     "organization": "WT",
     "category": "wt",
-    "series": "Taegeuk Series (Colour Belt)",
+    "series": "Taegeuk Series (Color Belt)",
     "seriesIcon": "☯️",
     "seriesHeader": "World Taekwondo (WT) / Kukkiwon Poomsae",
     "seriesDesc": "Kukkiwon poomsae, the forms used in World Taekwondo (WT) competition",
@@ -290,7 +290,7 @@
     "bgGradient": "linear-gradient(135deg,#0d1a1a,#1a3a3a)",
     "tags": [
       "WT",
-      "Colour Belt"
+      "Color Belt"
     ],
     "tagStyles": [
       "badge-navy",
@@ -320,7 +320,7 @@
     "meaning": "Earth & Infinity",
     "organization": "WT",
     "category": "wt",
-    "series": "Taegeuk Series (Colour Belt)",
+    "series": "Taegeuk Series (Color Belt)",
     "seriesIcon": "☯️",
     "seriesHeader": "World Taekwondo (WT) / Kukkiwon Poomsae",
     "seriesDesc": "Kukkiwon poomsae, the forms used in World Taekwondo (WT) competition",
@@ -340,7 +340,7 @@
       "badge-navy",
       "badge-red"
     ],
-    "description": "Earth and infinity — the final colour belt form, gateway to the black belt curriculum.",
+    "description": "Earth and infinity — the final color belt form, gateway to the black belt curriculum.",
     "review": {
       "status": "pending",
       "note": "Not yet reviewed by a qualified instructor."

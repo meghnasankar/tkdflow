@@ -68,7 +68,7 @@ test('blocked, failing and corrupt storage are reported honestly and never crash
  assert.equal(blocked.state,'unavailable');
  assert.equal(blocked.set('all:both',['choose-packet']),false,'kept in memory only');
  assert.deepEqual([...blocked.get('all:both')],['choose-packet'],'the checklist still works this visit');
- assert.match(storageMessage(blocked.state),/latest ticks are kept only on this page/);assert.match(storageMessage(blocked.state),/saved here earlier may come back/);
+ assert.match(storageMessage(blocked.state),/latest checkmarks are kept only on this page/);assert.match(storageMessage(blocked.state),/saved here earlier may come back/);
  const quota=memoryStorage();quota.setItem=()=>{throw new DOMException('full','QuotaExceededError');};
  const full=createChecklistStore(quota);
  assert.equal(full.set('all:both',['choose-packet']),false);assert.equal(full.state,'write-failed','a failed write is not blocked storage');assert.equal(full.unsaved,true);
@@ -176,7 +176,7 @@ test('the guide uses no account, personal data, network or cloud service',()=>{
  assert.match(page,/window\.addEventListener\('popstate'/);
  assert.match(page,/addEventListener\('storage'/,'other tabs stay in sync');
  assert.match(page,/\$\('ft-print'\)\.addEventListener\('click',\(\)=>window\.print\(\)\)/);
- assert.match(page,/ticks are not shared/,'copied links share the view, not personal ticks');
+ assert.match(page,/checkmarks are not shared/,'copied links share the view, not personal ticks');
  assert.doesNotMatch(html,/<input(?![^>]*type="checkbox")[^>]*>/,'no text fields: no personal data is collected');
 });
 
@@ -218,7 +218,7 @@ test('a failed save is retried on the next tick and then stores every unsaved vi
  f.write=1;assert.equal(store.set('aau:forms',['pay-forms']),false);
  assert.equal(store.state,'write-failed');assert.equal(store.unsaved,true);
  assert.deepEqual(stored(s),{'all:both':['choose-packet']},'the older saved ticks are untouched');
- assert.match(storageMessage('write-failed'),/latest ticks couldn’t be saved/);assert.match(storageMessage('write-failed'),/tries again when you tick/);assert.match(storageMessage('write-failed'),/ticks last saved here come back/);
+ assert.match(storageMessage('write-failed'),/latest checkmarks couldn’t be saved/);assert.match(storageMessage('write-failed'),/tries again when you check/);assert.match(storageMessage('write-failed'),/checkmarks last saved here come back/);
  assert.equal(store.set('usatkd:sparring',['pay-equipment']),true);
  assert.deepEqual(stored(s),{'all:both':['choose-packet'],'aau:forms':['pay-forms'],'usatkd:sparring':['pay-equipment']},'the retry stores the earlier unsaved view too');
  assert.equal(store.state,'ok');assert.equal(store.unsaved,false);
@@ -254,7 +254,7 @@ test('data that became unreadable after the page loaded is not overwritten witho
  s.data.set(STORAGE_KEY,'{damaged');                           // something else wrote unreadable data
  assert.equal(a.set('aau:forms',['pay-forms']),false);
  assert.equal(s.data.get(STORAGE_KEY),'{damaged','left as it is');assert.equal(a.state,'damaged');assert.equal(a.unsaved,true);
- assert.match(storageMessage(a.state),/became unreadable/);assert.match(storageMessage(a.state),/ticks are still shown here/);
+ assert.match(storageMessage(a.state),/became unreadable/);assert.match(storageMessage(a.state),/checkmarks are still shown here/);
  assert.doesNotMatch(storageMessage(a.state),/started empty/,'not the message for data that was unreadable from the start');
  assert.equal(a.set('aau:forms',['pay-forms','choose-packet']),true,'the next tick, after the notice, replaces it');
  assert.deepEqual(stored(s),{'all:both':['choose-packet'],'aau:forms':['pay-forms','choose-packet']});

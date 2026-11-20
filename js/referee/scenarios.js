@@ -197,7 +197,7 @@ S.push(retreatOut(8, 'wt-boundary-last10', 'Stepping over the line with 8 second
     id: 'wt-turning-then-fall', profile: 'wt-2026', title: 'A scoring back kick, then a fall', clock: 19, tc: 1.5, duration: 3.4,
     keys: {blue: keys, red: rock(RED0, 1.5, .08)}, contact: {by: 'blue', limb: k.limb, region: 'trunk', on: 'red'}, fall: {fighter: 'blue', by: 2.15},
     evidence: {pss: 'Hong’s trunk protector registered a valid hit at 1.50 s.', judges: 'Corner judges: turning kick confirmed.'},
-    facts: {attacker: 'blue', technique: 'turning-kick', target: 'trunk', contact: true, pss: true, judges: true, clock: 19, fall: {by: 'blue', afterScoringTurningKick: true, target: 'trunk', why: 'Chung fell after scoring with a turning kick, so the fall is not penalised'}},
+    facts: {attacker: 'blue', technique: 'turning-kick', target: 'trunk', contact: true, pss: true, judges: true, clock: 19, fall: {by: 'blue', afterScoringTurningKick: true, target: 'trunk', why: 'Chung fell after scoring with a turning kick, so the fall is not penalized'}},
     steps: ['Chung (blue) spins into a back kick that lands on Hong’s trunk protector at 1.50 s; the PSS and judges confirm it.', 'Chung loses balance after the kick and goes down to the floor at 2.15 s.'],
     options: [{label: 'Blue +4', outcome: {blue: 4, red: 0}}, {label: 'Blue +4, Red +1 (fall)', outcome: {blue: 4, red: 1}}, {label: 'Blue +2, Red +1', outcome: {blue: 2, red: 1}}]
   }));
@@ -221,11 +221,11 @@ S.push(retreatOut(8, 'wt-boundary-last10', 'Stepping over the line with 8 second
   options: [{label: 'Red +1', outcome: {blue: 0, red: 1}}, {label: 'No points; the referee may give a verbal warning', outcome: {blue: 0, red: 0}}, {label: 'Blue +3', outcome: {blue: 3, red: 0}}]
 })); }
 { const k = kickRed('spin', 'head', {depth: .006}); S.push(scenario({
-  id: 'aau-youth-turning-head', profile: 'aau-youth', title: 'Youth colour belt: a light spinning kick to the head', clock: 50, tc: 1.5,
+  id: 'aau-youth-turning-head', profile: 'aau-youth', title: 'Youth color belt: a light spinning kick to the head', clock: 50, tc: 1.5,
   keys: {blue: k.keys, red: still(RED0)}, contact: {by: 'blue', limb: k.limb, region: 'head', on: 'red'},
   evidence: {pss: 'Light, controlled contact on Hong’s head protector at 1.50 s.', judges: 'Technical judge: turning kick.'},
   facts: {attacker: 'blue', technique: 'turning-kick', target: 'head', contact: true, pss: true, judges: true, clock: 50},
-  steps: ['In a 12–17 colour-belt Olympic-style division, Chung (blue) spins into a high turning kick.', 'The heel touches Hong’s head protector lightly, with control, at 1.50 s.'],
+  steps: ['In a 12–17 color-belt Olympic-style division, Chung (blue) spins into a high turning kick.', 'The heel touches Hong’s head protector lightly, with control, at 1.50 s.'],
   options: [{label: 'Blue +3', outcome: {blue: 3, red: 0}}, {label: 'Blue +6', outcome: {blue: 6, red: 0}}, {label: 'Red +1', outcome: {blue: 0, red: 1}}]
 })); }
 export const SCENARIOS = Object.freeze(S);

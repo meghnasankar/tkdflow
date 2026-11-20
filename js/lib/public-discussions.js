@@ -7,7 +7,7 @@
    topics, and to published replies of published topics. */
 import {ACCOUNTS} from '../config.js';
 import {publicBase,publicRequest} from './public-read.js';
-import {TOPIC_COLUMNS,REPLY_COLUMNS,PAGE,cursorOf,keysetFilter,pageOf} from './discussions.js';
+import {TOPIC_COLUMNS,REPLY_COLUMNS,PAGE,cursorOf,keysetFilter,pageOf,guideWording} from './discussions.js';
 
 /** The categories allowed by discussion_topics' check constraint. */
 export const CATEGORIES=Object.freeze(['technique-qa','forms-discussion','sparring','training','competitions','grading-testing','general']);
@@ -26,7 +26,7 @@ export function publicTopicRow(row){
  if(!row||typeof row!=='object')return null;
  const t=pick(row,TOPIC_KEYS);
  return t.status==='published'&&UUID.test(t.id||'')&&CATEGORIES.includes(t.category)&&length(t.title,8,160)&&length(t.body,20,8000)
-  &&handle(t.author_handle)&&typeof t.editorial==='boolean'&&isDate(t.created_at)?t:null;
+  &&handle(t.author_handle)&&typeof t.editorial==='boolean'&&isDate(t.created_at)?guideWording(t):null;
 }
 export function publicReplyRow(row,topicId){
  if(!row||typeof row!=='object')return null;

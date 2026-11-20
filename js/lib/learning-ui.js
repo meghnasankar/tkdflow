@@ -23,11 +23,11 @@ export function saveFormButton(form,record,state,service) {
 export function learningCard(form,record,state,service) {
  return h('article',{class:'learning-card','data-form':form.id},
   form.thumbnail?h('img',{src:form.thumbnail.src,width:form.thumbnail.width,height:form.thumbnail.height,alt:'',loading:'lazy',decoding:'async'}):null,
-  h('div',{class:'learning-card-body'},h('p',{class:'section-label'},`${form.organization}${record.practised?' · Practised':''}`),h('h3',{},form.name),
+  h('div',{class:'learning-card-body'},h('p',{class:'section-label'},`${form.organization}${record.practised?' · Practiced':''}`),h('h3',{},form.name),
    h('p',{},record.last_pose!==null?`Last studied: pose ${record.last_pose+1} of ${record.pose_count}`:'Saved for later'),
    h('div',{class:'learning-card-actions'},h('a',{class:'btn btn-primary btn-sm','data-fk':`open:${form.id}`,'aria-label':`${record.last_pose!==null?'Resume lesson':'Open lesson'}: ${form.name}`,href:learningUrl(form.id,record)},record.last_pose!==null?'Resume lesson':'Open lesson'),saveFormButton(form,record,state,service)),
    record.last_pose!==null||record.practised?h('button',{type:'button',class:'link-btn reset-learning','data-fk':`reset:${form.id}`,'data-learning-key':`reset:${form.id}`,...busyAttrs(state),
-    on:{click:()=>{if(!readyToSave(service))return;if(confirm(`Clear your study position and practised mark for ${form.name}? Your saved-form choice will stay.`)&&readyToSave(service))service.update(form.id,{reset:true});}}},'Clear progress'):null));
+    on:{click:()=>{if(!readyToSave(service))return;if(confirm(`Clear your study position and practiced mark for ${form.name}? Your saved-form choice will stay.`)&&readyToSave(service))service.update(form.id,{reset:true});}}},'Clear progress'):null));
 }
 export function mountLessonLearning({id,title,count,player}) {
  const service=getLearningService(),holder=h('section',{class:'lesson-learning','aria-label':'Saved form and lesson progress'}),actions=h('div',{class:'learning-card-actions'}),position=h('p'),status=h('p',{role:'status',class:'learning-storage-note'}),retry=h('button',{type:'button',class:'btn btn-secondary btn-sm',hidden:true,on:{click:()=>service.retry()}},'Retry saving');
@@ -50,7 +50,7 @@ export function mountLessonLearning({id,title,count,player}) {
   keepFocus(actions,()=>actions.replaceChildren(saveFormButton({id,name:title},record,state,service),h('button',{
    type:'button',class:'btn btn-secondary btn-sm','data-fk':'practised','data-learning-key':'practised','aria-pressed':String(!!record?.practised),...busyAttrs(state),
    on:{click:()=>{if(readyToSave(service))service.update(id,{practised:!service.get(id)?.practised});}},
-  },icon('check'),record?.practised?'Practised':'Mark as practised')));
+  },icon('check'),record?.practised?'Practiced':'Mark as practiced')));
   position.textContent=record?.last_pose!==null&&record?`Last studied: pose ${record.last_pose+1} of ${record.pose_count}.`:'Your study position is saved when you use the lesson controls.';
   status.textContent=learningMessage(state);setHidden(retry,!state.error,status);   // a focused Retry hands focus to the status
   if(!ready&&saving){
