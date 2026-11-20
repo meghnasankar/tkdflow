@@ -363,7 +363,7 @@ $('sp-preview-cancel').addEventListener('click', () => {
   fileInput.value = '';
   setHidden($('sp-preview'), true, fileInput);
   focusTarget(fileInput);
-  say('Import cancelled. Your list is unchanged.');
+  say('Import canceled. Your list is unchanged.');
 });
 
 /* ---------- start ---------- */

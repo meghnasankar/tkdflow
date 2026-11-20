@@ -195,7 +195,7 @@ test('Referee training is a top-navigation section: one header link to the guide
     if (p.key === 'referee') assert.match(html, /<body data-page="referee">/, p.file);
   }
   const guide = read('referee-guide.html'), hero = guide.slice(guide.indexOf('<div class="page-hero">'), guide.indexOf('</div></div>', guide.indexOf('<div class="page-hero">')));
-  assert.match(hero, /<h1>[^<]+<\/h1>[\s\S]*<a class="btn btn-primary" href="\/referee\.html">Practise in the 3D arena<\/a>/);
+  assert.match(hero, /<h1>[^<]+<\/h1>[\s\S]*<a class="btn btn-primary" href="\/referee\.html">Practice in the 3D arena<\/a>/);
 });
 
 test('AAU youth divisions don’t inherit WT’s count or its fall exception for turning kicks to the head', () => {

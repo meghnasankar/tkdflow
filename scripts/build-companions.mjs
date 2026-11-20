@@ -121,7 +121,7 @@ export function renderIndexList(list) {
 }
 
 const skeleton = (marker) => `<!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en-US"><head>
 <!-- layout:head -->
 <!-- /layout:head -->
 <link rel="stylesheet" href="/css/companion.css">

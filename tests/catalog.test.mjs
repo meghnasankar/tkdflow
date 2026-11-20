@@ -160,7 +160,7 @@ test('a chosen sort, filters, exact names and the URL are unchanged by search ra
 
 test('the belt filter says colours are typical, not a school rule, and links to the school list', () => {
   const html = readFileSync(new URL('../forms.html', import.meta.url), 'utf8');
-  const group = html.slice(html.indexOf('<legend>Belt colour</legend>') - 80, html.indexOf('id="level-options"'));
+  const group = html.slice(html.indexOf('<legend>Belt color</legend>') - 80, html.indexOf('id="level-options"'));
   assert.match(group, /<fieldset class="filter-group" aria-describedby="belt-note">/);
   assert.match(group, /<p class="filter-note" id="belt-note">[^<]*not a rule[^<]*<a href="\/school-forms\.html">/);
 });

@@ -115,7 +115,7 @@ test('organization facts are sourced, dated and official; guidance makes no endo
  }
  assert.doesNotMatch(text,/approved by|endorsed|certified|reviewed by|has not been reviewed|official TKDflow curriculum/i);
  assert.doesNotMatch(text,/\bequivalent\b|\bequals\b|same as a .* belt/i,'no universal belt mapping');
- assert.match(text,/Belt colours do not line up between styles/);
+ assert.match(text,/Belt colors do not line up between styles/);
  assert.match(text,/ATA is a different organization from American Taekwondo United/);
 });
 

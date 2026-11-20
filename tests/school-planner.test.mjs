@@ -337,7 +337,7 @@ test('page: import shows a literal preview first; Cancel keeps the list, Replace
   assert.deepEqual(items[0].querySelector('ul').children.map(li=>li.textContent),['Koryo','<i>Kibon</i> (your entry)']);
   assert.deepEqual(p.saved().levels.map(l=>l.label),['Mine'],'nothing replaced before the choice');
   p.$('sp-preview-cancel').click();
-  assert.equal(p.$('sp-preview').hidden,true);is(p.doc.activeElement,p.$('sp-import-file'));assert.equal(p.status(),'Import cancelled. Your list is unchanged.');
+  assert.equal(p.$('sp-preview').hidden,true);is(p.doc.activeElement,p.$('sp-import-file'));assert.equal(p.status(),'Import canceled. Your list is unchanged.');
   assert.deepEqual(p.saved().levels.map(l=>l.label),['Mine']);
   await choose(file(good).f);p.$('sp-preview-replace').click();
   assert.deepEqual(p.saved().levels.map(l=>l.label),['<b>Black</b>','Red']);is(p.doc.activeElement,p.$('sp-list-title'));

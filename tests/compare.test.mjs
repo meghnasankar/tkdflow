@@ -42,7 +42,7 @@ test('each card shows only catalogue facts and the counts, and neutral shared li
  assert.deepEqual(factRows(koryo,facts.forms).map(r=>r[0]),['Style','Series','Typical belt / level','Reference counts','Study poses'],'no difficulty or review rows');
  assert.deepEqual(factRows(koryo,facts.forms).slice(2),[['Typical belt / level',`${koryo.beltLabel} (typical)`],['Reference counts','30'],['Study poses','52']]);
  assert.deepEqual(factRows(koryo,null).map(r=>r[0]),['Style','Series','Typical belt / level'],'without the counts file only catalogue facts');
- assert.deepEqual(sharedLines(byId.get('taegeuk-1'),byId.get('taegeuk-2')),['Both are in the Taegeuk Series (Colour Belt).']);
+ assert.deepEqual(sharedLines(byId.get('taegeuk-1'),byId.get('taegeuk-2')),['Both are in the Taegeuk Series (Color Belt).']);
  assert.deepEqual(sharedLines(byId.get('chon-ji'),byId.get('taegeuk-1')),[],'nothing is said about forms from different styles');
 });
 

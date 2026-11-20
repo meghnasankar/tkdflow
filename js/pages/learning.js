@@ -5,7 +5,7 @@ import {learningCard,savingBusy,readyToSave} from '../lib/learning-ui.js';
 import {h} from '../lib/dom.js';
 import {keepFocus,findKey,setHidden,setDisabled} from '../lib/focus-keep.js';
 const $=id=>document.getElementById(id),service=getLearningService();
-const VIEWS={all:'All learning',saved:'Saved forms',progress:'In progress',practised:'Practised'};
+const VIEWS={all:'All learning',saved:'Saved forms',progress:'In progress',practised:'Practiced'};
 let forms=[],loaded=false,view=new URLSearchParams(location.search).get('view')||'all',snapshot=service.snapshot();
 if(!VIEWS[view])view='all';
 function render(){
@@ -21,7 +21,7 @@ function render(){
  setDisabled($('learning-refresh'),state.mode==='loading',statusEl);$('learning-refresh').setAttribute('aria-disabled',busy);
  setHidden($('learning-import'),state.mode!=='account'||!service.browserRecords().length,statusEl);$('learning-import-button').setAttribute('aria-disabled',busy);
  keepFocus($('learning-tabs'),()=>$('learning-tabs').replaceChildren(...Object.entries(VIEWS).map(([key,label])=>h('button',{type:'button',class:'btn btn-secondary btn-sm','aria-pressed':String(view===key),'data-fk':`view:${key}`,'data-learning-key':`view:${key}`,on:{click:()=>{view=key;const p=key==='all'?'':`?view=${key}`;history.pushState(null,'',location.pathname+p);render();}}},`${label} (${all.filter(form=>match(form,key)).length})`))));
- $('learning-summary').textContent=`${all.filter(f=>match(f,'saved')).length} saved · ${all.filter(f=>match(f,'progress')).length} in progress · ${all.filter(f=>match(f,'practised')).length} marked practised`;
+ $('learning-summary').textContent=`${all.filter(f=>match(f,'saved')).length} saved · ${all.filter(f=>match(f,'progress')).length} in progress · ${all.filter(f=>match(f,'practised')).length} marked practiced`;
  if(!loaded||state.mode==='loading'){$('learning-cards').replaceChildren();return;}
  const shown=all.filter(form=>match(form,view)).sort((a,b)=>(records.get(b.id).studied_at||records.get(b.id).updated_at||'').localeCompare(records.get(a.id).studied_at||records.get(a.id).updated_at||''));
  const cards=$('learning-cards'),before=[...cards.children].map(n=>n.dataset?.form).filter(Boolean);
@@ -42,4 +42,4 @@ $('learning-retry').addEventListener('click',()=>service.retry());
 $('learning-refresh').addEventListener('click',()=>{const live=service.snapshot();if(live.mode!=='loading'&&!savingBusy(live))service.refresh();});
 $('learning-import-button').addEventListener('click',()=>{if(readyToSave(service))service.importBrowser();});
 window.addEventListener('popstate',()=>{view=new URLSearchParams(location.search).get('view')||'all';if(!VIEWS[view])view='all';render();});
-loadInto($('learning-cards'),'/data/forms.json',{title:'Your form catalogue could not load.',validate:validateForms,onData:data=>{forms=data;loaded=true;render();}});
+loadInto($('learning-cards'),'/data/forms.json',{title:'Your form catalog could not load.',validate:validateForms,onData:data=>{forms=data;loaded=true;render();}});

@@ -70,7 +70,7 @@ test('browser import is explicit and preserves existing account study position',
 test('shared pose links override auto-resume and the player never marks practice automatically',()=>{
  const player=readFileSync(new URL('../js/pages/lesson-player.js',import.meta.url),'utf8'),ui=readFileSync(new URL('../js/lib/learning-ui.js',import.meta.url),'utf8');
  assert.match(player,/mountLessonLearning/);assert.match(ui,/!explicitPose&&!interacted/);assert.match(ui,/player.select\(resume,'resume'\)/);
- assert.doesNotMatch(ui,/practised:\s*true/);assert.match(ui,/Mark as practised/);
+ assert.doesNotMatch(ui,/practised:\s*true/);assert.match(ui,/Mark as practiced/);
 });
 
 

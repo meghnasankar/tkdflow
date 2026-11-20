@@ -9,7 +9,7 @@ import {createProgress, progressText, savedNote} from '../referee/progress.js';
 
 const $ = id => document.getElementById(id);
 const NAMES = {blue: 'Chung (blue)', red: 'Hong (red)'};
-const BY = {PSS: 'the PSS (electronic scoring sensors)', judges: 'the judges', 'PSS + judges': 'the PSS and the judges together', referee: 'the centre referee'};
+const BY = {PSS: 'the PSS (electronic scoring sensors)', judges: 'the judges', 'PSS + judges': 'the PSS and the judges together', referee: 'the center referee'};
 const IDS = SCENARIOS.map(s => s.id);
 
 export const clockText = s => `${Math.floor(Math.max(0, s) / 60)}:${String(Math.round(Math.max(0, s)) % 60).padStart(2, '0')}`;

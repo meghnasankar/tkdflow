@@ -47,6 +47,13 @@ export function renderFooter() {
   return read('layout/footer.html').trimEnd();
 }
 
+/** Every page declares the site language (layout/pages.json "lang") on its <html> element. */
+export function renderLang(html, file) {
+  const re = /<html lang="[^"]*">/;
+  if (!re.test(html)) throw new Error(`${file}: missing <html lang="…">`);
+  return html.replace(re, `<html lang="${esc(manifest.lang)}">`);
+}
+
 function replaceRegion(html, name, content, file) {
   const re = new RegExp(`(<!-- layout:${name} -->)[\\s\\S]*?(<!-- /layout:${name} -->)`);
   if (!re.test(html)) throw new Error(`${file}: missing <!-- layout:${name} --> markers`);
@@ -54,7 +61,8 @@ function replaceRegion(html, name, content, file) {
 }
 
 export function renderPage(page, html) {
-  let out = replaceRegion(html, 'head', renderHead(page), page.file);
+  let out = renderLang(html, page.file);
+  out = replaceRegion(out, 'head', renderHead(page), page.file);
   out = replaceRegion(out, 'header', renderHeader(page), page.file);
   out = replaceRegion(out, 'footer', renderFooter(), page.file);
   return out;
