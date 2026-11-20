@@ -42,14 +42,18 @@ function difficultyDots(level, label) {
 function card(f) {
   const tags = f.tags.map((t, i) => h('span', { class: `badge ${safeClass(f.tagStyles?.[i], BADGE_CLASSES, 'badge-navy')}` }, t.startsWith('⬛') ? icon('belt') : null, t.replace(/^⬛\s*/,'')));
   const action = f.lessonUrl
-    ? h('a', { class: 'btn btn-gold btn-sm', href: f.lessonUrl }, 'Open lesson', h('span', { class: 'sr-only' }, `: ${f.name}`))
+    ? h('a', { class: 'btn btn-gold btn-sm', href: f.lessonUrl, 'data-fk': `open:${f.id}` }, 'Open lesson', h('span', { class: 'sr-only' }, `: ${f.name}`))
     : h('span', { class: 'badge badge-muted' }, 'Lesson not available yet');
+  const picture = f.thumbnail
+    ? h('img', { src: f.thumbnail.src, width: f.thumbnail.width, height: f.thumbnail.height,
+      alt: f.thumbnail.alt, loading: 'lazy', decoding: 'async' })
+    : icon('forms');
+  // The picture opens the lesson too: one plain link round the image (nothing else inside it), named like the button.
+  const visual = f.lessonUrl
+    ? h('a', { class: 'form-card-visual', href: f.lessonUrl, 'aria-label': `Open lesson: ${f.name}`, 'data-fk': `picture:${f.id}` }, picture)
+    : h('div', { class: 'form-card-visual' }, picture);
   return h('article', { class: `form-card${f.lessonUrl ? ' has-lesson' : ''}` },
-    h('div', { class: 'form-card-visual' },
-      f.thumbnail
-        ? h('img', { src: f.thumbnail.src, width: f.thumbnail.width, height: f.thumbnail.height,
-          alt: f.thumbnail.alt, loading: 'lazy', decoding: 'async' })
-        : icon('forms')),
+    visual,
     h('div', { class: 'form-card-body' },
       h('div', { class: 'form-tag-row' }, ...tags),
       h('h3', {}, f.name),
@@ -57,7 +61,8 @@ function card(f) {
       difficultyDots(f.difficulty, f.difficultyLabel),
       h('p', { class: 'meta-line' }, `${f.moves} movements · ${f.beltLabel}`),
       h('p', { class: 'description' }, f.description)),
-    h('div', { class: 'form-card-footer' }, h('span', {}, f.organization), saveFormButton(f,learning.get(f.id),learningState,learning), action));
+    // (the organisation is already the card's first tag; the footer holds the two actions, side by side)
+    h('div', { class: 'form-card-footer' }, h('div', { class: 'form-card-actions' }, action, saveFormButton(f,learning.get(f.id),learningState,learning))));
 }
 
 function renderOrgTabs() {
