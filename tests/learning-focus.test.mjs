@@ -121,6 +121,30 @@ test('Library: keyboard Unsave keeps focus while saving and after confirmation; 
  }finally{await done(env);}
 });
 
+test('Library cards: the picture is a plain named link to the lesson; the footer holds Open lesson and Save form side by side',async()=>{
+ const env=await library({rows:[]});
+ try{
+  const cards=env.doc.querySelectorAll('.form-card');assert.equal(cards.length,forms.length,'one card per form');
+  const interactive='a,button,input,select,textarea,[tabindex]';
+  for(const card of cards){
+   const f=forms.find(x=>card.querySelector('h3').textContent===x.name);assert.ok(f,'each card is a catalogued form');
+   const pic=card.children[0];assert.ok(pic.classList.contains('form-card-visual'));
+   if(f.lessonUrl){
+    assert.equal(pic.tagName,'A','the picture is a link');assert.equal(pic.getAttribute('href'),f.lessonUrl,'to the lesson');
+    assert.equal(pic.getAttribute('aria-label'),`Open lesson: ${f.name}`,'named for where it goes and which form');
+    assert.equal(pic.querySelectorAll(interactive).length,0,'nothing interactive inside the link');
+    if(f.thumbnail)assert.equal(pic.querySelectorAll('img').length,1);
+   }else assert.notEqual(pic.tagName,'A');
+   const footer=card.querySelector('.form-card-footer'),actions=footer.querySelector('.form-card-actions');
+   assert.equal(footer.children.length,1,'the footer holds only the actions row');
+   const [open,save]=actions.children;
+   if(f.lessonUrl){assert.equal(open.tagName,'A');assert.equal(open.getAttribute('href'),f.lessonUrl);assert.ok(open.textContent.startsWith('Open lesson'));}
+   assert.equal(save.tagName,'BUTTON');assert.ok(save.classList.contains('save-form'),'Save stays its own separate button');
+   assert.equal(actions.children.length,2);assert.equal(open.closest('a.form-card-visual'),null);
+  }
+ }finally{await done(env);}
+});
+
 test('Library: a failed save keeps focus and the busy state until Retry succeeds',async()=>{
  const env=await library({rows:[row('taegeuk-1')]});
  try{

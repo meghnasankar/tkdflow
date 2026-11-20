@@ -58,6 +58,19 @@
 .form-card .description { font-size: .85rem; }
 .form-card-visual img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: contain; }
 .form-card-visual span { line-height: 1; }
+/* The picture is a link to the lesson: the whole image is the target, with a visible keyboard focus ring inside the card. */
+a.form-card-visual { color: inherit; text-decoration: none; }
+a.form-card-visual:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  a.form-card-visual img { transition: transform .2s ease; }
+  a.form-card-visual:hover img { transform: scale(1.02); }
+}
+/* Footer: the lesson and Save buttons side by side, equal width, the same on every card; stacked on a narrow card. */
+.form-card { container-type: inline-size; }
+.form-card-footer { display: block; }
+.form-card-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.form-card-actions > .btn, .form-card-actions > .badge { width: 100%; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; text-align: center; white-space: normal; }
+@container (max-width: 260px) { .form-card-actions { grid-template-columns: minmax(0, 1fr); } }
 
 @media (max-width: 1100px) { .forms-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 860px) {
