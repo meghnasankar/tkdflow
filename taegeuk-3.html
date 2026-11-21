@@ -103,14 +103,9 @@
           <canvas id="lesson-canvas" width="640" height="640" role="img" aria-label="3D character showing the selected pose"></canvas>
           <p class="character-loading" id="character-loading" role="status">Loading the 3D character…</p>
           <p class="lesson-fallback" id="lesson-fallback" hidden>The 3D view could not load in this browser. The pose descriptions, movement list and pose links are still available.</p>
-        </div>
-
-        <div class="move-info" id="move-info" aria-live="polite">
-          <p class="move-counter" id="move-counter">Ready position</p>
-          <h3 class="move-name" id="move-name">Ready stance</h3>
-          <p class="voice-caption" id="voice-instruction"></p>
-          <p class="move-korean" lang="ko" id="move-korean"></p>
-          <p class="move-desc" id="move-desc"></p>
+          <div class="lesson-start" id="lesson-start" hidden>
+            <button type="button" class="lesson-start-button" id="btn-start" aria-label="Play lesson"><svg class="lesson-start-icon" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><path d="M8 5.2v13.6L19 12z" fill="currentColor"/></svg><span class="lesson-start-label">Play lesson</span></button>
+          </div>
         </div>
 
         <div class="progress-wrap">
@@ -120,13 +115,13 @@
         </div>
 
         <div class="lesson-controls" role="group" aria-label="Playback">
-          <button type="button" class="lesson-ctrl" id="btn-first" aria-label="First pose"><span aria-hidden="true">⏮</span></button>
           <button type="button" class="lesson-ctrl" id="btn-prev" aria-label="Previous pose"><span aria-hidden="true">◀</span></button>
           <button type="button" class="lesson-ctrl lesson-play" id="btn-play" aria-label="Play"><span aria-hidden="true">▶</span><span id="play-label">Play</span></button>
           <button type="button" class="lesson-ctrl" id="btn-next" aria-label="Next pose"><span aria-hidden="true">▶▏</span></button>
-          <button type="button" class="lesson-ctrl" id="btn-last" aria-label="Last pose"><span aria-hidden="true">⏭</span></button>
+          <button type="button" class="lesson-ctrl" id="btn-first" aria-label="First pose"><span aria-hidden="true">⏮</span></button>
           <button type="button" class="lesson-ctrl" id="frame-prev" aria-label="Previous frame" title="Previous frame"><span aria-hidden="true">−</span></button>
           <button type="button" class="lesson-ctrl" id="frame-next" aria-label="Next frame" title="Next frame"><span aria-hidden="true">+</span></button>
+          <button type="button" class="lesson-ctrl" id="btn-last" aria-label="Last pose"><span aria-hidden="true">⏭</span></button>
           <button type="button" class="lesson-ctrl lesson-replay" id="btn-replay-move"><span aria-hidden="true">↺</span><span class="replay-label">Replay move</span></button>
           <label class="speed-label" for="speed">Speed
             <select class="speed-select" id="speed">
@@ -135,6 +130,14 @@
               <option value="1" selected>1×</option>
             </select>
           </label>
+        </div>
+
+        <div class="move-info" id="move-info" aria-live="polite">
+          <p class="move-counter" id="move-counter">Ready position</p>
+          <h3 class="move-name" id="move-name">Ready stance</h3>
+          <p class="voice-caption" id="voice-instruction"></p>
+          <p class="move-korean" lang="ko" id="move-korean"></p>
+          <p class="move-desc" id="move-desc"></p>
         </div>
 
         <p class="player-keys" id="player-keys">Keys (with the player selected): <kbd>←</kbd> <kbd>→</kbd> step one frame (Shift for a pose), <kbd>Home</kbd> <kbd>End</kbd> first/last pose, <kbd>Space</kbd> or <kbd>K</kbd> play/pause, <kbd>R</kbd> replay the current move once. Camera: <kbd>A</kbd> <kbd>D</kbd> move around (Shift for the next side), <kbd>W</kbd> <kbd>S</kbd> raise or lower, <kbd>+</kbd> <kbd>-</kbd> zoom, <kbd>0</kbd> reset, <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> whole body, armwork or footwork.</p>

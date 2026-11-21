@@ -58,7 +58,7 @@
 .pose-fallback { margin-top: 8px; }
 .pose-fallback label { display: block; font-size: .8rem; font-weight: 600; color: var(--gray-600); margin-bottom: 4px; }
 .pose-fallback input { width: 100%; padding: 8px 10px; border: 1.5px solid var(--gray-300); border-radius: 8px; font-size: .85rem; color: var(--navy); background: white; min-height: 40px; }
-.speed-select { padding: 8px 10px; border: 1.5px solid var(--gray-300); border-radius: 8px; font-size: .85rem; color: var(--navy); background: white; min-height: 40px; }
+.speed-select { padding: 8px 10px; border: 1.5px solid var(--gray-300); border-radius: 8px; font-size: .85rem; color: var(--navy); background: white; min-height: 44px; }
 
 .move-panel { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; }
 .move-panel-header { padding: 14px 18px; background: var(--navy); color: white; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; justify-content: space-between; }
@@ -135,11 +135,41 @@
 .progress-wrap { display: flex; align-items: center; gap: 10px; }
 #lesson-progress { min-width: 0; flex: 1; }
 .lesson-clock { color: var(--navy); font-size: .78rem; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.lesson-play { border-radius: 999px; width: 98px; gap: 6px; }
-#play-label { font-size: .85rem; font-weight: 700; }
+.lesson-play { border-radius: 999px; width: auto; min-width: 132px; height: 52px; padding: 0 22px; gap: 8px; font-size: 1.05rem; }
+#play-label { font-size: 1rem; font-weight: 700; }
 .lesson-controls { padding: 8px 12px 14px; gap: 6px; }
 .lesson-controls .speed-label { margin-left: 0; }
 .lesson-controls .speed-select { min-width: 70px; }
+/* The timeline and playback bar sit directly under the view; the current move's card follows them. */
+.move-info { border-top: 1px solid var(--gray-100); }
+/* One playback bar for the page and Study view. The primary row is Previous | Play/Pause (large, always
+   labeled) | Next; First, the frame steps, Last, Replay move and Speed follow as a secondary row that wraps on
+   narrow screens. A zero-height break separates the rows; the markup is already in this order, so the tab
+   order follows what is seen. Every playback control keeps a 44 × 44 px target (short landscape Study view
+   compacts only the secondary controls, below). */
+.lesson-controls { row-gap: 4px; }
+.lesson-controls::after { content: ""; order: 1; flex-basis: 100%; height: 0; }
+.lesson-controls > #btn-first, .lesson-controls > #frame-prev, .lesson-controls > #frame-next,
+.lesson-controls > #btn-last, .lesson-controls > #btn-replay-move, .lesson-controls > .speed-label { order: 2; }
+/* First play: a large "Play lesson" button centered over the view until playback first starts. The layer
+   itself takes no pointer events, so dragging anywhere around the button still turns the camera. */
+.lesson-start { position: absolute; inset: 0; display: grid; place-items: center; padding: 12px; pointer-events: none; }
+.lesson-start[hidden] { display: none; }
+.lesson-start-button {
+  pointer-events: auto; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 60px; padding: 0 28px 0 22px; border: 2px solid var(--white); border-radius: 999px;
+  background: var(--red); color: var(--white); font: inherit; font-size: 1.15rem; font-weight: 800; line-height: 1.2;
+  box-shadow: 0 6px 22px rgba(13,27,42,.35); cursor: pointer; touch-action: manipulation;
+}
+.lesson-start-button:hover { background: var(--red-dark); }
+.lesson-start-button:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; box-shadow: 0 0 0 3px var(--focus-halo), 0 6px 22px rgba(13,27,42,.35); }
+.lesson-start-button:disabled { opacity: .6; cursor: not-allowed; }
+.lesson-start-icon { flex: none; }
+@media (max-width: 360px), (max-height: 420px) { .lesson-start-button { min-height: 52px; padding: 0 20px 0 16px; font-size: 1rem; } }
+@media (prefers-reduced-motion: no-preference) {
+  .lesson-start-button { transition: background-color .15s ease, transform .15s ease; }
+  .lesson-start-button:hover { transform: scale(1.03); }
+}
 .lesson-study { overflow: hidden; }
 .lesson-study header, .lesson-study footer, .lesson-study .page-hero,
 .lesson-study .before-begin, .lesson-study .move-panel, .lesson-study .info-section,
@@ -165,13 +195,9 @@
 @media(max-width:760px){ .lesson-layout { grid-template-columns: minmax(0,1fr); grid-template-areas: "player" "list" "info"; } }
 @media(max-width:400px){
  .lesson-study .player-card { inset: 8px; width: calc(100% - 16px); height: min(620px, calc(100svh - 16px)); max-height: calc(100dvh - 16px); }
- .lesson-study .lesson-controls { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 4px; }
- .lesson-study .replay-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
- .lesson-study .speed-label { grid-column: span 2; margin-left: 0; }   /* 8 buttons + Speed over 2 cells = two rows of 5 */
- .lesson-study .lesson-ctrl { width: 100%; height: 40px; }
- .lesson-study .lesson-play { width: 100%; height: 40px; }
- .lesson-study .speed-label { font-size: .7rem; gap: 2px; }
- .lesson-study .speed-select { min-width: 0; width: 100%; padding: 5px; }
+ /* The shared bar: Previous | Play/Pause | Next, then the secondary controls on (at most) two more rows, all 44 px. */
+ .lesson-study .lesson-play { height: 48px; }
+ .lesson-study .speed-label { font-size: .75rem; gap: 4px; }
 }
 @media(min-width:560px) and (max-height:560px){
  .lesson-study .lesson-view-toolbar { grid-template-columns: minmax(200px,.8fr) minmax(0,1fr); align-items: center; gap: 10px; }
@@ -181,12 +207,19 @@
  .lesson-study .move-info { padding: 4px 10px; }
  /* A lower canvas minimum (64 px at 320 px high) so the full caption and the controls fit the card. */
  .lesson-study .player-region { grid-template-rows: auto minmax(64px,1fr) auto auto auto; grid-template-rows: auto minmax(min(140px, 20svh), 1fr) auto auto auto; }
- /* One compact row: 8 buttons (Play and Replay icon-only) + Speed over 2 cells. */
- .lesson-study .lesson-controls { display: grid; grid-template-columns: repeat(10,minmax(0,1fr)); gap: 4px; padding: 4px 10px 5px; }
- .lesson-study .lesson-ctrl, .lesson-study .lesson-play { width: 100%; height: 36px; padding: 0; }
- .lesson-study #play-label, .lesson-study .replay-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
- .lesson-study .speed-label { grid-column: span 2; margin-left: 0; font-size: .7rem; gap: 2px; }
- .lesson-study .speed-select { min-width: 0; width: 100%; padding: 4px; }
+ /* Short screens: Previous | labeled Play/Pause | Next stay 44 px; the secondary controls are compact (40 × 36 px)
+    and follow on the same line when it is wide enough (from about 670 px), else wrap to a second row. Nothing
+    is hidden: every label stays visible. */
+ .lesson-study .lesson-controls { gap: 4px; padding: 4px 10px 5px; }
+ .lesson-study .lesson-controls::after { display: none; }
+ .lesson-study .lesson-play { height: 44px; min-width: 104px; padding: 0 14px; gap: 6px; font-size: .95rem; }
+ .lesson-study #play-label { font-size: .9rem; }
+ .lesson-study .lesson-controls > #btn-first { margin-left: 10px; }
+ .lesson-study .lesson-controls > #btn-first, .lesson-study .lesson-controls > #frame-prev,
+ .lesson-study .lesson-controls > #frame-next, .lesson-study .lesson-controls > #btn-last { width: 40px; height: 36px; }
+ .lesson-study .lesson-controls > #btn-replay-move { height: 36px; padding: 0 10px; }
+ .lesson-study .speed-label { font-size: .75rem; gap: 4px; }
+ .lesson-study .lesson-controls .speed-select { min-height: 36px; min-width: 64px; padding: 4px 8px; }
 }
 
 .lesson-view-note { color: var(--gray-600); font-size: .7rem; line-height: 1.4; }
