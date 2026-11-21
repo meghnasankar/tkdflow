@@ -30,7 +30,22 @@ let replaySelection=false;
 function requestFrame(){if(raf===null)raf=requestAnimationFrame(tick);}
 function tick(now){raf=null;const dt=lastNow?Math.min(.1,(now-lastNow)/1000):0;lastNow=now;const ready=voice.update({time:player.time,playing:player.playing,rate:player.rate});const effectsReady=effects.update({time:player.time,playing:player.playing,rate:player.rate});if(player.playing&&ready&&effectsReady)player.advance(dt);view?.draw(player.time);if(player.playing)requestFrame();else lastNow=0;}
 function settleCanvas(){view?.draw(player.time);}
-view=createLessonView(canvas,{motion:MOTION,requestFrame,onCamera:cameraChanged,onReady(){$('character-loading').hidden=true;},onError(){$('character-loading').hidden=true;canvas.hidden=true;$('lesson-fallback').hidden=false;cameraControls().forEach(control=>{control.disabled=true;});}});
+/* ── first play: a large "Play lesson" button over the viewer, offered only once the character is ready.
+   It runs the same toggle as the bar's Play. It goes away for good once playback first starts (by any
+   control or key), or once the learner picks a pose or a moment themselves (pose, frame or time controls, or
+   a link to a pose after the first), so a pose being studied is never covered. The first, idle pose keeps it,
+   including a saved study position restored on arrival. Only the button takes pointer events.
+   On a 3D failure it is never offered: the view never reports ready. (Clean-main port: the repair-era showAnimationUnavailable() is not on main.) ── */
+const startOverlay=$('lesson-start'),startButton=$('btn-start');
+const INSPECT_CAUSES=new Set(['select','next','prev','first','last','seek','frame']);
+let startDismissed=false,viewReady=false;
+function offerStart(){if(startOverlay)startOverlay.hidden=startDismissed||!viewReady||!!startButton?.disabled;}
+function dismissStart(){
+ if(startDismissed)return;startDismissed=true;if(!startOverlay)return;
+ const hadFocus=startOverlay.contains(document.activeElement);startOverlay.hidden=true;
+ if(hadFocus)$('btn-play').focus({preventScroll:true});   // keyboard users land on the bar's Play/Pause, right below the view
+}
+view=createLessonView(canvas,{motion:MOTION,requestFrame,onCamera:cameraChanged,onReady(){$('character-loading').hidden=true;viewReady=true;offerStart();},onError(){$('character-loading').hidden=true;canvas.hidden=true;$('lesson-fallback').hidden=false;cameraControls().forEach(control=>{control.disabled=true;});if(startButton)startButton.disabled=true;if(startOverlay)startOverlay.hidden=true;}});   // (clean-main port of the Play change to animation-unavailable.js: never offer "Play lesson" for an animation that can't play)
 /* ── camera: focus buttons, camera buttons and keys; announced once it settles ── */
 function cameraControls(){return document.querySelectorAll('[data-lesson-focus],[data-camera]');}
 let cameraNote=null;
@@ -54,6 +69,7 @@ const MANUAL_CAUSES = new Set(['next', 'prev', 'first', 'last', 'select', 'play'
 /* ── one render function for every state change ── */
 let previousIndex=-1,previousPlaying=null;
 function render({index,playing,cause,time}) {
+  if(playing||INSPECT_CAUSES.has(cause)||(cause==='link'&&index>0))dismissStart();
   if(cause==='play'||cause==='move-replay')lastNow=0;   // a (re)started replay never uses an old frame's delta
   if(['select','next','prev','first','last','link'].includes(cause))replaySelection=true;
   else if(['play','seek','frame','move-replay','move-ended'].includes(cause))replaySelection=false;
@@ -170,6 +186,7 @@ function init() {
   $('lesson-progress').max = String(DURATION);
   player.subscribe(render);
   $('btn-play').addEventListener('click',togglePlayback);
+  startButton?.addEventListener('click',()=>{if(!player.playing)togglePlayback();});   // only ever starts playback
   $('btn-replay-move')?.addEventListener('click',replayMove);
   $('btn-next').addEventListener('click', () => player.next());
   $('btn-prev').addEventListener('click', () => player.prev());
@@ -193,6 +210,7 @@ function init() {
   mountLessonLearning({id:LESSON.id,title:LESSON.title||document.querySelector('h1').textContent,count:POSES.length,player});
   mountLessonHelp({id:LESSON.id,title:lessonTitle(),count:POSES.length,player,poseName:i=>POSES[i]?.name||''});
   lifecycle.start();
+  viewReady||=!!view?.ready;offerStart();   // (also covers a character that was ready before the page finished wiring up)
   window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener?.('change',e=>{if(e.matches)player.pause();});
 }
 

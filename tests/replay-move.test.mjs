@@ -97,10 +97,12 @@ test('all 23 lesson pages offer Replay move in the playback controls, the R hint
  assert.match(read('start-here.html'),/R to replay the current move once/);
 });
 
-test('phone Study view keeps every control in two rows and the Replay label available to screen readers',()=>{
- const css=read('css/lesson.css'),start=css.indexOf('@media(max-width:400px){'),phone=css.slice(start,css.indexOf('\n}\n',start));
- assert.match(phone,/\.lesson-study \.lesson-controls \{ display: grid; grid-template-columns: repeat\(5,minmax\(0,1fr\)\);/);
+test('Study view keeps every playback control, with the Replay move label visible (phone and short screens)',()=>{
+ // (The bar's row layout and target sizes are checked in lesson-play-start.test.mjs.)
+ const css=read('css/lesson.css'),block=q=>{const start=css.indexOf(q);assert.ok(start>=0,q);return css.slice(start,css.indexOf('\n}\n',start));};
  const cells=(read('koryo.html').match(/<div class="lesson-controls"[^]*?<\/div>/)[0].match(/<button |<label /g)||[]).length;
- assert.equal(cells,9);assert.ok(Math.ceil(cells/5)===2,'nine controls fit two rows of five');
- assert.match(phone,/\.lesson-study \.replay-label \{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset\(50%\);/,'visually hidden, not display:none');
+ assert.equal(cells,9,'all nine playback controls are in the bar');
+ for(const q of ['@media(max-width:400px){','@media(min-width:560px) and (max-height:560px){']){
+  assert.doesNotMatch(block(q),/replay-label[^{]*\{[^}]*(clip-path|width: 1px|display: none)/,`${q} keeps the Replay move label visible`);
+ }
 });
